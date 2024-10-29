@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Character;
 using TMPro;
 using UnityEngine;
+using Characters.Player;
 
 [Serializable]
 public class Platform : MonoBehaviour
@@ -9,14 +11,35 @@ public class Platform : MonoBehaviour
     [SerializeField] private MeshRenderer platformRenderer;
     [SerializeField] private TextMeshPro platformText;
     
-    [HideInInspector] public int Weight;
-    [HideInInspector] public bool IsChecked;
     [HideInInspector] public bool IsBlocked;
 
     private List<GameObject> gameObjects = new();
     public Vector2Int CurrentCoordinates { get; private set; }
+    
+    private Color startColor;
 
 
+    private void OnEnable()
+    {
+        PlayerController.OnFinished += OnFinished;
+    }
+
+    private void OnDisable()
+    {
+        PlayerController.OnFinished -= OnFinished;
+    }
+
+    private void Start()
+    {
+        startColor = platformRenderer.material.color;
+    }
+
+    private void OnFinished()
+    {
+        SetColor(startColor);
+        platformText.enabled = false;
+    }
+    
     public void SetColor(Color color)
     {
         platformRenderer.material.color = color;

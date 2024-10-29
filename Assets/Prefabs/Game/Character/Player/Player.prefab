@@ -493,7 +493,6 @@ GameObject:
   m_Component:
   - component: {fileID: 235657330208172728}
   - component: {fileID: 6200176588022165938}
-  - component: {fileID: 4678123101908379361}
   - component: {fileID: 7224353900096107505}
   m_Layer: 0
   m_Name: Player
@@ -534,20 +533,7 @@ MonoBehaviour:
     <gameObjects>k__BackingField:
     - {fileID: 4609764714971673307}
     - {fileID: 3003171226424186197}
---- !u!114 &4678123101908379361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4609764714971673307}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d97b650b77e387647b439840b119b0ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterMainController: {fileID: 6200176588022165938}
-  config: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
+  so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
 --- !u!114 &7224353900096107505
 MonoBehaviour:
   m_ObjectHideFlags: 0

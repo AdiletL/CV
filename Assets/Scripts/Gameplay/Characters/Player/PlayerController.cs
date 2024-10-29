@@ -1,37 +1,75 @@
 using System;
+using Calculate;
 using UnityEngine;
 
-namespace Characters.Player
+namespace Character
 {
     public class PlayerController : CharacterMainController
     {
         public static event Action OnFinished;
 
-        public GameObject target { get; private set; }
+        [SerializeField] private SO_PlayerMove so_PlayerMove;
 
-
-        private void OnEnable()
+        private StateMachine stateMachine;
+        private PathToPoint pathToPoint;
+        
+        public override void Initialize()
         {
-            components.GetComponentInGameObjects<PlayerMove>().OnFinishedToTarget += OnFinihedToTarget;
+            base.Initialize();
+
+            pathToPoint = new PathToPointBuilder()
+                .SetPosition(transform, default)
+                .Build();
+
+            CreateStates();
+            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
+            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
+            stateMachine.SetState<PlayerIdleState>();
         }
 
-        private void OnDisable()
+        private void CreateStates()
         {
-            components.GetComponentInGameObjects<PlayerMove>().OnFinishedToTarget -= OnFinihedToTarget;
+            stateMachine = new StateMachine();
+
+            var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
+                .SetPathToPoint(pathToPoint)
+                .SetGameObject(gameObject)
+                .SetIdleClip(so_PlayerMove.IdleClip)
+                .SetCharacterAnimation(components.GetComponentInGameObjects<CharacterAnimation>())
+                .SetStateMachine(stateMachine)
+                .Build();
+            
+            var runState = (PlayerRunState)new PlayerRunStateBuilder()
+                .SetCharacterAnimation(components.GetComponentInGameObjects<CharacterAnimation>())
+                .SetGameObject(gameObject)
+                .SetMovementSpeed(so_PlayerMove.RunSpeed)
+                .SetRotateSpeed(so_PlayerMove.RotateSpeed)
+                .SetStateMachine(stateMachine)
+                .Build();
+            
+            stateMachine.AddState(idleState);
+            stateMachine.AddState(runState);
         }
 
-        private void OnFinihedToTarget()
+        private void Update()
         {
-            components.GetComponentInGameObjects<PlayerMove>().enabled = false;
+            stateMachine?.Update();
+        }
+
+        private void OnFinishedMoveToEndTarget()
+        {
             OnFinished?.Invoke();
+            //TODO: SetNextTarget
         }
 
         public void SetTarget(GameObject target)
         {
-            this.target = target;
-            components.GetComponentInGameObjects<PlayerMove>().SetTarget(target);
+            stateMachine.GetState<PlayerIdleState>().SetFinishTarget(target);
         }
-    
-    
+
+        private void OnDestroy()
+        {
+            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget -= OnFinishedMoveToEndTarget;
+        }
     }
 }

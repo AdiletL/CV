@@ -34,6 +34,7 @@ namespace Calculate
 
         public Queue<Platform> FindPathToPoint()
         {
+            weightPlatform = 0;
             SetCurrentPlatform();
             var pathToPoint = new Queue<Platform>();
             if (currentPlatform == null) return pathToPoint;

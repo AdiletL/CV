@@ -1,10 +1,8 @@
 ﻿public interface IMove
 {
-    public void Initialize();
-}
-
-public interface IRun : IMove
-{
-    public float runSpeed { get; set; }
-    public void Run();
+    public float MovementSpeed { get; set; }
+    public float RotationSpeed { get; set; }
+    
+    public void Move();
+    public void Rotate();
 }

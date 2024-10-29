@@ -1,5 +1,5 @@
+using Character;
 using Character.Enemy;
-using Characters.Player;
 using UnityEngine;
 
 public class CharacterSpawner : MonoBehaviour, ISpawner
@@ -21,6 +21,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
     public void SpawnGameObject()
     {
         SpawnPlayer();
+       // SpawnEnemies();
     }
 
     public void SetSpawners(PlatformSpawner platformSpawner, RewardSpawner rewardSpawner)
@@ -54,6 +55,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
                 enemyGameObject.transform.position = freePlatform.transform.position;
                 var enemy = enemyGameObject.GetComponent<EnemyController>();
                 enemy.Initialize();
+                //enemy.SetTarget()
                 freePlatform.GetComponent<Platform>().AddGameObject(enemyGameObject);
             }
         }

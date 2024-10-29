@@ -7,7 +7,5 @@ public abstract class CharacterMainController : MonoBehaviour, ICharacter
     public virtual void Initialize()
     {
         components.Initialize();
-        components.GetComponentInGameObjects<CharacterAnimation>()?.Initialize();
-        components.GetComponentInGameObjects<CharacterMove>()?.Initialize();
     }
 }

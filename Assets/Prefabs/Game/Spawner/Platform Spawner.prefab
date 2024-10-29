@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abda63cddb231a4c8db2f5f98867388, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  length: {x: 10, y: 10}
+  length: {x: 50, y: 50}
   platformPrefab: {fileID: 7336186292366945002, guid: f47b15b67a8e7cd45af6e9200106d374, type: 3}
   blockPrefab: {fileID: 6736080846960014249, guid: 11eddd7375914d04dab143aac2f0f02a, type: 3}
-  parent: {fileID: 0}

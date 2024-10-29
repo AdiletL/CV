@@ -45,5 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4609764714971673307, guid: 55c878377383c1149a6449ecfdcace72, type: 3}
+  enemyPrefabs:
+  - {fileID: 7394638003979218972, guid: 5bd00ca7b4a4a5744b95ea8881fbc574, type: 3}
   platformSpawner: {fileID: 0}
   rewardSpawner: {fileID: 0}
