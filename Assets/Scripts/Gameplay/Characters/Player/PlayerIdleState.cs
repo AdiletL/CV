@@ -43,9 +43,8 @@ namespace Character
             }
             else
             {
-                this.StateMachine.GetState<PlayerRunState>().SetTarget(currentTarget);
-                this.StateMachine.SetState<PlayerRunState>();
-                Debug.Log("TransitionRun");
+                this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTarget);
+                this.StateMachine.SetStates(new List<Type>(){ typeof(PlayerMoveState)});
             }
         }
         public override void Exit()

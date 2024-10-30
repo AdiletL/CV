@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Calculate;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Character
             CreateStates();
             //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
-            stateMachine.SetState<PlayerIdleState>();
+            stateMachine.SetStates(new List<Type>(){  typeof(PlayerIdleState) });
         }
 
         private void CreateStates()
@@ -46,9 +47,16 @@ namespace Character
                 .SetRotateSpeed(so_PlayerMove.RotateSpeed)
                 .SetStateMachine(stateMachine)
                 .Build();
+
+            var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
+                .SetRunState(runState.GetType())
+                .SetGameObject(gameObject)
+                .SetStates(new IState[]{runState})
+                .SetStateMachine(stateMachine)
+                .Build();
             
             stateMachine.AddState(idleState);
-            stateMachine.AddState(runState);
+            stateMachine.AddState(moveState);
         }
 
         private void Update()

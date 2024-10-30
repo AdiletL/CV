@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Character
 {
@@ -11,18 +13,8 @@ namespace Character
 
         public override void Update()
         {
-            if(!currentTarget) return;
-            
-            if (GameObject.transform.position != currentTarget.transform.position)
-            {
-                Move();
-                Rotate();
-            }
-            else
-            {
-                this.StateMachine.SetState<PlayerIdleState>();
-                Debug.Log("TransitionIdle");
-            }
+            Move();
+            Rotate();
         }
 
         public void SetTarget(GameObject target)

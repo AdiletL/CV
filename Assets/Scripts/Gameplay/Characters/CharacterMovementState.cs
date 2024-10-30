@@ -2,21 +2,19 @@
 
 namespace Character
 {
-    public class CharacterMovementState : State, IMove
+    public class CharacterMovementState : State
     {
         public GameObject GameObject;
-
-        public float MovementSpeed { get; set; }
-        public float RotationSpeed  { get; set; }
+        
+        public float MovementSpeed;
+        public float RotationSpeed;
         
         public override void Enter()
         {
-            
         }
 
         public override void Update()
         {
-            
         }
 
         public override void Exit()
@@ -26,8 +24,8 @@ namespace Character
 
         public virtual void Move()
         {
-           
         }
+
         public virtual void Rotate()
         {
             
@@ -45,7 +43,6 @@ namespace Character
             state.GameObject = gameObject;
             return this;
         }
-        
         public CharacterMovementStateBuilder SetMovementSpeed(float speed)
         {
             state.MovementSpeed = speed;

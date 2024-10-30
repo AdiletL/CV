@@ -2,41 +2,53 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class StateMachine
 {
-    private IState currentState;
+    private List<IState> activeStates = new List<IState>();
     private Dictionary<Type, IState> states = new Dictionary<Type, IState>();
 
     public bool CheckState<T>() where T : IState
     {
         return states.ContainsKey(typeof(T));
     }
+
     public T GetState<T>() where T : IState
     {
         return (T)states[typeof(T)];
     }
+
     public void AddState(IState state)
     {
-        states.Add(state.GetType(), state);
+        states[state.GetType()] = state;
     }
-    public void SetState<T>() where T : IState
-    {
-        var type = typeof(T);
-        
-        if(currentState != null && currentState.GetType() == type)
-            return;
 
-        if (states.TryGetValue(type, out var newState))
+    public void SetStates(List<Type> desiredStates)
+    {
+        for (int i = activeStates.Count - 1; i >= 0; i--)
         {
-            currentState?.Exit();
-            currentState = newState;
-            currentState.Enter();
+            var activeStateType = activeStates[i].GetType();
+            if (!desiredStates.Contains(activeStateType))
+            {
+                activeStates[i].Exit();
+                activeStates.RemoveAt(i);
+            }
+        }
+
+        foreach (var stateType in desiredStates)
+        {
+            if (!activeStates.Exists(state => state.GetType() == stateType) && states.TryGetValue(stateType, out var newState))
+            {
+                activeStates.Add(newState);
+                newState.Enter();
+            }
         }
     }
 
     public void Update()
     {
-        currentState?.Update();
+        for (int i = 0; i < activeStates.Count; i++)
+        {
+            activeStates[i].Update();
+        }
     }
 }
