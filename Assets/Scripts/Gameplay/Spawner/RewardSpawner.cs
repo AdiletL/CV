@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class RewardSpawner : MonoBehaviour, ISpawner
@@ -7,7 +8,7 @@ public class RewardSpawner : MonoBehaviour, ISpawner
 
     public Reward FinishReward {get; private set;}
     
-    public void Initialize()
+    public async void Initialize()
     {
         
     }
@@ -16,12 +17,12 @@ public class RewardSpawner : MonoBehaviour, ISpawner
     {
         this.platformSpawner = platformSpawner;
     }
-    public void Execute()
+    public async UniTask Execute()
     {
         SpawnGameObject();
     }
 
-    public void SpawnGameObject()
+    private void SpawnGameObject()
     {
         var freePlatform = platformSpawner.GetFreePlatform();
         if (freePlatform != null)

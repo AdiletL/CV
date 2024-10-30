@@ -1,5 +1,6 @@
 using Character;
 using Character.Enemy;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CharacterSpawner : MonoBehaviour, ISpawner
@@ -9,16 +10,16 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
     [SerializeField] private PlatformSpawner platformSpawner;
     [SerializeField] private RewardSpawner rewardSpawner;
 
-    public void Initialize()
+    public async void Initialize()
     {
     }
 
-    public void Execute()
+    public async UniTask Execute()
     {
         SpawnGameObject();
     }
 
-    public void SpawnGameObject()
+    private void SpawnGameObject()
     {
         SpawnPlayer();
        // SpawnEnemies();

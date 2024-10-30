@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class SpawnerManager : MonoBehaviour, IManager
@@ -27,7 +28,7 @@ public class SpawnerManager : MonoBehaviour, IManager
         characterSpawner.Initialize();
     }
 
-    private void InstantiateSpawners()
+    private async void InstantiateSpawners()
     {
         platformSpawner = Instantiate(platformSpawnerPrefab, transform);
         rewardSpawner = Instantiate(rewardSpawnerPrefab, transform);
@@ -37,11 +38,15 @@ public class SpawnerManager : MonoBehaviour, IManager
         //trapSpawner = Instantiate(trapSpawnerPrefab, transform);
     }
 
-
     private void Start()
     {
-        platformSpawner.Execute();
-        rewardSpawner.Execute();
-        characterSpawner.Execute();
+        StartSpawn();
+    }
+
+    private async void StartSpawn()
+    {
+        await platformSpawner.Execute();
+        await rewardSpawner.Execute();
+        await characterSpawner.Execute();
     }
 }

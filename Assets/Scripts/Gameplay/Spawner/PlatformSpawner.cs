@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour, ISpawner
@@ -11,7 +12,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
 
     private readonly List<Platform> platforms = new(20);
 
-    public void Initialize()
+    public async void Initialize()
     {
         var newParentPlatform = new GameObject("Platform Parent");
         newParentPlatform.transform.position = Vector3.zero;
@@ -22,14 +23,14 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
         blockParent = newParentBlock.transform;
     }
 
-    public void Execute()
+    public async UniTask Execute()
     {
         if (!platformParent || !platformPrefab) return;
 
         SpawnGameObject();
     }
 
-    public void SpawnGameObject()
+    private void SpawnGameObject()
     {
         for (var x = 0; x < length.y; x++)
         for (var y = 0; y < length.x; y++)
