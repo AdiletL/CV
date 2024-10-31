@@ -22,7 +22,7 @@ namespace Character
 
         public override void Exit()
         {
-            MoveStateMachine.SetStates(new List<Type>(){ typeof(CharacterMoveState) });
+            MoveStateMachine.SetStates(typeof(CharacterMoveState));
         }
 
         protected virtual void DestermineState()

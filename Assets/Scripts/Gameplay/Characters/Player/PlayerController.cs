@@ -25,7 +25,7 @@ namespace Character
             CreateStates();
             //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
-            stateMachine.SetStates(new List<Type>(){  typeof(PlayerIdleState) });
+            stateMachine.SetStates(typeof(PlayerIdleState));
         }
 
         private void CreateStates()
@@ -49,7 +49,7 @@ namespace Character
                 .Build();
 
             var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
-                .SetRunState(runState.GetType())
+                .SetRunState(runState)
                 .SetGameObject(gameObject)
                 .SetStates(new IState[]{runState})
                 .SetStateMachine(stateMachine)

@@ -44,7 +44,7 @@ namespace Character
             else
             {
                 this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTarget);
-                this.StateMachine.SetStates(new List<Type>(){ typeof(PlayerMoveState)});
+                this.StateMachine.SetStates(typeof(PlayerMoveState));
             }
         }
         public override void Exit()

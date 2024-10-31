@@ -22,12 +22,12 @@ public class StateMachine
         states[state.GetType()] = state;
     }
 
-    public void SetStates(List<Type> desiredStates)
+    public void SetStates(params Type[] desiredStates)
     {
         for (int i = activeStates.Count - 1; i >= 0; i--)
         {
             var activeStateType = activeStates[i].GetType();
-            if (!desiredStates.Contains(activeStateType))
+            if (Array.IndexOf(desiredStates, activeStateType) == -1)
             {
                 activeStates[i].Exit();
                 activeStates.RemoveAt(i);

@@ -7,8 +7,9 @@ namespace Character
     public class PlayerMoveState : CharacterMoveState
     {
         private GameObject currentTarget;
-        
-        public List<Type> runStates;
+        private List<Type> currentStates = new List<Type>();
+
+        public Type runState;
 
         public void SetTarget(GameObject target)
         {
@@ -22,11 +23,11 @@ namespace Character
             
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                MoveStateMachine.SetStates(runStates);
+                MoveStateMachine.SetStates(runState);
             }
             else
             {
-                this.StateMachine.SetStates(new List<Type>(){ typeof(PlayerIdleState) });
+                this.StateMachine.SetStates(typeof(PlayerIdleState));
             }
         }
     }
@@ -37,11 +38,11 @@ namespace Character
         {
         }
 
-        public PlayerMoveStateBuilder SetRunState(Type runState)
+        public PlayerMoveStateBuilder SetRunState(IState runState)
         {
             if (state is PlayerMoveState playerMoveState)
             {
-                playerMoveState.runStates = new List<Type> { runState };
+                playerMoveState.runState = runState.GetType();
             }
 
             return this;
