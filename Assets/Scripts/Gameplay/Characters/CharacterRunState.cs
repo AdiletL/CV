@@ -2,7 +2,7 @@
 
 namespace Character
 {
-    public class CharacterRunState : CharacterMovementState
+    public class CharacterRunState : CharacterBaseMovementState
     {
         public CharacterAnimation CharacterAnimation;
         public AnimationClip AnimationClip;
@@ -14,20 +14,20 @@ namespace Character
 
     }
 
-    public class CharacterRunStateBuilder : CharacterMovementStateBuilder
+    public class CharacterBaseRunStateBuilder : CharacterBaseMovementStateBuilder
     {
-        public CharacterRunStateBuilder(CharacterMovementState instance) : base(instance)
+        public CharacterBaseRunStateBuilder(CharacterBaseMovementState instance) : base(instance)
         {
         }
 
-        public CharacterRunStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterBaseRunStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if(state is CharacterRunState characterRunState)
                 characterRunState.CharacterAnimation = characterAnimation;
             return this;
         }
 
-        public CharacterRunStateBuilder SetAnimationClip(AnimationClip animationClip)
+        public CharacterBaseRunStateBuilder SetAnimationClip(AnimationClip animationClip)
         {
             if(state is CharacterRunState characterRunState)
                 characterRunState.AnimationClip = animationClip;

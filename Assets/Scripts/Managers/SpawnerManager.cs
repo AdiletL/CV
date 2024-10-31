@@ -28,7 +28,7 @@ public class SpawnerManager : MonoBehaviour, IManager
         characterSpawner.Initialize();
     }
 
-    private async void InstantiateSpawners()
+    private void InstantiateSpawners()
     {
         platformSpawner = Instantiate(platformSpawnerPrefab, transform);
         rewardSpawner = Instantiate(rewardSpawnerPrefab, transform);

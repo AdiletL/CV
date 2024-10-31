@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Character
+namespace Character.Player
 {
     public class PlayerMoveState : CharacterMoveState
     {
         private GameObject currentTarget;
-        private List<Type> currentStates = new List<Type>();
 
-        public Type runState;
+        public PlayerRunState runState;
 
         public void SetTarget(GameObject target)
         {
@@ -23,7 +22,7 @@ namespace Character
             
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                MoveStateMachine.SetStates(runState);
+                MoveStateMachine.SetStates(runState.GetType());
             }
             else
             {
@@ -40,9 +39,13 @@ namespace Character
 
         public PlayerMoveStateBuilder SetRunState(IState runState)
         {
-            if (state is PlayerMoveState playerMoveState)
+            if (runState is PlayerRunState playerRunState)
             {
-                playerMoveState.runState = runState.GetType();
+                if (state is PlayerMoveState playerMoveState)
+                {
+                    playerMoveState.MoveStateMachine.AddState(playerRunState);
+                    playerMoveState.runState = playerRunState;
+                }
             }
 
             return this;

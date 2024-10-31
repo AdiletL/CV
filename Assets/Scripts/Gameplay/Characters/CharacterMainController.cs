@@ -1,11 +1,16 @@
+using ScriptableObjects.Character;
 using UnityEngine;
 
-public abstract class CharacterMainController : MonoBehaviour, ICharacter
+namespace Character
 {
-    [field: SerializeField] public ComponentsInGameObjects components { get; private set; }
-    
-    public virtual void Initialize()
+    public abstract class CharacterMainController : MonoBehaviour, ICharacter
     {
-        components.Initialize();
+        [field: SerializeField] public ComponentsInGameObjects components { get; private set; }
+
+
+        public virtual void Initialize()
+        {
+            components.Initialize();
+        }
     }
 }

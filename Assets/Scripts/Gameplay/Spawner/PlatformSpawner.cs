@@ -21,6 +21,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
         var newParentBlock = new GameObject("Block Parent");
         newParentBlock.transform.position = Vector3.zero;
         blockParent = newParentBlock.transform;
+        await UniTask.WaitForEndOfFrame();
     }
 
     public async UniTask Execute()
@@ -28,6 +29,8 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
         if (!platformParent || !platformPrefab) return;
 
         SpawnGameObject();
+
+        await UniTask.WaitForEndOfFrame();
     }
 
     private void SpawnGameObject()

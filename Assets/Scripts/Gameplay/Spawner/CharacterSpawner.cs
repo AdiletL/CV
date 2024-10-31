@@ -1,5 +1,6 @@
 using Character;
 using Character.Enemy;
+using Character.Player;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -12,17 +13,19 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
 
     public async void Initialize()
     {
+        await UniTask.WaitForEndOfFrame();
     }
 
     public async UniTask Execute()
     {
         SpawnGameObject();
+        await UniTask.WaitForEndOfFrame();
     }
 
     private void SpawnGameObject()
     {
         SpawnPlayer();
-       // SpawnEnemies();
+        SpawnEnemies();
     }
 
     public void SetSpawners(PlatformSpawner platformSpawner, RewardSpawner rewardSpawner)

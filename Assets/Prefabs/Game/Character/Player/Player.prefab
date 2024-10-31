@@ -494,7 +494,9 @@ GameObject:
   - component: {fileID: 235657330208172728}
   - component: {fileID: 6200176588022165938}
   - component: {fileID: 7224353900096107505}
-  m_Layer: 0
+  - component: {fileID: 4734251447694061729}
+  - component: {fileID: 2532564218702919847}
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,6 +536,7 @@ MonoBehaviour:
     - {fileID: 4609764714971673307}
     - {fileID: 3003171226424186197}
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
+  so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
 --- !u!114 &7224353900096107505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,6 +550,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 2505450794040001929}
+--- !u!135 &4734251447694061729
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4609764714971673307}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.4, z: 0}
+--- !u!54 &2532564218702919847
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4609764714971673307}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4950508210840797703
 GameObject:
   m_ObjectHideFlags: 0

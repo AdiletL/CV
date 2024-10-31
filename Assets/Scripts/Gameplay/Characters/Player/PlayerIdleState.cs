@@ -4,7 +4,7 @@ using Calculate;
 using UnityEngine;
 
 
-namespace Character
+namespace Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
@@ -13,8 +13,8 @@ namespace Character
         public PathToPoint pathToPoint;
         public GameObject GameObject;
 
-        private GameObject currentTarget;
-        private GameObject finishTarget;
+        private GameObject currentTargetForMove, currentTargetForAttack;
+        private GameObject finishTargetForMove;
         
         private Vector3 currentEndPosition;
         private Vector2Int currentCoordinates, endTargetCoordinates;
@@ -29,23 +29,8 @@ namespace Character
 
         public override void Update()
         {
-            if (finishTarget && !currentTarget) FindPathToPlatform();
-            if (!currentTarget) return;
-
-            if (GameObject.transform.position == currentTarget.transform.position)
-            {
-                currentCoordinates = FindPlatform.GetCoordinates(GameObject.transform.position);
-                endTargetCoordinates = FindPlatform.GetCoordinates(finishTarget.transform.position);
-                if (currentCoordinates == endTargetCoordinates)
-                    OnFinishedMoveToEndTarget?.Invoke();
-
-                FindPathToPlatform();
-            }
-            else
-            {
-                this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTarget);
-                this.StateMachine.SetStates(typeof(PlayerMoveState));
-            }
+            CheckMove();
+            CheckAttack();
         }
         public override void Exit()
         {
@@ -54,21 +39,58 @@ namespace Character
 
         public void SetFinishTarget(GameObject finish)
         {
-            this.finishTarget = finish;
+            this.finishTargetForMove = finish;
             pathToPoint.SetTarget(finish.transform);
         }
+
+        private void CheckMove()
+        {
+            if (finishTargetForMove && !currentTargetForMove) FindPathToPlatform();
+            if (!currentTargetForMove) return;
+
+            if (GameObject.transform.position == currentTargetForMove.transform.position)
+            {
+                currentCoordinates = FindPlatform.GetCoordinates(GameObject.transform.position);
+                endTargetCoordinates = FindPlatform.GetCoordinates(finishTargetForMove.transform.position);
+                if (currentCoordinates == endTargetCoordinates)
+                    OnFinishedMoveToEndTarget?.Invoke();
+
+                FindPathToPlatform();
+            }
+            else
+            {
+                this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTargetForMove);
+                this.StateMachine.SetStates(typeof(PlayerMoveState));
+            }
+        }
+
+        private void CheckAttack()
+        {
+            if (Physics.Raycast(GameObject.transform.position + Vector3.up * .5f, Vector3.forward, out RaycastHit hit,
+                    1.5f, Layers.ENEMY_LAYER))
+            {
+                if (hit.transform.GetComponent<IHealth>() != null)
+                {
+                    currentTargetForAttack = hit.transform.gameObject;
+                    this.StateMachine.GetState<PlayerAttackState>().SetTarget(currentTargetForAttack);
+                    this.StateMachine.SetStates(typeof(PlayerAttackState));
+                    Debug.Log(hit.transform.gameObject.name);
+                }
+            }
+        }
+        
         private void FindPathToPlatform()
         {
             if (pathToPlatformQueue.Count == 0)
             {
                 pathToPlatformQueue = pathToPoint.FindPathToPoint();
             }
-            else if (currentEndPosition != finishTarget.transform.position)
+            else if (currentEndPosition != finishTargetForMove.transform.position)
             {
                 pathToPlatformQueue = pathToPoint.FindPathToPoint();
-                currentEndPosition = finishTarget.transform.position;
+                currentEndPosition = finishTargetForMove.transform.position;
             }
-            currentTarget = pathToPlatformQueue.Count != 0 ? pathToPlatformQueue.Dequeue().gameObject : null;
+            currentTargetForMove = pathToPlatformQueue.Count != 0 ? pathToPlatformQueue.Dequeue().gameObject : null;
         }
     }
 

@@ -2,12 +2,12 @@
 
 namespace Character
 {
-    public class CharacterMovementState : State
+    public class CharacterBaseMovementState : State, IMove
     {
         public GameObject GameObject;
         
-        public float MovementSpeed;
-        public float RotationSpeed;
+        public float MovementSpeed {get; set;}
+        public float RotationSpeed { get; set; }
         
         public override void Enter()
         {
@@ -32,24 +32,24 @@ namespace Character
         }
     }
 
-    public class CharacterMovementStateBuilder : StateBuilder<CharacterMovementState>
+    public class CharacterBaseMovementStateBuilder : StateBuilder<CharacterBaseMovementState>
     {
-        public CharacterMovementStateBuilder(CharacterMovementState instance) : base(instance)
+        public CharacterBaseMovementStateBuilder(CharacterBaseMovementState instance) : base(instance)
         {
         }
 
-        public CharacterMovementStateBuilder SetGameObject(GameObject gameObject)
+        public CharacterBaseMovementStateBuilder SetGameObject(GameObject gameObject)
         {
             state.GameObject = gameObject;
             return this;
         }
-        public CharacterMovementStateBuilder SetMovementSpeed(float speed)
+        public CharacterBaseMovementStateBuilder SetMovementSpeed(float speed)
         {
             state.MovementSpeed = speed;
             return this;
         }
 
-        public CharacterMovementStateBuilder SetRotateSpeed(float speed)
+        public CharacterBaseMovementStateBuilder SetRotateSpeed(float speed)
         {
             state.RotationSpeed = speed;
             return this;

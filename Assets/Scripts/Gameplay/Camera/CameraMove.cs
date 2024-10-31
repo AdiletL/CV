@@ -1,4 +1,5 @@
 using Character;
+using Character.Player;
 using UnityEngine;
 
 public class CameraMove : MonoBehaviour
@@ -21,7 +22,9 @@ public class CameraMove : MonoBehaviour
     {
         if (target == null)
         {
-            target = FindFirstObjectByType<PlayerController>().gameObject;
+            var playerController = FindFirstObjectByType<PlayerController>();
+            if(playerController != null)
+                target = playerController.gameObject;
         }
         else
         {

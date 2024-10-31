@@ -1,12 +1,11 @@
 ﻿
 public interface IAttack : IApplyDamage
 {
-    public void PrepareAttack();
-    public void FinishAttack();
+    
 }
 
 public interface IApplyDamage
 {
-    public IDamageble applyDamage { get; set; }
+    public IDamageble Damageble { get; set; }
     public void ApplyDamage();
 }

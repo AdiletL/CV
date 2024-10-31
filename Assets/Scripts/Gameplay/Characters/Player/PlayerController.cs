@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Calculate;
+using Gameplay.Damage;
+using ScriptableObjects.Character.Player;
 using UnityEngine;
 
-namespace Character
+namespace Character.Player
 {
     public class PlayerController : CharacterMainController
     {
         public static event Action OnFinished;
 
         [SerializeField] private SO_PlayerMove so_PlayerMove;
+        [SerializeField] private SO_PlayerAttack so_PlayerAttack;
 
         private StateMachine stateMachine;
         private PathToPoint pathToPoint;
@@ -23,6 +26,7 @@ namespace Character
                 .Build();
 
             CreateStates();
+            
             //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
             stateMachine.SetStates(typeof(PlayerIdleState));
@@ -32,16 +36,18 @@ namespace Character
         {
             stateMachine = new StateMachine();
 
+            var characterAnimation = components.GetComponentInGameObjects<CharacterAnimation>();
+
             var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetPathToPoint(pathToPoint)
                 .SetGameObject(gameObject)
                 .SetIdleClip(so_PlayerMove.IdleClip)
-                .SetCharacterAnimation(components.GetComponentInGameObjects<CharacterAnimation>())
+                .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
             
-            var runState = (PlayerRunState)new PlayerRunStateBuilder()
-                .SetCharacterAnimation(components.GetComponentInGameObjects<CharacterAnimation>())
+            var runState = (PlayerRunState)new PlayerBaseRunStateBuilder()
+                .SetCharacterAnimation(characterAnimation)
                 .SetGameObject(gameObject)
                 .SetMovementSpeed(so_PlayerMove.RunSpeed)
                 .SetRotateSpeed(so_PlayerMove.RotateSpeed)
@@ -51,12 +57,26 @@ namespace Character
             var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
                 .SetRunState(runState)
                 .SetGameObject(gameObject)
-                .SetStates(new IState[]{runState})
                 .SetStateMachine(stateMachine)
                 .Build();
+
+            var damageble = new NormalDamage(so_PlayerAttack.Damage);
+            var meleeState = (PlayerMeleeAttackState)new PlayerMeleeAttackStateBuilder()
+                .SetCharacterAnimation(characterAnimation)
+                .SetAnimationClip(so_PlayerAttack.MeleeAttackClip)
+                .SetDamageble(damageble)
+                .SetStateMachine(stateMachine)
+                .Build();
+
+            var attackState = (PlayerAttackState)new PlayerAttackStateBuilder()
+                .SetMeleeAttackState(meleeState)
+                .SetStateMachine(stateMachine)
+                .Build();
+                
             
             stateMachine.AddState(idleState);
             stateMachine.AddState(moveState);
+            stateMachine.AddState(attackState);
         }
 
         private void Update()

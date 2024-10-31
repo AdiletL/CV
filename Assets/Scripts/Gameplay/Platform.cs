@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Character;
+using Character.Player;
 using TMPro;
 using UnityEngine;
-using Characters.Player;
 
 [Serializable]
 public class Platform : MonoBehaviour

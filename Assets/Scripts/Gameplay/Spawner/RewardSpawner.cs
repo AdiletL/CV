@@ -10,7 +10,7 @@ public class RewardSpawner : MonoBehaviour, ISpawner
     
     public async void Initialize()
     {
-        
+        await UniTask.WaitForEndOfFrame();
     }
 
     public void SetSpawners(PlatformSpawner platformSpawner)
@@ -20,6 +20,8 @@ public class RewardSpawner : MonoBehaviour, ISpawner
     public async UniTask Execute()
     {
         SpawnGameObject();
+        
+        await UniTask.WaitForEndOfFrame();
     }
 
     private void SpawnGameObject()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Character
+namespace Character.Player
 {
     public class PlayerRunState : CharacterRunState
     {
@@ -40,9 +40,9 @@ namespace Character
         }
     }
 
-    public class PlayerRunStateBuilder : CharacterRunStateBuilder
+    public class PlayerBaseRunStateBuilder : CharacterBaseRunStateBuilder
     {
-        public PlayerRunStateBuilder() : base(new PlayerRunState())
+        public PlayerBaseRunStateBuilder() : base(new PlayerRunState())
         {
         }
     }

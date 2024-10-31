@@ -6,8 +6,9 @@ namespace Character
 {
     public class CharacterMoveState : State
     {
+        public StateMachine MoveStateMachine = new StateMachine();
+        
         public GameObject GameObject;
-        public StateMachine MoveStateMachine;
         
         public override void Enter()
         {
@@ -35,17 +36,6 @@ namespace Character
     {
         public CharacterMoveStateBuilder(CharacterMoveState instance) : base(instance)
         {
-        }
-
-        public CharacterMoveStateBuilder SetStates(IState[] moveStates)
-        {
-            state.MoveStateMachine = new StateMachine();
-            foreach (var VARIABLE in moveStates)
-            {
-                state.MoveStateMachine.AddState(VARIABLE);
-            }
-
-            return this;
         }
 
         public CharacterMoveStateBuilder SetGameObject(GameObject gameObject)
