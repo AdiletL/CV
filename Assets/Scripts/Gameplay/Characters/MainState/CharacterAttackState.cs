@@ -7,6 +7,7 @@ namespace Character
     public class CharacterAttackState : State
     {
         public StateMachine AttackStateMachine = new StateMachine();
+        public GameObject GameObject;
         public IDamageble Damageble { get; set; }
         
         public override void Enter()
@@ -28,6 +29,18 @@ namespace Character
         {
             
         }
+        
+        public GameObject CheckForwardEnemy()
+        {
+            if (Physics.Raycast(this.GameObject.transform.position + Vector3.up * .5f,
+                    this.GameObject.transform.forward, out RaycastHit hit,
+                    1.5f, Layers.ENEMY_LAYER))
+            {
+                return hit.transform.gameObject;
+            }
+
+            return null;
+        }
     }
 
     public class CharacterAttackStateBuilder : StateBuilder<CharacterAttackState>
@@ -35,6 +48,11 @@ namespace Character
         public CharacterAttackStateBuilder(CharacterAttackState instance) : base(instance)
         {
         }
-        
+
+        public CharacterAttackStateBuilder SetGameObject(GameObject gameObject)
+        {
+            state.GameObject = gameObject;
+            return this;
+        }
     }
 }

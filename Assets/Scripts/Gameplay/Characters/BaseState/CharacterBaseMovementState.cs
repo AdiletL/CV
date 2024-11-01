@@ -25,11 +25,6 @@ namespace Character
         public virtual void Move()
         {
         }
-
-        public virtual void Rotate()
-        {
-            
-        }
     }
 
     public class CharacterBaseMovementStateBuilder : StateBuilder<CharacterBaseMovementState>

@@ -13,7 +13,7 @@ namespace Character.Player
         public PathToPoint pathToPoint;
         public GameObject GameObject;
 
-        private GameObject currentTargetForMove, currentTargetForAttack;
+        private GameObject currentTargetForMove;
         private GameObject finishTargetForMove;
         
         private Vector3 currentEndPosition;
@@ -29,8 +29,8 @@ namespace Character.Player
 
         public override void Update()
         {
-            CheckMove();
             CheckAttack();
+            CheckMove();
         }
         public override void Exit()
         {
@@ -54,7 +54,7 @@ namespace Character.Player
                 endTargetCoordinates = FindPlatform.GetCoordinates(finishTargetForMove.transform.position);
                 if (currentCoordinates == endTargetCoordinates)
                     OnFinishedMoveToEndTarget?.Invoke();
-
+                
                 FindPathToPlatform();
             }
             else
@@ -66,16 +66,10 @@ namespace Character.Player
 
         private void CheckAttack()
         {
-            if (Physics.Raycast(GameObject.transform.position + Vector3.up * .5f, Vector3.forward, out RaycastHit hit,
-                    1.5f, Layers.ENEMY_LAYER))
+            var enemyGameObject = this.StateMachine.GetState<PlayerAttackState>().CheckForwardEnemy();
+            if (enemyGameObject?.transform.GetComponent<IHealth>() != null)
             {
-                if (hit.transform.GetComponent<IHealth>() != null)
-                {
-                    currentTargetForAttack = hit.transform.gameObject;
-                    this.StateMachine.GetState<PlayerAttackState>().SetTarget(currentTargetForAttack);
-                    this.StateMachine.SetStates(typeof(PlayerAttackState));
-                    Debug.Log(hit.transform.gameObject.name);
-                }
+                this.StateMachine.SetStates(typeof(PlayerAttackState));
             }
         }
         

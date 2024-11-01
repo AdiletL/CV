@@ -9,12 +9,20 @@ public class StateMachine
 
     public bool CheckState<T>() where T : IState
     {
-        return states.ContainsKey(typeof(T));
+        foreach (var state in states.Values)
+            if (state is T desiredState)
+                return true;
+        
+        return false;
     }
 
     public T GetState<T>() where T : IState
     {
-        return (T)states[typeof(T)];
+        foreach (var state in states.Values)
+            if (state is T desiredState)
+                return desiredState;
+        
+        throw new InvalidOperationException($"State of type {typeof(T)} not found.");
     }
 
     public void AddState(IState state)
@@ -27,7 +35,10 @@ public class StateMachine
         for (int i = activeStates.Count - 1; i >= 0; i--)
         {
             var activeStateType = activeStates[i].GetType();
-            if (Array.IndexOf(desiredStates, activeStateType) == -1)
+            bool keepActive = Array.Exists(desiredStates, desiredType => 
+                desiredType.IsAssignableFrom(activeStateType));
+
+            if (!keepActive)
             {
                 activeStates[i].Exit();
                 activeStates.RemoveAt(i);
@@ -36,13 +47,15 @@ public class StateMachine
 
         foreach (var stateType in desiredStates)
         {
-            if (!activeStates.Exists(state => state.GetType() == stateType) && states.TryGetValue(stateType, out var newState))
+            if (!activeStates.Exists(state => stateType.IsAssignableFrom(state.GetType())) 
+                && states.TryGetValue(stateType, out var newState))
             {
                 activeStates.Add(newState);
                 newState.Enter();
             }
         }
     }
+
 
     public void Update()
     {

@@ -1148,6 +1148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25204f8ee6134d7e80c593b66374fb62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterMainController: {fileID: 8941120503047223863}
   so_CharacterHealth: {fileID: 11400000, guid: efe419fcf807a9948b5eabd7d7ac874b, type: 2}
 --- !u!135 &2871698622119724440
 SphereCollider:

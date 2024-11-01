@@ -5,6 +5,7 @@ namespace Character
 {
     public abstract class CharacterHealth : MonoBehaviour, IHealth
     {
+        [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected SO_CharacterHealth so_CharacterHealth;
 
 

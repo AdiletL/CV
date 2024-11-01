@@ -50,12 +50,12 @@ namespace Character.Player
                 .SetCharacterAnimation(characterAnimation)
                 .SetGameObject(gameObject)
                 .SetMovementSpeed(so_PlayerMove.RunSpeed)
-                .SetRotateSpeed(so_PlayerMove.RotateSpeed)
                 .SetStateMachine(stateMachine)
                 .Build();
 
             var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
                 .SetRunState(runState)
+                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
@@ -70,6 +70,7 @@ namespace Character.Player
 
             var attackState = (PlayerAttackState)new PlayerAttackStateBuilder()
                 .SetMeleeAttackState(meleeState)
+                .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
                 

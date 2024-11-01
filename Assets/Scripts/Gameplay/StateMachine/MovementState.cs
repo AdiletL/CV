@@ -29,7 +29,7 @@ namespace Gameplay.StateMachine
             throw new System.NotImplementedException();
         }
 
-        public void Rotate()
+        public void Rotate(Vector3 direction)
         {
             throw new System.NotImplementedException();
         }

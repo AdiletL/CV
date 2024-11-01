@@ -10,9 +10,20 @@ namespace Character.Player
 
         protected override void DestermineState()
         {
-            if (currentTarget != null)
+            var enemyGameObject = CheckForwardEnemy();
+            if (enemyGameObject)
             {
-                AttackStateMachine.SetStates(meleeState.GetType());
+                this.StateMachine.GetState<PlayerMoveState>().Rotate(enemyGameObject);
+                if (this.StateMachine.GetState<PlayerMoveState>().IsLookAtTarget())
+                {
+                    currentTarget = enemyGameObject;
+                    AttackStateMachine.GetState<PlayerMeleeAttackState>().SetTarget(enemyGameObject);
+                    AttackStateMachine.SetStates(meleeState.GetType());
+                }
+            }
+            else
+            {
+                this.StateMachine.SetStates(typeof(PlayerIdleState));
             }
         }
         

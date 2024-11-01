@@ -6,8 +6,10 @@ namespace Character
     public abstract class CharacterAnimation : MonoBehaviour, ICharacter
     {
         [SerializeField] protected Animator animator;
+        
         protected AnimationClip currentClip;
-
+        protected AnimatorClipInfo[] currentClips;
+        
         protected float currentSpeed;
 
         protected const string TRANSITION_SPEED = "speed";
@@ -18,13 +20,22 @@ namespace Character
         }
 
         public void ChangeAnimation(AnimationClip clip, float division = 1, float duration = 1,
-            float transitionDuration = .1f)
+            float transitionDuration = .1f, bool play = false)
         {
-            if (!clip || clip == currentClip) return;
+            currentClips = animator.GetCurrentAnimatorClipInfo(0);
+
+            if (!clip)
+            {
+                return;
+            } 
+            else if (!play && currentClips.Length != 0)
+            {
+                currentClip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
+                if (clip == currentClip) return;
+            }
 
             SetSpeedAnimation(ref clip, division, duration);
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
-            currentClip = clip;
         }
 
         protected void SetSpeedAnimation(ref AnimationClip clip, float division = 1, float duration = 1)

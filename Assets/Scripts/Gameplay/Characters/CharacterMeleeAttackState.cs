@@ -20,10 +20,10 @@ namespace Character
         public override void Update()
         {
             base.Update();
-
+                    
             var timeAnimation = AnimationClip.length;
-            var timeApplyDamage = AnimationClip.length / 2;
-            
+            var timeApplyDamage = timeAnimation / 2.5f;
+
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation < timeAnimation)
             {
@@ -41,18 +41,25 @@ namespace Character
                 isApplyDamage = false;
             }
         }
-        
+
         public void SetTarget(GameObject target)
         {
             this.target = target;
-            Debug.Log(target);
         }
         
         public override void ApplyDamage()
         {
-            var health = target.GetComponent<IHealth>();
-            health?.TakeDamage(Damageble);
-            Debug.Log(health);
+            var enemyGameObject = this.StateMachine.GetState<CharacterAttackState>().CheckForwardEnemy();
+            if (enemyGameObject)
+            {
+                target = enemyGameObject;
+                var health = target.GetComponent<IHealth>();
+                health?.TakeDamage(Damageble);
+            }
+            else
+            {
+                this.StateMachine.SetStates(typeof(CharacterIdleState));
+            }
         }
     }
 
