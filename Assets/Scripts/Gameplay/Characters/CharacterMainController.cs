@@ -5,7 +5,7 @@ namespace Character
 {
     public abstract class CharacterMainController : MonoBehaviour, ICharacter
     {
-        [field: SerializeField] public ComponentsInGameObjects components { get; private set; }
+        [field: SerializeField] public ComponentsInGameObjects components { get; protected set; }
 
 
         public virtual void Initialize()

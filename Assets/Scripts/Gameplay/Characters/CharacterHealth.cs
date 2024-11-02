@@ -8,7 +8,6 @@ namespace Character
         [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected SO_CharacterHealth so_CharacterHealth;
 
-
         private int currentHealth;
         private bool isLive;
         

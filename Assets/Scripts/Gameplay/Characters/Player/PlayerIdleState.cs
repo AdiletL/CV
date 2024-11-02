@@ -10,9 +10,10 @@ namespace Character.Player
     {
         public event Action OnFinishedMoveToEndTarget;
 
-        public PathToPoint pathToPoint;
-        public GameObject GameObject;
+        public GameObject GameObject { get; set; }
+        public Transform EndPoint { get; set; }
 
+        private PathToPoint pathToPoint;
         private GameObject currentTargetForMove;
         private GameObject finishTargetForMove;
         
@@ -20,6 +21,14 @@ namespace Character.Player
         private Vector2Int currentCoordinates, endTargetCoordinates;
         
         private Queue<Platform> pathToPlatformQueue = new();
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            pathToPoint = new PathToPointBuilder()
+                .SetPosition(this.GameObject.transform, EndPoint)
+                .Build();
+        }
 
         public override void Enter()
         {
@@ -41,6 +50,7 @@ namespace Character.Player
         {
             this.finishTargetForMove = finish;
             pathToPoint.SetTarget(finish.transform);
+            EndPoint = finish.transform;
         }
 
         private void CheckMove()
@@ -92,15 +102,7 @@ namespace Character.Player
     {
         public PlayerIdleStateBuilder() : base(new PlayerIdleState())
         {
-        }
-
-        public PlayerIdleStateBuilder SetPathToPoint(PathToPoint pathToPoint)
-        {
-            if (state is PlayerIdleState playerIdleState)
-            {
-                playerIdleState.pathToPoint = pathToPoint;
-            }
-            return this;
+            
         }
 
         public PlayerIdleStateBuilder SetGameObject(GameObject gameObject)
@@ -111,6 +113,15 @@ namespace Character.Player
             }
             return this;
         }
+        
+        public PlayerIdleStateBuilder SetEndPoint(Transform endPoint)
+        {
+            if (state is PlayerIdleState playerIdleState)
+            {
+                playerIdleState.EndPoint = endPoint;
+            }
 
+            return this;
+        }
     }
 }

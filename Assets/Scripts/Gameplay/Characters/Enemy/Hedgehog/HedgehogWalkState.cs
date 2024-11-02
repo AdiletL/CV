@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Character.Player
+namespace Character.Enemy
 {
-    public class PlayerRunState : CharacterRunState
+    public class HedgehogWalkState : EnemyWalkState
     {
         private GameObject currentTarget;
 
@@ -22,12 +20,11 @@ namespace Character.Player
         {
             GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position, currentTarget.transform.position, MovementSpeed * Time.deltaTime);
         }
-        
     }
 
-    public class PlayerBaseRunStateBuilder : CharacterBaseRunStateBuilder
+    public class HedgehogWalkStateBuilder : EnemyWalkStateBuilder
     {
-        public PlayerBaseRunStateBuilder() : base(new PlayerRunState())
+        public HedgehogWalkStateBuilder(EnemyWalkState instance) : base(instance)
         {
         }
     }

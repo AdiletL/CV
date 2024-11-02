@@ -9,8 +9,7 @@ namespace Character.Player
         private GameObject currentTarget;
         private Quaternion currentTargetForRotate;
 
-        public PlayerRunState runState;
-        public float RotationSpeed;
+        public float RotationSpeed  { get; set; }
 
         public bool IsLookAtTarget()
         {
@@ -37,7 +36,7 @@ namespace Character.Player
                 {
                     Rotate(currentTarget);
                     if (GameObject.transform.rotation == currentTargetForRotate)
-                        MoveStateMachine.SetStates(runState.GetType());
+                        MoveStateMachine.SetStates(typeof(PlayerRunState));
                 }
                 else
                 {
@@ -83,7 +82,6 @@ namespace Character.Player
                 if (state is PlayerMoveState playerMoveState)
                 {
                     playerMoveState.MoveStateMachine.AddState(playerRunState);
-                    playerMoveState.runState = playerRunState;
                 }
             }
 

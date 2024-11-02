@@ -20,7 +20,7 @@ namespace Character
         }
 
         public void ChangeAnimation(AnimationClip clip, float division = 1, float duration = 1,
-            float transitionDuration = .1f, bool play = false)
+            float transitionDuration = .1f, bool force = false)
         {
             currentClips = animator.GetCurrentAnimatorClipInfo(0);
 
@@ -28,7 +28,7 @@ namespace Character
             {
                 return;
             } 
-            else if (!play && currentClips.Length != 0)
+            else if (!force && currentClips.Length != 0)
             {
                 currentClip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
                 if (clip == currentClip) return;

@@ -7,7 +7,11 @@ namespace Character
         public GameObject GameObject;
         
         public float MovementSpeed {get; set;}
-        public float RotationSpeed { get; set; }
+        
+        public override void Initialize()
+        {
+            
+        }
         
         public override void Enter()
         {
@@ -43,11 +47,6 @@ namespace Character
             state.MovementSpeed = speed;
             return this;
         }
-
-        public CharacterBaseMovementStateBuilder SetRotateSpeed(float speed)
-        {
-            state.RotationSpeed = speed;
-            return this;
-        }
+        
     }
 }

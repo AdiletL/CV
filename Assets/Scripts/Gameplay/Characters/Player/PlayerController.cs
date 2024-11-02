@@ -15,21 +15,12 @@ namespace Character.Player
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
 
         private StateMachine stateMachine;
-        private PathToPoint pathToPoint;
         
         public override void Initialize()
         {
             base.Initialize();
 
-            pathToPoint = new PathToPointBuilder()
-                .SetPosition(transform, default)
-                .Build();
-
             CreateStates();
-            
-            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
-            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
-            stateMachine.SetStates(typeof(PlayerIdleState));
         }
 
         private void CreateStates()
@@ -39,8 +30,8 @@ namespace Character.Player
             var characterAnimation = components.GetComponentInGameObjects<CharacterAnimation>();
 
             var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
-                .SetPathToPoint(pathToPoint)
                 .SetGameObject(gameObject)
+                .SetEndPoint(default)
                 .SetIdleClip(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
@@ -78,6 +69,12 @@ namespace Character.Player
             stateMachine.AddState(idleState);
             stateMachine.AddState(moveState);
             stateMachine.AddState(attackState);
+            
+            stateMachine.Initialize();
+            
+            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
+            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
+            stateMachine.SetStates(typeof(PlayerIdleState));
         }
 
         private void Update()

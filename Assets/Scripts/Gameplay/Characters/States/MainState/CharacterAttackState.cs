@@ -6,9 +6,13 @@ namespace Character
 {
     public class CharacterAttackState : State
     {
-        public StateMachine AttackStateMachine = new StateMachine();
-        public GameObject GameObject;
-        public IDamageble Damageble { get; set; }
+        public StateMachine AttackStateMachine { get; private set; } = new ();
+        public GameObject GameObject { get; set; }
+        
+        public override void Initialize()
+        {
+            AttackStateMachine?.Initialize();
+        }
         
         public override void Enter()
         {
@@ -34,7 +38,7 @@ namespace Character
         {
             if (Physics.Raycast(this.GameObject.transform.position + Vector3.up * .5f,
                     this.GameObject.transform.forward, out RaycastHit hit,
-                    1.5f, Layers.ENEMY_LAYER))
+                    .5f, Layers.ENEMY_LAYER))
             {
                 return hit.transform.gameObject;
             }

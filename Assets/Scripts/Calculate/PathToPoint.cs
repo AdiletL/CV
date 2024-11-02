@@ -5,7 +5,7 @@ namespace Calculate
 {
     public class PathToPoint
     {
-        public Transform StartTransform, TargetTransform;
+        public Transform StartTransform, EndTransform;
 
         private Platform startPlatform;
         private Platform currentPlatform;
@@ -23,7 +23,7 @@ namespace Calculate
 
         public void SetTarget(Transform target)
         {
-            TargetTransform = target;
+            EndTransform = target;
         }
 
         private void SetCurrentPlatform()
@@ -39,7 +39,7 @@ namespace Calculate
             var pathToPoint = new Queue<Platform>();
             if (currentPlatform == null) return pathToPoint;
 
-            var endPlatform = FindPlatform.GetPlatform(TargetTransform.position + startRayOnPlatform, Vector3.down);
+            var endPlatform = FindPlatform.GetPlatform(EndTransform.position + startRayOnPlatform, Vector3.down);
             if (endPlatform == null) return pathToPoint;
 
             while (currentPlatform.CurrentCoordinates != endPlatform.CurrentCoordinates)
@@ -68,7 +68,7 @@ namespace Calculate
                 }
             }
 
-            correctPlatformPosition = TargetTransform.position;
+            correctPlatformPosition = EndTransform.position;
             BuildPath(pathToPoint, endPlatform);
 
             platformData.Clear(); // Очищаем временные данные после завершения
@@ -216,10 +216,10 @@ namespace Calculate
     {
         private readonly PathToPoint pathToPoint = new();
 
-        public PathToPointBuilder SetPosition(Transform start, Transform target)
+        public PathToPointBuilder SetPosition(Transform start, Transform end)
         {
             pathToPoint.StartTransform = start;
-            pathToPoint.TargetTransform = target;
+            pathToPoint.EndTransform = end;
             return this;
         }
 

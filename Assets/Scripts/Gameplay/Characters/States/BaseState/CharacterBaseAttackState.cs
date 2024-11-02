@@ -8,6 +8,11 @@ namespace Character
         
         public IDamageble Damageble { get; set; }
         
+        public override void Initialize()
+        {
+            
+        }
+        
         public override void Enter()
         {
             

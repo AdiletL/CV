@@ -6,9 +6,14 @@ namespace Character
 {
     public class CharacterMoveState : State
     {
-        public StateMachine MoveStateMachine = new StateMachine();
+        public StateMachine MoveStateMachine  { get; set; } = new ();
         
-        public GameObject GameObject;
+        public GameObject GameObject  { get; set; }
+        
+        public override void Initialize()
+        {
+            MoveStateMachine?.Initialize();
+        }
         
         public override void Enter()
         {

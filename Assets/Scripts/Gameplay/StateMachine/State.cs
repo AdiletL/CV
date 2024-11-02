@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public abstract class State : IState
 {
     public StateMachine StateMachine;
-    
+
+    public abstract void Initialize();
     public abstract void Enter();
 
     public abstract void Update();

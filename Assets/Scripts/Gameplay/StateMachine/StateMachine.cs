@@ -7,6 +7,14 @@ public class StateMachine
     private List<IState> activeStates = new List<IState>();
     private Dictionary<Type, IState> states = new Dictionary<Type, IState>();
 
+    public void Initialize()
+    {
+        foreach (var VARIABLE in states)
+        {
+            VARIABLE.Value.Initialize();
+        }
+    }
+
     public bool CheckState<T>() where T : IState
     {
         foreach (var state in states.Values)

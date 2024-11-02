@@ -9,7 +9,12 @@ namespace Character
     {
         public CharacterAnimation CharacterAnimation;
         public AnimationClip IdleClip;
-        
+
+        public override void Initialize()
+        {
+            
+        }
+
         public override void Enter()
         {
             CharacterAnimation.ChangeAnimation(IdleClip);

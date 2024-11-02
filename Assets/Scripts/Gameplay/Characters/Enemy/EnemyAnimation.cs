@@ -1,6 +1,6 @@
 ﻿namespace Character.Enemy
 {
-    public class EnemyAnimation : CharacterAnimation
+    public abstract class EnemyAnimation : CharacterAnimation
     {
         
     }

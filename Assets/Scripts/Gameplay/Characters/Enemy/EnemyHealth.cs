@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Character.Enemy
 {
-    public class EnemyHealth : CharacterHealth
+    public abstract class EnemyHealth : CharacterHealth
     {
-        private EnemyController enemyController;
-        private CharacterAnimation characterAnimation;
-        private SO_EnemyHealth so_EnemyHealth;
-        private AnimationClip takeDamageClip;
+        protected EnemyController enemyController;
+        protected CharacterAnimation characterAnimation;
+        protected SO_EnemyHealth so_EnemyHealth;
+        protected AnimationClip takeDamageClip;
         
         public override void Initialize()
         {
@@ -17,12 +17,20 @@ namespace Character.Enemy
             characterAnimation = enemyController.components.GetComponentInGameObjects<CharacterAnimation>();
             so_EnemyHealth = (SO_EnemyHealth)so_CharacterHealth;
             takeDamageClip = so_EnemyHealth.takeDamageClip;
+
+            var takeDamageState = (EnemyTakeDamageState)new EnemyTakeDamageStateBuilder(new EnemyTakeDamageState())
+                .SetCharacterAnimation(characterAnimation)
+                .SetClip(takeDamageClip)
+                .SetStateMachine(enemyController.StateMachine)
+                .Build();
+            
+            enemyController.StateMachine.AddState(takeDamageState);
         }
 
         public override void TakeDamage(IDamageble damageble)
         {
             base.TakeDamage(damageble);
-            characterAnimation.ChangeAnimation(takeDamageClip, transitionDuration: 0, play: true);
+            enemyController.StateMachine.SetStates(typeof(EnemyTakeDamageState));
         }
     }
 }

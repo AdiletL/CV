@@ -6,8 +6,6 @@ namespace Character.Player
     {
         private GameObject currentTarget;
         
-        public PlayerMeleeAttackState meleeState;
-
         protected override void DestermineState()
         {
             var enemyGameObject = CheckForwardEnemy();
@@ -18,7 +16,7 @@ namespace Character.Player
                 {
                     currentTarget = enemyGameObject;
                     AttackStateMachine.GetState<PlayerMeleeAttackState>().SetTarget(enemyGameObject);
-                    AttackStateMachine.SetStates(meleeState.GetType());
+                    AttackStateMachine.SetStates(typeof(PlayerMeleeAttackState));
                 }
             }
             else
@@ -48,7 +46,6 @@ namespace Character.Player
                 if (state is PlayerAttackState playerAttackState)
                 {
                     state.AttackStateMachine.AddState(playerMeleeState);
-                    playerAttackState.meleeState = playerMeleeState;
                 }
             }
 

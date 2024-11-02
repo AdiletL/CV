@@ -4,8 +4,8 @@ namespace Character
 {
     public class CharacterRunState : CharacterBaseMovementState
     {
-        public CharacterAnimation CharacterAnimation;
-        public AnimationClip AnimationClip;
+        public CharacterAnimation CharacterAnimation  { get; set; }
+        public AnimationClip AnimationClip  { get; set; }
 
         public override void Enter()
         {

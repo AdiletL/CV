@@ -1079,13 +1079,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8832916819323147869}
-  - component: {fileID: 8941120503047223863}
-  - component: {fileID: 9208910029183751661}
-  - component: {fileID: 3461696115668778003}
+  - component: {fileID: -4317091476212416767}
+  - component: {fileID: -2349593288448719746}
+  - component: {fileID: 4232290133557393907}
   - component: {fileID: 2871698622119724440}
   - component: {fileID: -6732597954092341346}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Hedgehog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1107,7 +1107,7 @@ Transform:
   - {fileID: 2008082834353840857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8941120503047223863
+--- !u!114 &-4317091476212416767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1116,14 +1116,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7394638003979218972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e145a30fab41c3a76ded11c745a2c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 333276267c874bc2891e23cb3ce63d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <components>k__BackingField:
     <gameObjects>k__BackingField:
     - {fileID: 7394638003979218972}
     - {fileID: 2742346258566781402}
---- !u!114 &9208910029183751661
+  so_EnemyMove: {fileID: 11400000, guid: 5b70409799709944c8ab840b67a55063, type: 2}
+--- !u!114 &-2349593288448719746
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1132,24 +1133,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 7394638003979218972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86502fd932a640e39fde3b491c8a0c51, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f99ed2ec5284e7394b12f4aeb19d43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMainController: {fileID: -4317091476212416767}
+  so_CharacterHealth: {fileID: 11400000, guid: efe419fcf807a9948b5eabd7d7ac874b, type: 2}
+--- !u!114 &4232290133557393907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394638003979218972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 240b6ba4f0b949589d0bad1c7890c7b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 418193747676348885}
---- !u!114 &3461696115668778003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7394638003979218972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25204f8ee6134d7e80c593b66374fb62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterMainController: {fileID: 8941120503047223863}
-  so_CharacterHealth: {fileID: 11400000, guid: efe419fcf807a9948b5eabd7d7ac874b, type: 2}
 --- !u!135 &2871698622119724440
 SphereCollider:
   m_ObjectHideFlags: 0

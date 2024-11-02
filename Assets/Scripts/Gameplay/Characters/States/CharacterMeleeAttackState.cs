@@ -22,7 +22,7 @@ namespace Character
             base.Update();
                     
             var timeAnimation = AnimationClip.length;
-            var timeApplyDamage = timeAnimation / 2.5f;
+            var timeApplyDamage = timeAnimation / 1.5f;
 
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation < timeAnimation)
