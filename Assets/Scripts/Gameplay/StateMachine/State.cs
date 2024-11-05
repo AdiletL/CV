@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public abstract class State : IState
 {
+    public virtual StateCategory Category { get; }
     public StateMachine StateMachine;
 
     public abstract void Initialize();

@@ -4,6 +4,8 @@ namespace Character
 {
     public class CharacterTakeDamageState : State
     {
+        public override StateCategory Category { get; } = StateCategory.action;
+
         public override void Initialize()
         {
             

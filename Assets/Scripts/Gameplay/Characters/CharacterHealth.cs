@@ -13,7 +13,7 @@ namespace Character
         
         public int MaxHealth { get; set; }
 
-        public int CurrentHealth
+        public virtual int CurrentHealth
         {
             get => currentHealth;
             set
@@ -22,6 +22,7 @@ namespace Character
                 {
                     currentHealth = 0;
                     IsLive = false;
+                    gameObject.SetActive(false);
                 }
                 else
                 {

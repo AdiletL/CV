@@ -1,26 +1,38 @@
 using System;
-using System.Collections.Generic;
-using Calculate;
 using Gameplay.Damage;
 using ScriptableObjects.Character.Player;
+using Unity.Collections;
 using UnityEngine;
 
 namespace Character.Player
 {
     public class PlayerController : CharacterMainController
     {
-        public static event Action OnFinished;
-
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
+        
+        [ReadOnly] public StateCategory currentStateCategory;
+        [ReadOnly] public string currentStateName;
 
         private StateMachine stateMachine;
+        private GameObject finish;
+        
+        public T GetState<T>() where T : IState
+        {
+            return stateMachine.GetState<T>();
+        }
         
         public override void Initialize()
         {
             base.Initialize();
 
             CreateStates();
+            
+            stateMachine.Initialize();
+            
+            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
+            stateMachine.OnChangedState += OnChangedState;
+            stateMachine.SetStates(typeof(PlayerIdleState));
         }
 
         private void CreateStates()
@@ -31,13 +43,13 @@ namespace Character.Player
 
             var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetGameObject(gameObject)
-                .SetEndPoint(default)
+                .SetEndPoint(finish.transform)
                 .SetIdleClip(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
             
-            var runState = (PlayerRunState)new PlayerBaseRunStateBuilder()
+            var runState = (PlayerRunState)new PlayerRunStateBuilder()
                 .SetCharacterAnimation(characterAnimation)
                 .SetGameObject(gameObject)
                 .SetMovementSpeed(so_PlayerMove.RunSpeed)
@@ -45,14 +57,13 @@ namespace Character.Player
                 .Build();
 
             var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
-                .SetRunState(runState)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
 
             var damageble = new NormalDamage(so_PlayerAttack.Damage);
-            var meleeState = (PlayerMeleeAttackState)new PlayerMeleeAttackStateBuilder()
+            var meleeState = (PlayerMeleeAttackState)new PlayerMeleeAttackBuilder()
                 .SetCharacterAnimation(characterAnimation)
                 .SetAnimationClip(so_PlayerAttack.MeleeAttackClip)
                 .SetDamageble(damageble)
@@ -60,21 +71,16 @@ namespace Character.Player
                 .Build();
 
             var attackState = (PlayerAttackState)new PlayerAttackStateBuilder()
-                .SetMeleeAttackState(meleeState)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
                 
             
             stateMachine.AddState(idleState);
-            stateMachine.AddState(moveState);
             stateMachine.AddState(attackState);
-            
-            stateMachine.Initialize();
-            
-            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
-            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget += OnFinishedMoveToEndTarget;
-            stateMachine.SetStates(typeof(PlayerIdleState));
+            stateMachine.AddState(meleeState);
+            stateMachine.AddState(runState);
+            stateMachine.AddState(moveState);
         }
 
         private void Update()
@@ -82,20 +88,21 @@ namespace Character.Player
             stateMachine?.Update();
         }
 
-        private void OnFinishedMoveToEndTarget()
-        {
-            OnFinished?.Invoke();
-            //TODO: SetNextTarget
+        public void SetFinishTarget(GameObject target)
+        { 
+            finish = target;
+            this.stateMachine?.GetState<PlayerIdleState>()?.SetFinishTarget(finish);
         }
 
-        public void SetTarget(GameObject target)
+        private void OnChangedState(StateCategory category, IState state)
         {
-            stateMachine.GetState<PlayerIdleState>().SetFinishTarget(target);
+            currentStateCategory = category;
+            currentStateName = state.GetType().Name;
         }
 
         private void OnDestroy()
         {
-            stateMachine.GetState<PlayerIdleState>().OnFinishedMoveToEndTarget -= OnFinishedMoveToEndTarget;
+            stateMachine.OnChangedState -= OnChangedState;
         }
     }
 }

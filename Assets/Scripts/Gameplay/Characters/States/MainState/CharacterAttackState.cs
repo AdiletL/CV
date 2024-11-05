@@ -6,12 +6,20 @@ namespace Character
 {
     public class CharacterAttackState : State
     {
-        public StateMachine AttackStateMachine { get; private set; } = new ();
+        public override StateCategory Category { get; } = StateCategory.attack;
+        
+        protected CharacterBaseAttackState curretAttackState;
+
+        private Vector3 originRayForward;
+        private RaycastHit[] enemyHits = new RaycastHit[1];
+
         public GameObject GameObject { get; set; }
+        
         
         public override void Initialize()
         {
-            AttackStateMachine?.Initialize();
+            curretAttackState?.Initialize();
+            originRayForward = Vector3.up * .5f;
         }
         
         public override void Enter()
@@ -21,26 +29,30 @@ namespace Character
 
         public override void Update()
         {
-            DestermineState();
-            AttackStateMachine?.Update();
         }
 
         public override void Exit()
         {
-            AttackStateMachine?.SetStates(typeof(CharacterAttackState));
         }
         protected virtual void DestermineState()
         {
-            
+            //TODO: Switch type attack
         }
         
         public GameObject CheckForwardEnemy()
         {
-            if (Physics.Raycast(this.GameObject.transform.position + Vector3.up * .5f,
-                    this.GameObject.transform.forward, out RaycastHit hit,
-                    .5f, Layers.ENEMY_LAYER))
+            var hitCount = Physics.RaycastNonAlloc(this.GameObject.transform.position + originRayForward,
+                this.GameObject.transform.forward, enemyHits,
+                .5f, Layers.ENEMY_LAYER);
+
+            // Если был хотя бы один результат
+            if (hitCount > 0)
             {
-                return hit.transform.gameObject;
+                RaycastHit hit = enemyHits[0];
+    
+                // Проверяем, что найденный объект не совпадает с текущим GameObject
+                if (hit.transform.gameObject != this.GameObject)
+                    return hit.transform.gameObject;
             }
 
             return null;

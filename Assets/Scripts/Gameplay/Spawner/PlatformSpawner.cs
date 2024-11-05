@@ -42,7 +42,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
             newGameObject.transform.localPosition = new Vector3(x, 0, y);
             var platform = newGameObject.GetComponent<Platform>();
             platform.SetCoordinates(new Vector2Int(x + 1, y + 1));
-            platform.IsBlocked = Random.Range(0, 4) == 0;
+            platform.IsBlocked = Random.Range(0, 6) == 0;
             if (platform.IsBlocked)
             {
                 var block = Instantiate(blockPrefab, blockParent);

@@ -4,7 +4,9 @@ namespace Character
 {
     public class CharacterBaseMovementState : State, IMove
     {
-        public GameObject GameObject;
+        public override StateCategory Category { get; } = StateCategory.move;
+        
+        public GameObject GameObject { get; set; }
         
         public float MovementSpeed {get; set;}
         

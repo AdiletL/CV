@@ -10,9 +10,9 @@ namespace Character.Player
         
     }
 
-    public class PlayerMeleeAttackStateBuilder : CharacterMeleeAttackStateBuilder
+    public class PlayerMeleeAttackBuilder : CharacterMeleeAttackBuilder
     {
-        public PlayerMeleeAttackStateBuilder() : base(new PlayerMeleeAttackState())
+        public PlayerMeleeAttackBuilder() : base(new PlayerMeleeAttackState())
         {
         }
         

@@ -16,28 +16,13 @@ public class Platform : MonoBehaviour
     public Vector2Int CurrentCoordinates { get; private set; }
     
     private Color startColor;
-
-
-    private void OnEnable()
-    {
-        PlayerController.OnFinished += OnFinished;
-    }
-
-    private void OnDisable()
-    {
-        PlayerController.OnFinished -= OnFinished;
-    }
+    
 
     private void Start()
     {
         startColor = platformRenderer.material.color;
     }
-
-    private void OnFinished()
-    {
-        SetColor(startColor);
-        platformText.enabled = false;
-    }
+    
     
     public void SetColor(Color color)
     {

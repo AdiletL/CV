@@ -2,5 +2,6 @@
 
 public interface IPatrol
 {
-    public Transform EndPoint { get; set; }
+    public Vector3? StartPosition { get; set; }
+    public Vector3? EndPosition { get; set; }
 }

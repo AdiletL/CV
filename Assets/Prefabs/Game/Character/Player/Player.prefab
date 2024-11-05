@@ -537,6 +537,8 @@ MonoBehaviour:
     - {fileID: 3003171226424186197}
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
+  currentStateCategory: 1
+  currentStateName: 
 --- !u!114 &7224353900096107505
 MonoBehaviour:
   m_ObjectHideFlags: 0

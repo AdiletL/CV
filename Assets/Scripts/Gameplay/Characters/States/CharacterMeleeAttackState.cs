@@ -7,10 +7,18 @@ namespace Character
         public CharacterAnimation CharacterAnimation { get; set; }
         public AnimationClip AnimationClip { get; set; }
 
+        private CharacterAttackState characterAttackState;
+
         protected float countTimeApplyDamage, countTimeAnimation;
 
         protected bool isApplyDamage;
-        
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            characterAttackState = this.StateMachine.GetState<CharacterAttackState>();
+        }
+
         public override void Enter()
         {
             base.Enter();
@@ -20,9 +28,15 @@ namespace Character
         public override void Update()
         {
             base.Update();
+            
+            if(!currentTarget) 
+                currentTarget = characterAttackState.CheckForwardEnemy();
+            
+            if(!currentTarget)
+                this.StateMachine.ExitCategory(Category);
                     
             var timeAnimation = AnimationClip.length;
-            var timeApplyDamage = timeAnimation / 1.5f;
+            var timeApplyDamage = timeAnimation * .8f;
 
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation < timeAnimation)
@@ -44,32 +58,37 @@ namespace Character
 
         public void SetTarget(GameObject target)
         {
-            this.target = target;
+            this.currentTarget = target;
         }
         
         public override void ApplyDamage()
         {
-            var enemyGameObject = this.StateMachine.GetState<CharacterAttackState>().CheckForwardEnemy();
+            var enemyGameObject = characterAttackState.CheckForwardEnemy();
             if (enemyGameObject)
             {
-                target = enemyGameObject;
-                var health = target.GetComponent<IHealth>();
-                health?.TakeDamage(Damageble);
+                currentTarget = enemyGameObject;
+                currentTarget.GetComponent<IHealth>()?.TakeDamage(Damageble);
             }
             else
             {
-                this.StateMachine.SetStates(typeof(CharacterIdleState));
+                currentTarget = null;
             }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            currentTarget = null;
         }
     }
 
-    public class CharacterMeleeAttackStateBuilder : CharacterBaseAttackStateBuilder
+    public class CharacterMeleeAttackBuilder : CharacterBaseAttackStateBuilder
     {
-        public CharacterMeleeAttackStateBuilder(CharacterBaseAttackState instance) : base(instance)
+        public CharacterMeleeAttackBuilder(CharacterMeleeAttackState instance) : base(instance)
         {
         }
 
-        public CharacterMeleeAttackStateBuilder SetAnimationClip(AnimationClip animationClip)
+        public CharacterMeleeAttackBuilder SetAnimationClip(AnimationClip animationClip)
         {
             if (state is CharacterMeleeAttackState characterMeleeAttack)
             {
@@ -80,7 +99,7 @@ namespace Character
         }
         
         
-        public CharacterMeleeAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterMeleeAttackBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if (state is CharacterMeleeAttackState characterMeleeAttack)
             {

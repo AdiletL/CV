@@ -12,9 +12,10 @@ namespace Character.Enemy
         public override void Enter()
         {
             base.Enter();
+            this.StateMachine.ExitOtherCategories(Category);
             timeAnimation = TakeDamageClip.length;
             countTimeAnimation = 0;
-            CharacterAnimation.ChangeAnimation(TakeDamageClip, transitionDuration: 0, force: true);
+            CharacterAnimation?.ChangeAnimation(TakeDamageClip, transitionDuration: 0, force: true);
         }
 
         public override void Update()
@@ -24,7 +25,7 @@ namespace Character.Enemy
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation > timeAnimation)
             {
-                this.StateMachine.SetStates(typeof(EnemyIdleState));
+                this.StateMachine.ExitCategory(Category);
                 countTimeAnimation = 0;
             }
         }

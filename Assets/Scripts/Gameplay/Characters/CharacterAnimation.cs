@@ -35,7 +35,7 @@ namespace Character
             }
 
             SetSpeedAnimation(ref clip, division, duration);
-            animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
+            animator?.CrossFadeInFixedTime(clip?.name, transitionDuration, 0);
         }
 
         protected void SetSpeedAnimation(ref AnimationClip clip, float division = 1, float duration = 1)

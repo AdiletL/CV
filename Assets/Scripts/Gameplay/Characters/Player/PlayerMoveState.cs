@@ -7,56 +7,27 @@ namespace Character.Player
     public class PlayerMoveState : CharacterMoveState
     {
         private GameObject currentTarget;
-        private Quaternion currentTargetForRotate;
-
-        public float RotationSpeed  { get; set; }
-
-        public bool IsLookAtTarget()
-        {
-            if (this.GameObject.transform.rotation == this.currentTargetForRotate)
-                return true;
-            else
-                return false;
-        }
-
+        
         public void SetTarget(GameObject target)
         {
             currentTarget = target;
-            MoveStateMachine.GetState<PlayerRunState>()?.SetTarget(target);
+            this.StateMachine.GetState<PlayerRunState>()?.SetTarget(currentTarget);
         }
         
         protected override void DestermineState()
         {
-            if(!currentTarget) return;
+            //TODO: Select type move
             
-            if (GameObject.transform.position != currentTarget.transform.position)
+            var playerRunState = this.StateMachine.GetState<PlayerRunState>();
+            if(playerRunState == null) return;
+            if (currentMoveState != playerRunState)
             {
-                var enemyGameObject = this.StateMachine.GetState<PlayerAttackState>().CheckForwardEnemy();
-                if (!enemyGameObject)
-                {
-                    Rotate(currentTarget);
-                    if (GameObject.transform.rotation == currentTargetForRotate)
-                        MoveStateMachine.SetStates(typeof(PlayerRunState));
-                }
-                else
-                {
-                    this.StateMachine.SetStates(typeof(PlayerAttackState));
-                    Debug.Log("PlayerAttack");
-                }
+                playerRunState.SetTarget(currentTarget);
+                currentMoveState = playerRunState;
+                currentMoveState.Initialize();
             }
-            else
-            {
-                this.StateMachine.SetStates(typeof(PlayerIdleState));
-            }
-        }
-        
-        public void Rotate(GameObject target)
-        {
-           var direction = target.transform.position - GameObject.transform.position;
-            if (direction == Vector3.zero) return;
             
-            currentTargetForRotate = Quaternion.LookRotation(direction, Vector3.up);
-            GameObject.transform.rotation = Quaternion.RotateTowards(GameObject.transform.rotation, currentTargetForRotate, RotationSpeed * Time.deltaTime);
+            this.StateMachine.SetStates(typeof(PlayerRunState));
         }
     }
 
@@ -65,27 +36,6 @@ namespace Character.Player
         public PlayerMoveStateBuilder() : base(new PlayerMoveState())
         {
         }
-
-        public PlayerMoveStateBuilder SetRotationSpeed(float speed)
-        {
-            if (state is PlayerMoveState playerMoveState)
-            {
-                playerMoveState.RotationSpeed = speed;
-            }
-
-            return this;
-        }
-        public PlayerMoveStateBuilder SetRunState(IState runState)
-        {
-            if (runState is PlayerRunState playerRunState)
-            {
-                if (state is PlayerMoveState playerMoveState)
-                {
-                    playerMoveState.MoveStateMachine.AddState(playerRunState);
-                }
-            }
-
-            return this;
-        }
+        
     }
 }

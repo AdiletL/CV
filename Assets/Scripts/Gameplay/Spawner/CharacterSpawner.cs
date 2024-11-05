@@ -1,3 +1,4 @@
+using System;
 using Character;
 using Character.Enemy;
 using Character.Player;
@@ -8,8 +9,11 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject[] enemyPrefabs;
-    [SerializeField] private PlatformSpawner platformSpawner;
-    [SerializeField] private RewardSpawner rewardSpawner;
+    
+    private PlatformSpawner platformSpawner;
+    private RewardSpawner rewardSpawner;
+    
+    private PlayerController playerCharacter;
 
     public async void Initialize()
     {
@@ -42,8 +46,11 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
             var playerGameObject = Instantiate(playerPrefab);
             playerGameObject.transform.position = freePlatform.transform.position;
             var player = playerGameObject.GetComponent<PlayerController>();
+            player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
             player.Initialize();
-            player.SetTarget(rewardSpawner.FinishReward.gameObject);
+            player.GetState<PlayerIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
+            playerCharacter = player;
+            
             freePlatform.GetComponent<Platform>().AddGameObject(playerGameObject);
         }
     }
@@ -58,10 +65,23 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
                 var enemyGameObject = Instantiate(VARIABLE);
                 enemyGameObject.transform.position = freePlatform.transform.position;
                 var enemy = enemyGameObject.GetComponent<EnemyController>();
+                enemy.SetStartPlatform(freePlatform.GetComponent<Platform>());
+                enemy.SetEndPlatform(platformSpawner.GetFreePlatform().GetComponent<Platform>());
                 enemy.Initialize();
                 //enemy.SetTarget()
                 freePlatform.GetComponent<Platform>().AddGameObject(enemyGameObject);
             }
         }
+    }
+
+    private void OnFinishedToTargetPlayer()
+    {
+        rewardSpawner.ChangePositionReward();
+        playerCharacter.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        playerCharacter.GetState<PlayerIdleState>().OnFinishedToTarget -= OnFinishedToTargetPlayer;
     }
 }

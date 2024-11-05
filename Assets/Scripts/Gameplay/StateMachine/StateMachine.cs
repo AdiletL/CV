@@ -1,35 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class StateMachine
 {
-    private List<IState> activeStates = new List<IState>();
-    private Dictionary<Type, IState> states = new Dictionary<Type, IState>();
+    public event Action<StateCategory, IState> OnChangedState; 
+    
+    private readonly Dictionary<StateCategory, IState> activeStates = new();
+    private readonly Dictionary<Type, IState> states = new();
+    private readonly List<IState> updateStates = new();
+    private readonly List<StateCategory> cachedCategories = new(); // Static to avoid repeated allocations
+    
+    // Cache the default idle state
+    private IState defaultIdleState;
 
     public void Initialize()
     {
-        foreach (var VARIABLE in states)
-        {
-            VARIABLE.Value.Initialize();
-        }
-    }
-
-    public bool CheckState<T>() where T : IState
-    {
         foreach (var state in states.Values)
-            if (state is T desiredState)
-                return true;
-        
-        return false;
+        {
+            state.Initialize();
+            if (state.Category == StateCategory.idle && defaultIdleState == null)
+            {
+                defaultIdleState = state; // Cache idle state on initialization
+            }
+        }
     }
 
     public T GetState<T>() where T : IState
     {
         foreach (var state in states.Values)
+        {
             if (state is T desiredState)
+            {
                 return desiredState;
-        
+            }
+        }
+
         throw new InvalidOperationException($"State of type {typeof(T)} not found.");
     }
 
@@ -40,36 +45,73 @@ public class StateMachine
 
     public void SetStates(params Type[] desiredStates)
     {
-        for (int i = activeStates.Count - 1; i >= 0; i--)
-        {
-            var activeStateType = activeStates[i].GetType();
-            bool keepActive = Array.Exists(desiredStates, desiredType => 
-                desiredType.IsAssignableFrom(activeStateType));
-
-            if (!keepActive)
-            {
-                activeStates[i].Exit();
-                activeStates.RemoveAt(i);
-            }
-        }
-
         foreach (var stateType in desiredStates)
         {
-            if (!activeStates.Exists(state => stateType.IsAssignableFrom(state.GetType())) 
-                && states.TryGetValue(stateType, out var newState))
+            if (states.TryGetValue(stateType, out var state))
             {
-                activeStates.Add(newState);
-                newState.Enter();
+                var category = state.Category;
+
+                // If a state of this category is active, replace it
+                if (activeStates.TryGetValue(category, out var activeState) && activeState != state)
+                {
+                    activeState.Exit();
+                }
+
+                // Activate new state if not already active
+                if (!activeStates.ContainsKey(category) || activeStates[category] != state)
+                {
+                    activeStates[category] = state;
+                    state.Enter();
+                    OnChangedState?.Invoke(category, state);
+                }
             }
         }
     }
 
+    public void ExitOtherCategories(StateCategory excludedCategory)
+    {
+        cachedCategories.Clear();
+        cachedCategories.AddRange(activeStates.Keys);
+
+        foreach (var category in cachedCategories)
+        {
+            if (category != excludedCategory)
+            {
+                activeStates[category].Exit();
+                activeStates.Remove(category);
+            }
+        }
+    }
+
+    public void ExitCategory(StateCategory excludedCategory)
+    {
+        if (activeStates.TryGetValue(excludedCategory, out var state))
+        {
+            state.Exit();
+            activeStates.Remove(excludedCategory);
+        }
+    }
+
+    private void SetDefaultState()
+    {
+        if (defaultIdleState != null)
+        {
+            activeStates[StateCategory.idle] = defaultIdleState;
+            defaultIdleState.Enter();
+        }
+    }
 
     public void Update()
     {
-        for (int i = 0; i < activeStates.Count; i++)
+        if (activeStates.Count == 0)
+            SetDefaultState();
+
+        updateStates.Clear();
+        updateStates.AddRange(activeStates.Values);
+
+        for (int i = updateStates.Count - 1; i >= 0; i--)
         {
-            activeStates[i].Update();
+            updateStates[i]?.Update();
         }
     }
 }

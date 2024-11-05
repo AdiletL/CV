@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <IdleClip>k__BackingField: {fileID: 7400000, guid: 2c01f85ff72a3477ea14feee64280f31, type: 2}
   <RunClip>k__BackingField: {fileID: 7400000, guid: 1efea2309434b4778947a08347761298, type: 2}
-  <RunSpeed>k__BackingField: 4
+  <RunSpeed>k__BackingField: 2
   <RotateSpeed>k__BackingField: 800

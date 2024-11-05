@@ -4,7 +4,9 @@ namespace Character
 {
     public class CharacterBaseAttackState : State, IAttack
     {
-        protected GameObject target;
+        public override StateCategory Category { get; } = StateCategory.attack;
+        
+        protected GameObject currentTarget;
         
         public IDamageble Damageble { get; set; }
         
@@ -37,6 +39,7 @@ namespace Character
     {
         public CharacterBaseAttackStateBuilder(CharacterBaseAttackState instance) : base(instance)
         {
+            
         }
 
         public CharacterBaseAttackStateBuilder SetDamageble(IDamageble damageble)

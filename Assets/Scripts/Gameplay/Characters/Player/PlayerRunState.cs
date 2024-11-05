@@ -8,8 +8,24 @@ namespace Character.Player
     {
         private GameObject currentTarget;
 
+        private PlayerAttackState playerAttackState;
+        private PlayerMoveState playerMoveState;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            playerAttackState = this.StateMachine.GetState<PlayerAttackState>();
+            playerMoveState = this.StateMachine.GetState<PlayerMoveState>();
+        }
+
         public override void Update()
         {
+            if (!currentTarget)
+            {
+                this.StateMachine.ExitCategory(Category);
+                return;
+            }
+            
             Move();
         }
 
@@ -20,14 +36,37 @@ namespace Character.Player
 
         public override void Move()
         {
-            GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position, currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+            if (GameObject.transform.position != currentTarget.transform.position)
+            {
+                var enemyGameObject = playerAttackState.CheckForwardEnemy();
+                if (!enemyGameObject)
+                {
+                    if (!playerMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
+                    {
+                        playerMoveState.Rotate(currentTarget);
+                        return;
+                    }
+
+                    GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
+                        currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    this.StateMachine.ExitCategory(Category);
+                    this.StateMachine.SetStates(typeof(PlayerAttackState));
+                }
+            }
+            else
+            {
+                this.StateMachine.ExitCategory(Category);
+            }
         }
         
     }
 
-    public class PlayerBaseRunStateBuilder : CharacterBaseRunStateBuilder
+    public class PlayerRunStateBuilder : CharacterRunStateBuilder
     {
-        public PlayerBaseRunStateBuilder() : base(new PlayerRunState())
+        public PlayerRunStateBuilder() : base(new PlayerRunState())
         {
         }
     }

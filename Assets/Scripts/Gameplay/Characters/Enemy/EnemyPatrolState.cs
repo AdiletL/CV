@@ -1,8 +1,85 @@
-﻿namespace Character.Enemy
+﻿using System.Collections.Generic;
+using Calculate;
+using UnityEngine;
+
+namespace Character.Enemy
 {
     public class EnemyPatrolState : CharacterPatrolState
     {
+        protected PathToPoint pathToPoint;
 
+        protected GameObject currentTarget;
+
+        protected EnemyAttackState enemyAttackState;
+        protected EnemyMoveState enemyMoveState;
+
+        protected Queue<Platform> platformsQueue = new();
+
+        protected Transform GetCurrentPoint()
+        {
+            if(!EndPlatform || !StartPlatform) return null;
+
+            if (GameObject.transform.position == StartPosition)
+                pathToPoint.SetTarget(EndPlatform.transform);
+            else if (GameObject.transform.position == EndPosition)
+                pathToPoint.SetTarget(StartPlatform.transform);
+            
+            if(platformsQueue.Count == 0)
+                platformsQueue = pathToPoint.FindPathToPoint();
+
+            if (platformsQueue.Count == 0)
+                return null;
+            
+            return platformsQueue?.Dequeue()?.transform;
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            pathToPoint = new PathToPointBuilder()
+                .SetPosition(this.GameObject.transform, EndPlatform.transform)
+                .Build();
+
+            enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
+            enemyMoveState = this.StateMachine.GetState<EnemyMoveState>();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            
+            if (!currentTarget || GameObject.transform.position == currentTarget.transform.position)
+                currentTarget = GetCurrentPoint()?.gameObject;
+
+            if (!currentTarget)
+                this.StateMachine.ExitCategory(Category);
+
+            if (GameObject.transform.position != currentTarget.transform.position)
+            {
+                var enemyGameObject = enemyAttackState.CheckForwardEnemy();
+                if (!enemyGameObject)
+                {
+                    if (!enemyMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
+                    {
+                        enemyMoveState.Rotate(currentTarget);
+                        return;
+                    }
+
+                    GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
+                        currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                this.StateMachine.ExitCategory(Category);
+            }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            currentTarget = null;
+        }
     }
 
     public class EnemyPatrolStateBuilder : CharacterPatrolStateBuilder

@@ -1,4 +1,6 @@
-﻿namespace Character.Enemy
+﻿using UnityEngine;
+
+namespace Character.Enemy
 {
     public class HedgehogIdleState : EnemyIdleState
     {

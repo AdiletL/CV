@@ -4,33 +4,21 @@ namespace Character.Player
 {
     public class PlayerAttackState : CharacterAttackState
     {
-        private GameObject currentTarget;
         
         protected override void DestermineState()
         {
-            var enemyGameObject = CheckForwardEnemy();
-            if (enemyGameObject)
+            var playerMeleeAttackState = this.StateMachine.GetState<PlayerMeleeAttackState>();
+            if(playerMeleeAttackState == null) return;
+            
+            if (curretAttackState != playerMeleeAttackState)
             {
-                this.StateMachine.GetState<PlayerMoveState>().Rotate(enemyGameObject);
-                if (this.StateMachine.GetState<PlayerMoveState>().IsLookAtTarget())
-                {
-                    currentTarget = enemyGameObject;
-                    AttackStateMachine.GetState<PlayerMeleeAttackState>().SetTarget(enemyGameObject);
-                    AttackStateMachine.SetStates(typeof(PlayerMeleeAttackState));
-                }
+                curretAttackState = playerMeleeAttackState;
+                curretAttackState.Initialize();
             }
-            else
-            {
-                this.StateMachine.SetStates(typeof(PlayerIdleState));
-            }
+            
+            this.StateMachine.SetStates(typeof(PlayerMeleeAttackState));
         }
-        
-        public void SetTarget(GameObject target)
-        {
-            currentTarget = target;
-            AttackStateMachine.GetState<PlayerMeleeAttackState>()?.SetTarget(currentTarget);
-            Debug.Log(AttackStateMachine.GetState<PlayerMeleeAttackState>());
-        }
+
     }
 
     public class PlayerAttackStateBuilder : CharacterAttackStateBuilder
@@ -38,18 +26,6 @@ namespace Character.Player
         public PlayerAttackStateBuilder() : base(new PlayerAttackState())
         {
         }
-
-        public PlayerAttackStateBuilder SetMeleeAttackState(IState meleeState)
-        {
-            if (meleeState is PlayerMeleeAttackState playerMeleeState)
-            {
-                if (state is PlayerAttackState playerAttackState)
-                {
-                    state.AttackStateMachine.AddState(playerMeleeState);
-                }
-            }
-
-            return this;
-        }
+        
     }
 }

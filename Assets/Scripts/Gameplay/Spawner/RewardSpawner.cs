@@ -4,8 +4,8 @@ using UnityEngine;
 public class RewardSpawner : MonoBehaviour, ISpawner
 {
     [SerializeField] private GameObject chestPrefab;
-    [SerializeField] private PlatformSpawner platformSpawner;
 
+    private PlatformSpawner platformSpawner;
     public Reward FinishReward {get; private set;}
     
     public async void Initialize()
@@ -36,4 +36,8 @@ public class RewardSpawner : MonoBehaviour, ISpawner
         }
     }
 
+    public void ChangePositionReward()
+    {
+        FinishReward.transform.position = platformSpawner.GetFreePlatform().transform.position;
+    }
 }

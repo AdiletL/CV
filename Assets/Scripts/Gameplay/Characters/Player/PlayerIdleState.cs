@@ -8,12 +8,12 @@ namespace Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
-        public event Action OnFinishedMoveToEndTarget;
-
-        public GameObject GameObject { get; set; }
-        public Transform EndPoint { get; set; }
+        public event Action OnFinishedToTarget;
 
         private PathToPoint pathToPoint;
+        private PlayerAttackState playerAttackState;
+        private PlayerMoveState playerMoveState;
+        
         private GameObject currentTargetForMove;
         private GameObject finishTargetForMove;
         
@@ -21,6 +21,9 @@ namespace Character.Player
         private Vector2Int currentCoordinates, endTargetCoordinates;
         
         private Queue<Platform> pathToPlatformQueue = new();
+        
+        public GameObject GameObject { get; set; }
+        public Transform EndPoint { get; set; }
 
         public override void Initialize()
         {
@@ -28,6 +31,11 @@ namespace Character.Player
             pathToPoint = new PathToPointBuilder()
                 .SetPosition(this.GameObject.transform, EndPoint)
                 .Build();
+
+            playerAttackState = this.StateMachine.GetState<PlayerAttackState>();
+            playerMoveState = this.StateMachine.GetState<PlayerMoveState>();
+            
+            finishTargetForMove = EndPoint.gameObject;
         }
 
         public override void Enter()
@@ -63,22 +71,24 @@ namespace Character.Player
                 currentCoordinates = FindPlatform.GetCoordinates(GameObject.transform.position);
                 endTargetCoordinates = FindPlatform.GetCoordinates(finishTargetForMove.transform.position);
                 if (currentCoordinates == endTargetCoordinates)
-                    OnFinishedMoveToEndTarget?.Invoke();
+                    OnFinishedToTarget?.Invoke();
                 
                 FindPathToPlatform();
             }
             else
             {
-                this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTargetForMove);
+                this.StateMachine.ExitCategory(Category);
+                playerMoveState.SetTarget(currentTargetForMove);
                 this.StateMachine.SetStates(typeof(PlayerMoveState));
             }
         }
 
         private void CheckAttack()
         {
-            var enemyGameObject = this.StateMachine.GetState<PlayerAttackState>().CheckForwardEnemy();
+            var enemyGameObject = playerAttackState.CheckForwardEnemy();
             if (enemyGameObject?.transform.GetComponent<IHealth>() != null)
             {
+                this.StateMachine.ExitOtherCategories(Category);
                 this.StateMachine.SetStates(typeof(PlayerAttackState));
             }
         }

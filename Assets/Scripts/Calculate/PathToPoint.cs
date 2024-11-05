@@ -10,6 +10,9 @@ namespace Calculate
         private Platform startPlatform;
         private Platform currentPlatform;
         private Platform lastCorrectPlatform;
+        private Platform endPlatform;
+        
+        private RaycastHit hitResult;
 
         private readonly Vector3 startRayOnPlatform = Vector3.up * .5f;
         private readonly Vector3 startRayPositionPlatform = new(0, -.25f, 0);
@@ -18,8 +21,11 @@ namespace Calculate
         private Vector3 correctPlatformPosition;
         private int weightPlatform;
 
-        private readonly Stack<Platform> unverifiedPlatforms = new();
-        private readonly Dictionary<Platform, PlatformData> platformData = new(); // Временные данные платформ
+        private List<Platform> nearPlatforms = new();
+        private Stack<Platform> platformStack = new();
+        private Queue<Platform> pathToPoint =  new();
+        private Stack<Platform> unverifiedPlatforms = new();
+        private Dictionary<Platform, PlatformData> platformData = new(); // Временные данные платформ
 
         public void SetTarget(Transform target)
         {
@@ -36,21 +42,22 @@ namespace Calculate
         {
             weightPlatform = 0;
             SetCurrentPlatform();
-            var pathToPoint = new Queue<Platform>();
-            if (currentPlatform == null) return pathToPoint;
+            
+            pathToPoint.Clear();
+            if (!currentPlatform) return pathToPoint;
 
-            var endPlatform = FindPlatform.GetPlatform(EndTransform.position + startRayOnPlatform, Vector3.down);
-            if (endPlatform == null) return pathToPoint;
+            endPlatform = FindPlatform.GetPlatform(EndTransform.position + startRayOnPlatform, Vector3.down);
+            if (!endPlatform) return pathToPoint;
 
             while (currentPlatform.CurrentCoordinates != endPlatform.CurrentCoordinates)
             {
-                var nearPlatforms = GetNearPlatforms();
+                nearPlatforms = GetNearPlatforms();
 
                 if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
                 {
                     if (unverifiedPlatforms.TryPop(out var newPlatform))
                     {
-                        newPlatform.SetColor(Color.red);
+                        //newPlatform.SetColor(Color.red);
                         currentPlatform = newPlatform;
                     }
                     else
@@ -60,56 +67,58 @@ namespace Calculate
                 }   
                 else
                 {
-                    AddPlatformToVerified(currentPlatform, 1);
+                    AddPlatformToVerified(1);
                     if (currentPlatform.CurrentCoordinates == endPlatform.CurrentCoordinates) break;
 
                     currentPlatform = GetNextPlatform(nearPlatforms, endPlatform.CurrentCoordinates);
-                    AddPlatformToVerified(currentPlatform, 2);
+                    AddPlatformToVerified(2);
                 }
             }
 
             correctPlatformPosition = EndTransform.position;
-            BuildPath(pathToPoint, endPlatform);
+            BuildPath(pathToPoint);
 
+            unverifiedPlatforms.Clear();
+            nearPlatforms.Clear();
             platformData.Clear(); // Очищаем временные данные после завершения
             return pathToPoint;
         }
 
-        private void AddPlatformToVerified(Platform platform, int weight)
+        private void AddPlatformToVerified(int weight)
         {
-            if (!platformData.ContainsKey(platform))
-                platformData[platform] = new PlatformData();
+            if (!platformData.ContainsKey(currentPlatform))
+                platformData[currentPlatform] = new PlatformData();
 
-            var data = platformData[platform];
+            var data = platformData[currentPlatform];
             if (data.IsChecked) return;
 
             data.IsChecked = true;
             data.Weight = weightPlatform += weight;
 
-            platform.SetColor(Color.yellow);
-            platform.SetText(data.Weight.ToString());
+            //platform.SetColor(Color.yellow);
+            //platform.SetText(data.Weight.ToString());
         }
 
-        private void BuildPath(Queue<Platform> pathToPoint, Platform endPlatform)
+        private void BuildPath(Queue<Platform> path)
         {
-            var stack = new Stack<Platform>();
-            stack.Push(endPlatform);
-            endPlatform.SetColor(Color.white);
+            platformStack.Clear();
+            platformStack.Push(endPlatform);
+            //endPlatform.SetColor(Color.white);
             lastCorrectPlatform = endPlatform;
 
             while (lastCorrectPlatform != startPlatform)
             {
                 var correctPlatform = GetCorrectPlatform();
-                if (correctPlatform == null) break;
+                if (!correctPlatform) break;
 
-                correctPlatform.SetColor(Color.white);
+                //correctPlatform.SetColor(Color.white);
                 lastCorrectPlatform = correctPlatform;
-                stack.Push(correctPlatform);
+                platformStack.Push(correctPlatform);
             }
 
-            while (stack.Count > 0)
+            while (platformStack.Count > 0)
             {
-                pathToPoint.Enqueue(stack.Pop());
+                path.Enqueue(platformStack.Pop());
             }
         }
 
@@ -121,19 +130,18 @@ namespace Calculate
 
             foreach (var direction in rayDirectionsPlatform)
             {
-                if (Physics.Raycast(correctPlatformPosition, direction, out var hit, 4) &&
-                    hit.transform.TryGetComponent(out Platform platform) &&
-                    platformData.TryGetValue(platform, out var data) &&
-                    data.Weight > 0 &&
-                    platform != lastCorrectPlatform &&
-                    data.Weight < lastWeight)
-                {
-                    correctPlatform = platform;
-                    lastWeight = data.Weight;
-                }
+                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 4, Layers.PLATFORM_LAYER) ||
+                    !hitResult.transform.TryGetComponent(out Platform platform) ||
+                    !platformData.TryGetValue(platform, out var data) ||
+                    data.Weight <= 0 ||
+                    platform == lastCorrectPlatform ||
+                    data.Weight >= lastWeight) continue;
+                
+                correctPlatform = platform;
+                lastWeight = data.Weight;
             }
 
-            if (correctPlatform != null)
+            if (correctPlatform)
                 correctPlatformPosition = correctPlatform.transform.position;
 
             return correctPlatform;
@@ -146,8 +154,8 @@ namespace Calculate
 
             foreach (var direction in rayDirectionsPlatform)
             {
-                if (Physics.Raycast(origin, direction, out var hit, 4) &&
-                    hit.transform.TryGetComponent(out Platform platform) &&
+                if (Physics.Raycast(origin, direction, out hitResult, 4, Layers.PLATFORM_LAYER) &&
+                    hitResult.transform.TryGetComponent(out Platform platform) &&
                     (!platformData.TryGetValue(platform, out var data) || (!data.IsChecked && !platform.IsBlocked)))
                 {
                     platforms.Add(platform);
@@ -168,7 +176,7 @@ namespace Calculate
                 else
                 {
                     unverifiedPlatforms.Push(platforms[i]);
-                    platforms[i].SetColor(Color.blue);
+                    //platforms[i].SetColor(Color.blue);
                 }
             }
 

@@ -7,6 +7,8 @@ namespace Character
 {
     public class CharacterIdleState : State
     {
+        public override StateCategory Category { get; } = StateCategory.idle;
+        
         public CharacterAnimation CharacterAnimation;
         public AnimationClip IdleClip;
 
