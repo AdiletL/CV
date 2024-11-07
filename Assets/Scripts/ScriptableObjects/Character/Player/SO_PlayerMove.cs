@@ -10,6 +10,5 @@ namespace ScriptableObjects.Character.Player
 
         [field: SerializeField] public float RunSpeed { get; private set; }
 
-        [field: SerializeField] public float RotateSpeed { get; private set; }
     }
 }

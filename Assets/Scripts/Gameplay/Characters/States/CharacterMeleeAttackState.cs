@@ -4,25 +4,32 @@ namespace Character
 {
     public class CharacterMeleeAttackState : CharacterBaseAttackState
     {
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public AnimationClip AnimationClip { get; set; }
-
-        private CharacterAttackState characterAttackState;
-
-        protected float countTimeApplyDamage, countTimeAnimation;
+        protected float durationAttack, countDurationAttack;
+        protected float timeApplyDamage, countTimeApplyDamage;
+        protected float cooldown, countCooldown;
 
         protected bool isApplyDamage;
+        
+        public GameObject GameObject { get; set; }
+        public CharacterAnimation CharacterAnimation { get; set; }
+        public AnimationClip AnimationClip { get; set; }
+        public float AmountAttack { get; set; }
 
         public override void Initialize()
         {
             base.Initialize();
-            characterAttackState = this.StateMachine.GetState<CharacterAttackState>();
+            durationAttack = Calculate.Attack.TotalDurationAttack(AmountAttack);
+            timeApplyDamage = durationAttack * .8f;
+            cooldown = durationAttack / 2;
         }
 
         public override void Enter()
         {
             base.Enter();
-            this.CharacterAnimation?.ChangeAnimation(AnimationClip);
+            this.CharacterAnimation?.ChangeAnimation(AnimationClip, duration: durationAttack);
+            countDurationAttack = 0;
+            countTimeApplyDamage = 0;
+            countCooldown = 0;
         }
 
         public override void Update()
@@ -30,16 +37,13 @@ namespace Character
             base.Update();
             
             if(!currentTarget) 
-                currentTarget = characterAttackState.CheckForwardEnemy();
+                currentTarget = Calculate.Attack.CheckForwardEnemy(this.GameObject);
             
             if(!currentTarget)
                 this.StateMachine.ExitCategory(Category);
                     
-            var timeAnimation = AnimationClip.length;
-            var timeApplyDamage = timeAnimation * .8f;
-
-            countTimeAnimation += Time.deltaTime;
-            if (countTimeAnimation < timeAnimation)
+            countDurationAttack += Time.deltaTime;
+            if (countDurationAttack < durationAttack)
             {
                 countTimeApplyDamage += Time.deltaTime;
                 if (countTimeApplyDamage >= timeApplyDamage && !isApplyDamage)
@@ -50,9 +54,14 @@ namespace Character
             }
             else
             {
-                countTimeApplyDamage = 0;
-                countTimeAnimation = 0;
-                isApplyDamage = false;
+                countCooldown += Time.deltaTime;
+                if (countCooldown > cooldown)
+                {
+                    countTimeApplyDamage = 0;
+                    countDurationAttack = 0;
+                    countCooldown = 0;
+                    isApplyDamage = false;
+                }
             }
         }
 
@@ -63,7 +72,7 @@ namespace Character
         
         public override void ApplyDamage()
         {
-            var enemyGameObject = characterAttackState.CheckForwardEnemy();
+            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
             if (enemyGameObject)
             {
                 currentTarget = enemyGameObject;
@@ -88,6 +97,16 @@ namespace Character
         {
         }
 
+        public CharacterMeleeAttackBuilder SetGameObject(GameObject gameObject)
+        {
+            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            {
+                characterMeleeAttack.GameObject = gameObject;
+            }
+
+            return this;
+        }
+
         public CharacterMeleeAttackBuilder SetAnimationClip(AnimationClip animationClip)
         {
             if (state is CharacterMeleeAttackState characterMeleeAttack)
@@ -104,6 +123,16 @@ namespace Character
             if (state is CharacterMeleeAttackState characterMeleeAttack)
             {
                 characterMeleeAttack.CharacterAnimation = characterAnimation;
+            }
+
+            return this;
+        }
+
+        public CharacterMeleeAttackBuilder SetAmountAttack(float amount)
+        {
+            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            {
+                characterMeleeAttack.AmountAttack = amount;
             }
 
             return this;

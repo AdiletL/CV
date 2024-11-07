@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ScriptableObjects.Character;
 using UnityEngine;
 
 namespace Character
@@ -8,18 +9,17 @@ namespace Character
     {
         public override StateCategory Category { get; } = StateCategory.attack;
         
-        protected CharacterBaseAttackState curretAttackState;
 
-        private Vector3 originRayForward;
-        private RaycastHit[] enemyHits = new RaycastHit[1];
+        protected IDamageble damageble;
+        protected Dictionary<Type, CharacterBaseAttackState> attackStates = new();
 
         public GameObject GameObject { get; set; }
-        
-        
+        public CharacterAnimation CharacterAnimation { get; set; }
+        public SO_CharacterAttack SO_CharacterAttack { get; set; }
+
+
         public override void Initialize()
         {
-            curretAttackState?.Initialize();
-            originRayForward = Vector3.up * .5f;
         }
         
         public override void Enter()
@@ -39,24 +39,7 @@ namespace Character
             //TODO: Switch type attack
         }
         
-        public GameObject CheckForwardEnemy()
-        {
-            var hitCount = Physics.RaycastNonAlloc(this.GameObject.transform.position + originRayForward,
-                this.GameObject.transform.forward, enemyHits,
-                .5f, Layers.ENEMY_LAYER);
-
-            // Если был хотя бы один результат
-            if (hitCount > 0)
-            {
-                RaycastHit hit = enemyHits[0];
-    
-                // Проверяем, что найденный объект не совпадает с текущим GameObject
-                if (hit.transform.gameObject != this.GameObject)
-                    return hit.transform.gameObject;
-            }
-
-            return null;
-        }
+        
     }
 
     public class CharacterAttackStateBuilder : StateBuilder<CharacterAttackState>
@@ -68,6 +51,18 @@ namespace Character
         public CharacterAttackStateBuilder SetGameObject(GameObject gameObject)
         {
             state.GameObject = gameObject;
+            return this;
+        }
+
+        public CharacterAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        {
+            state.CharacterAnimation = characterAnimation;
+            return this;
+        }
+
+        public CharacterAttackStateBuilder SetConfig(SO_CharacterAttack config)
+        {
+            state.SO_CharacterAttack = config;
             return this;
         }
     }

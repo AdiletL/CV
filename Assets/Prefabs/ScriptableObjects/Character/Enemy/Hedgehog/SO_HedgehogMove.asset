@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3ff1ec23a974ced983bb92db5dcec0f, type: 3}
-  m_Name: SO_EnemyMove
+  m_Script: {fileID: 11500000, guid: d6eac1ea94c746ef8620d6440b0ccbb1, type: 3}
+  m_Name: SO_HedgehogMove
   m_EditorClassIdentifier: 
   <IdleClip>k__BackingField: {fileID: 7400000, guid: 1f583387dcc14604b6836cea4b8d68d0, type: 3}
+  <RotateSpeed>k__BackingField: 500
   <RunClip>k__BackingField: {fileID: 7400000, guid: 60dd7ef4512a4404896e945d3004f2b6, type: 3}
   <RunSpeed>k__BackingField: 2
   <WalkClip>k__BackingField: {fileID: 7400000, guid: 70329e6db728412fb2a6e0371aaaa001, type: 3}
   <WalkSpeed>k__BackingField: 2
-  <RotateSpeed>k__BackingField: 500

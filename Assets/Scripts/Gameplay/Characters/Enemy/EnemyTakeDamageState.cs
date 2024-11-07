@@ -7,13 +7,12 @@ namespace Character.Enemy
         public CharacterAnimation CharacterAnimation { get; set; }
         public AnimationClip TakeDamageClip { get; set; }
 
-        private float timeAnimation, countTimeAnimation;
+        private float durationAnimation, countTimeAnimation;
 
         public override void Enter()
         {
             base.Enter();
-            this.StateMachine.ExitOtherCategories(Category);
-            timeAnimation = TakeDamageClip.length;
+            durationAnimation = TakeDamageClip.length;
             countTimeAnimation = 0;
             CharacterAnimation?.ChangeAnimation(TakeDamageClip, transitionDuration: 0, force: true);
         }
@@ -23,7 +22,7 @@ namespace Character.Enemy
             base.Update();
             
             countTimeAnimation += Time.deltaTime;
-            if (countTimeAnimation > timeAnimation)
+            if (countTimeAnimation > durationAnimation)
             {
                 this.StateMachine.ExitCategory(Category);
                 countTimeAnimation = 0;

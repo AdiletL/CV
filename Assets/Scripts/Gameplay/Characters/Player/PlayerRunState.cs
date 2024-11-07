@@ -38,12 +38,12 @@ namespace Character.Player
         {
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                var enemyGameObject = playerAttackState.CheckForwardEnemy();
+                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
                 if (!enemyGameObject)
                 {
                     if (!playerMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
                     {
-                        playerMoveState.Rotate(currentTarget);
+                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform, playerMoveState.RotationSpeed);
                         return;
                     }
 

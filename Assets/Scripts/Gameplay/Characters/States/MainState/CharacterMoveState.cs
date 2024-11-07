@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ScriptableObjects.Character;
 using UnityEngine;
 
 namespace Character
@@ -7,12 +8,12 @@ namespace Character
     public class CharacterMoveState : State
     {
         public override StateCategory Category { get; } = StateCategory.move;
-
-        protected CharacterBaseMovementState currentMoveState;
-        
+        public SO_CharacterMove SO_CharacterMove { get; set; }
+        public CharacterAnimation CharacterAnimation { get; set; }
         public GameObject GameObject  { get; set; }
-        
         public float RotationSpeed { get; set; }
+
+        protected Dictionary<Type, CharacterBaseMovementState> movementStates = new();
         
         public bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = 1f)
         {
@@ -28,7 +29,7 @@ namespace Character
         
         public override void Initialize()
         {
-            currentMoveState?.Initialize();
+            RotationSpeed = this.SO_CharacterMove.RotateSpeed;
         }
         
         public override void Enter()
@@ -48,18 +49,6 @@ namespace Character
         {
             
         }
-        
-        public void Rotate(GameObject target)
-        {
-            var targetTransform = target.transform;
-            var objectTransform = GameObject.transform;
-            
-            var direction = targetTransform.position - objectTransform.position;
-            if (direction == Vector3.zero) return;
-            
-            var currentTargetForRotate = Quaternion.LookRotation(direction, Vector3.up);
-            GameObject.transform.rotation = Quaternion.RotateTowards(GameObject.transform.rotation, currentTargetForRotate, RotationSpeed * Time.deltaTime);
-        }
     }
 
     public class CharacterMoveStateBuilder : StateBuilder<CharacterMoveState>
@@ -74,9 +63,15 @@ namespace Character
             return this;
         }
 
-        public CharacterMoveStateBuilder SetRotationSpeed(float speed)
+        public CharacterMoveStateBuilder SetConfig(SO_CharacterMove config)
         {
-            state.RotationSpeed = speed;
+            state.SO_CharacterMove = config;
+            return this;
+        }
+
+        public CharacterMoveStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        {
+            state.CharacterAnimation = characterAnimation;
             return this;
         }
     }

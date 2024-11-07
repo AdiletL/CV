@@ -7,7 +7,8 @@ namespace Character.Enemy
         public override void Update()
         {
             base.Update();
-            this.StateMachine.SetStates(typeof(EnemyPatrolState));
+            this.StateMachine.ExitCategory(Category);
+            this.StateMachine.SetStates(typeof(EnemyMoveState));
         }
     }
 

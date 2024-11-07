@@ -38,26 +38,36 @@ public class StateMachine
         throw new InvalidOperationException($"State of type {typeof(T)} not found.");
     }
 
-    public void AddState(IState state)
+    public void AddStates(params IState[] states)
     {
-        states[state.GetType()] = state;
+        foreach (var state in states)
+        {
+            this.states[state.GetType()] = state;
+        }
     }
 
     public void SetStates(params Type[] desiredStates)
     {
-        foreach (var stateType in desiredStates)
+        foreach (var baseType in desiredStates)
         {
-            if (states.TryGetValue(stateType, out var state))
+            // Сначала проверяем, есть ли базовый тип в словаре состояний
+            if (!states.ContainsKey(baseType))
+                continue;
+
+            // Находим самое глубокое состояние, которое наследуется от указанного базового типа
+            var state = FindMostDerivedState(baseType);
+
+            if (state != null)
             {
                 var category = state.Category;
 
-                // If a state of this category is active, replace it
+                // Если состояние этой категории уже активно, заменяем его новым
                 if (activeStates.TryGetValue(category, out var activeState) && activeState != state)
                 {
                     activeState.Exit();
                 }
 
-                // Activate new state if not already active
+                // Активируем новое состояние, если оно еще не активно
                 if (!activeStates.ContainsKey(category) || activeStates[category] != state)
                 {
                     activeStates[category] = state;
@@ -67,6 +77,25 @@ public class StateMachine
             }
         }
     }
+
+// Метод поиска самого глубокого состояния в иерархии для данного базового типа
+    private IState FindMostDerivedState(Type baseType)
+    {
+        IState mostDerivedState = null;
+
+        foreach (var state in states.Values)
+        {
+            // Проверяем, что состояние является наследником baseType
+            if (baseType.IsAssignableFrom(state.GetType()) &&
+                (mostDerivedState == null || state.GetType().IsSubclassOf(mostDerivedState.GetType())))
+            {
+                mostDerivedState = state;
+            }
+        }
+
+        return mostDerivedState;
+    }
+
 
     public void ExitOtherCategories(StateCategory excludedCategory)
     {

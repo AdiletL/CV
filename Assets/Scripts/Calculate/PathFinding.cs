@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Calculate
 {
-    public class PathToPoint
+    public class PathFinding
     {
         public Transform StartTransform, EndTransform;
 
@@ -38,7 +38,7 @@ namespace Calculate
             currentPlatform = startPlatform;
         }
 
-        public Queue<Platform> FindPathToPoint()
+        public Queue<Platform> GetPath()
         {
             weightPlatform = 0;
             SetCurrentPlatform();
@@ -222,18 +222,18 @@ namespace Calculate
 
     public class PathToPointBuilder
     {
-        private readonly PathToPoint pathToPoint = new();
+        private readonly PathFinding pathFinding = new();
 
         public PathToPointBuilder SetPosition(Transform start, Transform end)
         {
-            pathToPoint.StartTransform = start;
-            pathToPoint.EndTransform = end;
+            pathFinding.StartTransform = start;
+            pathFinding.EndTransform = end;
             return this;
         }
 
-        public PathToPoint Build()
+        public PathFinding Build()
         {
-            return pathToPoint;
+            return pathFinding;
         }
     }
 }

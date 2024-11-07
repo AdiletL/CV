@@ -18,26 +18,28 @@ namespace Character
             
         }
 
-        public void ChangeAnimation(AnimationClip clip, float division = 1, float duration = 1,
+        public void ChangeAnimation(AnimationClip clip, float duration = 0,
             float transitionDuration = .1f, bool force = false)
         {
             if (clip == null || (!force && currentClip == clip)) return;
-
-            SetSpeedAnimation(clip, division, duration);
+            Debug.Log(clip.name + " / " + force);
+            SetSpeedAnimation(clip, duration);
             
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
             currentClip = clip;
         }
 
-        protected void SetSpeedAnimation(AnimationClip clip, float division = 1, float duration = 1)
+        protected void SetSpeedAnimation(AnimationClip clip, float duration)
         {
             if (!clipLengths.TryGetValue(clip, out float clipLength))
             {
                 clipLength = clip.length;
                 clipLengths[clip] = clipLength; // Кэшируем длину клипа
             }
-
-            float speed = (clipLength / division) * duration;
+            
+            if(duration == 0) duration = clipLength;
+            
+            float speed = Calculate.Animation.TotalAnimationSpeed(clipLength, duration);
             if (Mathf.Approximately(currentSpeed, speed)) return;
 
             animator.SetFloat(TRANSITION_SPEED, speed);

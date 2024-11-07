@@ -48,39 +48,23 @@ namespace Character.Player
                 .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
-            
-            var runState = (PlayerRunState)new PlayerRunStateBuilder()
-                .SetCharacterAnimation(characterAnimation)
-                .SetGameObject(gameObject)
-                .SetMovementSpeed(so_PlayerMove.RunSpeed)
-                .SetStateMachine(stateMachine)
-                .Build();
 
             var moveState = (PlayerMoveState)new PlayerMoveStateBuilder()
-                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
+                .SetCharacterAnimation(characterAnimation)
+                .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
-
-            var damageble = new NormalDamage(so_PlayerAttack.Damage);
-            var meleeState = (PlayerMeleeAttackState)new PlayerMeleeAttackBuilder()
-                .SetCharacterAnimation(characterAnimation)
-                .SetAnimationClip(so_PlayerAttack.MeleeAttackClip)
-                .SetDamageble(damageble)
-                .SetStateMachine(stateMachine)
-                .Build();
-
+            
             var attackState = (PlayerAttackState)new PlayerAttackStateBuilder()
                 .SetGameObject(gameObject)
+                .SetCharacterAnimation(characterAnimation)
+                .SetConfig(so_PlayerAttack)
                 .SetStateMachine(stateMachine)
                 .Build();
                 
             
-            stateMachine.AddState(idleState);
-            stateMachine.AddState(attackState);
-            stateMachine.AddState(meleeState);
-            stateMachine.AddState(runState);
-            stateMachine.AddState(moveState);
+            stateMachine.AddStates(idleState, attackState, moveState);
         }
 
         private void Update()

@@ -10,9 +10,7 @@ namespace Character.Player
     {
         public event Action OnFinishedToTarget;
 
-        private PathToPoint pathToPoint;
-        private PlayerAttackState playerAttackState;
-        private PlayerMoveState playerMoveState;
+        private PathFinding pathFinding;
         
         private GameObject currentTargetForMove;
         private GameObject finishTargetForMove;
@@ -28,12 +26,9 @@ namespace Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            pathToPoint = new PathToPointBuilder()
+            pathFinding = new PathToPointBuilder()
                 .SetPosition(this.GameObject.transform, EndPoint)
                 .Build();
-
-            playerAttackState = this.StateMachine.GetState<PlayerAttackState>();
-            playerMoveState = this.StateMachine.GetState<PlayerMoveState>();
             
             finishTargetForMove = EndPoint.gameObject;
         }
@@ -57,7 +52,7 @@ namespace Character.Player
         public void SetFinishTarget(GameObject finish)
         {
             this.finishTargetForMove = finish;
-            pathToPoint.SetTarget(finish.transform);
+            pathFinding.SetTarget(finish.transform);
             EndPoint = finish.transform;
         }
 
@@ -78,14 +73,14 @@ namespace Character.Player
             else
             {
                 this.StateMachine.ExitCategory(Category);
-                playerMoveState.SetTarget(currentTargetForMove);
+                this.StateMachine.GetState<PlayerMoveState>().SetTarget(currentTargetForMove);
                 this.StateMachine.SetStates(typeof(PlayerMoveState));
             }
         }
 
         private void CheckAttack()
         {
-            var enemyGameObject = playerAttackState.CheckForwardEnemy();
+            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
             if (enemyGameObject?.transform.GetComponent<IHealth>() != null)
             {
                 this.StateMachine.ExitOtherCategories(Category);
@@ -97,11 +92,11 @@ namespace Character.Player
         {
             if (pathToPlatformQueue.Count == 0)
             {
-                pathToPlatformQueue = pathToPoint.FindPathToPoint();
+                pathToPlatformQueue = pathFinding.GetPath();
             }
             else if (currentEndPosition != finishTargetForMove.transform.position)
             {
-                pathToPlatformQueue = pathToPoint.FindPathToPoint();
+                pathToPlatformQueue = pathFinding.GetPath();
                 currentEndPosition = finishTargetForMove.transform.position;
             }
             currentTargetForMove = pathToPlatformQueue.Count != 0 ? pathToPlatformQueue.Dequeue().gameObject : null;

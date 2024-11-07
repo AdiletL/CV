@@ -6,7 +6,10 @@ namespace Character.Enemy
 {
     public class EnemyPatrolState : CharacterPatrolState
     {
-        protected PathToPoint pathToPoint;
+        public EnemyAnimation EnemyAnimation { get; set; }
+        public AnimationClip WalkClip { get; set; }
+        
+        protected PathFinding PathFinding;
 
         protected GameObject currentTarget;
 
@@ -20,12 +23,12 @@ namespace Character.Enemy
             if(!EndPlatform || !StartPlatform) return null;
 
             if (GameObject.transform.position == StartPosition)
-                pathToPoint.SetTarget(EndPlatform.transform);
+                PathFinding.SetTarget(EndPlatform.transform);
             else if (GameObject.transform.position == EndPosition)
-                pathToPoint.SetTarget(StartPlatform.transform);
+                PathFinding.SetTarget(StartPlatform.transform);
             
             if(platformsQueue.Count == 0)
-                platformsQueue = pathToPoint.FindPathToPoint();
+                platformsQueue = PathFinding.GetPath();
 
             if (platformsQueue.Count == 0)
                 return null;
@@ -36,12 +39,18 @@ namespace Character.Enemy
         public override void Initialize()
         {
             base.Initialize();
-            pathToPoint = new PathToPointBuilder()
+            PathFinding = new PathToPointBuilder()
                 .SetPosition(this.GameObject.transform, EndPlatform.transform)
                 .Build();
 
             enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
             enemyMoveState = this.StateMachine.GetState<EnemyMoveState>();
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+            EnemyAnimation.ChangeAnimation(WalkClip, duration: 0.7f);
         }
 
         public override void Update()
@@ -56,12 +65,12 @@ namespace Character.Enemy
 
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                var enemyGameObject = enemyAttackState.CheckForwardEnemy();
+                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
                 if (!enemyGameObject)
                 {
                     if (!enemyMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
                     {
-                        enemyMoveState.Rotate(currentTarget);
+                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform, enemyMoveState.RotationSpeed);
                         return;
                     }
 
@@ -87,7 +96,25 @@ namespace Character.Enemy
         public EnemyPatrolStateBuilder(CharacterPatrolState instance) : base(instance)
         {
         }
-        
-        
+
+        public EnemyPatrolStateBuilder SetEnemyAnimation(EnemyAnimation enemyAnimation)
+        {
+            if (state is EnemyPatrolState enemyPatrolState)
+            {
+                enemyPatrolState.EnemyAnimation = enemyAnimation;
+            }
+
+            return this;
+        }
+
+        public EnemyPatrolStateBuilder SetWalkClip(AnimationClip walkClip)
+        {
+            if (state is EnemyPatrolState enemyPatrolState)
+            {
+                enemyPatrolState.WalkClip = walkClip;
+            }
+
+            return this;
+        }
     }
 }

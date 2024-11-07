@@ -10,6 +10,7 @@ namespace Character
         
         public IDamageble Damageble { get; set; }
         
+        
         public override void Initialize()
         {
             
@@ -28,6 +29,8 @@ namespace Character
         public override void Exit()
         {
         }
+
+
 
         public virtual void ApplyDamage()
         {

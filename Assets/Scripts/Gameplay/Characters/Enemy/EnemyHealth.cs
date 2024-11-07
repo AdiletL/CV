@@ -24,12 +24,14 @@ namespace Character.Enemy
                 .SetStateMachine(enemyController.StateMachine)
                 .Build();
             
-            enemyController.StateMachine.AddState(takeDamageState);
+            enemyController.StateMachine.AddStates(takeDamageState);
         }
 
         public override void TakeDamage(IDamageble damageble)
         {
             base.TakeDamage(damageble);
+            enemyController.StateMachine.ExitCategory(StateCategory.action);
+            enemyController.StateMachine.ExitOtherCategories(StateCategory.action);
             enemyController.StateMachine.SetStates(typeof(EnemyTakeDamageState));
         }
     }

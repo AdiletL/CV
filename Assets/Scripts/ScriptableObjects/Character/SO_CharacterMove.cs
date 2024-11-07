@@ -7,5 +7,7 @@ namespace ScriptableObjects.Character
         [field: SerializeField, Space, Header("AnimationClips")]
         public AnimationClip IdleClip { get; private set; }
 
+        [field: SerializeField] public float RotateSpeed { get; private set; } = 800;
+
     }
 }

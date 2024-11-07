@@ -12,8 +12,8 @@ namespace Character.Enemy
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
         
-        private Platform startPlatform;
-        private Platform endPlatform;
+        protected Platform startPlatform;
+        protected Platform endPlatform;
         
         public StateMachine StateMachine { get; protected set; }
         
@@ -35,10 +35,10 @@ namespace Character.Enemy
         {
             StateMachine = new StateMachine();
             
-            var characterAnimation = components.GetComponentInGameObjects<CharacterAnimation>();
+            var animation = components.GetComponentInGameObjects<EnemyAnimation>();
 
             var idleState = (EnemyIdleState)new EnemyIdleStateBuilder(new EnemyIdleState())
-                .SetCharacterAnimation(characterAnimation)
+                .SetCharacterAnimation(animation)
                 .SetIdleClip(so_EnemyMove.IdleClip)
                 .SetStateMachine(this.StateMachine)
                 .Build();;
@@ -49,33 +49,28 @@ namespace Character.Enemy
                 .Build();
 
             var moveState = (EnemyMoveState)new EnemyMoveStateBuilder(new EnemyMoveState())
-                .SetRotationSpeed(so_EnemyMove.RotateSpeed)
+                .SetConfig(so_EnemyMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
 
             var patrolState = (EnemyPatrolState)new EnemyPatrolStateBuilder(new EnemyPatrolState())
-                .SetStartPoint(startPlatform)
-                .SetEndPoint(endPlatform)
                 .SetMovementSpeed(so_EnemyMove.WalkSpeed)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
             
-            this.StateMachine.AddState(patrolState);
-            this.StateMachine.AddState(idleState);
-            this.StateMachine.AddState(moveState);
-            this.StateMachine.AddState(attackState);
+            this.StateMachine.AddStates(idleState, moveState, attackState);
         }
+        
+                
+        public void SetStartPlatform(Platform start) => startPlatform = start;
+        public void SetEndPlatform(Platform end) => endPlatform = end;
 
         public void Update()
         {
             StateMachine?.Update();
         }
-        
-        
-        public void SetStartPlatform(Platform start) => startPlatform = start;
-        public void SetEndPlatform(Platform end) => endPlatform = end;
         
         private void OnChangedState(StateCategory category, IState state)
         {

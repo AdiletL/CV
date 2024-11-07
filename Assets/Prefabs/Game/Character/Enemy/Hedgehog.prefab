@@ -1123,7 +1123,9 @@ MonoBehaviour:
     <gameObjects>k__BackingField:
     - {fileID: 7394638003979218972}
     - {fileID: 2742346258566781402}
-  so_EnemyMove: {fileID: 11400000, guid: 5b70409799709944c8ab840b67a55063, type: 2}
+  so_EnemyMove: {fileID: 11400000, guid: 5f7c8e2e673ebfe41a7693ca954df9ad, type: 2}
+  currentStateCategory: 0
+  currentStateName: 
 --- !u!114 &-2349593288448719746
 MonoBehaviour:
   m_ObjectHideFlags: 0
