@@ -1,7 +1,8 @@
-﻿namespace Gameplay.Characters.Player
+﻿using Character;
+
+namespace Gameplay.Characters.Player
 {
-    public class PlayerHealth
+    public class PlayerHealth : CharacterHealth
     {
-        
     }
 }

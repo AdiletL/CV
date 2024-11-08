@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
+using Machine;
 using UnityEngine;
 
 namespace Character

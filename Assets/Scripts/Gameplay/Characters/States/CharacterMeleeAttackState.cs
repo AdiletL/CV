@@ -4,6 +4,8 @@ namespace Character
 {
     public class CharacterMeleeAttackState : CharacterBaseAttackState
     {
+        protected virtual int checkEnemyLayer { get; }
+
         protected float durationAttack, countDurationAttack;
         protected float timeApplyDamage, countTimeApplyDamage;
         protected float cooldown, countCooldown;
@@ -13,7 +15,6 @@ namespace Character
         public GameObject GameObject { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public AnimationClip AnimationClip { get; set; }
-        public float AmountAttack { get; set; }
 
         public override void Initialize()
         {
@@ -37,7 +38,7 @@ namespace Character
             base.Update();
             
             if(!currentTarget) 
-                currentTarget = Calculate.Attack.CheckForwardEnemy(this.GameObject);
+                currentTarget = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer);
             
             if(!currentTarget)
                 this.StateMachine.ExitCategory(Category);
@@ -72,7 +73,7 @@ namespace Character
         
         public override void ApplyDamage()
         {
-            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
+            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer);
             if (enemyGameObject)
             {
                 currentTarget = enemyGameObject;

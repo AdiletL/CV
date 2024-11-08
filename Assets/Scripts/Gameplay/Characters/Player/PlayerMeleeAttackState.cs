@@ -6,8 +6,7 @@ namespace Character.Player
 {
     public class PlayerMeleeAttackState : CharacterMeleeAttackState
     {
-       
-        
+        protected override int checkEnemyLayer { get; } = Layers.ENEMY_LAYER;
     }
 
     public class PlayerMeleeAttackBuilder : CharacterMeleeAttackBuilder

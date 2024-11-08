@@ -1,8 +1,12 @@
 using System;
+using Gameplay.Characters.Player;
 using Gameplay.Damage;
+using Machine;
 using ScriptableObjects.Character.Player;
+using Unit;
 using Unity.Collections;
 using UnityEngine;
+using IState = Machine.IState;
 
 namespace Character.Player
 {
@@ -14,13 +18,7 @@ namespace Character.Player
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
-        private StateMachine stateMachine;
         private GameObject finish;
-        
-        public T GetState<T>() where T : IState
-        {
-            return stateMachine.GetState<T>();
-        }
         
         public override void Initialize()
         {
@@ -29,6 +27,8 @@ namespace Character.Player
             CreateStates();
             
             stateMachine.Initialize();
+            
+            components.GetComponentInGameObjects<PlayerHealth>()?.Initialize();
             
             //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             stateMachine.OnChangedState += OnChangedState;

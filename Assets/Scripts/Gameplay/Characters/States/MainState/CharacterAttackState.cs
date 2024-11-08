@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Machine;
 using ScriptableObjects.Character;
 using UnityEngine;
+using IState = Unit.IState;
 
 namespace Character
 {
@@ -38,8 +40,11 @@ namespace Character
         {
             //TODO: Switch type attack
         }
-        
-        
+
+        public virtual void IncreaseStates(IState state)
+        {
+            
+        }
     }
 
     public class CharacterAttackStateBuilder : StateBuilder<CharacterAttackState>

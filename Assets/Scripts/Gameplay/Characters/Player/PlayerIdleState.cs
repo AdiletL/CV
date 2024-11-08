@@ -80,7 +80,7 @@ namespace Character.Player
 
         private void CheckAttack()
         {
-            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
+            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Layers.ENEMY_LAYER);
             if (enemyGameObject?.transform.GetComponent<IHealth>() != null)
             {
                 this.StateMachine.ExitOtherCategories(Category);

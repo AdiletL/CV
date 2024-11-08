@@ -22,7 +22,6 @@ namespace Character
             float transitionDuration = .1f, bool force = false)
         {
             if (clip == null || (!force && currentClip == clip)) return;
-            Debug.Log(clip.name + " / " + force);
             SetSpeedAnimation(clip, duration);
             
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);

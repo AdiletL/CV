@@ -1,4 +1,5 @@
-﻿using ScriptableObjects.Character.Enemy;
+﻿using Machine;
+using ScriptableObjects.Character.Enemy;
 using UnityEngine;
 
 namespace Character.Enemy

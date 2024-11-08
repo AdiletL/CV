@@ -12,18 +12,16 @@ namespace Calculate
             return 1 / countAttack;
         }
         
-        public static GameObject CheckForwardEnemy(GameObject gameObject)
+        public static GameObject CheckForwardEnemy(GameObject gameObject, int layerMask, float distance = .6f)
         {
             var hitCount = Physics.RaycastNonAlloc(gameObject.transform.position + originRayForward,
                 gameObject.transform.forward, enemyHits,
-                .6f, Layers.ENEMY_LAYER);
+                distance, layerMask);
 
-            // Если был хотя бы один результат
             if (hitCount > 0)
             {
                 RaycastHit hit = enemyHits[0];
     
-                // Проверяем, что найденный объект не совпадает с текущим GameObject
                 if (hit.transform.gameObject != gameObject)
                     return hit.transform.gameObject;
             }

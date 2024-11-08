@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Machine;
+using UnityEngine;
+using IState = Unit.IState;
 
 namespace Character
 {
@@ -9,7 +11,8 @@ namespace Character
         protected GameObject currentTarget;
         
         public IDamageble Damageble { get; set; }
-        
+        public float AmountAttack { get; set; }
+
         
         public override void Initialize()
         {
@@ -33,6 +36,11 @@ namespace Character
 
 
         public virtual void ApplyDamage()
+        {
+            
+        }
+
+        public virtual void IncreaseStates(IState state)
         {
             
         }

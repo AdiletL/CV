@@ -38,7 +38,7 @@ namespace Character.Player
         {
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject);
+                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Layers.ENEMY_LAYER);
                 if (!enemyGameObject)
                 {
                     if (!playerMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))

@@ -493,6 +493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 235657330208172728}
   - component: {fileID: 6200176588022165938}
+  - component: {fileID: 1634422324230795542}
   - component: {fileID: 7224353900096107505}
   - component: {fileID: 4734251447694061729}
   - component: {fileID: 2532564218702919847}
@@ -539,6 +540,20 @@ MonoBehaviour:
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
   currentStateCategory: 1
   currentStateName: 
+--- !u!114 &1634422324230795542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4609764714971673307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fbacef5dfc546858e9571013a69e7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMainController: {fileID: 6200176588022165938}
+  so_CharacterHealth: {fileID: 11400000, guid: 8818916dcc9c4134a9bda51edd836c19, type: 2}
 --- !u!114 &7224353900096107505
 MonoBehaviour:
   m_ObjectHideFlags: 0

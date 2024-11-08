@@ -1,16 +1,21 @@
-﻿using ScriptableObjects.Character;
+﻿using System;
+using ScriptableObjects.Character;
+using Unit;
 using UnityEngine;
 
 namespace Character
 {
-    public abstract class CharacterHealth : MonoBehaviour, IHealth
+    public abstract class CharacterHealth : MonoBehaviour, IHealth, ICharacter
     {
+        public event Action<IHealthInfo> OnChangedHealth;
+        
         [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected SO_CharacterHealth so_CharacterHealth;
 
+        private HealthInfo healthInfo;
         private int currentHealth;
         private bool isLive;
-        
+
         public int MaxHealth { get; set; }
 
         public virtual int CurrentHealth
@@ -28,7 +33,9 @@ namespace Character
                 {
                     currentHealth = value;
                 }
-                Debug.Log(gameObject.name + " / " + currentHealth);
+
+                Debug.Log(gameObject.name + " Current Health: " + currentHealth);
+                ExecuteEventChangedHealth();
             }
         }
 
@@ -44,15 +51,44 @@ namespace Character
             }
         }
 
+        protected virtual HealthInfo CreateHealthInfo()
+        {
+            return new HealthInfo();
+        }
+
+        protected virtual void ExecuteEventChangedHealth()
+        {
+            healthInfo.CurrentHealth = currentHealth;
+            healthInfo.MaxHealth = MaxHealth;
+            OnChangedHealth?.Invoke(healthInfo);
+        }
+        
         public virtual void Initialize()
         {
+            healthInfo = CreateHealthInfo();
             MaxHealth = so_CharacterHealth.MaxHealth;
             CurrentHealth = MaxHealth;
         }
+
+        public virtual void IncreaseStates(IState state)
+        {
+            if (state is CharacterHealthStates characterHealthStates)
+            {
+                CurrentHealth += characterHealthStates.Health;
+                MaxHealth += characterHealthStates.MaxHealth;
+            }
+        }
+        
         public virtual void TakeDamage(IDamageble damageble)
         {
             var totalDamage = damageble.GetTotalDamage(gameObject);
             CurrentHealth -= totalDamage;
         }
+    }
+
+    public class HealthInfo : IHealthInfo
+    {
+        public int CurrentHealth { get; set; }
+        public int MaxHealth { get; set; }
     }
 }

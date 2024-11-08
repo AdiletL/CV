@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Machine;
 using ScriptableObjects.Character;
 using UnityEngine;
+using IState = Unit.IState;
 
 namespace Character
 {
@@ -46,6 +48,11 @@ namespace Character
         }
 
         protected virtual void DestermineState()
+        {
+            
+        }
+
+        public virtual void IncreaseStates(IState state)
         {
             
         }

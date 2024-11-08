@@ -1,10 +1,12 @@
 ﻿
+using Unit;
+
 public interface IAttack : IApplyDamage
 {
+    public float AmountAttack { get; set; }
     public void Initialize();
-    public void Enter();
-    public void Update();
-    public void Exit();
+
+    public void IncreaseStates(IState state);
 }
 
 public interface IApplyDamage

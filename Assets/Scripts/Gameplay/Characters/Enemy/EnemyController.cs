@@ -1,4 +1,5 @@
-﻿using ScriptableObjects.Character.Enemy;
+﻿using Machine;
+using ScriptableObjects.Character.Enemy;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -26,6 +27,7 @@ namespace Character.Enemy
             
             this.StateMachine.Initialize();
             components.GetComponentInGameObjects<EnemyHealth>()?.Initialize();
+            
             this.StateMachine.SetStates(typeof(EnemyIdleState));
             
             StateMachine.OnChangedState += OnChangedState;
