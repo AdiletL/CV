@@ -16,7 +16,26 @@ public class Platform : MonoBehaviour
     public Vector2Int CurrentCoordinates { get; private set; }
     
     private Color startColor;
-    
+
+    private void Awake()
+    {
+        startColor = platformRenderer.material.color;
+    }
+
+    private void OnEnable()
+    {
+        PlayerIdleState.ASD += ADS;
+    }
+    private void OnDisable()
+    {
+        PlayerIdleState.ASD -= ADS;
+    }
+
+    private void ADS()
+    {
+        SetColor(startColor);
+        platformText.enabled = false;
+    }
 
     private void Start()
     {

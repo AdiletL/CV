@@ -79,9 +79,4 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
         rewardSpawner.ChangePositionReward();
         playerCharacter.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
     }
-
-    private void OnDestroy()
-    {
-        playerCharacter.GetState<PlayerIdleState>().OnFinishedToTarget -= OnFinishedToTargetPlayer;
-    }
 }

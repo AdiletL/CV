@@ -1,7 +1,7 @@
 using System;
 using Gameplay.Experience;
 using ScriptableObjects.Character;
-using Unit;
+using Character;
 using UnityEngine;
 
 namespace Character
@@ -35,7 +35,7 @@ namespace Character
         {
             foreach (IState state in stats)
             {
-            Debug.Log(state.StateType);
+                Debug.Log(state.StateType);
                 switch (state.StateType)
                 {
                     case StateType.nothing:

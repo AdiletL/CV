@@ -9,6 +9,7 @@ namespace Character.Player
     public class PlayerIdleState : CharacterIdleState
     {
         public event Action OnFinishedToTarget;
+        public static event Action ASD;
 
         private PathFinding pathFinding;
         
@@ -22,6 +23,8 @@ namespace Character.Player
         
         public GameObject GameObject { get; set; }
         public Transform EndPoint { get; set; }
+
+        private int asdf;
 
         public override void Initialize()
         {
@@ -47,6 +50,7 @@ namespace Character.Player
         public override void Exit()
         {
             FindPlatform.GetPlatform(GameObject.transform.position + (Vector3.up * .5f), Vector3.down)?.RemoveGameObject(GameObject);
+            //pathToPlatformQueue.Clear();
         }
 
         public void SetFinishTarget(GameObject finish)
@@ -66,7 +70,10 @@ namespace Character.Player
                 currentCoordinates = FindPlatform.GetCoordinates(GameObject.transform.position);
                 endTargetCoordinates = FindPlatform.GetCoordinates(finishTargetForMove.transform.position);
                 if (currentCoordinates == endTargetCoordinates)
+                {
+                    ASD?.Invoke();
                     OnFinishedToTarget?.Invoke();
+                }
                 
                 FindPathToPlatform();
             }
@@ -102,6 +109,7 @@ namespace Character.Player
             currentTargetForMove = pathToPlatformQueue.Count != 0 ? pathToPlatformQueue.Dequeue().gameObject : null;
         }
     }
+    
 
     public class PlayerIdleStateBuilder : CharacterIdleStateBuilder
     {

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: SO_PlayerAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
-  <AmountAttack>k__BackingField: 2
+  <AmountAttack>k__BackingField: 10
   <MeleeAttackClip>k__BackingField: {fileID: 7400000, guid: bdb5b47dd4fff45a89a80d4abe856294, type: 2}
+  <CooldownMeleeAttackClip>k__BackingField: {fileID: 7400000, guid: 2c01f85ff72a3477ea14feee64280f31, type: 2}

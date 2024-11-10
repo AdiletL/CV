@@ -28,7 +28,8 @@ namespace Character.Player
                     .SetGameObject(this.GameObject)
                     .SetAmountAttack(so_PlayerAttack.AmountAttack)
                     .SetCharacterAnimation(playerAnimation)
-                    .SetAnimationClip(so_PlayerAttack.MeleeAttackClip)
+                    .SetAttackClip(so_PlayerAttack.MeleeAttackClip)
+                    .SetCooldowClip(so_PlayerAttack.CooldownMeleeAttackClip)
                     .SetDamageble(damageble)
                     .SetStateMachine(this.StateMachine)
                     .Build();

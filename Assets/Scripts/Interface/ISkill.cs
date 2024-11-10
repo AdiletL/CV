@@ -2,8 +2,8 @@
 
 public interface ISkill
 {
-    public float cooldown { get; set; }
-    public float countCoolodwn { get; set; }
+    public float cooldown { get; }
+    public float countCoolodwn { get; }
     
     public void AddSkill(ISkill skill);
     public void RemoveSkill(ISkill skill);

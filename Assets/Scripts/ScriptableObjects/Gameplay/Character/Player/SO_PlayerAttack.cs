@@ -7,5 +7,6 @@ namespace ScriptableObjects.Character.Player
     {
         [field: SerializeField, Space(5), Header("AnimationClips")] 
         public AnimationClip MeleeAttackClip { get; private set; }
+        [field: SerializeField] public AnimationClip CooldownMeleeAttackClip { get; private set; }
     }
 }

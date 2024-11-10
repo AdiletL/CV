@@ -1,14 +1,14 @@
 ﻿
 using System;
-using Unit;
+using Character;
 using UnityEngine;
 
 public interface IHealth
 {
     public event Action<IHealthInfo> OnChangedHealth;
-    public int MaxHealth { get; set; }
-    public int CurrentHealth { get;  set; }
-    public bool IsLive {get;set;}
+    public int MaxHealth { get; }
+    public int CurrentHealth { get; }
+    public bool IsLive { get; }
     public void Initialize();
     public void IncreaseStates(IState state);
     public void TakeDamage(IDamageble damageble);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Machine;
 using ScriptableObjects.Character;
 using UnityEngine;
-using IState = Unit.IState;
+using IState = Character.IState;
 
 namespace Character
 {

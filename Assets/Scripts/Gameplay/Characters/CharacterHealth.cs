@@ -1,6 +1,6 @@
 ﻿using System;
 using ScriptableObjects.Character;
-using Unit;
+using Character;
 using UnityEngine;
 
 namespace Character
@@ -13,10 +13,15 @@ namespace Character
         [SerializeField] protected SO_CharacterHealth so_CharacterHealth;
 
         private HealthInfo healthInfo;
+        private int maxHealth;
         private int currentHealth;
         private bool isLive;
 
-        public int MaxHealth { get; set; }
+        public virtual int MaxHealth
+        {
+            get => maxHealth;
+            protected set => maxHealth = value; 
+        }
 
         public virtual int CurrentHealth
         {

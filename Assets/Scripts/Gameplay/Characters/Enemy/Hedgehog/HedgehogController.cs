@@ -12,6 +12,13 @@ namespace Character.Enemy
 
             var animation = components.GetComponentInGameObjects<HedgehogAnimation>();
             
+            var idleState = (HedgehogIdleState)new HedgehogIdleStateBuilder()
+                .SetGameObject(gameObject)
+                .SetCharacterAnimation(animation)
+                .SetIdleClip(so_EnemyMove.IdleClip)
+                .SetStateMachine(this.StateMachine)
+                .Build();;
+            
             var moveState = (HedgehogMoveState)new HedgehogMoveStateBuilder()
                 .SetStartPlatform(startPlatform)
                 .SetEndPlatform(endPlatform)
@@ -20,9 +27,8 @@ namespace Character.Enemy
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
-            
-            this.StateMachine.AddStates(moveState);
-            
+
+            this.StateMachine.AddStates(idleState, moveState);
         }
 
     }

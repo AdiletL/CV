@@ -4,7 +4,7 @@ namespace Calculate
 {
     public static class Move
     {
-        public static void Rotate(Transform transform, Transform target, float speed, Vector3 upwards = default, bool ignoreX = false, bool ignoreY = false, bool ignoreZ = false)
+        public static void Rotate(Transform transform, Transform target, float speed, Vector3 upwards = new Vector3(), bool ignoreX = false, bool ignoreY = false, bool ignoreZ = false)
         {
             var direction = target.position - transform.position;
             if (direction == Vector3.zero) return;
@@ -24,6 +24,18 @@ namespace Calculate
             // Обновляем поворот с учетом игнорируемых осей
             Quaternion finalRotation = Quaternion.Euler(targetEulerAngles);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
+        }
+        
+        public static bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = .95f)
+        {
+            // Направление на цель
+            Vector3 directionToTarget = (targetTransform.position - objectTransform.position).normalized;
+
+            // Значение Dot между forward направлением объекта и направлением на цель
+            float dotToTarget = Vector3.Dot(objectTransform.forward, directionToTarget);
+
+            // Если Dot больше порога, объект смотрит на цель
+            return dotToTarget >= thresholdDot;
         }
     }
 }

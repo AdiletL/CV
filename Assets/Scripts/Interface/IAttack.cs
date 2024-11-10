@@ -1,9 +1,9 @@
 ﻿
-using Unit;
+using Character;
 
 public interface IAttack : IApplyDamage
 {
-    public float AmountAttack { get; set; }
+    public float AmountAttack { get; }
     public void Initialize();
 
     public void IncreaseStates(IState state);
@@ -11,6 +11,6 @@ public interface IAttack : IApplyDamage
 
 public interface IApplyDamage
 {
-    public IDamageble Damageble { get; set; }
+    IDamageble Damageble { get; set; }
     public void ApplyDamage();
 }

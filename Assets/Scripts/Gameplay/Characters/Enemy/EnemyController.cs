@@ -2,7 +2,6 @@
 using ScriptableObjects.Character.Enemy;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Character.Enemy
 {
@@ -40,6 +39,7 @@ namespace Character.Enemy
             var animation = components.GetComponentInGameObjects<EnemyAnimation>();
 
             var idleState = (EnemyIdleState)new EnemyIdleStateBuilder(new EnemyIdleState())
+                .SetGameObject(gameObject)
                 .SetCharacterAnimation(animation)
                 .SetIdleClip(so_EnemyMove.IdleClip)
                 .SetStateMachine(this.StateMachine)
@@ -62,7 +62,7 @@ namespace Character.Enemy
                 .SetStateMachine(this.StateMachine)
                 .Build();
             
-            this.StateMachine.AddStates(idleState, moveState, attackState);
+            this.StateMachine.AddStates(idleState, moveState);
         }
         
                 
@@ -74,7 +74,7 @@ namespace Character.Enemy
             StateMachine?.Update();
         }
         
-        private void OnChangedState(StateCategory category, IState state)
+        private void OnChangedState(StateCategory category, Machine.IState state)
         {
             currentStateCategory = category;
             currentStateName = state.GetType().Name;

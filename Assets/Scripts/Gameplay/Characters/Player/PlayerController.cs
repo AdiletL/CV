@@ -1,12 +1,9 @@
 using System;
 using Gameplay.Characters.Player;
-using Gameplay.Damage;
 using Machine;
 using ScriptableObjects.Character.Player;
-using Unit;
 using Unity.Collections;
 using UnityEngine;
-using IState = Machine.IState;
 
 namespace Character.Player
 {
@@ -78,7 +75,7 @@ namespace Character.Player
             this.stateMachine?.GetState<PlayerIdleState>()?.SetFinishTarget(finish);
         }
 
-        private void OnChangedState(StateCategory category, IState state)
+        private void OnChangedState(StateCategory category, Machine.IState state)
         {
             currentStateCategory = category;
             currentStateName = state.GetType().Name;

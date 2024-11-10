@@ -10,8 +10,8 @@ namespace Character
     {
         public override StateCategory Category { get; } = StateCategory.idle;
         
-        public CharacterAnimation CharacterAnimation;
-        public AnimationClip IdleClip;
+        public CharacterAnimation CharacterAnimation { get; set; }
+        public AnimationClip IdleClip { get; set; }
 
         public override void Initialize()
         {
@@ -20,7 +20,7 @@ namespace Character
 
         public override void Enter()
         {
-            CharacterAnimation.ChangeAnimation(IdleClip);
+            CharacterAnimation.ChangeAnimation(IdleClip, transitionDuration: .5f);
         }
 
         public override void Update()

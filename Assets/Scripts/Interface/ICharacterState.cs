@@ -1,4 +1,4 @@
-﻿namespace Unit
+﻿namespace Character
 {
     public enum StateType
     {
@@ -11,6 +11,6 @@
 
     public interface IState
     {
-        public StateType StateType { get; set; }
+        public StateType StateType { get; }
     }
 }

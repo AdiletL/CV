@@ -9,7 +9,8 @@ namespace Character
 
         public override void Enter()
         {
-            CharacterAnimation.ChangeAnimation(AnimationClip, duration: MovementSpeed);
+            var duration = 3 / MovementSpeed;
+            CharacterAnimation.ChangeAnimation(AnimationClip, duration: duration);
         }
 
     }

@@ -95,15 +95,15 @@ namespace Calculate
             data.IsChecked = true;
             data.Weight = weightPlatform += weight;
 
-            //platform.SetColor(Color.yellow);
-            //platform.SetText(data.Weight.ToString());
+            //currentPlatform.SetColor(Color.yellow);
+            //currentPlatform.SetText(data.Weight.ToString());
         }
 
         private void BuildPath(Queue<Platform> path)
         {
             platformStack.Clear();
             platformStack.Push(endPlatform);
-            //endPlatform.SetColor(Color.white);
+           // endPlatform.SetColor(Color.white);
             lastCorrectPlatform = endPlatform;
 
             while (lastCorrectPlatform != startPlatform)
@@ -120,6 +120,8 @@ namespace Calculate
             {
                 path.Enqueue(platformStack.Pop());
             }
+
+            path.Dequeue();
         }
 
         private Platform GetCorrectPlatform()
@@ -187,28 +189,35 @@ namespace Calculate
         {
             if (nearAccessiblePlatforms.Count == 0) return currentPlatform;
 
-            int targetSum = endCoordinates.x + endCoordinates.y;
             Platform bestPlatform = nearAccessiblePlatforms[0];
-            int bestDistance = CalculateDistance(bestPlatform, targetSum, endCoordinates);
+            int bestDistance = CalculateDistance(bestPlatform, endCoordinates);
 
             foreach (var platform in nearAccessiblePlatforms)
             {
-                int distance = CalculateDistance(platform, targetSum, endCoordinates);
+                int distance = CalculateDistance(platform, endCoordinates);
                 if (distance < bestDistance)
                 {
                     bestPlatform = platform;
                     bestDistance = distance;
+                }
+                else if (distance == bestDistance)
+                {
+                    int random = Random.Range(0, 2);
+                    if (random == 0)
+                    {
+                        bestPlatform = platform;
+                        bestDistance = distance;
+                    }
                 }
             }
 
             return bestPlatform;
         }
 
-        private static int CalculateDistance(Platform platform, int targetSum, Vector2Int endCoordinates)
+        private static int CalculateDistance(Platform platform, Vector2Int endCoordinates)
         {
             var coordinates = platform.CurrentCoordinates;
-            int result = Mathf.Abs(targetSum - (coordinates.x + coordinates.y));
-            result += Mathf.Abs(endCoordinates.x - coordinates.x) + Mathf.Abs(endCoordinates.y - coordinates.y);
+            int result = Mathf.Abs(endCoordinates.x - coordinates.x) + Mathf.Abs(endCoordinates.y - coordinates.y);
             return result;
         }
 

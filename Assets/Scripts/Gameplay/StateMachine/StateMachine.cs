@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Machine;
+using UnityEngine;
 
 public class StateMachine
 {
@@ -21,7 +22,7 @@ public class StateMachine
             state.Initialize();
             if (state.Category == StateCategory.idle && defaultIdleState == null)
             {
-                defaultIdleState = state; // Cache idle state on initialization
+                defaultIdleState = FindMostDerivedState(state.GetType());// Cache idle state on initialization
             }
         }
     }

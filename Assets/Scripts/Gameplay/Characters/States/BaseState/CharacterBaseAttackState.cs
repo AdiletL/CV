@@ -1,6 +1,6 @@
 ﻿using Machine;
 using UnityEngine;
-using IState = Unit.IState;
+using IState = Character.IState;
 
 namespace Character
 {

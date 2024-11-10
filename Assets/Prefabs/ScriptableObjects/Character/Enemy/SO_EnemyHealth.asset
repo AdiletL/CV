@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdf1a7d22eb04b1f9885e09d1e401be1, type: 3}
   m_Name: SO_EnemyHealth
   m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 20
+  <MaxHealth>k__BackingField: 30
   <takeDamageClip>k__BackingField: {fileID: 7400000, guid: ee7bb9ee4f2544619d907133f41c9fc1, type: 3}

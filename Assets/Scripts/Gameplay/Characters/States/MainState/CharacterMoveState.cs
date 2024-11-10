@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Machine;
 using ScriptableObjects.Character;
 using UnityEngine;
-using IState = Unit.IState;
+using IState = Character.IState;
 
 namespace Character
 {
@@ -17,18 +17,6 @@ namespace Character
 
         protected Dictionary<Type, CharacterBaseMovementState> movementStates = new();
         
-        public bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = 1f)
-        {
-            // Направление на цель
-            Vector3 directionToTarget = (targetTransform.position - objectTransform.position).normalized;
-
-            // Значение Dot между forward направлением объекта и направлением на цель
-            float dotToTarget = Vector3.Dot(objectTransform.forward, directionToTarget);
-
-            // Если Dot больше порога, объект смотрит на цель
-            return dotToTarget >= thresholdDot;
-        }
-        
         public override void Initialize()
         {
             RotationSpeed = this.SO_CharacterMove.RotateSpeed;
@@ -36,11 +24,11 @@ namespace Character
         
         public override void Enter()
         {
-            DestermineState();
         }
 
         public override void Update()
         {
+            DestermineState();
         }
 
         public override void Exit()

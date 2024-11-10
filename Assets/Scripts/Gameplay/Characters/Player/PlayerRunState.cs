@@ -41,11 +41,9 @@ namespace Character.Player
                 var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Layers.ENEMY_LAYER);
                 if (!enemyGameObject)
                 {
-                    if (!playerMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
-                    {
-                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform, playerMoveState.RotationSpeed);
+                    Calculate.Move.Rotate(GameObject.transform, currentTarget.transform, playerMoveState.RotationSpeed);
+                    if (!Calculate.Move.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
                         return;
-                    }
 
                     GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
                         currentTarget.transform.position, MovementSpeed * Time.deltaTime);

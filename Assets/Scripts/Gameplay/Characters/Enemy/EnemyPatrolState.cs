@@ -6,10 +6,9 @@ namespace Character.Enemy
 {
     public class EnemyPatrolState : CharacterPatrolState
     {
-        public EnemyAnimation EnemyAnimation { get; set; }
-        public AnimationClip WalkClip { get; set; }
+        protected virtual int checkEnemyLayer { get; }
         
-        protected PathFinding PathFinding;
+        protected PathFinding pathFinding;
 
         protected GameObject currentTarget;
 
@@ -17,18 +16,21 @@ namespace Character.Enemy
         protected EnemyMoveState enemyMoveState;
 
         protected Queue<Platform> platformsQueue = new();
+        
+        public AnimationClip WalkClip { get; set; }
+        public EnemyAnimation EnemyAnimation { get; set; }
 
         protected Transform GetCurrentPoint()
         {
             if(!EndPlatform || !StartPlatform) return null;
 
             if (GameObject.transform.position == StartPosition)
-                PathFinding.SetTarget(EndPlatform.transform);
+                pathFinding.SetTarget(EndPlatform.transform);
             else if (GameObject.transform.position == EndPosition)
-                PathFinding.SetTarget(StartPlatform.transform);
+                pathFinding.SetTarget(StartPlatform.transform);
             
             if(platformsQueue.Count == 0)
-                platformsQueue = PathFinding.GetPath();
+                platformsQueue = pathFinding.GetPath();
 
             if (platformsQueue.Count == 0)
                 return null;
@@ -39,11 +41,11 @@ namespace Character.Enemy
         public override void Initialize()
         {
             base.Initialize();
-            PathFinding = new PathToPointBuilder()
+            pathFinding = new PathToPointBuilder()
                 .SetPosition(this.GameObject.transform, EndPlatform.transform)
                 .Build();
 
-            enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
+            //enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
             enemyMoveState = this.StateMachine.GetState<EnemyMoveState>();
         }
 
@@ -51,31 +53,34 @@ namespace Character.Enemy
         {
             base.Enter();
             EnemyAnimation.ChangeAnimation(WalkClip, duration: 0.7f);
+            var targetTransform = GetCurrentPoint();
+            currentTarget = targetTransform ? targetTransform.gameObject : null;
         }
 
         public override void Update()
         {
             base.Update();
             
-            if (!currentTarget || GameObject.transform.position == currentTarget.transform.position)
-                currentTarget = GetCurrentPoint()?.gameObject;
-
             if (!currentTarget)
                 this.StateMachine.ExitCategory(Category);
 
             if (GameObject.transform.position != currentTarget.transform.position)
             {
-                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Layers.PLAYER_LAYER);
+                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer);
                 if (!enemyGameObject)
                 {
-                    if (!enemyMoveState.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
-                    {
-                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform, enemyMoveState.RotationSpeed);
+                    Calculate.Move.Rotate(GameObject.transform, currentTarget.transform,
+                        enemyMoveState.RotationSpeed);
+                    
+                    if (!Calculate.Move.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
                         return;
-                    }
-
+                    
                     GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
                         currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    this.StateMachine.ExitCategory(Category);
                 }
             }
             else
@@ -87,6 +92,7 @@ namespace Character.Enemy
         public override void Exit()
         {
             base.Exit();
+            //platformsQueue.Clear();
             currentTarget = null;
         }
     }
