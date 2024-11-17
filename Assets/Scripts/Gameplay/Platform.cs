@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Character.Player;
+using Unit.Character.Player;
 using TMPro;
 using UnityEngine;
 
@@ -24,11 +24,11 @@ public class Platform : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerIdleState.ASD += ADS;
+        PlayerIdleIdleState.ASD += ADS;
     }
     private void OnDisable()
     {
-        PlayerIdleState.ASD -= ADS;
+        PlayerIdleIdleState.ASD -= ADS;
     }
 
     private void ADS()

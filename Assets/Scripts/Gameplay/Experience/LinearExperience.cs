@@ -1,10 +1,21 @@
-﻿namespace Gameplay.Experience
+﻿using ScriptableObjects.Gameplay;
+using Zenject;
+
+namespace Gameplay.Experience
 {
     public class LinearExperience : IExperience
     {
+        private SO_GameConfig so_GameConfig;
+        
+        [Inject]
+        public void Contruct(SO_GameConfig so_GameConfig)
+        {
+            this.so_GameConfig = so_GameConfig;
+        }
+        
         public int CalculateExperienceForNextLevel(int currentLevel)
         {
-            return currentLevel * 100;
+            return currentLevel * so_GameConfig.Experience;
         }
     }
 }

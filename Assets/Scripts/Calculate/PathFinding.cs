@@ -135,7 +135,6 @@ namespace Calculate
                 if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 4, Layers.PLATFORM_LAYER) ||
                     !hitResult.transform.TryGetComponent(out Platform platform) ||
                     !platformData.TryGetValue(platform, out var data) ||
-                    data.Weight <= 0 ||
                     platform == lastCorrectPlatform ||
                     data.Weight >= lastWeight) continue;
                 

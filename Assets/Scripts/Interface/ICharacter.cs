@@ -1,4 +1,4 @@
-﻿using Character;
+﻿using Unit;
 
 public interface ICharacter
 {
@@ -6,9 +6,6 @@ public interface ICharacter
 }
 
 public interface ICharacterController : ICharacter
-{ 
+{
     public void IncreaseStates(params IState[] stats);
-    
-    public void AddExperience(int experience);
-    public void LevelUp();
 }

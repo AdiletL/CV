@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,12 +8,29 @@ public class ComponentsInGameObjects
 {
     [field: SerializeField] public GameObject[] gameObjects { get; private set; }
 
+    private List<Type> componentTypes = new List<Type>(); 
+    
     public void Initialize()
     {
         
     }
 
-    public T GetComponentInGameObjects<T>()
+    public T GetComponentFromArray<T>()
+    {
+        foreach (var VARIABLE in componentTypes)
+        {
+            if (VARIABLE is T component)
+            {
+                if(!componentTypes.Contains(VARIABLE))
+                    componentTypes.Add(VARIABLE);
+                return component;
+            }
+        }
+
+        return GetComponentInGameObjects<T>();
+    }
+
+    private T GetComponentInGameObjects<T>()
     {
         foreach (var item in gameObjects)
         {
@@ -22,6 +40,7 @@ public class ComponentsInGameObjects
         }
         return default;
     }
+    
     public List<T> GetComponentsInGameObjects<T>()
     {
         List<T> list = new();
@@ -33,8 +52,28 @@ public class ComponentsInGameObjects
 
         return list;
     }
+
+    public bool TryGetComponentFromArray<T>(out T component) where T : Component
+    {
+        foreach (var item in componentTypes)
+        {
+            if (item == typeof(T))
+            {
+                component = null;
+                return true;
+            }
+        }
+
+        if (TryGetComponentInGameObjects(out component))
+        {
+            component = null;
+            return true;
+        }
+        
+        return false;
+    }
     
-    public bool TryGetComponentInGameObjects<T>(out T component) where T : Component
+    private bool TryGetComponentInGameObjects<T>(out T component) where T : Component
     {
         foreach (var item in gameObjects)
         {

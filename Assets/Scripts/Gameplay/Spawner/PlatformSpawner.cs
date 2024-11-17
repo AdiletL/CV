@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 public class PlatformSpawner : MonoBehaviour, ISpawner
 {
@@ -11,6 +12,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
     private Transform platformParent, blockParent;
 
     private readonly List<Platform> platforms = new(20);
+    
 
     public async void Initialize()
     {

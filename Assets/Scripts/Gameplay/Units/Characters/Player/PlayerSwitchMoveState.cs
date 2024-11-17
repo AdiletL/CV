@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using ScriptableObjects.Unit.Character.Player;
+using UnityEngine;
+
+namespace Unit.Character.Player
+{
+    public class PlayerSwitchMoveState : CharacterSwitchMoveState
+    {
+        private SO_PlayerMove so_PlayerMove;
+        private GameObject finish;
+
+        private Queue<Platform> pathToFinish = new();
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            so_PlayerMove = (SO_PlayerMove)SO_CharacterMove;
+        }
+        
+        public void SetFinish(GameObject target)
+        {
+            finish = target;
+        }
+        public void SetPathToFinish(Queue<Platform> path)
+        {
+            this.pathToFinish = path;
+        }
+        
+        protected override void DestermineState()
+        {
+            //TODO: Select type move
+
+            if (!movementStates.ContainsKey(typeof(PlayerRunState)))
+            {
+                var runState = (PlayerRunState)new PlayerRunStateBuilder()
+                    .SetCharacterAnimation(this.CharacterAnimation)
+                    .SetRunClips(so_PlayerMove.RunClip)
+                    .SetGameObject(GameObject)
+                    .SetMovementSpeed(so_PlayerMove.RunSpeed)
+                    .SetStateMachine(this.StateMachine)
+                    .Build();
+                
+                runState.Initialize();
+                runState.SetPathToFinish(pathToFinish);
+                runState.SetFinish(finish);
+                movementStates.TryAdd(typeof(PlayerRunState), runState);
+                this.StateMachine.AddStates(runState);
+            }
+
+            if (movementStates.TryGetValue(typeof(PlayerRunState), out var state)
+                && state is PlayerRunState playerRunState)
+            {
+                playerRunState.SetPathToFinish(pathToFinish);
+                playerRunState.SetFinish(finish);
+            }
+            
+            this.StateMachine.SetStates(typeof(PlayerRunState));
+        }
+    }
+
+    public class PlayerMoveStateBuilder : CharacterMoveStateBuilder
+    {
+        public PlayerMoveStateBuilder() : base(new PlayerSwitchMoveState())
+        {
+        }
+        
+    }
+}

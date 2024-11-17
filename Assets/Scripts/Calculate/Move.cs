@@ -26,7 +26,7 @@ namespace Calculate
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
         }
         
-        public static bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = .95f)
+        public static bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = 1f)
         {
             // Направление на цель
             Vector3 directionToTarget = (targetTransform.position - objectTransform.position).normalized;

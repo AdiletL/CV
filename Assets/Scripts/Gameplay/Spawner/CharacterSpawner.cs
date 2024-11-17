@@ -1,19 +1,29 @@
 using System;
-using Character;
-using Character.Enemy;
-using Character.Player;
+using Unit.Character.Creep;
+using Unit.Character.Player;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 public class CharacterSpawner : MonoBehaviour, ISpawner
 {
+    [Inject] private DiContainer diContainer;
+    
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject[] enemyPrefabs;
     
+    private GameUnits gameUnits;
     private PlatformSpawner platformSpawner;
     private RewardSpawner rewardSpawner;
     
     private PlayerController playerCharacter;
+    
+
+    [Inject]
+    public void Construct(GameUnits gameUnits)
+    {
+        this.gameUnits = gameUnits;
+    }
 
     public async void Initialize()
     {
@@ -40,37 +50,35 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
 
     private void SpawnPlayer()
     {
-        var freePlatform = platformSpawner.GetFreePlatform();
-        if (freePlatform != null)
-        {
-            var playerGameObject = Instantiate(playerPrefab);
-            playerGameObject.transform.position = freePlatform.transform.position;
-            var player = playerGameObject.GetComponent<PlayerController>();
-            player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
-            player.Initialize();
-            player.GetState<PlayerIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
-            playerCharacter = player;
-            
-            freePlatform.GetComponent<Platform>().AddGameObject(playerGameObject);
-        }
+        var platform = platformSpawner.GetFreePlatform();
+        if(!platform) return;
+        
+        var playerGameObject = diContainer.InstantiatePrefabForComponent<PlayerController>(playerPrefab);
+        playerGameObject.transform.position = platform.transform.position;
+        var player = playerGameObject.GetComponent<PlayerController>();
+        player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
+        player.Initialize();
+        player.GetState<PlayerIdleIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
+        playerCharacter = player;
+        
+        gameUnits.AddUnits(player);
     }
 
     private void SpawnEnemies()
     {
         foreach (var VARIABLE in enemyPrefabs)
         {
-            var freePlatform = platformSpawner.GetFreePlatform();
-            if (freePlatform != null)
-            {
-                var enemyGameObject = Instantiate(VARIABLE);
-                enemyGameObject.transform.position = freePlatform.transform.position;
-                var enemy = enemyGameObject.GetComponent<EnemyController>();
-                enemy.SetStartPlatform(freePlatform.GetComponent<Platform>());
-                enemy.SetEndPlatform(platformSpawner.GetFreePlatform().GetComponent<Platform>());
-                enemy.Initialize();
-                //enemy.SetTarget()
-                freePlatform.GetComponent<Platform>().AddGameObject(enemyGameObject);
-            }
+            var platform = platformSpawner.GetFreePlatform();
+            if (!platform) return;
+            
+            var enemyGameObject = diContainer.InstantiatePrefabForComponent<CreepController>(VARIABLE);
+            enemyGameObject.transform.position = platform.transform.position;
+            var enemy = enemyGameObject.GetComponent<CreepController>();
+            enemy.SetStartPlatform(platform.GetComponent<Platform>());
+            enemy.SetEndPlatform(platformSpawner.GetFreePlatform().GetComponent<Platform>());
+            enemy.Initialize();
+            //enemy.SetTarget()
+            gameUnits.AddUnits(enemy);
         }
     }
 

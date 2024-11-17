@@ -1,4 +1,4 @@
-﻿namespace Character
+﻿namespace Unit
 {
     public enum StateType
     {

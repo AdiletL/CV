@@ -1,5 +1,5 @@
 ﻿
-using Character;
+using Unit;
 
 public interface IAttack : IApplyDamage
 {

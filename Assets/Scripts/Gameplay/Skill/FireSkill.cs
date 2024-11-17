@@ -5,7 +5,7 @@
         public float cooldown { get; set; }
         public float countCoolodwn { get; set; }
         
-        public void AddSkill(ISkill skill)
+        public void AddSkill(ISkill skill)  
         {
             throw new System.NotImplementedException();
         }

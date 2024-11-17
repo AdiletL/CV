@@ -1,5 +1,5 @@
-using Character;
-using Character.Player;
+using Unit.Character;
+using Unit.Character.Player;
 using UnityEngine;
 
 public class CameraMove : MonoBehaviour

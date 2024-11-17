@@ -1079,11 +1079,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8832916819323147869}
-  - component: {fileID: -4317091476212416767}
-  - component: {fileID: -2349593288448719746}
-  - component: {fileID: 4232290133557393907}
+  - component: {fileID: 3631513383952340615}
   - component: {fileID: 2871698622119724440}
   - component: {fileID: -6732597954092341346}
+  - component: {fileID: 9158319335001124321}
+  - component: {fileID: 1296476832893846553}
+  - component: {fileID: 6118961045405547200}
   m_Layer: 7
   m_Name: Hedgehog
   m_TagString: Untagged
@@ -1108,7 +1109,7 @@ Transform:
   - {fileID: 3234777975290829289}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4317091476212416767
+--- !u!114 &3631513383952340615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1123,38 +1124,10 @@ MonoBehaviour:
   <components>k__BackingField:
     <gameObjects>k__BackingField:
     - {fileID: 7394638003979218972}
-    - {fileID: 2742346258566781402}
     - {fileID: 5109393615892339241}
-  so_EnemyMove: {fileID: 11400000, guid: 5f7c8e2e673ebfe41a7693ca954df9ad, type: 2}
+  soCreepMove: {fileID: 11400000, guid: 5f7c8e2e673ebfe41a7693ca954df9ad, type: 2}
   currentStateCategory: 0
   currentStateName: 
---- !u!114 &-2349593288448719746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7394638003979218972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f99ed2ec5284e7394b12f4aeb19d43e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterMainController: {fileID: -4317091476212416767}
-  so_CharacterHealth: {fileID: 11400000, guid: efe419fcf807a9948b5eabd7d7ac874b, type: 2}
---- !u!114 &4232290133557393907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7394638003979218972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 240b6ba4f0b949589d0bad1c7890c7b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 418193747676348885}
 --- !u!135 &2871698622119724440
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1203,6 +1176,47 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &9158319335001124321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394638003979218972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f99ed2ec5284e7394b12f4aeb19d43e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitController: {fileID: 3631513383952340615}
+  so_UnitHealth: {fileID: 11400000, guid: efe419fcf807a9948b5eabd7d7ac874b, type: 2}
+--- !u!114 &1296476832893846553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394638003979218972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 240b6ba4f0b949589d0bad1c7890c7b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 418193747676348885}
+--- !u!114 &6118961045405547200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394638003979218972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 094132d54ac0430da3c9fe76747d8767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitController: {fileID: 3631513383952340615}
+  so_UnitExperience: {fileID: 11400000, guid: d6bfb1c0af819d04384137c4ab071689, type: 2}
 --- !u!1 &7654363317769717686
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,7 +1403,7 @@ PrefabInstance:
     - target: {fileID: 9034722997431569740, guid: 2ea10f84cfc4f5f4d869fd90a530d28b, type: 3}
       propertyPath: characterMainController
       value: 
-      objectReference: {fileID: -4317091476212416767}
+      objectReference: {fileID: 3631513383952340615}
     - target: {fileID: 9147056008878702537, guid: 2ea10f84cfc4f5f4d869fd90a530d28b, type: 3}
       propertyPath: m_Name
       value: HedgehogUI

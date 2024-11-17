@@ -1,9 +1,13 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Gameplay;
 using UnityEngine;
+using Zenject;
 
 public class SpawnerManager : MonoBehaviour, IManager
 {
+    [Inject] private DiContainer diContainer;
+    
     [SerializeField] private CharacterSpawner characterSpawnerPrefab;
     [SerializeField] private PlatformSpawner platformSpawnerPrefab;
     [SerializeField] private RewardSpawner rewardSpawnerPrefab;
@@ -13,11 +17,7 @@ public class SpawnerManager : MonoBehaviour, IManager
     private PlatformSpawner platformSpawner;
     private RewardSpawner rewardSpawner;
     private TrapSpawner trapSpawner;
-
-    private void Awake()
-    {
-        Initialize();
-    }
+    
     
     public void Initialize()
     {
@@ -30,10 +30,12 @@ public class SpawnerManager : MonoBehaviour, IManager
 
     private void InstantiateSpawners()
     {
-        platformSpawner = Instantiate(platformSpawnerPrefab, transform);
-        rewardSpawner = Instantiate(rewardSpawnerPrefab, transform);
+        platformSpawner = diContainer.InstantiatePrefabForComponent<PlatformSpawner>(platformSpawnerPrefab, transform);
+        
+        rewardSpawner = diContainer.InstantiatePrefabForComponent<RewardSpawner>(rewardSpawnerPrefab, transform);
         rewardSpawner.SetSpawners(platformSpawner);
-        characterSpawner = Instantiate(characterSpawnerPrefab, transform);
+        
+        characterSpawner = diContainer.InstantiatePrefabForComponent<CharacterSpawner>(characterSpawnerPrefab, transform);
         characterSpawner.SetSpawners(platformSpawner, rewardSpawner);
         //trapSpawner = Instantiate(trapSpawnerPrefab, transform);
     }
