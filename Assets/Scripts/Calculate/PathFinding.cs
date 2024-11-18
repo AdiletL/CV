@@ -121,7 +121,7 @@ namespace Calculate
                 path.Enqueue(platformStack.Pop());
             }
 
-            path.Dequeue();
+           // path.Dequeue();
         }
 
         private Platform GetCorrectPlatform()

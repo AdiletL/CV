@@ -5,9 +5,9 @@
         
     }
 
-    public class HedgehogAttackStateBuilder : CreepAttackStateBuilder
+    public class HedgehogSwitchAttackStateBuilder : CreepSwitchAttackStateBuilder
     {
-        public HedgehogAttackStateBuilder() : base(new HedgehogSwitchAttackState())
+        public HedgehogSwitchAttackStateBuilder() : base(new HedgehogSwitchAttackState())
         {
         }
     }

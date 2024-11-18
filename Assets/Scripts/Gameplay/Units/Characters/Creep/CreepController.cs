@@ -1,5 +1,5 @@
 ﻿using Machine;
-using ScriptableObjects.Unit.Character.Enemy;
+using ScriptableObjects.Unit.Character.Creep;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,6 +8,8 @@ namespace Unit.Character.Creep
 {
     public abstract class CreepController : CharacterMainController
     {
+        public override UnitType UnitType { get; } = UnitType.creep;
+
         [FormerlySerializedAs("so_EnemyMove")] [SerializeField] protected SO_CreepMove soCreepMove;
         
         [ReadOnly] public StateCategory currentStateCategory;
@@ -25,7 +27,7 @@ namespace Unit.Character.Creep
             this.StateMachine.Initialize();
             components.GetComponentFromArray<CreepHealth>()?.Initialize();
             
-            this.StateMachine.SetStates(typeof(CreepIdleIdleState));
+            this.StateMachine.SetStates(typeof(CreepIdleState));
             
             this.StateMachine.OnChangedState += OnChangedState;
         }
@@ -36,19 +38,19 @@ namespace Unit.Character.Creep
             
             var animation = components.GetComponentFromArray<CreepAnimation>();
 
-            var idleState = (CreepIdleIdleState)new CreepIdleStateBuilder(new CreepIdleIdleState())
+            var idleState = (CreepIdleState)new CreepIdleStateBuilder(new CreepIdleState())
                 .SetCharacterAnimation(animation)
                 .SetIdleClips(soCreepMove.IdleClip)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();;
             
-            var attackState = (CreepSwitchAttackState)new CreepAttackStateBuilder(new CreepSwitchAttackState())
+            var attackState = (CreepSwitchAttackState)new CreepSwitchAttackStateBuilder(new CreepSwitchAttackState())
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
 
-            var moveState = (CreepSwitchMoveState)new CreepMoveStateBuilder(new CreepSwitchMoveState())
+            var moveState = (CreepSwitchMoveState)new CreepSwitchMoveStateBuilder(new CreepSwitchMoveState())
                 .SetConfig(soCreepMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)

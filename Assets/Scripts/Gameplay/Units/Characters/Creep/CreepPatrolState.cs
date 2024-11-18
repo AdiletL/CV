@@ -73,7 +73,7 @@ namespace Unit.Character.Creep
                 var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer);
                 if (!enemyGameObject)
                 {
-                    if (!Calculate.Move.IsFacingTargetUsingDot(GameObject.transform, currentTarget.transform))
+                    if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform, currentTarget.transform))
                     {
                         Calculate.Move.Rotate(GameObject.transform, currentTarget.transform,
                             CreepSwitchMoveState.RotationSpeed);

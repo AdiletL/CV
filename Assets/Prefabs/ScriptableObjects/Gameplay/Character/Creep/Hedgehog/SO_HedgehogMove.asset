@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6eac1ea94c746ef8620d6440b0ccbb1, type: 3}
+  m_Name: SO_HedgehogMove
+  m_EditorClassIdentifier: 
+  <IdleClip>k__BackingField:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  <RotateSpeed>k__BackingField: 500
+  <RunClip>k__BackingField: {fileID: 7400000, guid: 60dd7ef4512a4404896e945d3004f2b6, type: 3}
+  <RunSpeed>k__BackingField: 1.5
+  <WalkClip>k__BackingField: {fileID: 7400000, guid: 70329e6db728412fb2a6e0371aaaa001, type: 3}
+  <WalkSpeed>k__BackingField: 1.5

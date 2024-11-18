@@ -4,7 +4,7 @@ namespace Calculate
 {
     public static class Attack
     {
-        private static readonly Vector3 originRayForward = Vector3.up * .5f;
+        private static readonly Vector3 originRayForward = Vector3.up * .25f;
         private static RaycastHit[] enemyHits = new RaycastHit[1];
         
         public static float TotalDurationAttack(float countAttack)

@@ -1,4 +1,4 @@
-﻿using ScriptableObjects.Unit.Character.Enemy;
+﻿using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
 namespace Unit.Character.Creep
@@ -13,11 +13,7 @@ namespace Unit.Character.Creep
             base.Initialize();
             soCreepMove = (SO_CreepMove)this.SO_CharacterMove;
         }
-
-        public void SetTarget(GameObject target)
-        {
-            currentTarget = target;
-        }
+        
         
         protected override void DestermineState()
         {
@@ -25,9 +21,9 @@ namespace Unit.Character.Creep
         }
     }
 
-    public class CreepMoveStateBuilder : CharacterMoveStateBuilder
+    public class CreepSwitchMoveStateBuilder : CharacterMoveStateBuilder
     {
-        public CreepMoveStateBuilder(CharacterSwitchMoveState instance) : base(instance)
+        public CreepSwitchMoveStateBuilder(CharacterSwitchMoveState instance) : base(instance)
         {
         }
     }

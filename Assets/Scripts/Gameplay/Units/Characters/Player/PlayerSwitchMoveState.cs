@@ -11,6 +11,9 @@ namespace Unit.Character.Player
         private GameObject finish;
 
         private Queue<Platform> pathToFinish = new();
+        
+        public Transform Center { get; set; }
+
 
         public override void Initialize()
         {
@@ -34,6 +37,7 @@ namespace Unit.Character.Player
             if (!movementStates.ContainsKey(typeof(PlayerRunState)))
             {
                 var runState = (PlayerRunState)new PlayerRunStateBuilder()
+                    .SetCenter(Center)
                     .SetCharacterAnimation(this.CharacterAnimation)
                     .SetRunClips(so_PlayerMove.RunClip)
                     .SetGameObject(GameObject)
@@ -65,5 +69,12 @@ namespace Unit.Character.Player
         {
         }
         
+        public PlayerMoveStateBuilder SetCenter(Transform center)
+        {
+            if(state is PlayerSwitchMoveState playerSwitchMoveState)
+                playerSwitchMoveState.Center = center;
+
+            return this;
+        }
     }
 }

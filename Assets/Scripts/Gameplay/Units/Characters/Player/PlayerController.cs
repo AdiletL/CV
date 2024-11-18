@@ -31,7 +31,7 @@ namespace Unit.Character.Player
             
             //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             StateMachine.OnChangedState += OnChangedState;
-            StateMachine.SetStates(typeof(PlayerIdleIdleState));
+            StateMachine.SetStates(typeof(PlayerIdleState));
         }
 
         private void CreateStates()
@@ -39,16 +39,20 @@ namespace Unit.Character.Player
             StateMachine = new StateMachine();
 
             var characterAnimation = components.GetComponentFromArray<CharacterAnimation>();
-
-            var idleState = (PlayerIdleIdleState)new PlayerIdleStateBuilder()
+            var center = components.GetComponentFromArray<UnitCenter>().Center;
+            var enemyLayer = Layers.CREEP_LAYER;
+            
+            var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetFinishTargetToMove(finish)
                 .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
+                .SetCenter(center)
                 .SetGameObject(gameObject)
                 .SetStateMachine(StateMachine)
                 .Build();
 
             var moveState = (PlayerSwitchMoveState)new PlayerMoveStateBuilder()
+                .SetCenter(center)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
@@ -56,6 +60,8 @@ namespace Unit.Character.Player
                 .Build();
             
             var attackState = (PlayerSwitchAttackState)new PlayerAttackStateBuilder()
+                .SetCenter(center)
+                .SetEnemyLayer(enemyLayer)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerAttack)
@@ -74,7 +80,7 @@ namespace Unit.Character.Player
         public void SetFinishTarget(GameObject target)
         { 
             finish = target;
-            this.StateMachine?.GetState<PlayerIdleIdleState>()?.SetFinishTarget(finish);
+            this.StateMachine?.GetState<PlayerIdleState>()?.SetFinishTarget(finish);
         }
 
         private void OnChangedState(StateCategory category, Machine.IState state)

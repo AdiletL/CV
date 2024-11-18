@@ -14,7 +14,7 @@ namespace Unit.Character.Creep
             base.Enter();
             durationAnimation = TakeDamageClip.length;
             countTimeAnimation = 0;
-            CharacterAnimation?.ChangeAnimation(TakeDamageClip, transitionDuration: 0, force: true);
+            CharacterAnimation?.ChangeAnimation(TakeDamageClip, transitionDuration: 0, isForce: true);
         }
 
         public override void Update()

@@ -24,11 +24,11 @@ public class Platform : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerIdleIdleState.ASD += ADS;
+        PlayerIdleState.ASD += ADS;
     }
     private void OnDisable()
     {
-        PlayerIdleIdleState.ASD -= ADS;
+        PlayerIdleState.ASD -= ADS;
     }
 
     private void ADS()

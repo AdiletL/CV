@@ -15,8 +15,10 @@ namespace Unit.Character
         protected Dictionary<Type, CharacterBaseAttackState> attackStates = new();
 
         public GameObject GameObject { get; set; }
+        public Transform Center { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public SO_CharacterAttack SO_CharacterAttack { get; set; }
+        public int EnemyLayer { get; set; }
 
 
         public override void Initialize()
@@ -67,6 +69,16 @@ namespace Unit.Character
         public CharacterAttackStateBuilder SetConfig(SO_CharacterAttack config)
         {
             state.SO_CharacterAttack = config;
+            return this;
+        }
+        public CharacterAttackStateBuilder SetCenter(Transform center)
+        {
+            state.Center = center;
+            return this;
+        }
+        public CharacterAttackStateBuilder SetEnemyLayer(int index)
+        {
+            state.EnemyLayer = index;
             return this;
         }
     }

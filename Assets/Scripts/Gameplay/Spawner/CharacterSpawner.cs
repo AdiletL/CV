@@ -58,7 +58,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
         var player = playerGameObject.GetComponent<PlayerController>();
         player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
         player.Initialize();
-        player.GetState<PlayerIdleIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
+        player.GetState<PlayerIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
         playerCharacter = player;
         
         gameUnits.AddUnits(player);

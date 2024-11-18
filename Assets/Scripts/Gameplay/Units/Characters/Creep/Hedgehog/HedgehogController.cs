@@ -4,8 +4,6 @@ namespace Unit.Character.Creep
 {
     public class HedgehogController : CreepController
     {
-        public override UnitType UnitType { get; } = UnitType.creep;
-
         
         protected override void CreateStates()
         {
@@ -13,14 +11,14 @@ namespace Unit.Character.Creep
 
             var animation = components.GetComponentFromArray<HedgehogAnimation>();
             
-            var idleState = (HedgehogIdleIdleState)new HedgehogIdleStateBuilder()
+            var idleState = (HedgehogIdleState)new HedgehogIdleStateBuilder()
                 .SetCharacterAnimation(animation)
                 .SetIdleClips(soCreepMove.IdleClip)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();;
             
-            var moveState = (HedgehogSwitchMoveState)new HedgehogMoveStateBuilder()
+            var moveState = (HedgehogSwitchMoveState)new HedgehogSwitchMoveStateBuilder()
                 .SetStartPlatform(startPlatform)
                 .SetEndPlatform(endPlatform)
                 .SetCharacterAnimation(animation)

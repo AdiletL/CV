@@ -26,16 +26,16 @@ namespace Calculate
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
         }
         
-        public static bool IsFacingTargetUsingDot(Transform objectTransform, Transform targetTransform, float thresholdDot = 1f)
+        public static bool IsFacingTargetUsingAngle(Transform objectTransform, Transform targetTransform, float thresholdDot = 0)
         {
             // Направление на цель
             Vector3 directionToTarget = (targetTransform.position - objectTransform.position).normalized;
 
-            // Значение Dot между forward направлением объекта и направлением на цель
-            float dotToTarget = Vector3.Dot(objectTransform.forward, directionToTarget);
+            // Угол между forward направлением объекта и направлением на цель
+            float angleToTarget = Vector3.Angle(objectTransform.forward, directionToTarget);
 
-            // Если Dot больше порога, объект смотрит на цель
-            return dotToTarget >= thresholdDot;
+            // Если угол меньше или равен порогу, объект смотрит на цель
+            return angleToTarget <= thresholdDot;
         }
     }
 }

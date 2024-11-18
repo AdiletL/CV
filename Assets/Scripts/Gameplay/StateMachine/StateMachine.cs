@@ -127,8 +127,7 @@ public class StateMachine
     {
         if (defaultIdleState != null)
         {
-            activeStates[StateCategory.idle] = defaultIdleState;
-            defaultIdleState.Enter();
+            SetStates(defaultIdleState.GetType());
         }
     }
 

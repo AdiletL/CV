@@ -6,6 +6,7 @@ namespace Unit.Character
     public abstract class CharacterAnimation : MonoBehaviour, ICharacter
     {
         [SerializeField] protected Animator animator;
+        [SerializeField] protected AnimationClip defaultAnimationClip;
         
         protected AnimationClip currentClip;
         protected float currentSpeed;
@@ -19,9 +20,18 @@ namespace Unit.Character
         }
 
         public void ChangeAnimation(AnimationClip clip, float duration = 0,
-            float transitionDuration = .1f, bool force = false)
+            float transitionDuration = .1f, bool isForce = false, bool isDefault = false)
         {
-            if (clip == null || (!force && currentClip == clip)) return;
+            if (!isDefault)
+            {
+                if (clip == null || (!isForce && currentClip == clip)) return;
+            }
+            else
+            {
+                if(!isForce && currentClip == clip) return;
+                clip = defaultAnimationClip;
+            }
+            
             SetSpeedAnimation(clip, duration);
             
             if(!gameObject.activeSelf) return;

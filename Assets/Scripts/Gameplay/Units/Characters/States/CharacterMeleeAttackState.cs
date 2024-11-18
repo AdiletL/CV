@@ -6,40 +6,39 @@ namespace Unit.Character
     {
         private CharacterSwitchMoveState characterSwitchMoveState;
         
-        protected virtual int checkEnemyLayer { get; }
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
         protected float cooldown, countCooldown;
 
         protected bool isApplyDamage;
+        protected bool isAttack;
         
         public GameObject GameObject { get; set; }
+        public Transform Center { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public AnimationClip[] AttackClips { get; set; }
         public AnimationClip CooldownClip { get; set; }
         public float RangeAttack { get; set; }
+        public int EnemyLayer { get; set; }
         
 
         protected AnimationClip getRandomAnimationClip()
         {
             return AttackClips[Random.Range(0, AttackClips.Length)];
         }
-
-        protected bool isCheckTarget()
+        
+        protected bool isCheckDistanceToTarget()
         {
-            currentTarget = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer, RangeAttack);
-
-            if (!currentTarget 
-                || !currentTarget.TryGetComponent(out IHealth health)
-                || !health.IsLive)
+            float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
+            if (distanceToTarget > RangeAttack)
             {
-                this.StateMachine.ExitCategory(Category);
                 return false;
             }
 
             return true;
         }
+
 
         public override void Initialize()
         {
@@ -54,15 +53,18 @@ namespace Unit.Character
         {
             base.Enter();
 
-            if (!isCheckTarget())
+            FindTarget();
+            if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
             
-            this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
+            CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+            isAttack = false;
             isApplyDamage = false;
             countDurationAttack = 0;
+            countApplyDamage = 0;
             countCooldown = 0;
         }
 
@@ -70,58 +72,125 @@ namespace Unit.Character
         {
             base.Update();
 
-            var distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
+            if (!currentTarget)
+            {
+                FindTarget();
+                if (!currentTarget)
+                {
+                    this.StateMachine.ExitCategory(Category);
+                    return;
+                }
+            }
 
-            if (!currentTarget || distanceToTarget > RangeAttack)
+            if(!isCheckDistanceToTarget())
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
-            
-            if (!Calculate.Move.IsFacingTargetUsingDot(this.GameObject.transform, currentTarget.transform))
-            {
-                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform, characterSwitchMoveState.RotationSpeed);
-                return;
-            }
 
-            if (!isApplyDamage)
+            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
             {
-                countApplyDamage += Time.deltaTime;
-                if (countApplyDamage > applyDamage)
-                {
-                    ApplyDamage();
-                    countApplyDamage = 0;
-                }
+                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform,
+                    characterSwitchMoveState.RotationSpeed);
             }
             else
             {
-                countCooldown += Time.deltaTime;
-                if (countCooldown > cooldown)
-                {
-                    if (isCheckTarget())
-                        this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
-                    
-                    isApplyDamage = false;
-                    countCooldown = 0;
-                }
+                isAttack = true;
             }
+
+            if (!isAttack)
+            {
+                CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+                return;
+            }
+
+            Cooldown();
+            Attack();
         }
         
-        public override void ApplyDamage()
-        {
-            if (isCheckTarget())
-            { 
-                currentTarget.GetComponent<IHealth>()?.TakeDamage(Damageble, this.GameObject);
-                this.CharacterAnimation?.ChangeAnimation(CooldownClip);
-                isApplyDamage = true;
-            }
-        }
-
         public override void Exit()
         {
             base.Exit();
             currentTarget = null;
         }
+
+        protected void FindTarget()
+        {
+            Collider[] hits = Physics.OverlapSphere(Center.position, RangeAttack, EnemyLayer);
+            float closestDistanceSqr = RangeAttack;
+
+            foreach (var hit in hits)
+            {
+                if(!hit.TryGetComponent(out IHealth health) || !health.IsLive) continue;
+                
+                if (hit.TryGetComponent(out UnitCenter unitCenter))
+                {
+                    float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
+                    var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
+                    
+                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, RangeAttack) 
+                        && hit2.transform.gameObject == hit.gameObject
+                        && distanceToTarget < closestDistanceSqr)
+                    {
+                        closestDistanceSqr = distanceToTarget;
+                        currentTarget = hit.transform.gameObject;
+                    }
+                }
+            }
+        }
+
+        protected virtual void Attack()
+        {
+            if (!isApplyDamage) return;
+            
+            countApplyDamage += Time.deltaTime;
+            if (countApplyDamage > applyDamage)
+            {
+                ApplyDamage();
+                isApplyDamage = false;
+                countApplyDamage = 0;
+            }
+            
+        }
+        
+        public override void ApplyDamage()
+        {
+            if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
+            {
+                if (health.IsLive)
+                    health.TakeDamage(Damageble, this.GameObject);
+                else
+                    currentTarget = null;
+            }
+            this.CharacterAnimation?.ChangeAnimation(CooldownClip);
+            isAttack = false;
+        }
+
+        protected virtual void Cooldown()
+        {
+            if(isApplyDamage) return;
+            countCooldown += Time.deltaTime;
+            
+            if (countCooldown > cooldown)
+            {
+                if (currentTarget &&
+                    Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
+                {
+                    this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
+                    isApplyDamage = true;
+                }
+                else
+                {
+                    isAttack = false;
+                }
+
+                countCooldown = 0;
+            }
+        }
+        
+        
+
+
     }
 
     public class CharacterMeleeAttackBuilder : CharacterBaseAttackStateBuilder
@@ -185,6 +254,26 @@ namespace Unit.Character
             if (state is CharacterMeleeAttackState characterMeleeAttack)
             {
                 characterMeleeAttack.RangeAttack = range;
+            }
+
+            return this;
+        }
+
+        public CharacterMeleeAttackBuilder SetEnemyLayer(int index)
+        {
+            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            {
+                characterMeleeAttack.EnemyLayer = index;
+            }
+
+            return this;
+        }
+        
+        public CharacterMeleeAttackBuilder SetCenter(Transform center)
+        {
+            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            {
+                characterMeleeAttack.Center = center;
             }
 
             return this;

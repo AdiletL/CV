@@ -7,7 +7,8 @@ namespace Unit
     public class UnitIdleState : State
     {
         public GameObject GameObject { get; set; }
-
+        public Transform Center { get; set; }
+        
         private readonly Vector3 rayFindPlatformPosition = Vector3.up * .5f;
         
         public override void Initialize()
@@ -38,6 +39,12 @@ namespace Unit
         public UnitIdleStateBuilder SetGameObject(GameObject gameObject)
         {
             state.GameObject = gameObject;
+            return this;
+        }
+
+        public UnitIdleStateBuilder SetCenter(Transform center)
+        {
+            state.Center = center;
             return this;
         }
     }

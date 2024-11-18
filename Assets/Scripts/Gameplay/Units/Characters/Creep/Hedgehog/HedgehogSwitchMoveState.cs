@@ -1,4 +1,4 @@
-﻿using ScriptableObjects.Unit.Character.Enemy;
+﻿using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
 namespace Unit.Character.Creep
@@ -42,13 +42,13 @@ namespace Unit.Character.Creep
         }
     }
 
-    public class HedgehogMoveStateBuilder : CreepMoveStateBuilder
+    public class HedgehogSwitchMoveStateBuilder : CreepSwitchMoveStateBuilder
     {
-        public HedgehogMoveStateBuilder() : base(new HedgehogSwitchMoveState())
+        public HedgehogSwitchMoveStateBuilder() : base(new HedgehogSwitchMoveState())
         {
         }
 
-        public HedgehogMoveStateBuilder SetStartPlatform(Platform startPlatform)
+        public HedgehogSwitchMoveStateBuilder SetStartPlatform(Platform startPlatform)
         {
             if (state is HedgehogSwitchMoveState hedgehogMoveState)
             {
@@ -57,7 +57,7 @@ namespace Unit.Character.Creep
 
             return this;
         }
-        public HedgehogMoveStateBuilder SetEndPlatform(Platform endPlatform)
+        public HedgehogSwitchMoveStateBuilder SetEndPlatform(Platform endPlatform)
         {
             if (state is HedgehogSwitchMoveState hedgehogMoveState)
             {

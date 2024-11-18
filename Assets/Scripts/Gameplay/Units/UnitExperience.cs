@@ -17,11 +17,18 @@ namespace Unit
         
         private AoeExperienceInfo aoeExperienceInfo;
         
+        private int giveExperience;
+        
         public IExperience ExperienceCalculate { get; protected set; }
         
         public int CurrentLevel { get; protected set; }
         public int CurrentExperience { get; protected set; }
-        public int GiveExperience { get; protected set; }
+
+        public int GiveExperience
+        {
+            get => giveExperience + CurrentExperience;
+            set => giveExperience = value;
+        }
         public int RangeTakeExperience { get; protected set; }
         
         public bool IsTakeLevel { get; protected set; }
