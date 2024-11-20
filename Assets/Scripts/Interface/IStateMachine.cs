@@ -15,6 +15,7 @@
         public void Initialize();
         public void Enter();
         public void Update();
+        public void LateUpdate();
         public void Exit();
     }
 }

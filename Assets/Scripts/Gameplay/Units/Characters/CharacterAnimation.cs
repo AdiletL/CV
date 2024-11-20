@@ -14,6 +14,8 @@ namespace Unit.Character
         private Dictionary<AnimationClip, float> clipLengths = new(); // Кэш длины клипов
         private const string TRANSITION_SPEED = "speed";
 
+        private bool isBlock;
+        
         public virtual void Initialize()
         {
             
@@ -22,6 +24,8 @@ namespace Unit.Character
         public void ChangeAnimation(AnimationClip clip, float duration = 0,
             float transitionDuration = .1f, bool isForce = false, bool isDefault = false)
         {
+            if(this.isBlock) return;
+            
             if (!isDefault)
             {
                 if (clip == null || (!isForce && currentClip == clip)) return;
@@ -56,5 +60,7 @@ namespace Unit.Character
             animator.SetFloat(TRANSITION_SPEED, speed);
             currentSpeed = speed;
         }
+
+        public void SetBlock(bool isBlock) => this.isBlock = isBlock;
     }
 }

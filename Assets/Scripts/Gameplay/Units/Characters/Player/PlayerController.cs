@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using Unity.Collections;
@@ -29,7 +30,6 @@ namespace Unit.Character.Player
             
             components.GetComponentFromArray<PlayerHealth>()?.Initialize();
             
-            //Debug.Log(stateMachine.CheckState<PlayerIdleState>());
             StateMachine.OnChangedState += OnChangedState;
             StateMachine.SetStates(typeof(PlayerIdleState));
         }
@@ -43,6 +43,7 @@ namespace Unit.Character.Player
             var enemyLayer = Layers.CREEP_LAYER;
             
             var idleState = (PlayerIdleState)new PlayerIdleStateBuilder()
+                .SetMoveConfig(so_PlayerMove)
                 .SetFinishTargetToMove(finish)
                 .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
@@ -75,6 +76,11 @@ namespace Unit.Character.Player
         private void Update()
         {
             StateMachine?.Update();
+        }
+
+        private void LateUpdate()
+        {
+            StateMachine?.LateUpdate();
         }
 
         public void SetFinishTarget(GameObject target)

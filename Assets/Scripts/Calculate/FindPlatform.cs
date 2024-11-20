@@ -11,7 +11,7 @@ namespace Calculate
         {
             Vector3 rayOrigin = origin + StartRayCheckOffset;
 
-            int hitCount = Physics.RaycastNonAlloc(rayOrigin, Vector3.down, hits, 4, Layers.PLATFORM_LAYER);
+            int hitCount = Physics.RaycastNonAlloc(rayOrigin, Vector3.down, hits, 100, Layers.PLATFORM_LAYER);
 
             if (hitCount > 0)
             {
@@ -27,7 +27,7 @@ namespace Calculate
 
         public static Platform GetPlatform(Vector3 start, Vector3 rayDirection)
         {
-            int hitCount = Physics.RaycastNonAlloc(start, rayDirection, hits, 4, Layers.PLATFORM_LAYER);
+            int hitCount = Physics.RaycastNonAlloc(start, rayDirection, hits, 100, Layers.PLATFORM_LAYER);
 
             if (hitCount > 0)
             {

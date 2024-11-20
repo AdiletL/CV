@@ -31,7 +31,7 @@ namespace Unit.Character
         protected bool isCheckDistanceToTarget()
         {
             float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
-            if (distanceToTarget > RangeAttack)
+            if (distanceToTarget > RangeAttack + .15f)
             {
                 return false;
             }
@@ -45,7 +45,7 @@ namespace Unit.Character
             base.Initialize();
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
             durationAttack = Calculate.Attack.TotalDurationAttack(AmountAttack);
-            applyDamage = durationAttack * .65f;
+            applyDamage = durationAttack * .6f;
             cooldown = durationAttack;
         }
 
@@ -90,8 +90,7 @@ namespace Unit.Character
 
             if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
             {
-                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform,
-                    characterSwitchMoveState.RotationSpeed);
+                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
             }
             else
             {

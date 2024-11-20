@@ -132,7 +132,7 @@ namespace Calculate
 
             foreach (var direction in rayDirectionsPlatform)
             {
-                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 4, Layers.PLATFORM_LAYER) ||
+                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 100, Layers.PLATFORM_LAYER) ||
                     !hitResult.transform.TryGetComponent(out Platform platform) ||
                     !platformData.TryGetValue(platform, out var data) ||
                     platform == lastCorrectPlatform ||
@@ -155,7 +155,7 @@ namespace Calculate
 
             foreach (var direction in rayDirectionsPlatform)
             {
-                if (Physics.Raycast(origin, direction, out hitResult, 4, Layers.PLATFORM_LAYER) &&
+                if (Physics.Raycast(origin, direction, out hitResult, 100, Layers.PLATFORM_LAYER) &&
                     hitResult.transform.TryGetComponent(out Platform platform) &&
                     (!platformData.TryGetValue(platform, out var data) || (!data.IsChecked && !platform.IsBlocked)))
                 {

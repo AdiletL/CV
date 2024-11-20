@@ -15,7 +15,10 @@ namespace Unit.Character
         public override void Enter()
         {
         }
-
+        public override void LateUpdate()
+        {
+            
+        }
         public override void Update()
         {
         }

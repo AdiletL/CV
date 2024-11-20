@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class StateMachine
 {
-    public event Action<StateCategory, IState> OnChangedState; 
+    public event Action<StateCategory, IState> OnChangedState;
+    public event Action<StateCategory, IState> OnExitCategory;
     
     private readonly Dictionary<StateCategory, IState> activeStates = new();
     private readonly Dictionary<Type, IState> states = new();
@@ -14,6 +15,29 @@ public class StateMachine
     
     // Cache the default idle state
     private IState defaultIdleState;
+
+    public bool IsStateNotNull(Type state)
+    {
+        return states.ContainsKey(state) && states[state] != null;
+    }
+
+    public bool IsActivateType(StateCategory category, Type state)
+    {
+        return activeStates.ContainsKey(category) && activeStates[category].GetType().IsAssignableFrom(state);
+    }
+    
+    public T GetState<T>() where T : IState
+    {
+        foreach (var state in states.Values)
+        {
+            if (state is T desiredState)
+            {
+                return desiredState;
+            }
+        }
+
+        throw new InvalidOperationException($"State of type {typeof(T)} not found.");
+    }
 
     public void Initialize()
     {
@@ -27,18 +51,7 @@ public class StateMachine
         }
     }
 
-    public T GetState<T>() where T : IState
-    {
-        foreach (var state in states.Values)
-        {
-            if (state is T desiredState)
-            {
-                return desiredState;
-            }
-        }
-
-        throw new InvalidOperationException($"State of type {typeof(T)} not found.");
-    }
+    
 
     public void AddStates(params IState[] states)
     {
@@ -79,6 +92,7 @@ public class StateMachine
             }
         }
     }
+    
 
 // Метод поиска самого глубокого состояния в иерархии для данного базового типа
     private IState FindMostDerivedState(Type baseType)
@@ -112,6 +126,9 @@ public class StateMachine
                 activeStates.Remove(category);
             }
         }
+        
+        if (activeStates.Count == 0)
+            SetDefaultState();
     }
 
     public void ExitCategory(StateCategory excludedCategory)
@@ -120,6 +137,10 @@ public class StateMachine
         {
             state.Exit();
             activeStates.Remove(excludedCategory);
+            OnExitCategory?.Invoke(excludedCategory, state);
+            
+            if (activeStates.Count == 0)
+                SetDefaultState();
         }
     }
 
@@ -133,15 +154,23 @@ public class StateMachine
 
     public void Update()
     {
-        if (activeStates.Count == 0)
-            SetDefaultState();
-
+        updateStates.Clear();
+        updateStates.AddRange(activeStates.Values);
+        
+        for (int i = updateStates.Count - 1; i >= 0; i--)
+        {
+            updateStates[i]?.Update();
+        }
+    }
+    
+    public void LateUpdate()
+    {
         updateStates.Clear();
         updateStates.AddRange(activeStates.Values);
 
         for (int i = updateStates.Count - 1; i >= 0; i--)
         {
-            updateStates[i]?.Update();
+            updateStates[i]?.LateUpdate();
         }
     }
 }

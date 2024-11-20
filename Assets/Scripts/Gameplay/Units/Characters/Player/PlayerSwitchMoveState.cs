@@ -37,6 +37,7 @@ namespace Unit.Character.Player
             if (!movementStates.ContainsKey(typeof(PlayerRunState)))
             {
                 var runState = (PlayerRunState)new PlayerRunStateBuilder()
+                    .SetMoveConfig(so_PlayerMove)
                     .SetCenter(Center)
                     .SetCharacterAnimation(this.CharacterAnimation)
                     .SetRunClips(so_PlayerMove.RunClip)

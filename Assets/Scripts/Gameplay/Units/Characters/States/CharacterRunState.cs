@@ -14,10 +14,14 @@ namespace Unit.Character
 
         public override void Enter()
         {
-            var duration = 3 / MovementSpeed;
-            CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: duration);
+            PlayAnimation();
         }
 
+        protected void PlayAnimation()
+        {
+            var duration = 2 / MovementSpeed;
+            CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: duration);
+        }
     }
 
     public class CharacterRunStateBuilder : CharacterBaseMovementStateBuilder

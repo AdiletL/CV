@@ -33,7 +33,10 @@ namespace Unit.Character
         public override void Update()
         {
         }
-
+        public override void LateUpdate()
+        {
+            
+        }
         public override void Exit()
         {
         }

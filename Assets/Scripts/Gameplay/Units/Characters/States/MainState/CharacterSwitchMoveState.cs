@@ -29,7 +29,10 @@ namespace Unit.Character
         {
             DestermineState();
         }
-
+        public override void LateUpdate()
+        {
+            
+        }
         public override void Exit()
         {
         }

@@ -20,9 +20,13 @@ namespace Unit.Character
         public override void Enter()
         {
             base.Enter();
-            CharacterAnimation.ChangeAnimation(getRandomIdleClip(), transitionDuration: .5f);
+            PlayAnimation();
         }
 
+        protected void PlayAnimation()
+        {
+            CharacterAnimation.ChangeAnimation(getRandomIdleClip(), transitionDuration: .5f);
+        }
     }
 
     public class CharacterIdleStateBuilder : UnitIdleStateBuilder

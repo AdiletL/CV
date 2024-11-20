@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
+using Machine;
+using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 
@@ -14,15 +16,20 @@ namespace Unit.Character.Player
         private PathFinding pathFinding;
         private PlayerSwitchAttackState playerSwitchAttackState;
 
-        private float checkEnemyCooldown = .3f;
+        private float checkEnemyCooldown = .25f;
         private float countCheckEnemyCooldown;
+        private int asdf;
+
+        private bool isCheckAttack;
+        private bool isCheckJump;
         
         private Queue<Platform> pathToPoint = new();
         
-        private int asdf;
         
         public GameObject FinishTargetForMove { get; set; }
+        public SO_PlayerMove SO_PlayerMove { get; set; }
 
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -36,14 +43,25 @@ namespace Unit.Character.Player
         {
             base.Enter();
             pathToPoint.Clear();
+            
+            isCheckJump = !this.StateMachine.IsActivateType(StateCategory.action, typeof(PlayerJumpState));
+            isCheckAttack = isCheckJump;
+            
+            this.StateMachine.OnExitCategory += OnExitCategory;
         }
 
-        public override void Update()
+        public override void LateUpdate()
         {
             CheckAttack();
             CheckMove();
+            CheckJump();
         }
 
+        public override void Exit()
+        {
+            base.Exit();
+            this.StateMachine.OnExitCategory -= OnExitCategory;
+        }
 
         public void SetFinishTarget(GameObject finish)
         {
@@ -53,7 +71,8 @@ namespace Unit.Character.Player
 
         private void CheckMove()
         {
-            if (GameObject.transform.position == FinishTargetForMove.transform.position)
+            if (GameObject.transform.position.x == FinishTargetForMove.transform.position.x 
+                && GameObject.transform.position.z == FinishTargetForMove.transform.position.z)
             {
                 pathToPoint.Clear();
                 ASD?.Invoke();
@@ -63,7 +82,6 @@ namespace Unit.Character.Player
             {
                 if (FinishTargetForMove && pathToPoint.Count == 0) FindPathToPoint();
                 if (pathToPoint.Count == 0) return;
-
 
                 this.StateMachine.ExitCategory(Category);
                 this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToFinish(pathToPoint);
@@ -81,6 +99,8 @@ namespace Unit.Character.Player
         
         private void CheckAttack()
         {
+            if(!isCheckAttack) return;
+            
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
@@ -92,6 +112,46 @@ namespace Unit.Character.Player
 
                 countCheckEnemyCooldown = 0;
             }
+        }
+        
+        private void OnExitCategory(Machine.StateCategory category, Machine.IState state)
+        {
+            if (category == Machine.StateCategory.action
+                && state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            {
+                PlayAnimation();
+                isCheckJump = true;
+            }
+        }
+        
+
+        private void CheckJump()
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && isCheckJump)
+            {
+                StartJump();
+            }
+        }
+        private void StartJump()
+        {
+            if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
+            {
+                var playerJumpState = (PlayerJumpState)new PlayerJumpStateBuilder()
+                    .SetAnimationCurve(SO_PlayerMove.JumpCurve)
+                    .SetJumpDuration(SO_PlayerMove.JumpDuration)
+                    .SetJumpClip(SO_PlayerMove.JumpClip)
+                    .SetJumpHeight(SO_PlayerMove.JumpHeight)
+                    .SetGameObject(GameObject)
+                    .SetCharacterAnimation(CharacterAnimation)
+                    .SetStateMachine(this.StateMachine)
+                    .Build();
+                        
+                playerJumpState.Initialize();
+                this.StateMachine.AddStates(playerJumpState);
+            }
+            this.StateMachine.SetStates(typeof(PlayerJumpState));
+            isCheckJump = false;
+            isCheckAttack = false;
         }
     }
     
@@ -107,6 +167,14 @@ namespace Unit.Character.Player
         {
             if (state is PlayerIdleState playerIdleState)
                 playerIdleState.FinishTargetForMove = finish;
+
+            return this;
+        }
+        
+        public PlayerIdleStateBuilder SetMoveConfig(SO_PlayerMove config)
+        {
+            if (state is PlayerIdleState playerIdleState)
+                playerIdleState.SO_PlayerMove = config;
 
             return this;
         }

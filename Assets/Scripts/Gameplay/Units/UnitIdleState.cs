@@ -23,7 +23,10 @@ namespace Unit
         public override void Update()
         {
         }
-
+        public override void LateUpdate()
+        {
+            
+        }
         public override void Exit()
         {
             FindPlatform.GetPlatform(GameObject.transform.position + rayFindPlatformPosition, Vector3.down)?.RemoveGameObject(GameObject);
