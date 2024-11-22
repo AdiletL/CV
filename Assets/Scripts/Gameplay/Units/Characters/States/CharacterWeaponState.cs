@@ -1,29 +1,31 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Weapon;
+using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character
 {
     public class CharacterWeaponState : CharacterBaseAttackState
     {
-        private CharacterSwitchMoveState characterSwitchMoveState;
+        protected CharacterSwitchMoveState characterSwitchMoveState;
+        public List<AnimationClip> AttackClips { get; set; }
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
+        protected float range;
 
         protected bool isApplyDamage;
         protected bool isAttack;
         
+        public SO_PlayerAttack SO_PlayerAttack { get; set; }
         public Weapon CurrentWeapon { get; set; }
+        public CharacterAnimation CharacterAnimation { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public Transform WeaponParent { get; set; }
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public List<AnimationClip> AttackClips { get; set; }
         public AnimationClip CooldownClip { get; set; }
-        public float Range { get; set; }
         public int EnemyLayer { get; set; }
         
 
@@ -35,7 +37,7 @@ namespace Unit.Character
         protected bool isCheckDistanceToTarget()
         {
             float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
-            if (distanceToTarget > Range + .15f)
+            if (distanceToTarget > range + .15f)
             {
                 return false;
             }
@@ -125,7 +127,14 @@ namespace Unit.Character
             durationAttack = Calculate.Attack.TotalDurationAttack(CurrentWeapon.AmountAttack);
             applyDamage = durationAttack * .55f;
             cooldown = durationAttack;
-            Range = CurrentWeapon.Range;
+            range = CurrentWeapon.Range;
+
+            switch (weapon)
+            {
+                case Sword:
+                    SetAnimationClip(SO_PlayerAttack.SwordAttackClip, SO_PlayerAttack.SwordCooldownClip);
+                    break;
+            }
             
             Restart();
         }
@@ -138,8 +147,8 @@ namespace Unit.Character
         
         protected void FindTarget()
         {
-            Collider[] hits = Physics.OverlapSphere(Center.position, Range, EnemyLayer);
-            float closestDistanceSqr = Range;
+            Collider[] hits = Physics.OverlapSphere(Center.position, range, EnemyLayer);
+            float closestDistanceSqr = range;
 
             foreach (var hit in hits)
             {
@@ -150,7 +159,7 @@ namespace Unit.Character
                     float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
                     var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
                     
-                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, Range) 
+                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, range) 
                         && hit2.transform.gameObject == hit.gameObject
                         && distanceToTarget < closestDistanceSqr)
                     {
@@ -234,26 +243,6 @@ namespace Unit.Character
 
             return this;
         }
-
-        public CharacterWeaponBuilder SetAttackClip(List<AnimationClip> animationClips)
-        {
-            if (state is CharacterWeaponState characterWeapon)
-            {
-                characterWeapon.AttackClips = animationClips;
-            }
-
-            return this;
-        }
-
-        public CharacterWeaponBuilder SetCooldowClip(AnimationClip animationClip)
-        {
-            if (state is CharacterWeaponState characterWeapon)
-            {
-                characterWeapon.CooldownClip = animationClip;
-            }
-
-            return this;
-        }
         
         public CharacterWeaponBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
@@ -264,26 +253,7 @@ namespace Unit.Character
 
             return this;
         }
-
-        public CharacterWeaponBuilder SetAmountAttack(int amount)
-        {
-            if (state is CharacterWeaponState characterWeapon)
-            {
-                characterWeapon.AmountAttack = amount;
-            }
-
-            return this;
-        }
-
-        public CharacterWeaponBuilder SetRangeAttack(float range)
-        {
-            if (state is CharacterWeaponState characterWeapon)
-            {
-                characterWeapon.Range = range;
-            }
-
-            return this;
-        }
+        
 
         public CharacterWeaponBuilder SetEnemyLayer(int index)
         {
@@ -320,6 +290,16 @@ namespace Unit.Character
             if (state is CharacterWeaponState characterWeapon)
             {
                 characterWeapon.WeaponParent = parent;
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetConfig(SO_PlayerAttack config)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.SO_PlayerAttack = config;
             }
 
             return this;

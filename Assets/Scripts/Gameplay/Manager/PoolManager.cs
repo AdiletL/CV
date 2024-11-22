@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Manager
 {
     public class PoolManager : MonoBehaviour, IManager, IPoolable
     {
+        [Inject] private DiContainer diContainer;
+        
         [SerializeField] private List<GameObject> poolObjects;
         
         public Transform poolParent { get; private set; }
         public List<GameObject> PoolObjects { get; private set; } = new();
+        
         
         
         public void Initialize()
@@ -27,6 +31,7 @@ namespace Gameplay.Manager
                 {
                     poolObject.transform.SetParent(null);
                     poolObject.SetActive(true);
+                    PoolObjects.RemoveAt(i);
                     return poolObject;
                 }
             }
@@ -37,7 +42,7 @@ namespace Gameplay.Manager
                 var component = poolObject.GetComponent<T>();
                 if (component != null)
                 {
-                    var newGameObject = Instantiate(poolObject);
+                    var newGameObject = diContainer.InstantiatePrefab(poolObject);
                     return newGameObject;
                 }
             }
@@ -49,6 +54,7 @@ namespace Gameplay.Manager
         {
             obj.transform.SetParent(poolParent);
             obj.SetActive(false);
+            PoolObjects.Add(obj);
         }
     }
 }

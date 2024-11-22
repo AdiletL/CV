@@ -48,15 +48,12 @@ namespace Unit.Character.Player
         private PlayerWeaponState CreateWeaponState()
         {
             return (PlayerWeaponState)new PlayerWeaponBuilder()
+                .SetConfig(so_PlayerAttack)
                 .SetWeaponParent(WeaponParent)
                 .SetEnemyLayer(EnemyLayer)
                 .SetCenter(Center)
-                .SetRangeAttack(so_PlayerAttack.Range)
                 .SetGameObject(this.GameObject)
-                .SetAmountAttack(so_PlayerAttack.AmountAttack)
                 .SetCharacterAnimation(playerAnimation)
-                .SetAttackClip(so_PlayerAttack.SwordAttackClip)
-                .SetCooldowClip(so_PlayerAttack.SwordCooldownClip)
                 .SetDamageble(Damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
@@ -101,16 +98,7 @@ namespace Unit.Character.Player
                 this.StateMachine.AddStates(newState);
             }
 
-            var weaponState = this.StateMachine.GetState<PlayerWeaponState>();
-            weaponState.SetWeapon(currentWeapon);
-            
-            switch (currentWeapon)
-            {
-                case Sword:
-                    weaponState.SetAnimationClip(so_PlayerAttack.SwordAttackClip,
-                        so_PlayerAttack.SwordCooldownClip);
-                    break;
-            }
+            this.StateMachine.GetState<PlayerWeaponState>().SetWeapon(currentWeapon);
         }
     }
 
