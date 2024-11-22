@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 2
   <AmountAttack>k__BackingField: 3
-  <RangeAttack>k__BackingField: 1
-  <MeleeAttackClip>k__BackingField:
+  <Range>k__BackingField: 2
+  <SwordAttackClip>k__BackingField:
   - {fileID: 1827226128182048838, guid: db509ad77f9b4f84a8eb1989f589b24c, type: 3}
   - {fileID: 1827226128182048838, guid: 8283fadf2c89507469495f30db8680db, type: 3}
   - {fileID: 1827226128182048838, guid: 9a6c3585df66f2e4782635fc7a23494c, type: 3}
-  <CooldownMeleeAttackClip>k__BackingField: {fileID: 1827226128182048838, guid: 0308cf4e83cf517488b60af58b290fe0, type: 3}
+  <SwordCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 0308cf4e83cf517488b60af58b290fe0, type: 3}

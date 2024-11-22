@@ -9,8 +9,8 @@ namespace Unit.Character
         
         protected GameObject currentTarget;
         
-        public IDamageble Damageble { get; set; }
-        public float AmountAttack { get; set; }
+        public IDamageable Damageable { get; set; }
+        public int AmountAttack { get; set; }
 
         
         public override void Initialize()
@@ -37,7 +37,10 @@ namespace Unit.Character
         {
         }
 
-
+        public virtual void Attack()
+        {
+            
+        }
 
         public virtual void ApplyDamage()
         {
@@ -57,9 +60,9 @@ namespace Unit.Character
             
         }
 
-        public CharacterBaseAttackStateBuilder SetDamageble(IDamageble damageble)
+        public CharacterBaseAttackStateBuilder SetDamageble(IDamageable damageable)
         {
-            state.Damageble = damageble;
+            state.Damageable = damageable;
             return this;
         }
     }

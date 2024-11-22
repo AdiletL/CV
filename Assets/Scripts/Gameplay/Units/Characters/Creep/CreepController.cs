@@ -45,7 +45,7 @@ namespace Unit.Character.Creep
                 .SetStateMachine(this.StateMachine)
                 .Build();;
             
-            var attackState = (CreepSwitchAttackState)new CreepSwitchAttackStateBuilder(new CreepSwitchAttackState())
+            var attackState = (CreepSwitchAttackState)new CreepSwitchSwitchAttackStateBuilder(new CreepSwitchAttackState())
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();

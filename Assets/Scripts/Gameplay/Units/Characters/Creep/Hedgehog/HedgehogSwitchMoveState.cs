@@ -10,6 +10,20 @@ namespace Unit.Character.Creep
         
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
+        
+        
+        private HedgehogPatrolState CreatePatrolState()
+        {
+            return (HedgehogPatrolState)new HedgehogPatrolStateBuilder()
+                .SetEnemyAnimation(hedgehogAnimation)
+                .SetWalkClip(so_HedgehogMove.WalkClip)
+                .SetStartPoint(StartPlatform)
+                .SetEndPoint(EndPlatform)
+                .SetGameObject(GameObject)
+                .SetMovementSpeed(so_HedgehogMove.RunSpeed)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
 
         public override void Initialize()
         {
@@ -21,21 +35,12 @@ namespace Unit.Character.Creep
         protected override void DestermineState()
         {
             base.DestermineState();
-            if (!movementStates.ContainsKey(typeof(HedgehogPatrolState)))
+            if (!this.StateMachine.IsStateNotNull(typeof(HedgehogPatrolState)))
             {
-                var patrolState = (HedgehogPatrolState)new HedgehogPatrolStateBuilder()
-                    .SetEnemyAnimation(hedgehogAnimation)
-                    .SetWalkClip(so_HedgehogMove.WalkClip)
-                    .SetStartPoint(StartPlatform)
-                    .SetEndPoint(EndPlatform)
-                    .SetGameObject(GameObject)
-                    .SetMovementSpeed(so_HedgehogMove.RunSpeed)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
+                var newState = CreatePatrolState();
                 
-                patrolState.Initialize();
-                movementStates.TryAdd(typeof(HedgehogPatrolState), patrolState);
-                this.StateMachine.AddStates(patrolState);
+                newState.Initialize();
+                this.StateMachine.AddStates(newState);
             }
             
             this.StateMachine.SetStates(typeof(HedgehogPatrolState));

@@ -56,7 +56,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
         }
     }
 
-    public GameObject GetFreePlatform()
+    public GameObject GetFreePlatform(Vector3 currentPosition = new Vector3())
     {
         var copyPlatforms = new List<Platform>(platforms);
         var randomIndex = 0;
@@ -65,7 +65,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
             randomIndex = Random.Range(0, copyPlatforms.Count);
             var platform = copyPlatforms[randomIndex];
 
-            if (platform.IsFreeForSpawn())
+            if (platform.IsFreeForSpawn() && platform.transform.position != currentPosition)
                 return platform.gameObject;
             copyPlatforms.Remove(platform);
         }

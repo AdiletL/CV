@@ -17,7 +17,7 @@ namespace Unit.Character.Player
         
         private Vector3 currentFinishPosition;
 
-        private readonly float cooldownCheckEnemy = .25f;
+        private readonly float cooldownCheckEnemy = .05f;
         private float countCooldownCheckEnemy;
 
         private bool isRotate;

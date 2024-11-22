@@ -1,4 +1,6 @@
-﻿using Gameplay.Damage;
+﻿using System;
+using Gameplay.Damage;
+using Gameplay.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
@@ -8,7 +10,10 @@ namespace Unit.Character.Player
     {
         private PlayerAnimation playerAnimation;
         private SO_PlayerAttack so_PlayerAttack;
+        private Weapon currentWeapon;
         private float rangeAttack;
+        
+        public Transform WeaponParent { get; set; }
         
         protected bool isCheckDistanceToTarget(Vector3 targetPosition)
         {
@@ -17,43 +22,6 @@ namespace Unit.Character.Player
                 return false;
             else
                 return true;
-        }
-        
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            playerAnimation = (PlayerAnimation)CharacterAnimation;
-            so_PlayerAttack = (SO_PlayerAttack)SO_CharacterAttack;
-            damageble = new NormalDamage(so_PlayerAttack.Damage);
-            rangeAttack = so_PlayerAttack.RangeAttack;
-        }
-
-        protected override void DestermineState()
-        {
-            //TODO: Type attack state
-            
-            if(!attackStates.ContainsKey(typeof(PlayerMeleeAttackState)))
-            {
-                var meleeState = (PlayerMeleeAttackState)new PlayerMeleeAttackBuilder()
-                    .SetEnemyLayer(EnemyLayer)
-                    .SetCenter(Center)
-                    .SetRangeAttack(so_PlayerAttack.RangeAttack)
-                    .SetGameObject(this.GameObject)
-                    .SetAmountAttack(so_PlayerAttack.AmountAttack)
-                    .SetCharacterAnimation(playerAnimation)
-                    .SetAttackClip(so_PlayerAttack.MeleeAttackClip)
-                    .SetCooldowClip(so_PlayerAttack.CooldownMeleeAttackClip)
-                    .SetDamageble(damageble)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
-                
-                meleeState.Initialize();
-                attackStates.TryAdd(typeof(PlayerMeleeAttackState), meleeState);
-                this.StateMachine.AddStates(meleeState);
-            }
-            
-            this.StateMachine.SetStates(typeof(PlayerMeleeAttackState));
         }
         
         public bool IsCheckTarget()
@@ -76,13 +44,88 @@ namespace Unit.Character.Player
 
             return false;
         }
-    }
-
-    public class PlayerAttackStateBuilder : CharacterAttackStateBuilder
-    {
-        public PlayerAttackStateBuilder() : base(new PlayerSwitchAttackState())
+        
+        private PlayerWeaponState CreateWeaponState()
         {
+            return (PlayerWeaponState)new PlayerWeaponBuilder()
+                .SetWeaponParent(WeaponParent)
+                .SetEnemyLayer(EnemyLayer)
+                .SetCenter(Center)
+                .SetRangeAttack(so_PlayerAttack.Range)
+                .SetGameObject(this.GameObject)
+                .SetAmountAttack(so_PlayerAttack.AmountAttack)
+                .SetCharacterAnimation(playerAnimation)
+                .SetAttackClip(so_PlayerAttack.SwordAttackClip)
+                .SetCooldowClip(so_PlayerAttack.SwordCooldownClip)
+                .SetDamageble(Damageable)
+                .SetStateMachine(this.StateMachine)
+                .Build();
         }
         
+        public override void Initialize()
+        {
+            base.Initialize();
+            playerAnimation = (PlayerAnimation)CharacterAnimation;
+            so_PlayerAttack = (SO_PlayerAttack)SO_CharacterAttack;
+            Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
+        }
+
+        protected override void DestermineState()
+        {
+            //TODO: Type attack state
+            
+            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+            {
+                var newState = CreateWeaponState();
+                
+                newState.Initialize();
+                this.StateMachine.AddStates(newState);
+            }
+            
+            if(currentWeapon != null)
+                this.StateMachine.SetStates(typeof(PlayerWeaponState));
+        }
+        
+        
+
+        public void SetWeapon(Weapon weapon)
+        {
+            currentWeapon = weapon;
+            rangeAttack = currentWeapon.Range;
+            
+            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+            {
+                var newState = CreateWeaponState();
+                
+                newState.Initialize();
+                this.StateMachine.AddStates(newState);
+            }
+
+            var weaponState = this.StateMachine.GetState<PlayerWeaponState>();
+            weaponState.SetWeapon(currentWeapon);
+            
+            switch (currentWeapon)
+            {
+                case Sword:
+                    weaponState.SetAnimationClip(so_PlayerAttack.SwordAttackClip,
+                        so_PlayerAttack.SwordCooldownClip);
+                    break;
+            }
+        }
+    }
+
+    public class PlayerSwitchAttackStateBuilder : CharacterSwitchAttackStateBuilder
+    {
+        public PlayerSwitchAttackStateBuilder() : base(new PlayerSwitchAttackState())
+        {
+        }
+
+        public PlayerSwitchAttackStateBuilder SetWeaponParent(Transform weaponParent)
+        {
+            if (state is PlayerSwitchAttackState playerSwitchAttackState)
+                playerSwitchAttackState.WeaponParent = weaponParent;
+
+            return this;
+        }
     }
 }

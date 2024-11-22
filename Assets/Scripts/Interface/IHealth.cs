@@ -10,7 +10,7 @@ public interface IHealth
     public bool IsLive { get; }
     public void Initialize();
     public void IncreaseStates(IState state);
-    public void TakeDamage(IDamageble damageble, GameObject gameObject);
+    public void TakeDamage(IDamageable damageable);
 }
 
 public interface IHealthInfo
@@ -19,8 +19,9 @@ public interface IHealthInfo
     public int MaxHealth { get; set; }
 }
 
-public interface IDamageble
+public interface IDamageable
 {
+    public GameObject GameObject { get; set; }
     public int Amount { get; set; }
     public int GetTotalDamage(GameObject gameObject);
 }

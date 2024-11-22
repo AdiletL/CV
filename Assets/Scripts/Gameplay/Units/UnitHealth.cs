@@ -99,12 +99,12 @@ namespace Unit
             }
         }
         
-        public virtual void TakeDamage(IDamageble damageble, GameObject gameObject)
+        public virtual void TakeDamage(IDamageable damageable)
         {
-            var totalDamage = damageble.GetTotalDamage(gameObject);
+            var totalDamage = damageable.GetTotalDamage(gameObject);
             if(totalDamage == 0) return;
             
-            Damaging = gameObject;
+            Damaging = damageable.GameObject;
             CurrentHealth -= totalDamage;
         }
     }

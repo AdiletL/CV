@@ -1,37 +1,41 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Gameplay.Weapon;
+using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterMeleeAttackState : CharacterBaseAttackState
+    public class CharacterWeaponState : CharacterBaseAttackState
     {
         private CharacterSwitchMoveState characterSwitchMoveState;
-        
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
         protected float cooldown, countCooldown;
+        protected float angleToTarget = 10;
 
         protected bool isApplyDamage;
         protected bool isAttack;
         
+        public Weapon CurrentWeapon { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
+        public Transform WeaponParent { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
-        public AnimationClip[] AttackClips { get; set; }
+        public List<AnimationClip> AttackClips { get; set; }
         public AnimationClip CooldownClip { get; set; }
-        public float RangeAttack { get; set; }
+        public float Range { get; set; }
         public int EnemyLayer { get; set; }
         
 
         protected AnimationClip getRandomAnimationClip()
         {
-            return AttackClips[Random.Range(0, AttackClips.Length)];
+            return AttackClips[Random.Range(0, AttackClips.Count)];
         }
         
         protected bool isCheckDistanceToTarget()
         {
             float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
-            if (distanceToTarget > RangeAttack + .15f)
+            if (distanceToTarget > Range + .15f)
             {
                 return false;
             }
@@ -44,28 +48,24 @@ namespace Unit.Character
         {
             base.Initialize();
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
-            durationAttack = Calculate.Attack.TotalDurationAttack(AmountAttack);
-            applyDamage = durationAttack * .6f;
-            cooldown = durationAttack;
         }
 
         public override void Enter()
         {
             base.Enter();
 
-            FindTarget();
+            if(CurrentWeapon != null)
+                FindTarget();
+            
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
             
+            CurrentWeapon.Show();
             CharacterAnimation?.ChangeAnimation(null, isDefault: true);
-            isAttack = false;
-            isApplyDamage = false;
-            countDurationAttack = 0;
-            countApplyDamage = 0;
-            countCooldown = 0;
+            Restart();
         }
 
         public override void Update()
@@ -89,13 +89,10 @@ namespace Unit.Character
             }
 
             if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
-            {
                 Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
-            }
-            else
-            {
+               
+            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
                 isAttack = true;
-            }
 
             if (!isAttack)
             {
@@ -111,12 +108,38 @@ namespace Unit.Character
         {
             base.Exit();
             currentTarget = null;
+            CurrentWeapon?.Hide();
         }
 
+        protected virtual void Restart()
+        {
+            isAttack = false;
+            isApplyDamage = false;
+            countDurationAttack = 0;
+            countApplyDamage = 0;
+            countCooldown = cooldown;
+        }
+        public virtual void SetWeapon(Weapon weapon)
+        {
+            CurrentWeapon = weapon;
+            durationAttack = Calculate.Attack.TotalDurationAttack(CurrentWeapon.AmountAttack);
+            applyDamage = durationAttack * .55f;
+            cooldown = durationAttack;
+            Range = CurrentWeapon.Range;
+            
+            Restart();
+        }
+
+        public virtual void SetAnimationClip(List<AnimationClip> attackClips, AnimationClip cooldownClip)
+        {
+            AttackClips = attackClips;
+            CooldownClip = cooldownClip;
+        }
+        
         protected void FindTarget()
         {
-            Collider[] hits = Physics.OverlapSphere(Center.position, RangeAttack, EnemyLayer);
-            float closestDistanceSqr = RangeAttack;
+            Collider[] hits = Physics.OverlapSphere(Center.position, Range, EnemyLayer);
+            float closestDistanceSqr = Range;
 
             foreach (var hit in hits)
             {
@@ -127,19 +150,21 @@ namespace Unit.Character
                     float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
                     var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
                     
-                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, RangeAttack) 
+                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, Range) 
                         && hit2.transform.gameObject == hit.gameObject
                         && distanceToTarget < closestDistanceSqr)
                     {
                         closestDistanceSqr = distanceToTarget;
                         currentTarget = hit.transform.gameObject;
+                        CurrentWeapon.SetTarget(currentTarget);
                     }
                 }
             }
         }
 
-        protected virtual void Attack()
+        public override void Attack()
         {
+            base.Attack();
             if (!isApplyDamage) return;
             
             countApplyDamage += Time.deltaTime;
@@ -157,7 +182,7 @@ namespace Unit.Character
             if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
             {
                 if (health.IsLive)
-                    health.TakeDamage(Damageble, this.GameObject);
+                    CurrentWeapon.ApplyDamage();
                 else
                     currentTarget = null;
             }
@@ -172,9 +197,15 @@ namespace Unit.Character
             
             if (countCooldown > cooldown)
             {
-                if (currentTarget &&
-                    Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
+                if (currentTarget 
+                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
                 {
+                    if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
+                    {
+                        currentTarget = null;
+                        return;
+                    }
+                    
                     this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
                     isApplyDamage = true;
                 }
@@ -186,93 +217,109 @@ namespace Unit.Character
                 countCooldown = 0;
             }
         }
-        
-        
-
-
     }
 
-    public class CharacterMeleeAttackBuilder : CharacterBaseAttackStateBuilder
+    public class CharacterWeaponBuilder : CharacterBaseAttackStateBuilder
     {
-        public CharacterMeleeAttackBuilder(CharacterMeleeAttackState instance) : base(instance)
+        public CharacterWeaponBuilder(CharacterWeaponState instance) : base(instance)
         {
         }
 
-        public CharacterMeleeAttackBuilder SetGameObject(GameObject gameObject)
+        public CharacterWeaponBuilder SetGameObject(GameObject gameObject)
         {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            if (state is CharacterWeaponState characterWeapon)
             {
-                characterMeleeAttack.GameObject = gameObject;
+                characterWeapon.GameObject = gameObject;
             }
 
             return this;
         }
 
-        public CharacterMeleeAttackBuilder SetAttackClip(AnimationClip[] animationClips)
+        public CharacterWeaponBuilder SetAttackClip(List<AnimationClip> animationClips)
         {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            if (state is CharacterWeaponState characterWeapon)
             {
-                characterMeleeAttack.AttackClips = animationClips;
+                characterWeapon.AttackClips = animationClips;
             }
 
             return this;
         }
 
-        public CharacterMeleeAttackBuilder SetCooldowClip(AnimationClip animationClip)
+        public CharacterWeaponBuilder SetCooldowClip(AnimationClip animationClip)
         {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            if (state is CharacterWeaponState characterWeapon)
             {
-                characterMeleeAttack.CooldownClip = animationClip;
-            }
-
-            return this;
-        }
-        
-        public CharacterMeleeAttackBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
-        {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
-            {
-                characterMeleeAttack.CharacterAnimation = characterAnimation;
-            }
-
-            return this;
-        }
-
-        public CharacterMeleeAttackBuilder SetAmountAttack(float amount)
-        {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
-            {
-                characterMeleeAttack.AmountAttack = amount;
-            }
-
-            return this;
-        }
-
-        public CharacterMeleeAttackBuilder SetRangeAttack(float range)
-        {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
-            {
-                characterMeleeAttack.RangeAttack = range;
-            }
-
-            return this;
-        }
-
-        public CharacterMeleeAttackBuilder SetEnemyLayer(int index)
-        {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
-            {
-                characterMeleeAttack.EnemyLayer = index;
+                characterWeapon.CooldownClip = animationClip;
             }
 
             return this;
         }
         
-        public CharacterMeleeAttackBuilder SetCenter(Transform center)
+        public CharacterWeaponBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            if (state is CharacterMeleeAttackState characterMeleeAttack)
+            if (state is CharacterWeaponState characterWeapon)
             {
-                characterMeleeAttack.Center = center;
+                characterWeapon.CharacterAnimation = characterAnimation;
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetAmountAttack(int amount)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.AmountAttack = amount;
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetRangeAttack(float range)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.Range = range;
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetEnemyLayer(int index)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.EnemyLayer = index;
+            }
+
+            return this;
+        }
+        
+        public CharacterWeaponBuilder SetCenter(Transform center)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.Center = center;
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetWeapon(Weapon weapon)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.SetWeapon(weapon);
+            }
+
+            return this;
+        }
+
+        public CharacterWeaponBuilder SetWeaponParent(Transform parent)
+        {
+            if (state is CharacterWeaponState characterWeapon)
+            {
+                characterWeapon.WeaponParent = parent;
             }
 
             return this;

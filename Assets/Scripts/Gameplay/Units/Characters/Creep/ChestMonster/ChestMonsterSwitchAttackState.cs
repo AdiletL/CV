@@ -5,9 +5,9 @@
         
     }
     
-    public class ChestMonsterSwitchAttackStateBuilder : CreepSwitchAttackStateBuilder
+    public class ChestMonsterSwitchSwitchAttackStateBuilder : CreepSwitchSwitchAttackStateBuilder
     {
-        public ChestMonsterSwitchAttackStateBuilder() : base(new ChestMonsterSwitchAttackState())
+        public ChestMonsterSwitchSwitchAttackStateBuilder() : base(new ChestMonsterSwitchAttackState())
         {
         }
     }

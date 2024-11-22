@@ -31,9 +31,9 @@ namespace Unit.Character.Creep
             CreepController.StateMachine.AddStates(takeDamageState);
         }
 
-        public override void TakeDamage(IDamageble damageble, GameObject gameObject)
+        public override void TakeDamage(IDamageable damageable)
         {
-            base.TakeDamage(damageble, gameObject);
+            base.TakeDamage(damageable);
             
             CreepController.StateMachine.ExitCategory(StateCategory.action);
             CreepController.StateMachine.SetStates(typeof(CreepTakeDamageState));

@@ -5,9 +5,9 @@
         
     }
 
-    public class CreepSwitchAttackStateBuilder : CharacterAttackStateBuilder
+    public class CreepSwitchSwitchAttackStateBuilder : CharacterSwitchAttackStateBuilder
     {
-        public CreepSwitchAttackStateBuilder(CharacterSwitchAttackState instance) : base(instance)
+        public CreepSwitchSwitchAttackStateBuilder(CharacterSwitchAttackState instance) : base(instance)
         {
         }
     }

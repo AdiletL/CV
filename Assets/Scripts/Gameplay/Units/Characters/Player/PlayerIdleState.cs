@@ -16,7 +16,7 @@ namespace Unit.Character.Player
         private PathFinding pathFinding;
         private PlayerSwitchAttackState playerSwitchAttackState;
 
-        private float checkEnemyCooldown = .25f;
+        private float checkEnemyCooldown = .05f;
         private float countCheckEnemyCooldown;
         private int asdf;
 

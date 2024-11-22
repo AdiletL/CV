@@ -11,8 +11,7 @@ namespace Unit.Character
         public override StateCategory Category { get; } = StateCategory.attack;
         
 
-        protected IDamageble damageble;
-        protected Dictionary<Type, CharacterBaseAttackState> attackStates = new();
+        protected IDamageable Damageable;
 
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
@@ -51,35 +50,35 @@ namespace Unit.Character
         }
     }
 
-    public class CharacterAttackStateBuilder : StateBuilder<CharacterSwitchAttackState>
+    public class CharacterSwitchAttackStateBuilder : StateBuilder<CharacterSwitchAttackState>
     {
-        public CharacterAttackStateBuilder(CharacterSwitchAttackState instance) : base(instance)
+        public CharacterSwitchAttackStateBuilder(CharacterSwitchAttackState instance) : base(instance)
         {
         }
 
-        public CharacterAttackStateBuilder SetGameObject(GameObject gameObject)
+        public CharacterSwitchAttackStateBuilder SetGameObject(GameObject gameObject)
         {
             state.GameObject = gameObject;
             return this;
         }
 
-        public CharacterAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterSwitchAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             state.CharacterAnimation = characterAnimation;
             return this;
         }
 
-        public CharacterAttackStateBuilder SetConfig(SO_CharacterAttack config)
+        public CharacterSwitchAttackStateBuilder SetConfig(SO_CharacterAttack config)
         {
             state.SO_CharacterAttack = config;
             return this;
         }
-        public CharacterAttackStateBuilder SetCenter(Transform center)
+        public CharacterSwitchAttackStateBuilder SetCenter(Transform center)
         {
             state.Center = center;
             return this;
         }
-        public CharacterAttackStateBuilder SetEnemyLayer(int index)
+        public CharacterSwitchAttackStateBuilder SetEnemyLayer(int index)
         {
             state.EnemyLayer = index;
             return this;

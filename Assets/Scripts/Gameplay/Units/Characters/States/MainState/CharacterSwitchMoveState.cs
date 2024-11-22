@@ -14,7 +14,6 @@ namespace Unit.Character
         public GameObject GameObject  { get; set; }
         public float RotationSpeed { get; set; }
 
-        protected Dictionary<Type, CharacterBaseMovementState> movementStates = new();
         
         public override void Initialize()
         {

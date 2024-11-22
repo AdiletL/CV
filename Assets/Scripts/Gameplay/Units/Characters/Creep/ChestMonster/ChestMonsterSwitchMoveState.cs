@@ -10,6 +10,19 @@ namespace Unit.Character.Creep
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
 
+        private ChestMonsterPatrolState CreatePatrolState()
+        {
+            return (ChestMonsterPatrolState)new ChestMonsterPatrolStateBuilder()
+                .SetEnemyAnimation(hedgehogAnimation)
+                .SetWalkClip(so_HedgehogMove.WalkClip)
+                .SetStartPoint(StartPlatform)
+                .SetEndPoint(EndPlatform)
+                .SetGameObject(GameObject)
+                .SetMovementSpeed(so_HedgehogMove.RunSpeed)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -20,21 +33,12 @@ namespace Unit.Character.Creep
         protected override void DestermineState()
         {
             base.DestermineState();
-            if (!movementStates.ContainsKey(typeof(ChestMonsterPatrolState)))
+            if (!this.StateMachine.IsStateNotNull(typeof(ChestMonsterPatrolState)))
             {
-                var patrolState = (ChestMonsterPatrolState)new ChestMonsterPatrolStateBuilder()
-                    .SetEnemyAnimation(hedgehogAnimation)
-                    .SetWalkClip(so_HedgehogMove.WalkClip)
-                    .SetStartPoint(StartPlatform)
-                    .SetEndPoint(EndPlatform)
-                    .SetGameObject(GameObject)
-                    .SetMovementSpeed(so_HedgehogMove.RunSpeed)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
+                var newState = CreatePatrolState();
                 
-                patrolState.Initialize();
-                movementStates.TryAdd(typeof(ChestMonsterPatrolState), patrolState);
-                this.StateMachine.AddStates(patrolState);
+                newState.Initialize();
+                this.StateMachine.AddStates(newState);
             }
             
             this.StateMachine.SetStates(typeof(ChestMonsterPatrolState));

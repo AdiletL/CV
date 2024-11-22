@@ -15,10 +15,41 @@ namespace Unit.Character.Player
         public Transform Center { get; set; }
 
 
+        private PlayerRunState CreateRunState()
+        {
+            return (PlayerRunState)new PlayerRunStateBuilder()
+                .SetMoveConfig(so_PlayerMove)
+                .SetCenter(Center)
+                .SetCharacterAnimation(this.CharacterAnimation)
+                .SetRunClips(so_PlayerMove.RunClip)
+                .SetGameObject(GameObject)
+                .SetMovementSpeed(so_PlayerMove.RunSpeed)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
+        
         public override void Initialize()
         {
             base.Initialize();
             so_PlayerMove = (SO_PlayerMove)SO_CharacterMove;
+        }
+        
+        protected override void DestermineState()
+        {
+            //TODO: Select type move
+
+            if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
+            {
+                var newState = CreateRunState();
+                newState.Initialize();
+                this.StateMachine.AddStates(newState);
+            }
+
+            var runState = this.StateMachine.GetState<PlayerRunState>();
+            runState.SetPathToFinish(pathToFinish);
+            runState.SetFinish(finish);
+            
+            this.StateMachine.SetStates(typeof(PlayerRunState));
         }
         
         public void SetFinish(GameObject target)
@@ -29,39 +60,7 @@ namespace Unit.Character.Player
         {
             this.pathToFinish = path;
         }
-        
-        protected override void DestermineState()
-        {
-            //TODO: Select type move
 
-            if (!movementStates.ContainsKey(typeof(PlayerRunState)))
-            {
-                var runState = (PlayerRunState)new PlayerRunStateBuilder()
-                    .SetMoveConfig(so_PlayerMove)
-                    .SetCenter(Center)
-                    .SetCharacterAnimation(this.CharacterAnimation)
-                    .SetRunClips(so_PlayerMove.RunClip)
-                    .SetGameObject(GameObject)
-                    .SetMovementSpeed(so_PlayerMove.RunSpeed)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
-                
-                runState.Initialize();
-                runState.SetPathToFinish(pathToFinish);
-                runState.SetFinish(finish);
-                movementStates.TryAdd(typeof(PlayerRunState), runState);
-                this.StateMachine.AddStates(runState);
-            }
-
-            if (movementStates.TryGetValue(typeof(PlayerRunState), out var state)
-                && state is PlayerRunState playerRunState)
-            {
-                playerRunState.SetPathToFinish(pathToFinish);
-                playerRunState.SetFinish(finish);
-            }
-            
-            this.StateMachine.SetStates(typeof(PlayerRunState));
-        }
     }
 
     public class PlayerMoveStateBuilder : CharacterMoveStateBuilder

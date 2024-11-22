@@ -75,7 +75,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
             enemyGameObject.transform.position = platform.transform.position;
             var enemy = enemyGameObject.GetComponent<CreepController>();
             enemy.SetStartPlatform(platform.GetComponent<Platform>());
-            enemy.SetEndPlatform(platformSpawner.GetFreePlatform().GetComponent<Platform>());
+            enemy.SetEndPlatform(platformSpawner.GetFreePlatform(platform.transform.position).GetComponent<Platform>());
             enemy.Initialize();
             //enemy.SetTarget()
             gameUnits.AddUnits(enemy);

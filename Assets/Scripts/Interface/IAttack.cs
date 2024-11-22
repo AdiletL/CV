@@ -3,14 +3,16 @@ using Unit;
 
 public interface IAttack : IApplyDamage
 {
-    public float AmountAttack { get; }
+    public int AmountAttack { get; }
     public void Initialize();
 
+    public void Attack();
+    
     public void IncreaseStates(IState state);
 }
 
 public interface IApplyDamage
 {
-    IDamageble Damageble { get; set; }
+    IDamageable Damageable { get; set; }
     public void ApplyDamage();
 }
