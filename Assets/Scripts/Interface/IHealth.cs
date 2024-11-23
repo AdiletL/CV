@@ -21,7 +21,7 @@ public interface IHealthInfo
 
 public interface IDamageable
 {
-    public GameObject GameObject { get; set; }
-    public int Amount { get; set; }
+    public GameObject Owner { get; set; }
+    public int Amount { get; }
     public int GetTotalDamage(GameObject gameObject);
 }

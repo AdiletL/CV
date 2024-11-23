@@ -8,7 +8,8 @@ namespace Unit.Character
     public class CharacterWeaponState : CharacterBaseAttackState
     {
         protected CharacterSwitchMoveState characterSwitchMoveState;
-        public List<AnimationClip> AttackClips { get; set; }
+        protected AnimationClip cooldownClip;
+        protected List<AnimationClip> attackClips;
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
@@ -25,13 +26,13 @@ namespace Unit.Character
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public Transform WeaponParent { get; set; }
-        public AnimationClip CooldownClip { get; set; }
+        public Transform ProjectilePoint { get; set; }
         public int EnemyLayer { get; set; }
         
 
         protected AnimationClip getRandomAnimationClip()
         {
-            return AttackClips[Random.Range(0, AttackClips.Count)];
+            return attackClips[Random.Range(0, attackClips.Count)];
         }
         
         protected bool isCheckDistanceToTarget()
@@ -131,8 +132,11 @@ namespace Unit.Character
 
             switch (weapon)
             {
-                case Sword:
+                case Sword sword:
                     SetAnimationClip(SO_PlayerAttack.SwordAttackClip, SO_PlayerAttack.SwordCooldownClip);
+                    break;
+                case Bow bow:
+                    SetAnimationClip(SO_PlayerAttack.BowAttackClip, SO_PlayerAttack.BowCooldownClip);
                     break;
             }
             
@@ -141,8 +145,8 @@ namespace Unit.Character
 
         public virtual void SetAnimationClip(List<AnimationClip> attackClips, AnimationClip cooldownClip)
         {
-            AttackClips = attackClips;
-            CooldownClip = cooldownClip;
+            this.attackClips = attackClips;
+            this.cooldownClip = cooldownClip;
         }
         
         protected void FindTarget()
@@ -159,7 +163,8 @@ namespace Unit.Character
                     float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
                     var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
                     
-                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, range) 
+                    //Debug.DrawRay(Center.position, direcitonToTarget * 100, Color.red, 2);
+                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, 100) 
                         && hit2.transform.gameObject == hit.gameObject
                         && distanceToTarget < closestDistanceSqr)
                     {
@@ -195,7 +200,7 @@ namespace Unit.Character
                 else
                     currentTarget = null;
             }
-            this.CharacterAnimation?.ChangeAnimation(CooldownClip);
+            this.CharacterAnimation?.ChangeAnimation(cooldownClip);
             isAttack = false;
         }
 
@@ -270,16 +275,6 @@ namespace Unit.Character
             if (state is CharacterWeaponState characterWeapon)
             {
                 characterWeapon.Center = center;
-            }
-
-            return this;
-        }
-
-        public CharacterWeaponBuilder SetWeapon(Weapon weapon)
-        {
-            if (state is CharacterWeaponState characterWeapon)
-            {
-                characterWeapon.SetWeapon(weapon);
             }
 
             return this;

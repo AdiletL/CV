@@ -13,6 +13,6 @@ public interface IAttack : IApplyDamage
 
 public interface IApplyDamage
 {
-    IDamageable Damageable { get; set; }
+    public IDamageable Damageable { get; }
     public void ApplyDamage();
 }

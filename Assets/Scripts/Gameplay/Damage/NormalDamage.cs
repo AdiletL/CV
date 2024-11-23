@@ -4,13 +4,13 @@ namespace Gameplay.Damage
 {
     public class NormalDamage : IDamageable
     {
-        public GameObject GameObject { get; set; }
+        public GameObject Owner { get; set; }
         public int Amount { get; set; }
 
         public NormalDamage(int amount, GameObject gameObject)
         {
             this.Amount = amount;
-            this.GameObject = gameObject;
+            this.Owner = gameObject;
         }
         
         public int GetTotalDamage(GameObject gameObject)

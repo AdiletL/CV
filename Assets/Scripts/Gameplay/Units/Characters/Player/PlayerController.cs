@@ -7,16 +7,19 @@ using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Player
 {
     public class PlayerController : CharacterMainController
     {
+        [Inject] private DiContainer diContainer;
         public override UnitType UnitType { get; } = UnitType.player;
         
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_Sword so_Sword;
+        [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
         
         [ReadOnly] public StateCategory currentStateCategory;
@@ -73,7 +76,7 @@ namespace Unit.Character.Player
             components.GetComponentFromArray<PlayerHealth>()?.Initialize();
             
             //TEST
-            var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
+            /*var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
             var sword = (Sword)new SwordBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetRange(so_Sword.Range)
@@ -82,7 +85,19 @@ namespace Unit.Character.Player
                 .SetDamageable(swordDamageable)
                 .Build();
             sword.Initialize();
-            SetWeapon(sword);
+            SetWeapon(sword);*/
+
+            var projectile = new NormalDamage(so_Bow.Damage, gameObject);
+            var bow = (Bow)new BowBuilder()
+                .SetDamageable(projectile)
+                .SetRange(so_Bow.Range)
+                .SetAmountAttack(so_Bow.AmountAttack)
+                .SetWeaponParent(weaponParent)
+                .SetWeaponPrefab(so_Bow.WeaponPrefab)
+                .Build();
+            diContainer.Inject(bow);
+            bow.Initialize();
+            SetWeapon(bow);
             
             StateMachine.OnChangedState += OnChangedState;
             StateMachine.SetStates(typeof(PlayerIdleState));

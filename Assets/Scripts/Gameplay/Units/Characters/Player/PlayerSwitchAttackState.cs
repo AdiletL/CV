@@ -12,6 +12,7 @@ namespace Unit.Character.Player
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
         private float rangeAttack;
+        private int amountAttack;
         
         public Transform WeaponParent { get; set; }
         
@@ -44,6 +45,21 @@ namespace Unit.Character.Player
 
             return false;
         }
+
+        private PlayerDefaultAttackState CreateDefaultAttackState()
+        {
+            return (PlayerDefaultAttackState)new PlayerDefaultAttackStateBuilder()
+                .SetAttackClips(so_PlayerAttack.DefaultAttackClips)
+                .SetCooldownClip(so_PlayerAttack.DefaultCooldownClip)
+                .SetAmountAttack(amountAttack)
+                .SetGameObject(GameObject)
+                .SetCenter(Center)
+                .SetCharacterAnimation(CharacterAnimation)
+                .SetEnemyLayer(EnemyLayer)
+                .SetDamageble(Damageable)
+                .SetStateMachine(StateMachine)
+                .Build();
+        }
         
         private PlayerWeaponState CreateWeaponState()
         {
@@ -65,24 +81,40 @@ namespace Unit.Character.Player
             playerAnimation = (PlayerAnimation)CharacterAnimation;
             so_PlayerAttack = (SO_PlayerAttack)SO_CharacterAttack;
             Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
+            amountAttack = so_PlayerAttack.AmountAttack;
         }
 
         protected override void DestermineState()
         {
             //TODO: Type attack state
-            
-            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+
+            if (currentWeapon != null)
             {
-                var newState = CreateWeaponState();
-                
-                newState.Initialize();
-                this.StateMachine.AddStates(newState);
-            }
-            
-            if(currentWeapon != null)
+                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+                {
+                    var newState = CreateWeaponState();
+                    
+                    newState.Initialize();
+                    this.StateMachine.AddStates(newState);
+                }
+
+                rangeAttack = currentWeapon.Range;
                 this.StateMachine.SetStates(typeof(PlayerWeaponState));
+            }
+            else
+            {
+                if(!this.StateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
+                {
+                    var newState = CreateDefaultAttackState();
+                    
+                    newState.Initialize();
+                    this.StateMachine.AddStates(newState);
+                }
+
+                rangeAttack = so_PlayerAttack.Range;
+                this.StateMachine.SetStates(typeof(PlayerDefaultAttackState));
+            }
         }
-        
         
 
         public void SetWeapon(Weapon weapon)

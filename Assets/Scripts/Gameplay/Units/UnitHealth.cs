@@ -104,7 +104,7 @@ namespace Unit
             var totalDamage = damageable.GetTotalDamage(gameObject);
             if(totalDamage == 0) return;
             
-            Damaging = damageable.GameObject;
+            Damaging = damageable.Owner;
             CurrentHealth -= totalDamage;
         }
     }

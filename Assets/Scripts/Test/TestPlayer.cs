@@ -1,4 +1,5 @@
 using System;
+using Gameplay.Damage;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
@@ -27,9 +28,11 @@ public class TestPlayer : MonoInstaller
    {
       if (Input.GetKeyDown(KeyCode.A))
       {
-         var arrow = newPool.GetObject<Arrow>();
+         var arrow = newPool.GetObject<ArrowController>();
          arrow.transform.position = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
-         arrow?.GetComponent<Arrow>()?.SetTarget(target.position);
+         arrow.GetComponent<ArrowController>()?.Initialize();
+         arrow.GetComponent<ArrowController>()?.SetTargetPosition(target.position);
+         arrow.GetComponent<ArrowController>()?.SetDamageable(new NormalDamage(1, gameObject));
       }
    }
 }

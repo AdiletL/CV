@@ -47,7 +47,7 @@ namespace Gameplay.Weapon
 
     public abstract class WeaponBuilder
     {
-        private Weapon weapon;
+        protected Weapon weapon;
 
         public WeaponBuilder(Weapon weapon)
         {
