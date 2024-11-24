@@ -5,12 +5,12 @@ namespace Unit.Character.Creep
     public class CreepIdleState : CharacterIdleState
     {
         protected virtual int checkEnemyLayer { get; }
-
+        
         
         public override void Update()
         {
             base.Update();
-            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(GameObject, checkEnemyLayer);
+            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(GameObject, Center.position, checkEnemyLayer);
             if (!enemyGameObject)
             {
                 this.StateMachine.ExitCategory(Category);
@@ -24,6 +24,6 @@ namespace Unit.Character.Creep
         public CreepIdleStateBuilder(CharacterIdleState instance) : base(instance)
         {
         }
-
+        
     }
 }

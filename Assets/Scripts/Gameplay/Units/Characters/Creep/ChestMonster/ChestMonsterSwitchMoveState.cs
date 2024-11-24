@@ -1,4 +1,5 @@
 ﻿using ScriptableObjects.Unit.Character.Creep;
+using UnityEngine;
 
 namespace Unit.Character.Creep
 {
@@ -9,10 +10,12 @@ namespace Unit.Character.Creep
         
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
-
+        
+        
         private ChestMonsterPatrolState CreatePatrolState()
         {
             return (ChestMonsterPatrolState)new ChestMonsterPatrolStateBuilder()
+                .SetCenter(Center)
                 .SetEnemyAnimation(hedgehogAnimation)
                 .SetWalkClip(so_HedgehogMove.WalkClip)
                 .SetStartPoint(StartPlatform)

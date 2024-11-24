@@ -14,6 +14,7 @@ namespace Unit.Character.Creep
             var idleState = (HedgehogIdleState)new HedgehogIdleStateBuilder()
                 .SetCharacterAnimation(animation)
                 .SetIdleClips(soCreepMove.IdleClip)
+                .SetCenter(center)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();;
@@ -21,6 +22,7 @@ namespace Unit.Character.Creep
             var moveState = (HedgehogSwitchMoveState)new HedgehogSwitchMoveStateBuilder()
                 .SetStartPlatform(startPlatform)
                 .SetEndPlatform(endPlatform)
+                .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)
                 .SetGameObject(gameObject)

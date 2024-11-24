@@ -13,6 +13,7 @@ namespace Unit.Character.Creep
         private BeholderPatrolState CreatePatrolState()
         {
             return (BeholderPatrolState)new BeholderPatrolStateBuilder()
+                .SetCenter(Center)
                 .SetEnemyAnimation(hedgehogAnimation)
                 .SetWalkClip(so_HedgehogMove.WalkClip)
                 .SetStartPoint(StartPlatform)

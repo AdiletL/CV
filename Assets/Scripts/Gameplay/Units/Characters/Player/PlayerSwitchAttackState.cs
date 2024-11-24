@@ -14,37 +14,10 @@ namespace Unit.Character.Player
         private float rangeAttack;
         private int amountAttack;
         
+        protected Collider[] findUnitColliders = new Collider[1];
+        
         public Transform WeaponParent { get; set; }
         
-        protected bool isCheckDistanceToTarget(Vector3 targetPosition)
-        {
-            float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, targetPosition);
-            if (distanceToTarget > rangeAttack)
-                return false;
-            else
-                return true;
-        }
-        
-        public bool IsCheckTarget()
-        {
-            Collider[] hits = Physics.OverlapSphere(Center.position, rangeAttack, EnemyLayer);
-
-            if (hits.Length == 0) return false;
-
-            if (!hits[0].TryGetComponent(out IHealth health) || !health.IsLive) return false;
-            if (!isCheckDistanceToTarget(hits[0].transform.position)) return false;
-            if (hits[0].TryGetComponent(out UnitCenter unitCenter))
-            {
-                var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
-                if (Physics.Raycast(Center.position, direcitonToTarget, out var hit, rangeAttack)
-                    && hit.transform.gameObject == hits[0].gameObject)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         private PlayerDefaultAttackState CreateDefaultAttackState()
         {
@@ -73,6 +46,11 @@ namespace Unit.Character.Player
                 .SetDamageble(Damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+        }
+        
+        public bool IsFindUnitInRange()
+        {
+            return Calculate.Attack.IsFindUnitInRange(Center.position, rangeAttack, EnemyLayer, findUnitColliders);
         }
         
         public override void Initialize()

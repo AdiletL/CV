@@ -7,6 +7,8 @@ namespace Unit.Character.Creep
     {
         private SO_CreepMove soCreepMove;
         private GameObject currentTarget;
+        
+        public Transform Center { get; set; }
 
         public override void Initialize()
         {
@@ -25,6 +27,13 @@ namespace Unit.Character.Creep
     {
         public CreepSwitchMoveStateBuilder(CharacterSwitchMoveState instance) : base(instance)
         {
+        }
+
+        public CreepSwitchMoveStateBuilder SetCenter(Transform center)
+        {
+            if(state is CreepSwitchMoveState creepSwitchMoveState)
+                creepSwitchMoveState.Center = center;
+            return this;
         }
     }
 }

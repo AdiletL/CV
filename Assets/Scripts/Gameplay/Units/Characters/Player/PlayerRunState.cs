@@ -17,7 +17,7 @@ namespace Unit.Character.Player
         
         private Vector3 currentFinishPosition;
 
-        private readonly float cooldownCheckEnemy = .05f;
+        private readonly float cooldownCheckEnemy = 0.1f;
         private float countCooldownCheckEnemy;
 
         private bool isRotate;
@@ -28,6 +28,11 @@ namespace Unit.Character.Player
 
         public Transform Center { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
+        
+        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0)
+        {
+            return (current - target).sqrMagnitude <= threshold;
+        }
 
         public override void Initialize()
         {
@@ -49,6 +54,8 @@ namespace Unit.Character.Player
 
         public override void Update()
         {
+            base.Update();
+            
             if (!currentTarget || finish.transform.position == currentFinishPosition)
                 FindNextPoint();
             
@@ -86,8 +93,9 @@ namespace Unit.Character.Player
         
         public override void Move()
         {
-            if (GameObject.transform.position.x == currentTarget.transform.position.x 
-                && GameObject.transform.position.z == currentTarget.transform.position.z)
+            currentFinishPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
+            
+            if (IsNear(GameObject.transform.position, currentFinishPosition))
             {
                 currentTarget = null; 
                 pathToPoint.Dequeue();
@@ -100,8 +108,7 @@ namespace Unit.Character.Player
                     return;
                 }
     
-                Vector3 targetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
-                GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position, targetPosition, MovementSpeed * Time.deltaTime);
+                GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position, currentFinishPosition, MovementSpeed * Time.deltaTime);
             }
         }
 
@@ -112,7 +119,7 @@ namespace Unit.Character.Player
             countCooldownCheckEnemy += Time.deltaTime;
             if (countCooldownCheckEnemy > cooldownCheckEnemy)
             {
-                if (playerSwitchAttackState.IsCheckTarget())
+                if (playerSwitchAttackState.IsFindUnitInRange())
                 {
                     this.StateMachine.ExitCategory(Category);
                     this.StateMachine.SetStates(typeof(PlayerSwitchAttackState));

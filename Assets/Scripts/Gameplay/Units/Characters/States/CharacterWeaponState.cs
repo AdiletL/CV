@@ -10,6 +10,8 @@ namespace Unit.Character
         protected CharacterSwitchMoveState characterSwitchMoveState;
         protected AnimationClip cooldownClip;
         protected List<AnimationClip> attackClips;
+        
+        protected Collider[] findUnitColliders = new Collider[10];
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
@@ -26,7 +28,6 @@ namespace Unit.Character
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public Transform WeaponParent { get; set; }
-        public Transform ProjectilePoint { get; set; }
         public int EnemyLayer { get; set; }
         
 
@@ -37,8 +38,8 @@ namespace Unit.Character
         
         protected bool isCheckDistanceToTarget()
         {
-            float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, this.currentTarget.transform.position);
-            if (distanceToTarget > range + .15f)
+            float distanceToTarget = (currentTarget.transform.position - GameObject.transform.position).sqrMagnitude;;
+            if (distanceToTarget > (range * range) + .15f)
             {
                 return false;
             }
@@ -57,8 +58,10 @@ namespace Unit.Character
         {
             base.Enter();
 
-            if(CurrentWeapon != null)
-                FindTarget();
+            if (CurrentWeapon != null)
+            {
+                FindUnit();
+            }
             
             if (!currentTarget)
             {
@@ -77,7 +80,7 @@ namespace Unit.Character
 
             if (!currentTarget)
             {
-                FindTarget();
+                FindUnit();
                 if (!currentTarget)
                 {
                     this.StateMachine.ExitCategory(Category);
@@ -148,33 +151,13 @@ namespace Unit.Character
             this.attackClips = attackClips;
             this.cooldownClip = cooldownClip;
         }
-        
-        protected void FindTarget()
-        {
-            Collider[] hits = Physics.OverlapSphere(Center.position, range, EnemyLayer);
-            float closestDistanceSqr = range;
 
-            foreach (var hit in hits)
-            {
-                if(!hit.TryGetComponent(out IHealth health) || !health.IsLive) continue;
-                
-                if (hit.TryGetComponent(out UnitCenter unitCenter))
-                {
-                    float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
-                    var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
-                    
-                    //Debug.DrawRay(Center.position, direcitonToTarget * 100, Color.red, 2);
-                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, 100) 
-                        && hit2.transform.gameObject == hit.gameObject
-                        && distanceToTarget < closestDistanceSqr)
-                    {
-                        closestDistanceSqr = distanceToTarget;
-                        currentTarget = hit.transform.gameObject;
-                        CurrentWeapon.SetTarget(currentTarget);
-                    }
-                }
-            }
+        private void FindUnit()
+        {
+            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
+            CurrentWeapon.SetTarget(currentTarget);
         }
+        
 
         public override void Attack()
         {
@@ -202,6 +185,7 @@ namespace Unit.Character
             }
             this.CharacterAnimation?.ChangeAnimation(cooldownClip);
             isAttack = false;
+            FindUnit();
         }
 
         protected virtual void Cooldown()

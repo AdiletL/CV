@@ -1128,6 +1128,7 @@ MonoBehaviour:
     - {fileID: 7394638003979218972}
     - {fileID: 260987309586280179}
   soCreepMove: {fileID: 11400000, guid: 5f7c8e2e673ebfe41a7693ca954df9ad, type: 2}
+  center: {fileID: 2837959123269537506}
   currentStateCategory: 0
   currentStateName: 
 --- !u!135 &2871698622119724440
@@ -1174,7 +1175,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

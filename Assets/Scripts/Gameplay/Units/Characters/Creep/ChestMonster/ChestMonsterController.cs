@@ -11,6 +11,7 @@
             var idleState = (ChestMonsterIdleState)new ChestMonsterIdleStateBuilder()
                 .SetCharacterAnimation(animation)
                 .SetIdleClips(soCreepMove.IdleClip)
+                .SetCenter(center)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
@@ -18,6 +19,7 @@
             var moveState = (ChestMonsterSwitchMoveState)new ChestMonsterSwitchMoveStateBuilder()
                 .SetStartPlatform(startPlatform)
                 .SetEndPlatform(endPlatform)
+                .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)
                 .SetGameObject(gameObject)

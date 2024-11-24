@@ -15,6 +15,7 @@ namespace Unit.Character.Creep
         private HedgehogPatrolState CreatePatrolState()
         {
             return (HedgehogPatrolState)new HedgehogPatrolStateBuilder()
+                .SetCenter(Center)
                 .SetEnemyAnimation(hedgehogAnimation)
                 .SetWalkClip(so_HedgehogMove.WalkClip)
                 .SetStartPoint(StartPlatform)

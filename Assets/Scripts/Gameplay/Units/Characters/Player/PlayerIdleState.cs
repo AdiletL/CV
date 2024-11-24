@@ -15,8 +15,10 @@ namespace Unit.Character.Player
         
         private PathFinding pathFinding;
         private PlayerSwitchAttackState playerSwitchAttackState;
+        
+        private Vector3 targetPosition;
 
-        private float checkEnemyCooldown = .05f;
+        private float checkEnemyCooldown = .01f;
         private float countCheckEnemyCooldown;
         private int asdf;
 
@@ -25,10 +27,14 @@ namespace Unit.Character.Player
         
         private Queue<Platform> pathToPoint = new();
         
-        
         public GameObject FinishTargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
 
+        
+        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0)
+        {
+            return (current - target).sqrMagnitude <= threshold;
+        }
         
         public override void Initialize()
         {
@@ -50,8 +56,9 @@ namespace Unit.Character.Player
             this.StateMachine.OnExitCategory += OnExitCategory;
         }
 
-        public override void LateUpdate()
+        public override void Update()
         {
+            base.Update();
             CheckAttack();
             CheckMove();
             CheckJump();
@@ -71,8 +78,9 @@ namespace Unit.Character.Player
 
         private void CheckMove()
         {
-            if (GameObject.transform.position.x == FinishTargetForMove.transform.position.x 
-                && GameObject.transform.position.z == FinishTargetForMove.transform.position.z)
+            targetPosition = new Vector3(FinishTargetForMove.transform.position.x, GameObject.transform.position.y, FinishTargetForMove.transform.position.z);
+            
+            if (IsNear(GameObject.transform.position, targetPosition))
             {
                 pathToPoint.Clear();
                 ASD?.Invoke();
@@ -104,7 +112,7 @@ namespace Unit.Character.Player
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
-                if (playerSwitchAttackState.IsCheckTarget())
+                if (playerSwitchAttackState.IsFindUnitInRange())
                 {
                     this.StateMachine.ExitOtherCategories(Category);
                     this.StateMachine.SetStates(typeof(PlayerSwitchAttackState));

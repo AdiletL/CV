@@ -424,6 +424,7 @@ MonoBehaviour:
     - {fileID: 5977742061788822388}
     - {fileID: 8978075614323205831}
   soCreepMove: {fileID: 11400000, guid: c693917f9cd3163428cc976bc8dddab3, type: 2}
+  center: {fileID: 2943206695905368765}
   currentStateCategory: 0
   currentStateName: 
 --- !u!114 &6150397021721207006

@@ -19,15 +19,21 @@ namespace Unit.Character.Creep
         
         public AnimationClip WalkClip { get; set; }
         public CreepAnimation CreepAnimation { get; set; }
+        public Transform Center { get; set; }
         
+        
+        protected bool IsNear(Vector3 current, Vector3 target, float threshold = 0f)
+        {
+            return (current - target).sqrMagnitude <= threshold;
+        }
 
         protected Transform GetCurrentPoint()
         {
             if(!EndPlatform || !StartPlatform) return null;
 
-            if (GameObject.transform.position == StartPosition)
+            if (StartPosition.HasValue && IsNear(GameObject.transform.position, StartPosition.Value))
                 pathFinding.SetTarget(EndPlatform.transform);
-            else if (GameObject.transform.position == EndPosition)
+            else if (EndPosition.HasValue && IsNear(GameObject.transform.position, EndPosition.Value))
                 pathFinding.SetTarget(StartPlatform.transform);
             
             if(platformsQueue.Count == 0)
@@ -53,24 +59,30 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
-            CreepAnimation.ChangeAnimation(WalkClip, duration: 0.7f);
             var targetTransform = GetCurrentPoint();
             currentTarget = targetTransform ? targetTransform.gameObject : null;
+            
+            if (!currentTarget)
+            {
+                this.StateMachine.ExitCategory(Category);
+                return;
+            }
+            
+            CreepAnimation.ChangeAnimation(WalkClip,  duration: 0.7f);
         }
 
         public override void Update()
         {
             base.Update();
-
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
 
-            if (GameObject.transform.position != currentTarget.transform.position)
+            if (!IsNear(GameObject.transform.position, currentTarget.transform.position))
             {
-                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, checkEnemyLayer);
+                var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, checkEnemyLayer);
                 if (!enemyGameObject)
                 {
                     if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform, currentTarget.transform))
@@ -124,6 +136,16 @@ namespace Unit.Character.Creep
             if (state is CreepPatrolState enemyPatrolState)
             {
                 enemyPatrolState.WalkClip = walkClip;
+            }
+
+            return this;
+        }
+        
+        public CreepPatrolStateBuilder SetCenter(Transform center)
+        {
+            if (state is CreepPatrolState enemyPatrolState)
+            {
+                enemyPatrolState.Center = center;
             }
 
             return this;

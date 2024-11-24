@@ -15,5 +15,4 @@ MonoBehaviour:
   <WeaponPrefab>k__BackingField: {fileID: 726123980392875945, guid: a611871aa4f987941bf934736c0ee6d7, type: 3}
   <AmountAttack>k__BackingField: 1
   <Damage>k__BackingField: 1
-  <Range>k__BackingField: 5
-  <projectile>k__BackingField: {fileID: 11400000, guid: bef2c4541ca736c47bd7e03be14c5f87, type: 2}
+  <Range>k__BackingField: 2

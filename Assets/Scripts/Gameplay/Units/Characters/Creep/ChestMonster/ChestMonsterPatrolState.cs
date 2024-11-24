@@ -2,7 +2,7 @@
 {
     public class ChestMonsterPatrolState : CreepPatrolState
     {
-        
+        protected override int checkEnemyLayer { get; } = Layers.PLAYER_LAYER;
     }
     
     public class ChestMonsterPatrolStateBuilder : CreepPatrolStateBuilder

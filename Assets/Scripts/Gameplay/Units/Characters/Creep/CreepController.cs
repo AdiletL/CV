@@ -11,6 +11,7 @@ namespace Unit.Character.Creep
         public override UnitType UnitType { get; } = UnitType.creep;
 
         [FormerlySerializedAs("so_EnemyMove")] [SerializeField] protected SO_CreepMove soCreepMove;
+        [SerializeField] protected Transform center;
         
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
@@ -42,6 +43,7 @@ namespace Unit.Character.Creep
                 .SetCharacterAnimation(animation)
                 .SetIdleClips(soCreepMove.IdleClip)
                 .SetGameObject(gameObject)
+                .SetCenter(center)
                 .SetStateMachine(this.StateMachine)
                 .Build();;
             
@@ -51,6 +53,7 @@ namespace Unit.Character.Creep
                 .Build();
 
             var moveState = (CreepSwitchMoveState)new CreepSwitchMoveStateBuilder(new CreepSwitchMoveState())
+                .SetCenter(center)
                 .SetConfig(soCreepMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)

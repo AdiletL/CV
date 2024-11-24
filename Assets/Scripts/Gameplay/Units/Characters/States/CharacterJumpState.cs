@@ -45,7 +45,6 @@ namespace Unit.Character
 
                 if (progress >= 1f)
                 {
-                    // Завершаем прыжок
                     isJumping = false;
                     timer = 0f;
                     CharacterAnimation.SetBlock(false);

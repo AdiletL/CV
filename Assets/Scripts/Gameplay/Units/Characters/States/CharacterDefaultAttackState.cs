@@ -8,6 +8,8 @@ namespace Unit.Character
     public class CharacterDefaultAttackState : CharacterBaseAttackState
     {
         protected CharacterSwitchMoveState characterSwitchMoveState;
+        
+        protected Collider[] findUnitColliders = new Collider[10];
 
         protected float durationAttack, countDurationAttack;
         protected float applyDamage, countApplyDamage;
@@ -53,7 +55,7 @@ namespace Unit.Character
         {
             base.Enter();
 
-            FindTarget();
+            FindUnit();
             
             if (!currentTarget)
             {
@@ -71,7 +73,7 @@ namespace Unit.Character
 
             if (!currentTarget)
             {
-                FindTarget();
+                FindUnit();
                 if (!currentTarget)
                 {
                     this.StateMachine.ExitCategory(Category);
@@ -115,32 +117,12 @@ namespace Unit.Character
             countApplyDamage = 0;
             countCooldown = cooldown;
         }
-        
-        protected void FindTarget()
+
+        protected void FindUnit()
         {
-            Collider[] hits = Physics.OverlapSphere(Center.position, range, EnemyLayer);
-            float closestDistanceSqr = range;
-
-            foreach (var hit in hits)
-            {
-                if(!hit.TryGetComponent(out IHealth health) || !health.IsLive) continue;
-                
-                if (hit.TryGetComponent(out UnitCenter unitCenter))
-                {
-                    float distanceToTarget = Vector3.Distance(this.GameObject.transform.position, hit.transform.position);
-                    var direcitonToTarget = (unitCenter.Center.position - Center.position).normalized;
-                    
-                    if (Physics.Raycast(Center.position, direcitonToTarget, out var hit2, range) 
-                        && hit2.transform.gameObject == hit.gameObject
-                        && distanceToTarget < closestDistanceSqr)
-                    {
-                        closestDistanceSqr = distanceToTarget;
-                        currentTarget = hit.transform.gameObject;
-                    }
-                }
-            }
+            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
         }
-
+        
         public override void Attack()
         {
             base.Attack();
