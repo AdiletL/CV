@@ -23,7 +23,7 @@ public class StateMachine
 
     public bool IsActivateType(StateCategory category, Type state)
     {
-        return activeStates.ContainsKey(category) && activeStates[category].GetType().IsAssignableFrom(state);
+        return activeStates.ContainsKey(category) &&  activeStates[category].GetType().IsAssignableFrom(state);
     }
     
     public T GetState<T>() where T : IState

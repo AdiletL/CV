@@ -24,7 +24,7 @@ namespace Unit.Character
         public void ChangeAnimation(AnimationClip clip, float duration = 0,
             float transitionDuration = .1f, bool isForce = false, bool isDefault = false)
         {
-            if(this.isBlock) return;
+            if(this.isBlock && !isForce) return;
             
             if (!isDefault)
             {
@@ -43,6 +43,7 @@ namespace Unit.Character
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
             currentClip = clip;
         }
+
 
         protected void SetSpeedAnimation(AnimationClip clip, float duration)
         {

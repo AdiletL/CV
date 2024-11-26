@@ -77,15 +77,11 @@ namespace Unit.Character
         public override void Update()
         {
             base.Update();
-
+            
             if (!currentTarget)
             {
-                FindUnit();
-                if (!currentTarget)
-                {
-                    this.StateMachine.ExitCategory(Category);
-                    return;
-                }
+                this.StateMachine.ExitCategory(Category);
+                return;
             }
 
             if(!isCheckDistanceToTarget())

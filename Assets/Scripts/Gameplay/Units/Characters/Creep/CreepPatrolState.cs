@@ -27,7 +27,7 @@ namespace Unit.Character.Creep
             return (current - target).sqrMagnitude <= threshold;
         }
 
-        protected Transform GetCurrentPoint()
+        protected GameObject GetNextPoint()
         {
             if(!EndPlatform || !StartPlatform) return null;
 
@@ -42,7 +42,7 @@ namespace Unit.Character.Creep
             if (platformsQueue.Count == 0)
                 return null;
             
-            return platformsQueue?.Peek()?.transform;
+            return platformsQueue?.Peek().gameObject;
         }
 
         public override void Initialize()
@@ -59,8 +59,7 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
-            var targetTransform = GetCurrentPoint();
-            currentTarget = targetTransform ? targetTransform.gameObject : null;
+            currentTarget = GetNextPoint();
             
             if (!currentTarget)
             {
@@ -103,7 +102,8 @@ namespace Unit.Character.Creep
             else
             {
                 platformsQueue?.Dequeue();
-                this.StateMachine.ExitCategory(Category);
+                currentTarget = GetNextPoint();
+                //this.StateMachine.ExitCategory(Category);
             }
         }
 

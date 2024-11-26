@@ -8,6 +8,8 @@ namespace Unit.Character
     {
         public override StateCategory Category { get; } = StateCategory.action;
 
+        protected Gravity gravity;
+        
         private Vector3 startPosition;
         private float timer;
         private bool isJumping;
@@ -21,7 +23,7 @@ namespace Unit.Character
         
         public override void Initialize()
         {
-            
+            gravity = GameObject.GetComponent<Gravity>();
         }
 
         public override void Enter()
@@ -30,33 +32,56 @@ namespace Unit.Character
             isJumping = true;
             CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration);
             CharacterAnimation.SetBlock(true);
+            gravity.ChangeGravity(false);
         }
 
         public override void Update()
         {
             
         }
+        
         public override void LateUpdate()
         {
+            CheckJump();
             if (isJumping)
             {
                 timer += Time.deltaTime;
-                float progress = timer / JumpDuration;
+                float progress = (timer / JumpDuration);
 
-                if (progress >= 1f)
+                if (progress >= .5f)
                 {
-                    isJumping = false;
-                    timer = 0f;
-                    CharacterAnimation.SetBlock(false);
-                    this.StateMachine.ExitCategory(Category);
+                    gravity.ChangeGravity(true);
+                    if (progress >= 1f)
+                    {
+                        isJumping = false;
+                        timer = 0f;
+                        CharacterAnimation.SetBlock(false);
+                        this.StateMachine.ExitCategory(Category);
+                    }
                 }
                 else
                 {
                     float jumpOffset = Curve.Evaluate(progress) * JumpHeight;
-                    
                     GameObject.transform.position = new Vector3(GameObject.transform.position.x, startPosition.y + jumpOffset, GameObject.transform.position.z);
                 }
+
             }
+        }
+
+        private void CheckJump()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartJump();
+            }
+        }
+        
+        private void StartJump()
+        {
+            startPosition = GameObject.transform.position;
+            timer = 0f;
+            CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration, isForce: true);
+            gravity.ChangeGravity(false);
         }
         public override void Exit()
         {
