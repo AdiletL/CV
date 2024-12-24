@@ -1,7 +1,7 @@
 ﻿using System;
 using Zenject;
 
-namespace Unit.Trap.Tower.Dragon
+namespace Unit.Trap.Tower
 {
     public class DragonController : TowerController
     {
@@ -23,7 +23,7 @@ namespace Unit.Trap.Tower.Dragon
         {
             var idle = (DragonIdleState)new DragonIdleStateBuilder()
                 .SetPointSpawnProjectile(pointSpawnProjectile)
-                .SetConfig(so_TowerAttack)
+                .SetConfig(so_Tower)
                 .SetCenter(GetComponent<UnitCenter>().Center)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.stateMachine)

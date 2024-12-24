@@ -1,4 +1,4 @@
-﻿namespace Unit.Trap.Tower.Dragon
+﻿namespace Unit.Trap.Tower
 {
     public class DragonIdleState : TowerIdleState
     {

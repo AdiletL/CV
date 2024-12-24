@@ -92,7 +92,7 @@ namespace Unit.Character.Player
             
             if (IsNear(GameObject.transform.position, currentTargetPosition.Value))
             {
-                Calculate.FindPlatform.GetPlatform(GameObject.transform.position, Vector3.down)?.GetComponent<UnitMeshRenderer>().ResetColor();
+                Calculate.FindPlatform.GetPlatform(GameObject.transform.position, Vector3.down)?.GetComponent<UnitRenderer>().ResetColor();
                 currentTargetPosition = null; 
                 pathToPoint.Dequeue();
             }

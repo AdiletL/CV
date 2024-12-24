@@ -2,12 +2,13 @@
 using ScriptableObjects.Gameplay.Trap.Tower;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Unit.Trap.Tower
 {
     public abstract class TowerController : TrapController, ITower
     {
-        [SerializeField] protected SO_TowerAttack so_TowerAttack;
+        protected SO_Tower so_Tower;
 
         [Space] [SerializeField] protected Transform pointSpawnProjectile;
         
@@ -19,6 +20,8 @@ namespace Unit.Trap.Tower
         public override void Initialize()
         {
             base.Initialize();
+
+            so_Tower = (SO_Tower)so_Trap;
             
             stateMachine = new StateMachine();
             

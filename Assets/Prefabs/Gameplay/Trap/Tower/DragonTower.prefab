@@ -183,7 +183,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1777627349215838221}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PointSpawnProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -264,11 +264,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ebb9a303e6d4acb886ef2def43b36c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <components>k__BackingField:
+  components:
     <gameObjects>k__BackingField:
     - {fileID: 6528987841846448985}
-  so_Trap: {fileID: 0}
-  so_TowerAttack: {fileID: 11400000, guid: 31914f4f61da1934e9dd467d2c2aff5a, type: 2}
+  so_Trap: {fileID: 11400000, guid: 31914f4f61da1934e9dd467d2c2aff5a, type: 2}
   pointSpawnProjectile: {fileID: 1777627349215838221}
   currentStateCategory: 0
   currentStateName: 

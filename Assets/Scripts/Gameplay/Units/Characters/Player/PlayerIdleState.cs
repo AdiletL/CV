@@ -105,7 +105,7 @@ namespace Unit.Character.Player
         {
             for (int i = pathToPoint.Count - 1; i >= 0; i--)
             {
-                pathToPoint.Dequeue()?.GetComponent<UnitMeshRenderer>().ResetColor();
+                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>().ResetColor();
             }
             pathToPoint = pathFinding.GetPath(true);
         }

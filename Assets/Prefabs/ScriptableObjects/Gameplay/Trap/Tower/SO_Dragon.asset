@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83101f80fb8b4e4b9d1d02b1b90f6dc6, type: 3}
-  m_Name: SO_DragonAttack
+  m_Name: SO_Dragon
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 5
   <AmountAttack>k__BackingField: 1

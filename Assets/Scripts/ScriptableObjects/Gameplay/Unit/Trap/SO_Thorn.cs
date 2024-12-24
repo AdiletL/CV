@@ -2,7 +2,7 @@
 
 namespace ScriptableObjects.Gameplay.Trap
 {
-    [CreateAssetMenu(fileName = "SO_Thorn", menuName = "SO/Gameplay/Trap/Thorn", order = 51)]
+    [CreateAssetMenu(fileName = "SO_Thorn", menuName = "SO/Gameplay/Unit/Trap/Thorn", order = 51)]
     public class SO_Thorn : SO_Trap
     {
         [field: SerializeField] public float StartTimer { get; private set; }

@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Unit.Trap
 {
     [RequireComponent(typeof(SphereCollider))]
-    public class Thorn : TrapController, IApplyDamage
+    public class ThornController : TrapController, IApplyDamage
     {
         [SerializeField] private GameObject asdf;
         
@@ -144,14 +144,28 @@ namespace Unit.Trap
             if(target.TryGetComponent(out IHealth health) && health.IsLive)
                 health.TakeDamage(Damageable);
         }
+
+        private void ApplyDamage(IHealth health)
+        {
+            if(health.IsLive)
+                health.TakeDamage(Damageable);
+        }
         
         private void OnTriggerEnter(Collider other)
         {
-            if(!isReady) return;
-            
             if (other.TryGetComponent(out PlayerController player))
             {
-                Activate();
+                if (!isReady)
+                {
+                    if (player.TryGetComponent(out IHealth health))
+                    {
+                        ApplyDamage(health);
+                    }
+                }
+                else
+                {
+                    Activate();
+                }
             }
         }
 

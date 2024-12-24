@@ -11,6 +11,8 @@ public class Platform : MonoBehaviour
     
     [HideInInspector] public bool IsBlocked;
 
+    private UnitRenderer unitRenderer;
+    
     public Vector2Int CurrentCoordinates { get; private set; }
     
 
@@ -23,15 +25,20 @@ public class Platform : MonoBehaviour
         PlayerIdleState.ASD -= ADS;
     }
 
+    private void Start()
+    {
+        unitRenderer = GetComponent<UnitRenderer>();
+    }
+    
     private void ADS()
     {
-        GetComponent<UnitMeshRenderer>().ResetColor();
+        unitRenderer.ResetColor();
         platformText.enabled = false;
     }
     
     public void SetColor(Color color)
     {
-        GetComponent<UnitMeshRenderer>().SetColor(color);
+        unitRenderer.SetColor(color);
     }
 
     public void SetText(string weight)

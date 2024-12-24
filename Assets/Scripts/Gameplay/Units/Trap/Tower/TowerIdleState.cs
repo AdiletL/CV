@@ -12,7 +12,7 @@ namespace Unit.Trap.Tower
         private TowerAttackState attackState;
         
         
-        public SO_TowerAttack SO_TowerAttack { get; set; }
+        public SO_Tower SO_Tower { get; set; }
         public Transform PointSpawnProjectile { get; set; }
         
 
@@ -20,8 +20,8 @@ namespace Unit.Trap.Tower
         {
             return (TowerAttackState)new TowerAttackStateBuilder()
                 .SetPointSpawnProjectile(PointSpawnProjectile)
-                .SetAmountAttack(SO_TowerAttack.AmountAttack)
-                .SetDamageable(new NormalDamage(SO_TowerAttack.Damage, this.GameObject))
+                .SetAmountAttack(SO_Tower.AmountAttack)
+                .SetDamageable(new NormalDamage(SO_Tower.Damage, this.GameObject))
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
@@ -50,10 +50,10 @@ namespace Unit.Trap.Tower
         {
         }
 
-        public TowerIdleStateBuilder SetConfig(SO_TowerAttack config)
+        public TowerIdleStateBuilder SetConfig(SO_Tower config)
         {
             if(state is TowerIdleState towerIdleState)
-                towerIdleState.SO_TowerAttack = config;
+                towerIdleState.SO_Tower = config;
 
             return this;
         }

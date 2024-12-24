@@ -25,13 +25,13 @@ namespace Unit.Character.Player
 
             var hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity);
 
-            previousHit?.GetComponent<UnitMeshRenderer>().ResetColor();
+            previousHit?.GetComponent<UnitRenderer>().ResetColor();
             for (int i = 0; i < hitsCount; i++)
             {
                 // Возвращаем данные о позиции и объекте
                 hitObject = hits[i].collider.gameObject;
                 previousHit = hitObject;
-                hitObject.GetComponent<UnitMeshRenderer>().SetColor(Color.red);
+                hitObject.GetComponent<UnitRenderer>().SetColor(Color.red);
                 return true;
             }
 
