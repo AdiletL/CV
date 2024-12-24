@@ -14,7 +14,7 @@ namespace Unit.Character
         protected Collider[] findUnitColliders = new Collider[10];
 
         protected float durationAttack, countDurationAttack;
-        protected float applyDamage, countApplyDamage;
+        protected float timerApplyDamage, countTimerApplyDamage;
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
         protected float range;
@@ -90,10 +90,10 @@ namespace Unit.Character
                 return;
             }
 
-            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
-                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
+            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
+                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform.position, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
                
-            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
+            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
 
             if (!isAttack)
@@ -118,14 +118,14 @@ namespace Unit.Character
             isAttack = false;
             isApplyDamage = false;
             countDurationAttack = 0;
-            countApplyDamage = 0;
+            countTimerApplyDamage = 0;
             countCooldown = cooldown;
         }
         public virtual void SetWeapon(Weapon weapon)
         {
             CurrentWeapon = weapon;
             durationAttack = Calculate.Attack.TotalDurationAttack(CurrentWeapon.AmountAttack);
-            applyDamage = durationAttack * .55f;
+            timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack;
             range = CurrentWeapon.Range;
 
@@ -160,17 +160,17 @@ namespace Unit.Character
             base.Attack();
             if (!isApplyDamage) return;
             
-            countApplyDamage += Time.deltaTime;
-            if (countApplyDamage > applyDamage)
+            countTimerApplyDamage += Time.deltaTime;
+            if (countTimerApplyDamage > timerApplyDamage)
             {
-                ApplyDamage();
+                Fire();
                 isApplyDamage = false;
-                countApplyDamage = 0;
+                countTimerApplyDamage = 0;
             }
             
         }
-        
-        public override void ApplyDamage()
+
+        protected virtual void Fire()
         {
             if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
             {
@@ -183,6 +183,9 @@ namespace Unit.Character
             isAttack = false;
             FindUnit();
         }
+        public override void ApplyDamage()
+        {
+        }
 
         protected virtual void Cooldown()
         {
@@ -192,7 +195,7 @@ namespace Unit.Character
             if (countCooldown > cooldown)
             {
                 if (currentTarget 
-                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
+                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 {
                     if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                     {

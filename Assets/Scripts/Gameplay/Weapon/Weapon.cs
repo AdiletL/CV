@@ -35,9 +35,10 @@ namespace Gameplay.Weapon
             CurrentTarget = target;
         }
 
+        public abstract void Fire();
+
         public virtual void ApplyDamage()
         {
-            
         }
 
         public void Show() => weapon.SetActive(true);

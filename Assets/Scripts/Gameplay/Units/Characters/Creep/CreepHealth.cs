@@ -10,7 +10,7 @@ namespace Unit.Character.Creep
         
         protected CreepController CreepController;
         protected CharacterAnimation characterAnimation;
-        protected SO_CreepHealth SoCreepHealth;
+        protected SO_CreepHealth so_CreepHealth;
         protected AnimationClip takeDamageClip;
         
         public override void Initialize()
@@ -18,9 +18,9 @@ namespace Unit.Character.Creep
             base.Initialize();
             
             CreepController = (CreepController)unitController;
-            characterAnimation = CreepController.components.GetComponentFromArray<CharacterAnimation>();
-            SoCreepHealth = (SO_CreepHealth)so_UnitHealth;
-            takeDamageClip = SoCreepHealth.takeDamageClip;
+            characterAnimation = CreepController.GetComponentInUnit<CharacterAnimation>();
+            so_CreepHealth = (SO_CreepHealth)so_UnitHealth;
+            takeDamageClip = so_CreepHealth.takeDamageClip;
 
             var takeDamageState = (CreepTakeDamageState)new CreepTakeDamageStateBuilder(new CreepTakeDamageState())
                 .SetCharacterAnimation(characterAnimation)
@@ -35,9 +35,7 @@ namespace Unit.Character.Creep
         {
             base.TakeDamage(damageable);
             
-            CreepController.StateMachine.ExitCategory(StateCategory.action);
-            CreepController.StateMachine.SetStates(typeof(CreepTakeDamageState));
-            CreepController.StateMachine.ExitOtherCategories(StateCategory.action);
+            CreepController.StateMachine.ExitOtherStates(typeof(CreepTakeDamageState));
         }
     }
 }

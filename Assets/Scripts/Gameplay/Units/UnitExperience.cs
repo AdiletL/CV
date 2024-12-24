@@ -57,7 +57,7 @@ namespace Unit
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
             IsTakeExperience = so_UnitExperience.IsTakeExperience;
             IsGiveExperience = so_UnitExperience.IsGiveExperience;
-            unitController.components.GetComponentFromArray<UnitHealth>().OnDeath += OnDeath;
+            unitController.GetComponentInUnit<UnitHealth>().OnDeath += OnDeath;
         }
         
         public virtual void AddExperience(int experience)
@@ -100,7 +100,7 @@ namespace Unit
         {
             if(!IsGiveExperience) return;
 
-            var damaging = unitController.components.GetComponentFromArray<UnitHealth>().Damaging;
+            var damaging = unitController.GetComponentInUnit<UnitHealth>().Damaging;
             if (damaging.TryGetComponent(out IUnitExperience unitExperience))
                 unitExperience.AddExperience(GiveExperience);
             
@@ -112,7 +112,7 @@ namespace Unit
 
         private void OnDestroy()
         {
-            unitController.components.GetComponentFromArray<UnitHealth>().OnDeath -= OnDeath;
+            unitController.GetComponentInUnit<UnitHealth>().OnDeath -= OnDeath;
         }
     }
 

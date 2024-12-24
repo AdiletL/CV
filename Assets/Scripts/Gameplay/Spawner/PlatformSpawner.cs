@@ -37,23 +37,35 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
 
     private void SpawnGameObject()
     {
-        for (var x = 0; x < length.y; x++)
-        for (var y = 0; y < length.x; y++)
+        float intervalX = 0;
+        float intervalZ = 0;
+        for (var x = 0; x < length.x; x++)
         {
-            var newGameObject = Instantiate(platformPrefab, platformParent.transform);
-            newGameObject.transform.localPosition = new Vector3(x, 0, y);
-            var platform = newGameObject.GetComponent<Platform>();
-            platform.SetCoordinates(new Vector2Int(x + 1, y + 1));
-            platform.IsBlocked = Random.Range(0, 6) == 0;
-            if (platform.IsBlocked)
+            intervalX = x * .05f;
+            for (var y = 0; y < length.y; y++)
             {
-                var block = Instantiate(blockPrefab, blockParent);
-                block.transform.position = platform.transform.position;
-                platform.AddGameObject(block);
-            }
+                intervalZ = y * .05f;
+                var newGameObject = Instantiate(platformPrefab, platformParent.transform);
+                newGameObject.transform.localPosition = new Vector3(
+                    (x * platformPrefab.transform.localScale.x) + intervalX, 0,
+                    (y * platformPrefab.transform.localScale.z) + intervalZ);
+                var platform = newGameObject.GetComponent<Platform>();
+                platform.SetCoordinates(new Vector2Int(x + 1, y + 1));
+                platform.IsBlocked = Random.Range(0, 6) == 0;
+                if (platform.IsBlocked)
+                    CreateBlock(platform);
 
-            platforms.Add(platform);
+                platforms.Add(platform);
+            }
         }
+    }
+
+    private void CreateBlock(Platform platform)
+    {
+        var block = Instantiate(blockPrefab);
+        block.transform.position = platform.transform.position;
+        block.transform.localScale = platformPrefab.transform.localScale;
+        block.transform.SetParent(blockParent);
     }
 
     public GameObject GetFreePlatform(Vector3 currentPosition = new Vector3())

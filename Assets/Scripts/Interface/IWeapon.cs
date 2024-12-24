@@ -9,6 +9,7 @@ public interface IWeapon : IApplyDamage
     
     public void Initialize();
 
+    public void Fire();
     public void SetTarget(GameObject target);
     public void IncreaseStates(Unit.IState state);
 }

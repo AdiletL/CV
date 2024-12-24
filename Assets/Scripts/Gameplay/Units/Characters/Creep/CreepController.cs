@@ -33,40 +33,7 @@ namespace Unit.Character.Creep
             this.StateMachine.OnChangedState += OnChangedState;
         }
 
-        protected virtual void CreateStates()
-        {
-            this.StateMachine = new StateMachine();
-            
-            var animation = components.GetComponentFromArray<CreepAnimation>();
-
-            var idleState = (CreepIdleState)new CreepIdleStateBuilder(new CreepIdleState())
-                .SetCharacterAnimation(animation)
-                .SetIdleClips(soCreepMove.IdleClip)
-                .SetGameObject(gameObject)
-                .SetCenter(center)
-                .SetStateMachine(this.StateMachine)
-                .Build();;
-            
-            var attackState = (CreepSwitchAttackState)new CreepSwitchSwitchAttackStateBuilder(new CreepSwitchAttackState())
-                .SetGameObject(gameObject)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-
-            var moveState = (CreepSwitchMoveState)new CreepSwitchMoveStateBuilder(new CreepSwitchMoveState())
-                .SetCenter(center)
-                .SetConfig(soCreepMove)
-                .SetGameObject(gameObject)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-
-            var patrolState = (CreepPatrolState)new CreepPatrolStateBuilder(new CreepPatrolState())
-                .SetMovementSpeed(soCreepMove.WalkSpeed)
-                .SetGameObject(gameObject)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-            
-            this.StateMachine.AddStates(idleState, moveState);
-        }
+        protected abstract void CreateStates();
         
                 
         public void SetStartPlatform(Platform start) => startPlatform = start;

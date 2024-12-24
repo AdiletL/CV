@@ -24,12 +24,12 @@ namespace Unit.Character.Player
             return (PlayerDefaultAttackState)new PlayerDefaultAttackStateBuilder()
                 .SetAttackClips(so_PlayerAttack.DefaultAttackClips)
                 .SetCooldownClip(so_PlayerAttack.DefaultCooldownClip)
-                .SetAmountAttack(amountAttack)
                 .SetGameObject(GameObject)
                 .SetCenter(Center)
                 .SetCharacterAnimation(CharacterAnimation)
                 .SetEnemyLayer(EnemyLayer)
-                .SetDamageble(Damageable)
+                .SetAmountAttack(amountAttack)
+                .SetDamageable(Damageable)
                 .SetStateMachine(StateMachine)
                 .Build();
         }
@@ -43,12 +43,12 @@ namespace Unit.Character.Player
                 .SetCenter(Center)
                 .SetGameObject(this.GameObject)
                 .SetCharacterAnimation(playerAnimation)
-                .SetDamageble(Damageable)
+                .SetDamageable(Damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
         
-        public bool IsFindUnitInRange()
+        public override bool IsFindUnitInRange()
         {
             return Calculate.Attack.IsFindUnitInRange(Center.position, rangeAttack, EnemyLayer, findUnitColliders);
         }
@@ -57,7 +57,7 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             playerAnimation = (PlayerAnimation)CharacterAnimation;
-            so_PlayerAttack = (SO_PlayerAttack)SO_CharacterAttack;
+            so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
             Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
             amountAttack = so_PlayerAttack.AmountAttack;
         }

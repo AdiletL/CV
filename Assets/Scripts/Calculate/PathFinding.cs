@@ -5,7 +5,7 @@ namespace Calculate
 {
     public class PathFinding
     {
-        public Transform StartTransform, EndTransform;
+        public Vector3 StartPosition, EndPosition;
 
         private Platform startPlatform;
         private Platform currentPlatform;
@@ -27,18 +27,24 @@ namespace Calculate
         private Stack<Platform> unverifiedPlatforms = new();
         private Dictionary<Platform, PlatformData> platformData = new(); // Временные данные платформ
 
-        public void SetTarget(Transform target)
+        private bool isUseColor;
+
+        public void SetStartPosition(Vector3 position)
         {
-            EndTransform = target;
+            StartPosition = position;
+        }
+        public void SetTargetPosition(Vector3 target)
+        {
+            EndPosition = target;
         }
 
         private void SetCurrentPlatform()
         {
-            startPlatform = FindPlatform.GetPlatform(StartTransform.position + startRayOnPlatform, Vector3.down);
+            startPlatform = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
             currentPlatform = startPlatform;
         }
 
-        public Queue<Platform> GetPath()
+        public Queue<Platform> GetPath(bool isUseColor = false)
         {
             weightPlatform = 0;
             SetCurrentPlatform();
@@ -46,13 +52,15 @@ namespace Calculate
             pathToPoint.Clear();
             if (!currentPlatform) return pathToPoint;
 
-            endPlatform = FindPlatform.GetPlatform(EndTransform.position + startRayOnPlatform, Vector3.down);
+            endPlatform = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
             if (!endPlatform) return pathToPoint;
 
+            this.isUseColor = isUseColor;
+            
             while (currentPlatform.CurrentCoordinates != endPlatform.CurrentCoordinates)
             {
                 nearPlatforms = GetNearPlatforms();
-
+                
                 if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
                 {
                     if (unverifiedPlatforms.TryPop(out var newPlatform))
@@ -75,7 +83,7 @@ namespace Calculate
                 }
             }
 
-            correctPlatformPosition = EndTransform.position;
+            correctPlatformPosition = EndPosition;
             BuildPath(pathToPoint);
 
             unverifiedPlatforms.Clear();
@@ -102,8 +110,10 @@ namespace Calculate
         private void BuildPath(Queue<Platform> path)
         {
             platformStack.Clear();
-            platformStack.Push(endPlatform);
-           // endPlatform.SetColor(Color.white);
+            if(!endPlatform.IsBlocked)
+                platformStack.Push(endPlatform);
+            
+            //endPlatform.SetColor(Color.white);
             lastCorrectPlatform = endPlatform;
 
             while (lastCorrectPlatform != startPlatform)
@@ -111,7 +121,8 @@ namespace Calculate
                 var correctPlatform = GetCorrectPlatform();
                 if (!correctPlatform) break;
 
-                //correctPlatform.SetColor(Color.white);
+                if(this.isUseColor)
+                    correctPlatform.SetColor(Color.yellow);
                 lastCorrectPlatform = correctPlatform;
                 platformStack.Push(correctPlatform);
             }
@@ -155,14 +166,15 @@ namespace Calculate
 
             foreach (var direction in rayDirectionsPlatform)
             {
+                Debug.DrawRay(origin, direction, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, 100, Layers.PLATFORM_LAYER) &&
-                    hitResult.transform.TryGetComponent(out Platform platform) &&
-                    (!platformData.TryGetValue(platform, out var data) || (!data.IsChecked && !platform.IsBlocked)))
+                    hitResult.transform.TryGetComponent(out Platform platform))
                 {
                     platforms.Add(platform);
                 }
             }
-
+           // &&
+            //(!platformData.TryGetValue(platform, out var data) || (!data.IsChecked && !platform.IsBlocked)
             return platforms;
         }
 
@@ -170,8 +182,14 @@ namespace Calculate
         {
             for (int i = platforms.Count - 1; i >= 0; i--)
             {
-                if (platforms[i].IsBlocked || (platformData.TryGetValue(platforms[i], out var data) && data.IsChecked))
+                if ((platformData.TryGetValue(platforms[i], out var data) && data.IsChecked) || platforms[i].IsBlocked)
                 {
+                    if (platforms[i].CurrentCoordinates == endPlatform.CurrentCoordinates)
+                    {
+                        unverifiedPlatforms.Push(platforms[i]);
+                        return platforms;
+                    }
+                    
                     platforms.RemoveAt(i);
                 }
                 else
@@ -232,10 +250,10 @@ namespace Calculate
     {
         private readonly PathFinding pathFinding = new();
 
-        public PathToPointBuilder SetPosition(Transform start, Transform end)
+        public PathToPointBuilder SetPosition(Vector3 start, Vector3 end)
         {
-            pathFinding.StartTransform = start;
-            pathFinding.EndTransform = end;
+            pathFinding.StartPosition = start;
+            pathFinding.EndPosition = end;
             return this;
         }
 

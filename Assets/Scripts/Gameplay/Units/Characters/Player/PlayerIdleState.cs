@@ -27,11 +27,11 @@ namespace Unit.Character.Player
         
         private Queue<Platform> pathToPoint = new();
         
-        public GameObject FinishTargetForMove { get; set; }
+        public GameObject TargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
 
         
-        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0)
+        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0.01f)
         {
             return (current - target).sqrMagnitude <= threshold;
         }
@@ -40,7 +40,7 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             pathFinding = new PathToPointBuilder()
-                .SetPosition(this.GameObject.transform, FinishTargetForMove.transform)
+                .SetPosition(this.GameObject.transform.position, GameObject.transform.position)
                 .Build();
             playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
         }
@@ -70,15 +70,23 @@ namespace Unit.Character.Player
             this.StateMachine.OnExitCategory -= OnExitCategory;
         }
 
-        public void SetFinishTarget(GameObject finish)
+        
+        public void SetTarget(GameObject target)
         {
-            this.FinishTargetForMove = finish;
-            pathFinding.SetTarget(finish.transform);
+            //if(!target.TryGetComponent(out Platform platform)) return;
+            
+            this.TargetForMove = target;
+            pathFinding.SetStartPosition(GameObject.transform.position);
+            pathFinding.SetTargetPosition(target.transform.position);
+            FindPathToPoint();
+            this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
         }
 
         private void CheckMove()
         {
-            targetPosition = new Vector3(FinishTargetForMove.transform.position.x, GameObject.transform.position.y, FinishTargetForMove.transform.position.z);
+            if(!TargetForMove || pathToPoint.Count == 0) return;
+            
+            targetPosition = new Vector3(TargetForMove.transform.position.x, GameObject.transform.position.y, TargetForMove.transform.position.z);
             
             if (IsNear(GameObject.transform.position, targetPosition))
             {
@@ -88,21 +96,18 @@ namespace Unit.Character.Player
             }
             else
             {
-                if (FinishTargetForMove && pathToPoint.Count == 0) FindPathToPoint();
-                if (pathToPoint.Count == 0) return;
-
                 this.StateMachine.ExitCategory(Category);
-                this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToFinish(pathToPoint);
-                this.StateMachine.GetState<PlayerSwitchMoveState>().SetFinish(FinishTargetForMove);
+                this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
                 this.StateMachine.SetStates(typeof(PlayerSwitchMoveState));
             }
         }
         private void FindPathToPoint()
         {
-            if (pathToPoint.Count == 0)
+            for (int i = pathToPoint.Count - 1; i >= 0; i--)
             {
-                pathToPoint = pathFinding.GetPath();
+                pathToPoint.Dequeue()?.GetComponent<UnitMeshRenderer>().ResetColor();
             }
+            pathToPoint = pathFinding.GetPath(true);
         }
         
         private void CheckAttack()
@@ -114,8 +119,7 @@ namespace Unit.Character.Player
             {
                 if (playerSwitchAttackState.IsFindUnitInRange())
                 {
-                    this.StateMachine.ExitOtherCategories(Category);
-                    this.StateMachine.SetStates(typeof(PlayerSwitchAttackState));
+                    this.StateMachine.ExitOtherStates(typeof(PlayerSwitchAttackState));
                 }
 
                 countCheckEnemyCooldown = 0;
@@ -174,7 +178,7 @@ namespace Unit.Character.Player
         public PlayerIdleStateBuilder SetFinishTargetToMove(GameObject finish)
         {
             if (state is PlayerIdleState playerIdleState)
-                playerIdleState.FinishTargetForMove = finish;
+                playerIdleState.TargetForMove = finish;
 
             return this;
         }

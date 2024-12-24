@@ -70,15 +70,11 @@ namespace Unit.Character
         public override void Update()
         {
             base.Update();
-
+            
             if (!currentTarget)
             {
-                FindUnit();
-                if (!currentTarget)
-                {
-                    this.StateMachine.ExitCategory(Category);
-                    return;
-                }
+                this.StateMachine.ExitCategory(Category);
+                return;
             }
 
             if(!isCheckDistanceToTarget())
@@ -87,10 +83,10 @@ namespace Unit.Character
                 return;
             }
 
-            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform))
-                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
+            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
+                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform.position, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
                
-            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
+            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
 
             if (!isAttack)
@@ -149,6 +145,7 @@ namespace Unit.Character
             }
             this.CharacterAnimation?.ChangeAnimation(CooldownClip);
             isAttack = false;
+            FindUnit();
         }
 
         protected virtual void Cooldown()
@@ -159,7 +156,7 @@ namespace Unit.Character
             if (countCooldown > cooldown)
             {
                 if (currentTarget 
-                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform, currentTarget.transform, angleToTarget))
+                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 {
                     if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                     {
@@ -243,15 +240,6 @@ namespace Unit.Character
             if (state is CharacterDefaultAttackState characterWeapon)
             {
                 characterWeapon.CooldownClip = animationClip;
-            }
-
-            return this;
-        }
-        public CharacterDefaultAttackStateBuilder SetAmountAttack(int amount)
-        {
-            if (state is CharacterDefaultAttackState characterWeapon)
-            {
-                characterWeapon.AmountAttack = amount;
             }
 
             return this;

@@ -2,9 +2,8 @@
 {
     public class Sword : Weapon
     {
-        public override void ApplyDamage()
+        public override void Fire()
         {
-            base.ApplyDamage();
             if (CurrentTarget.TryGetComponent(out IHealth health)
                 &&  health.IsLive)
             {

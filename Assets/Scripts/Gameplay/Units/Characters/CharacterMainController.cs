@@ -1,5 +1,4 @@
 using System;
-using Machine;
 using UnityEngine;
 
 namespace Unit.Character
@@ -8,6 +7,11 @@ namespace Unit.Character
     {
         public StateMachine StateMachine { get; protected set; }
         
+        public override T GetComponentInUnit<T>() where T : class
+        {
+            return components.GetComponentFromArray<T>();
+        }
+
         public T GetState<T>() where T : Machine.IState
         {
             return StateMachine.GetState<T>();
@@ -23,7 +27,7 @@ namespace Unit.Character
 
         protected virtual void OnEnable()
         {
-            this.StateMachine?.ExitOtherCategories(StateCategory.idle);
+            this.StateMachine?.ExitOtherStates(typeof(CharacterIdleState));
         }
 
         public virtual void IncreaseStates(params IState[] stats)

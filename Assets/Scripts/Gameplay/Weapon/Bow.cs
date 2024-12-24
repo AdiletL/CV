@@ -21,16 +21,15 @@ namespace Gameplay.Weapon
             pointSpawnProjectile = weapon.transform.GetChild(0);
         }
 
-        public override void ApplyDamage()
+        public override void Fire()
         {
-            base.ApplyDamage();
             var newGameObject = this.pool.GetObject<ArrowController>();
             newGameObject.transform.position = pointSpawnProjectile.position;
             newGameObject.transform.rotation = pointSpawnProjectile.rotation;
             var arrow = newGameObject.GetComponent<ArrowController>();
             arrow.Initialize();
             arrow.SetDamageable(Damageable);
-            arrow.SetTargetPosition(CurrentTarget.transform.position);
+            arrow.UpdateData(CurrentTarget.transform.position);
         }
     }
     

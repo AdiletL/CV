@@ -2,7 +2,40 @@
 {
     public class ChestMonsterIdleState : CreepIdleState
     {
-        protected override int checkEnemyLayer { get; } = Layers.PLAYER_LAYER;
+        private int checkEnemyLayer { get; } = Layers.PLAYER_LAYER;
+        
+        private ChestMonsterSwitchMoveState chestMonsterSwitchMoveState;
+        private ChestMonsterSwitchAttackState chestMonsterSwitchAttackState;
+        
+        private float checkEnemyCooldown = .03f;
+        private float countCheckEnemyCooldown;
+        
+        private bool isCheckAttack;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            chestMonsterSwitchMoveState = this.StateMachine.GetState<ChestMonsterSwitchMoveState>();
+            //chestMonsterSwitchAttackState = this.StateMachine.GetState<ChestMonsterSwitchAttackState>();
+        }
+
+
+        public override void Update()
+        {
+            base.Update();
+
+            //CheckAttack();
+            CheckPatrol();
+        }
+
+        private void CheckPatrol()
+        {
+            if(chestMonsterSwitchMoveState == null 
+               && !chestMonsterSwitchMoveState.IsCanMovement()) return;
+            
+            this.StateMachine.ExitCategory(Category);
+            this.StateMachine.SetStates(typeof(ChestMonsterSwitchMoveState));
+        }
     }
 
     public class ChestMonsterIdleStateBuilder : CreepIdleStateBuilder

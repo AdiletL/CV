@@ -31,7 +31,6 @@ public class RewardSpawner : MonoBehaviour, ISpawner
         {
             var newGameObject = Instantiate(chestPrefab);
             newGameObject.transform.position = freePlatform.transform.position;
-            freePlatform.GetComponent<Platform>().AddGameObject(newGameObject);
             FinishReward = newGameObject.GetComponent<Reward>();
         }
     }

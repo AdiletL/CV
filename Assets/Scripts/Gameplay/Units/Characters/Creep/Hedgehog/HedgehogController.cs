@@ -7,8 +7,6 @@ namespace Unit.Character.Creep
         
         protected override void CreateStates()
         {
-            base.CreateStates();
-
             var animation = components.GetComponentFromArray<HedgehogAnimation>();
             
             var idleState = (HedgehogIdleState)new HedgehogIdleStateBuilder()

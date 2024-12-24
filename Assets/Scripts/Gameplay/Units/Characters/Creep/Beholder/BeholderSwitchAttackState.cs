@@ -4,4 +4,11 @@
     {
         
     }
+    
+    public class BeholderSwitchAttackStateBuilder : CreepSwitchSwitchAttackStateBuilder
+    {
+        public BeholderSwitchAttackStateBuilder() : base(new BeholderSwitchAttackState())
+        {
+        }
+    }
 }

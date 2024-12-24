@@ -87,7 +87,7 @@ namespace Unit
 
         protected virtual void OnDisable()
         {
-            Calculate.FindPlatform.GetPlatform(transform.position + (Vector3.up * .5f), Vector3.down)?.RemoveGameObject(gameObject);
+            
         }
 
         public virtual void IncreaseStates(IState state)

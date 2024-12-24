@@ -113,19 +113,18 @@ public class StateMachine
     }
 
 
-    public void ExitOtherCategories(StateCategory excludedCategory)
+    public void ExitOtherStates(Type installationState)
     {
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
 
         foreach (var category in cachedCategories)
         {
-            if (category != excludedCategory)
-            {
-                activeStates[category].Exit();
-                activeStates.Remove(category);
-            }
+            activeStates[category].Exit();
+            activeStates.Remove(category);
         }
+        
+        SetStates(installationState);
         
         if (activeStates.Count == 0)
             SetDefaultState();
@@ -138,9 +137,6 @@ public class StateMachine
             state.Exit();
             activeStates.Remove(excludedCategory);
             OnExitCategory?.Invoke(excludedCategory, state);
-            
-            if (activeStates.Count == 0)
-                SetDefaultState();
         }
     }
 
@@ -165,6 +161,9 @@ public class StateMachine
     
     public void LateUpdate()
     {
+        if (activeStates.Count == 0)
+            SetDefaultState();
+        
         updateStates.Clear();
         updateStates.AddRange(activeStates.Values);
 

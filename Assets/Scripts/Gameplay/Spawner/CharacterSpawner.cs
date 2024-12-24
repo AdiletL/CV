@@ -39,7 +39,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
     private void SpawnGameObject()
     {
         SpawnPlayer();
-        SpawnEnemies();
+        //SpawnEnemies();
     }
 
     public void SetSpawners(PlatformSpawner platformSpawner, RewardSpawner rewardSpawner)
@@ -56,7 +56,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
         var playerGameObject = diContainer.InstantiatePrefabForComponent<PlayerController>(playerPrefab);
         playerGameObject.transform.position = platform.transform.position;
         var player = playerGameObject.GetComponent<PlayerController>();
-        player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
+        //player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
         player.Initialize();
         player.GetState<PlayerIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
         playerCharacter = player;
@@ -84,7 +84,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
 
     private void OnFinishedToTargetPlayer()
     {
-        rewardSpawner.ChangePositionReward();
-        playerCharacter.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
+        //rewardSpawner.ChangePositionReward();
+        //playerCharacter.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
     }
 }

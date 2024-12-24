@@ -10,6 +10,11 @@ namespace Unit.Character.Creep
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
 
+        public override bool IsCanMovement()
+        {
+            return StartPlatform && EndPlatform;
+        }
+
         private BeholderPatrolState CreatePatrolState()
         {
             return (BeholderPatrolState)new BeholderPatrolStateBuilder()

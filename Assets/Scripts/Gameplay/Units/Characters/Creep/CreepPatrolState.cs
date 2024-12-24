@@ -32,9 +32,9 @@ namespace Unit.Character.Creep
             if(!EndPlatform || !StartPlatform) return null;
 
             if (StartPosition.HasValue && IsNear(GameObject.transform.position, StartPosition.Value))
-                pathFinding.SetTarget(EndPlatform.transform);
+                pathFinding.SetTargetPosition(EndPlatform.transform.position);
             else if (EndPosition.HasValue && IsNear(GameObject.transform.position, EndPosition.Value))
-                pathFinding.SetTarget(StartPlatform.transform);
+                pathFinding.SetTargetPosition(StartPlatform.transform.position);
             
             if(platformsQueue.Count == 0)
                 platformsQueue = pathFinding.GetPath();
@@ -49,7 +49,7 @@ namespace Unit.Character.Creep
         {
             base.Initialize();
             pathFinding = new PathToPointBuilder()
-                .SetPosition(this.GameObject.transform, EndPlatform.transform)
+                .SetPosition(this.GameObject.transform.position, EndPlatform.transform.position)
                 .Build();
 
             //enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
@@ -84,7 +84,7 @@ namespace Unit.Character.Creep
                 var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, checkEnemyLayer);
                 if (!enemyGameObject)
                 {
-                    if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform, currentTarget.transform))
+                    if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTarget.transform.position))
                     {
                         Calculate.Move.Rotate(GameObject.transform, currentTarget.transform,
                             CreepSwitchMoveState.RotationSpeed);

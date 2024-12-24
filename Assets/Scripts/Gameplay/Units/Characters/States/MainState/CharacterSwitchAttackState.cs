@@ -6,22 +6,29 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterSwitchAttackState : State
+    public class CharacterSwitchAttackState : UnitSwitchAttackState
     {
         public override StateCategory Category { get; } = StateCategory.attack;
         
+        protected SO_CharacterAttack so_CharacterAttack;
 
         protected IDamageable Damageable;
 
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
-        public SO_CharacterAttack SO_CharacterAttack { get; set; }
         public int EnemyLayer { get; set; }
+
+
+        public virtual bool IsFindUnitInRange()
+        {
+            throw new NotImplementedException();
+        }
 
 
         public override void Initialize()
         {
+            so_CharacterAttack = (SO_CharacterAttack)this.SO_UnitAttack;
         }
         
         public override void Enter()
@@ -50,7 +57,7 @@ namespace Unit.Character
         }
     }
 
-    public class CharacterSwitchAttackStateBuilder : StateBuilder<CharacterSwitchAttackState>
+    public class CharacterSwitchAttackStateBuilder : UnitSwitchAttackStateBuilder
     {
         public CharacterSwitchAttackStateBuilder(CharacterSwitchAttackState instance) : base(instance)
         {
@@ -58,29 +65,28 @@ namespace Unit.Character
 
         public CharacterSwitchAttackStateBuilder SetGameObject(GameObject gameObject)
         {
-            state.GameObject = gameObject;
+            if(state is CharacterSwitchAttackState characterSwitchAttackState)
+                characterSwitchAttackState.GameObject = gameObject;
             return this;
         }
 
         public CharacterSwitchAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            state.CharacterAnimation = characterAnimation;
+            if(state is CharacterSwitchAttackState characterSwitchAttackState)
+                characterSwitchAttackState.CharacterAnimation = characterAnimation;
             return this;
         }
-
-        public CharacterSwitchAttackStateBuilder SetConfig(SO_CharacterAttack config)
-        {
-            state.SO_CharacterAttack = config;
-            return this;
-        }
+        
         public CharacterSwitchAttackStateBuilder SetCenter(Transform center)
         {
-            state.Center = center;
+            if(state is CharacterSwitchAttackState characterSwitchAttackState)
+                characterSwitchAttackState.Center = center;
             return this;
         }
         public CharacterSwitchAttackStateBuilder SetEnemyLayer(int index)
         {
-            state.EnemyLayer = index;
+            if(state is CharacterSwitchAttackState characterSwitchAttackState)
+                characterSwitchAttackState.EnemyLayer = index;
             return this;
         }
     }

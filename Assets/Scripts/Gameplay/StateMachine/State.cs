@@ -2,7 +2,7 @@
 {
     public abstract class State : IState
     {
-        public virtual StateCategory Category { get; }
+        public abstract StateCategory Category { get; }
         public StateMachine StateMachine;
 
         public abstract void Initialize();
@@ -14,7 +14,7 @@
         public abstract void Exit();
     }
 
-    public abstract class StateBuilder<T> where T : State, new()
+    public abstract class StateBuilder<T> where T : State
     {
         protected T state;
 

@@ -8,16 +8,17 @@ namespace Unit.Character.Player
     public class PlayerSwitchMoveState : CharacterSwitchMoveState
     {
         private SO_PlayerMove so_PlayerMove;
-        private GameObject finish;
 
-        private Queue<Platform> pathToFinish = new();
+        private Queue<Platform> pathToTarget = new();
         
         public Transform Center { get; set; }
 
+        public CharacterController CharacterController { get; set; }
 
         private PlayerRunState CreateRunState()
         {
             return (PlayerRunState)new PlayerRunStateBuilder()
+                .SetCharacterController(CharacterController)
                 .SetMoveConfig(so_PlayerMove)
                 .SetCenter(Center)
                 .SetCharacterAnimation(this.CharacterAnimation)
@@ -46,21 +47,19 @@ namespace Unit.Character.Player
             }
 
             var runState = this.StateMachine.GetState<PlayerRunState>();
-            runState.SetPathToFinish(pathToFinish);
-            runState.SetFinish(finish);
+            runState.SetPathToTarget(pathToTarget);
             
             this.StateMachine.SetStates(typeof(PlayerRunState));
         }
         
-        public void SetFinish(GameObject target)
+        public void SetPathToTarget(Queue<Platform> path)
         {
-            finish = target;
+            this.pathToTarget = path;
+            if (this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
+            {
+                this.StateMachine.GetState<PlayerRunState>().SetPathToTarget(path);
+            }
         }
-        public void SetPathToFinish(Queue<Platform> path)
-        {
-            this.pathToFinish = path;
-        }
-
     }
 
     public class PlayerMoveStateBuilder : CharacterMoveStateBuilder
@@ -73,6 +72,14 @@ namespace Unit.Character.Player
         {
             if(state is PlayerSwitchMoveState playerSwitchMoveState)
                 playerSwitchMoveState.Center = center;
+
+            return this;
+        }
+        
+        public PlayerMoveStateBuilder SetCharacterController(CharacterController characterController)
+        {
+            if(state is PlayerSwitchMoveState playerSwitchMoveState)
+                playerSwitchMoveState.CharacterController = characterController;
 
             return this;
         }

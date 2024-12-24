@@ -21,7 +21,7 @@ namespace Unit.Character
         
         public virtual void Initialize()
         {
-            characterMainController.components.GetComponentFromArray<CharacterHealth>().OnChangedHealth += OnChangeHealth;
+            characterMainController.GetComponentInUnit<CharacterHealth>().OnChangedHealth += OnChangeHealth;
         }
 
         protected virtual void OnChangeHealth(IHealthInfo healthInfo)
@@ -38,7 +38,7 @@ namespace Unit.Character
 
         private void OnDestroy()
         {
-            characterMainController.components.GetComponentFromArray<CharacterHealth>().OnChangedHealth -= OnChangeHealth;
+            characterMainController.GetComponentInUnit<CharacterHealth>().OnChangedHealth -= OnChangeHealth;
         }
     }
 }

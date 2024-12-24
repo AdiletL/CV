@@ -19,7 +19,7 @@ namespace Unit.Character
 
         protected void PlayAnimation()
         {
-            var duration = 2 / MovementSpeed;
+            var duration = 1.5f / MovementSpeed;
             CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: duration);
         }
     }

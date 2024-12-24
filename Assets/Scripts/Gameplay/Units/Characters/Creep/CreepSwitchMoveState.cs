@@ -10,6 +10,12 @@ namespace Unit.Character.Creep
         
         public Transform Center { get; set; }
 
+        public virtual bool IsCanMovement()
+        {
+            throw new System.NotImplementedException();
+        }
+
+
         public override void Initialize()
         {
             base.Initialize();

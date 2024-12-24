@@ -17,8 +17,6 @@ namespace Gameplay.Weapon.Projectile
         public float MovementSpeed { get; protected set; }
 
         protected float height;
-        protected bool isMoveable;
-
         
         [Inject]
         public void Construct(IPoolable poolable)
@@ -40,7 +38,7 @@ namespace Gameplay.Weapon.Projectile
         }
         public abstract void Move();
 
-        public void ApplyDamage()
+        public virtual void ApplyDamage()
         {
             if (target && target.TryGetComponent(out IHealth health))
             {

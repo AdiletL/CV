@@ -21,9 +21,9 @@ namespace Calculate
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
         }
         
-        public static void Rotate(Transform transform, Transform target, float speed, bool ignoreX, bool ignoreY, bool ignoreZ, Vector3 upwards = new Vector3())
+        public static void Rotate(Transform transform, Vector3 target, float speed, bool ignoreX, bool ignoreY, bool ignoreZ, Vector3 upwards = new Vector3())
         {
-            var direction = target.position - transform.position;
+            var direction = target - transform.position;
             if (direction == Vector3.zero) return;
 
             if (upwards == Vector3.zero) upwards = Vector3.up;
@@ -43,10 +43,10 @@ namespace Calculate
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
         }
         
-        public static bool IsFacingTargetUsingAngle(Transform objectTransform, Transform targetTransform, float thresholdDot = 0)
+        public static bool IsFacingTargetUsingAngle(Vector3 origin, Vector3 forward, Vector3 target, float thresholdDot = 0.01f)
         {
             // Направление на цель
-            Vector3 directionToTarget = targetTransform.position - objectTransform.position;
+            Vector3 directionToTarget = target - origin;
 
             // Игнорируем ось Y (проекция на плоскость XZ)
             directionToTarget.y = 0;
@@ -55,17 +55,16 @@ namespace Calculate
             directionToTarget.Normalize();
 
             // Forward направление объекта, игнорируя ось Y
-            Vector3 forwardXZ = objectTransform.forward;
+            Vector3 forwardXZ = forward;
             forwardXZ.y = 0;
             forwardXZ.Normalize();
 
-            // Угол между forward направлением объекта и направлением на цель
-            float angleToTarget = Vector3.Angle(forwardXZ, directionToTarget);
+            // Скалярное произведение между forward направлением объекта и направлением на цель
+            float dotProduct = Vector3.Angle(forwardXZ, directionToTarget);
 
-            // Если угол меньше или равен порогу, объект смотрит на цель
-            return angleToTarget <= thresholdDot;
+            // Если скалярное произведение больше или равно порогу, объект смотрит на цель
+            return dotProduct <= thresholdDot;
         }
-
 
     }
 }

@@ -4,8 +4,6 @@
     {
         protected override void CreateStates()
         {
-            base.CreateStates();
-
             var animation = components.GetComponentFromArray<BeholderAnimation>();
             
             var idleState = (BeholderIdleState)new BeholderIdleStateBuilder()

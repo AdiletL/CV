@@ -4,12 +4,11 @@ using UnityEngine;
 
 namespace Unit
 {
-    public class UnitIdleState : State
+    public abstract class UnitIdleState : State
     {
+        public override StateCategory Category { get; } = StateCategory.idle;
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
-        
-        private readonly Vector3 rayFindPlatformPosition = Vector3.up * .5f;
         
         public override void Initialize()
         {
@@ -17,7 +16,7 @@ namespace Unit
 
         public override void Enter()
         {
-            FindPlatform.GetPlatform(GameObject.transform.position + rayFindPlatformPosition, Vector3.down)?.AddGameObject(GameObject);
+            
         }
 
         public override void Update()
@@ -29,7 +28,7 @@ namespace Unit
         }
         public override void Exit()
         {
-            FindPlatform.GetPlatform(GameObject.transform.position + rayFindPlatformPosition, Vector3.down)?.RemoveGameObject(GameObject);
+            
         }
     }
 

@@ -25,7 +25,11 @@ namespace Unit.Character.Player
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
+        private UnitControlDesktop unitControlDesktop;
+        
         private GameObject finish;
+        
+        private CharacterController characterController;
         
         private PlayerIdleState CreateIdleState(CharacterAnimation characterAnimation, Transform center)
         {
@@ -43,6 +47,7 @@ namespace Unit.Character.Player
         private PlayerSwitchMoveState CreateSwitchMoveState(CharacterAnimation characterAnimation, Transform center)
         {
             return (PlayerSwitchMoveState)new PlayerMoveStateBuilder()
+                .SetCharacterController(characterController)
                 .SetCenter(center)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
@@ -69,6 +74,9 @@ namespace Unit.Character.Player
         {
             base.Initialize();
 
+            unitControlDesktop = new PlayerControlDesktop(this);
+            characterController = GetComponent<CharacterController>();
+            
             CreateStates();
             
             StateMachine.Initialize();
@@ -120,6 +128,7 @@ namespace Unit.Character.Player
 
         private void Update()
         {
+            unitControlDesktop.HandleInput();
             StateMachine?.Update();
         }
 
@@ -140,7 +149,7 @@ namespace Unit.Character.Player
         public void SetFinishTarget(GameObject target)
         { 
             finish = target;
-            this.StateMachine?.GetState<PlayerIdleState>()?.SetFinishTarget(finish);
+            this.StateMachine?.GetState<PlayerIdleState>()?.SetTarget(finish);
         }
 
         private void OnChangedState(StateCategory category, Machine.IState state)

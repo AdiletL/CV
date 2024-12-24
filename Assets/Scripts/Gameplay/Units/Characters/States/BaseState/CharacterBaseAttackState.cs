@@ -3,21 +3,16 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterBaseAttackState : State, IAttack
+    public class CharacterBaseAttackState : UnitBaseAttackState
     {
-        public override StateCategory Category { get; } = StateCategory.attack;
-        
         protected GameObject currentTarget;
-        
-        public IDamageable Damageable { get; set; }
-        public int AmountAttack { get; set; }
-
         
         public override void Initialize()
         {
             
         }
-        
+
+
         public override void Enter()
         {
             
@@ -36,34 +31,25 @@ namespace Unit.Character
         public override void Exit()
         {
         }
-
-        public virtual void Attack()
+        public override void Attack()
         {
             
         }
 
-        public virtual void ApplyDamage()
+        public override void IncreaseStates(IState state)
         {
-            
         }
 
-        public virtual void IncreaseStates(Unit.IState state)
+        public override void ApplyDamage()
         {
-            
         }
     }
 
-    public class CharacterBaseAttackStateBuilder : StateBuilder<CharacterBaseAttackState>
+    public class CharacterBaseAttackStateBuilder : UnitBaseAttackStateBuilder
     {
         public CharacterBaseAttackStateBuilder(CharacterBaseAttackState instance) : base(instance)
         {
             
-        }
-
-        public CharacterBaseAttackStateBuilder SetDamageble(IDamageable damageable)
-        {
-            state.Damageable = damageable;
-            return this;
         }
     }
 }

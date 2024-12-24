@@ -1,5 +1,7 @@
 using System;
+using Gameplay.Spawner;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -8,10 +10,10 @@ namespace Gameplay.Manager
     {
         [Inject] private DiContainer diContainer;
 
-        [SerializeField] private CharacterSpawner characterSpawnerPrefab;
-        [SerializeField] private PlatformSpawner platformSpawnerPrefab;
-        [SerializeField] private RewardSpawner rewardSpawnerPrefab;
-        [SerializeField] private TrapSpawner trapSpawnerPrefab;
+        [SerializeField] private GameObject characterSpawnerPrefab;
+        [SerializeField] private GameObject platformSpawnerPrefab;
+        [SerializeField] private GameObject rewardSpawnerPrefab;
+        [SerializeField] private GameObject trapSpawnerPrefab;
 
         private CharacterSpawner characterSpawner;
         private PlatformSpawner platformSpawner;
@@ -26,6 +28,7 @@ namespace Gameplay.Manager
             platformSpawner.Initialize();
             rewardSpawner.Initialize();
             characterSpawner.Initialize();
+            trapSpawner.Initialize();
         }
 
         private void InstantiateSpawners()
@@ -39,7 +42,9 @@ namespace Gameplay.Manager
             characterSpawner =
                 diContainer.InstantiatePrefabForComponent<CharacterSpawner>(characterSpawnerPrefab, transform);
             characterSpawner.SetSpawners(platformSpawner, rewardSpawner);
-            //trapSpawner = Instantiate(trapSpawnerPrefab, transform);
+            
+            trapSpawner =  diContainer.InstantiatePrefabForComponent<TrapSpawner>(trapSpawnerPrefab, transform);
+            trapSpawner.SetSpawners(platformSpawner);
         }
 
         private void Start()
@@ -52,6 +57,7 @@ namespace Gameplay.Manager
             await platformSpawner.Execute();
             await rewardSpawner.Execute();
             await characterSpawner.Execute();
+            await trapSpawner.Execute();
         }
     }
 }
