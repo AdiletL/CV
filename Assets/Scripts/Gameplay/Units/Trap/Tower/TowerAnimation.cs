@@ -2,7 +2,7 @@
 
 namespace Unit.Trap.Tower
 {
-    public class TowerAnimation : MonoBehaviour
+    public class TowerAnimation : UnitAnimation
     {
         
     }

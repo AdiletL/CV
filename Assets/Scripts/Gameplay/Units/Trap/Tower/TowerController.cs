@@ -8,20 +8,19 @@ namespace Unit.Trap.Tower
 {
     public abstract class TowerController : TrapController, ITower
     {
-        protected SO_Tower so_Tower;
-
         [Space] [SerializeField] protected Transform pointSpawnProjectile;
         
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
+        protected SO_Tower so_Tower;
         protected StateMachine stateMachine;
         
         public override void Initialize()
         {
             base.Initialize();
 
-            so_Tower = (SO_Tower)so_Trap;
+            InitializeConfig();
             
             stateMachine = new StateMachine();
             
@@ -31,6 +30,11 @@ namespace Unit.Trap.Tower
             stateMachine.OnChangedState += OnChangedState;
         }
 
+        protected virtual void InitializeConfig()
+        {
+            so_Tower = (SO_Tower)so_Trap;
+        }
+        
         protected abstract void CreateState();
         
         private void Update()

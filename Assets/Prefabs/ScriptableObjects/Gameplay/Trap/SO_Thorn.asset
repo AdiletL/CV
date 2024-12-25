@@ -17,7 +17,7 @@ MonoBehaviour:
   <Duration>k__BackingField: 2
   <ApplyDamageCooldown>k__BackingField: 0.3
   <Cooldown>k__BackingField: 1
-  <Radius>k__BackingField: 1
+  <Radius>k__BackingField: 0.5
   <EnemyLayers>k__BackingField:
   - serializedVersion: 2
     m_Bits: 8

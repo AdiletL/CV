@@ -4,6 +4,8 @@ namespace Unit.Character
 {
     public class CharacterRunState : CharacterBaseMovementState
     {
+        protected float durationAnimation;
+        
         public CharacterAnimation CharacterAnimation  { get; set; }
         public AnimationClip[] RunClips  { get; set; }
 
@@ -19,8 +21,26 @@ namespace Unit.Character
 
         protected void PlayAnimation()
         {
-            var duration = 1.5f / MovementSpeed;
-            CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: duration);
+            SetDurationAnimation();
+            CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: durationAnimation);
+        }
+
+        protected void SetDurationAnimation()
+        {
+            durationAnimation = 1.5f / MovementSpeed;
+            CharacterAnimation.SetSpeedAnimation(getRandomRunClip(), duration: durationAnimation);
+        }
+
+        public override void IncreaseMovementSpeed(float value)
+        {
+            base.IncreaseMovementSpeed(value);
+            SetDurationAnimation();
+        }
+
+        public override void DecreaseMovementSpeed(float value)
+        {
+            base.DecreaseMovementSpeed(value);
+            SetDurationAnimation();
         }
     }
 

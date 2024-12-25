@@ -7,5 +7,5 @@ public interface ICharacter
 
 public interface ICharacterController : ICharacter
 {
-    public void IncreaseStates(params IState[] stats);
+    
 }

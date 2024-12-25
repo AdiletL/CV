@@ -38,6 +38,19 @@ public class StateMachine
 
         throw new InvalidOperationException($"State of type {typeof(T)} not found.");
     }
+    public List<T> GetStates<T>() where T : IState
+    {
+        var result = new List<T>();
+        foreach (var state in states.Values)
+        {
+            if (state is T desiredState)
+            {
+                result.Add(desiredState);
+            }
+        }
+
+        return result;
+    }
 
     public void Initialize()
     {

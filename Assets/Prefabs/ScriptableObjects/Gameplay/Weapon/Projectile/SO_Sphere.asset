@@ -21,3 +21,5 @@ MonoBehaviour:
   <Speed>k__BackingField: 2
   <Height>k__BackingField: 0
   <TimerDestroy>k__BackingField: 5
+  <decreaseSpeed>k__BackingField: 3
+  <durationEffect>k__BackingField: 5

@@ -5,11 +5,8 @@ namespace Unit
     
     public abstract class UnitStates : IState
     {
-        public StateType StateType { get; set; }
-
-        public UnitStates(StateType stateType)
+        public UnitStates()
         {
-            this.StateType = stateType;
         }
     }
     
@@ -18,7 +15,7 @@ namespace Unit
         public int Level { get; private set; }
         public int Experience { get; private set; }
 
-        public UnitLevelStates(StateType stateType, int level, int experience) : base(stateType)
+        public UnitLevelStates(int level, int experience) : base()
         {
             this.Level = level;
             this.Experience = experience;
@@ -32,7 +29,7 @@ namespace Unit
         
         public float RegenerationRate { get; private set; }
 
-        public UnitStateHealth(StateType stateType, int health, int MaxHealth, float RegenerationRate) : base(stateType)
+        public UnitStateHealth(int health, int MaxHealth, float RegenerationRate) : base()
         {
             this.Health = health;
             this.MaxHealth = MaxHealth;

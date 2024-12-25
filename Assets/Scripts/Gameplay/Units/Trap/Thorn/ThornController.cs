@@ -11,11 +11,10 @@ namespace Unit.Trap
     [RequireComponent(typeof(SphereCollider))]
     public class ThornController : TrapController, IApplyDamage
     {
-        [SerializeField] private GameObject asdf;
-        
         private SO_Thorn so_Thorn;
 
         private SphereCollider sphereCollider;
+        private Animator animator;
 
         private Coroutine timerCoroutine;
         private Coroutine applyDamageCoroutine;
@@ -31,18 +30,16 @@ namespace Unit.Trap
 
         private bool isReady;
         
+        private const string ACTIVATE_NAME = "Activate";
+        private const string DEACTIVATE_NAME = "Deactivate";
+        
         public IDamageable Damageable { get; private set; }
 
         public override T GetComponentInUnit<T>()
         {
             return GetComponent<T>();
         }
-
-
-        private void Start()
-        {
-            Initialize();
-        }
+        
 
         public override void Initialize()
         {
@@ -60,6 +57,8 @@ namespace Unit.Trap
             sphereCollider = GetComponent<SphereCollider>();
             sphereCollider.isTrigger = true;
             sphereCollider.radius = radius;
+            
+            animator = GetComponent<Animator>();
 
             isReady = true;
         }
@@ -68,25 +67,29 @@ namespace Unit.Trap
         {
             isReady = false;
             
-            asdf.SetActive(false);
             if(timerCoroutine != null)
                 StopCoroutine(timerCoroutine);
                 
-            timerCoroutine = StartCoroutine(TimerCoroutine(startTimer, Duration));
+            timerCoroutine = StartCoroutine(StartCooldownCoroutine(startTimer, Duration));
         }
         public override void Deactivate()
         {
+            animator.SetTrigger(DEACTIVATE_NAME);
             if(timerCoroutine != null)
                 StopCoroutine(timerCoroutine);
                 
-            timerCoroutine = StartCoroutine(TimerCoroutine(cooldown, () =>
+            timerCoroutine = StartCoroutine(StartCooldownCoroutine(cooldown, () =>
             {
                 isReady = true;
-                asdf.SetActive(true);
+                Collider[] colliders = Physics.OverlapSphere(transform.position, radius, Layers.PLAYER_LAYER);
+                if (colliders.Length > 0)
+                {
+                    Activate();
+                }
             }));
         }
         
-        private IEnumerator TimerCoroutine(float timer, Action action)
+        private IEnumerator StartCooldownCoroutine(float timer, Action action)
         {
             float countTimer = 0;
             while (countTimer < timer)
@@ -111,6 +114,7 @@ namespace Unit.Trap
             float countTimer = 0;
 
             HashSet<GameObject> affectedEnemies = new HashSet<GameObject>();
+            animator.SetTrigger(ACTIVATE_NAME);
 
             while (countTimer < duration)
             {
@@ -168,6 +172,5 @@ namespace Unit.Trap
                 }
             }
         }
-
     }
 }

@@ -15,6 +15,7 @@ namespace Unit.Trap.Tower
         protected bool isAttack;
         
         public TowerAnimation TowerAnimation { get; set; }
+        public AnimationClip AttackClip { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public Transform PointSpawnProjectile { get; set; }
@@ -34,6 +35,7 @@ namespace Unit.Trap.Tower
         }
         public override void Enter()
         {
+            this.TowerAnimation.ChangeAnimation(AttackClip, cooldown);
         }
         public override void Exit()
         {
@@ -110,6 +112,22 @@ namespace Unit.Trap.Tower
         {
             if(state is TowerAttackState towerAttackState)
                 towerAttackState.PointSpawnProjectile = pointSpawnProjectile;
+            
+            return this;
+        }
+        
+        public TowerAttackStateBuilder SetTowerAnimation(TowerAnimation towerAnimation)
+        {
+            if(state is TowerAttackState towerAttackState)
+                towerAttackState.TowerAnimation = towerAnimation;
+            
+            return this;
+        }
+        
+        public TowerAttackStateBuilder SetAttackClip(AnimationClip animationClip)
+        {
+            if(state is TowerAttackState towerAttackState)
+                towerAttackState.AttackClip = animationClip;
             
             return this;
         }

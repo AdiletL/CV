@@ -11,7 +11,7 @@ namespace Unit.Trap
         private GameObject target;
         
         private const string ACTIVATE_NAME = "Activate";
-        private const string DEACTIVATE_NAME = "Activate";
+        private const string DEACTIVATE_NAME = "Deactivate";
         
         public IDamageable Damageable { get; private set; }
         

@@ -3,15 +3,14 @@ namespace Unit.Character
 {
     public abstract class CharacterStates : UnitStates
     {
-        public CharacterStates(StateType stateType) : base(stateType)
+        public CharacterStates() : base()
         {
-            this.StateType = stateType;
         }
     }
     
     public class CharacterHealthStates : UnitStateHealth
     {
-        public CharacterHealthStates(StateType stateType, int health, int MaxHealth, float RegenerationRate) : base(stateType, health, MaxHealth, RegenerationRate)
+        public CharacterHealthStates(int health, int MaxHealth, float RegenerationRate) : base(health, MaxHealth, RegenerationRate)
         {
         }
     }
@@ -21,7 +20,7 @@ namespace Unit.Character
         public int Damage { get; private set; }
         public int AmountAttack { get; private set; }
 
-        public CharacterAttackStates(StateType stateType) : base(stateType)
+        public CharacterAttackStates() : base()
         {
             
         }

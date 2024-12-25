@@ -9,7 +9,7 @@ namespace Unit.Character
         
         public GameObject GameObject { get; set; }
         
-        public float MovementSpeed {get; set;}
+        public float MovementSpeed { get; set; }
         
         public override void Initialize()
         {
@@ -36,6 +36,16 @@ namespace Unit.Character
 
         public virtual void Move()
         {
+        }
+        
+        public virtual void IncreaseMovementSpeed(float value)
+        {
+            MovementSpeed += value;
+        }
+
+        public virtual void DecreaseMovementSpeed(float value)
+        {
+            MovementSpeed -= value;
         }
     }
 

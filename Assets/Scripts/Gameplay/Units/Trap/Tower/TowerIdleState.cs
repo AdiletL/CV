@@ -11,14 +11,17 @@ namespace Unit.Trap.Tower
         
         private TowerAttackState attackState;
         
-        
         public SO_Tower SO_Tower { get; set; }
         public Transform PointSpawnProjectile { get; set; }
+        public TowerAnimation TowerAnimation { get; set; }
+        public AnimationClip IdleClip { get; set; }
         
 
-        protected TowerAttackState CreateAttackState()
+        protected virtual TowerAttackState CreateAttackState()
         {
             return (TowerAttackState)new TowerAttackStateBuilder()
+                .SetTowerAnimation(TowerAnimation)
+                .SetAttackClip(SO_Tower.AttackClip)
                 .SetPointSpawnProjectile(PointSpawnProjectile)
                 .SetAmountAttack(SO_Tower.AmountAttack)
                 .SetDamageable(new NormalDamage(SO_Tower.Damage, this.GameObject))
@@ -29,6 +32,9 @@ namespace Unit.Trap.Tower
         public override void Enter()
         {
             base.Enter();
+            
+            this.TowerAnimation.ChangeAnimation(IdleClip);
+            
             if (attackState == null)
             {
                 attackState = CreateAttackState();
@@ -62,6 +68,22 @@ namespace Unit.Trap.Tower
         {
             if(state is TowerIdleState towerIdleState)
                 towerIdleState.PointSpawnProjectile = pointSpawnProjectile;
+
+            return this;
+        }
+        
+        public TowerIdleStateBuilder SetTowerAnimation(TowerAnimation towerAnimation)
+        {
+            if(state is TowerIdleState towerIdleState)
+                towerIdleState.TowerAnimation = towerAnimation;
+
+            return this;
+        }
+        
+        public TowerIdleStateBuilder SetIdleClip(AnimationClip idleClip)
+        {
+            if(state is TowerIdleState towerIdleState)
+                towerIdleState.IdleClip = idleClip;
 
             return this;
         }

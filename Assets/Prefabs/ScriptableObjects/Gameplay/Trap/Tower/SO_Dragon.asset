@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83101f80fb8b4e4b9d1d02b1b90f6dc6, type: 3}
   m_Name: SO_Dragon
   m_EditorClassIdentifier: 
-  <Damage>k__BackingField: 5
+  <Damage>k__BackingField: 1
   <AmountAttack>k__BackingField: 1
-  <DefaultClip>k__BackingField: {fileID: 0}
+  <IdleClip>k__BackingField: {fileID: 7400000, guid: 344764ae3188a484cb38676ca0356fab, type: 2}
+  <AttackClip>k__BackingField: {fileID: 7400000, guid: f4338710b93f59845ba6d44cc3b1bffc, type: 2}
