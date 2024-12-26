@@ -51,8 +51,8 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
                     (y * platformPrefab.transform.localScale.z) + intervalZ);
                 var platform = newGameObject.GetComponent<Platform>();
                 platform.SetCoordinates(new Vector2Int(x + 1, y + 1));
-                platform.IsBlocked = Random.Range(0, 6) == 0;
-                if (platform.IsBlocked)
+                var isBlock = Random.Range(0, 6) == 0;
+                if (isBlock)
                     CreateBlock(platform);
 
                 platforms.Add(platform);
@@ -77,7 +77,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
             randomIndex = Random.Range(0, copyPlatforms.Count);
             var platform = copyPlatforms[randomIndex];
 
-            if (platform.IsFreeForSpawn() && platform.transform.position != currentPosition)
+            if (!platform.IsBlocked() && platform.transform.position != currentPosition)
                 return platform.gameObject;
             copyPlatforms.Remove(platform);
         }

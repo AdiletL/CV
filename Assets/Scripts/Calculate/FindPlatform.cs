@@ -26,7 +26,7 @@ namespace Calculate
             return Vector2Int.zero;
         }
 
-        public static Platform GetPlatform(Vector3 start, Vector3 rayDirection)
+        public static Platform GetPlatform(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
         {
             int hitCount = Physics.RaycastNonAlloc(start + StartRayCheckOffset, rayDirection, hits, 100, Layers.PLATFORM_LAYER);
 
@@ -36,6 +36,8 @@ namespace Calculate
             }
             else
             {
+                if (!isUseOverlapSphere) return null;
+                
                 int colliderCount = Physics.OverlapSphereNonAlloc(start, 1, colliders, Layers.PLATFORM_LAYER);
                 
                 if(colliderCount > 0)

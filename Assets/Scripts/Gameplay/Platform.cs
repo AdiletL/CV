@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay;
 using Unit.Character.Player;
 using TMPro;
 using UnityEngine;
 
-[Serializable]
+[SelectionBase]
 public class Platform : MonoBehaviour
 {
     [SerializeField] private TextMeshPro platformText;
     
-    [HideInInspector] public bool IsBlocked;
-
     private UnitRenderer unitRenderer;
+    private Collider[] colliders = new Collider[1];
     
     public Vector2Int CurrentCoordinates { get; private set; }
     
@@ -51,8 +51,18 @@ public class Platform : MonoBehaviour
         CurrentCoordinates = coordinates;
     }
 
-    public bool IsFreeForSpawn()
+    public bool IsBlocked()
     {
-        return Physics.OverlapSphere(transform.position, 1, ~Layers.PLATFORM_LAYER).Length == 0;
+        var colliderCount = Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
+        if(colliderCount == 0) return false;
+        
+        for (int i = colliders.Length - 1; i >= 0; i--)
+        {
+            if (colliders[i].TryGetComponent(out BlockGameObject blockGameObject))
+            {
+                return blockGameObject.IsBlocked;
+            }
+        }
+        return false;
     }
 }

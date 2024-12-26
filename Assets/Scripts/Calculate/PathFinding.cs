@@ -44,6 +44,13 @@ namespace Calculate
             currentPlatform = startPlatform;
         }
 
+        private void ClearData()
+        {
+            unverifiedPlatforms.Clear();
+            nearPlatforms.Clear();
+            platformData.Clear(); // Очищаем временные данные после завершения
+        }
+
         public Queue<Platform> GetPath(bool isUseColor = false)
         {
             weightPlatform = 0;
@@ -56,11 +63,11 @@ namespace Calculate
             if (!endPlatform) return pathToPoint;
 
             this.isUseColor = isUseColor;
-            
+            ClearData();
+
             while (currentPlatform.CurrentCoordinates != endPlatform.CurrentCoordinates)
             {
                 nearPlatforms = GetNearPlatforms();
-                
                 if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
                 {
                     if (unverifiedPlatforms.TryPop(out var newPlatform))
@@ -85,10 +92,7 @@ namespace Calculate
 
             correctPlatformPosition = EndPosition;
             BuildPath(pathToPoint);
-
-            unverifiedPlatforms.Clear();
-            nearPlatforms.Clear();
-            platformData.Clear(); // Очищаем временные данные после завершения
+            
             return pathToPoint;
         }
 
@@ -110,7 +114,7 @@ namespace Calculate
         private void BuildPath(Queue<Platform> path)
         {
             platformStack.Clear();
-            if(!endPlatform.IsBlocked)
+            if(!endPlatform.IsBlocked())
                 platformStack.Push(endPlatform);
             
             //endPlatform.SetColor(Color.white);
@@ -173,8 +177,7 @@ namespace Calculate
                     platforms.Add(platform);
                 }
             }
-           // &&
-            //(!platformData.TryGetValue(platform, out var data) || (!data.IsChecked && !platform.IsBlocked)
+
             return platforms;
         }
 
@@ -182,7 +185,7 @@ namespace Calculate
         {
             for (int i = platforms.Count - 1; i >= 0; i--)
             {
-                if ((platformData.TryGetValue(platforms[i], out var data) && data.IsChecked) || platforms[i].IsBlocked)
+                if ((platformData.TryGetValue(platforms[i], out var data) && data.IsChecked) || platforms[i].IsBlocked())
                 {
                     if (platforms[i].CurrentCoordinates == endPlatform.CurrentCoordinates)
                     {

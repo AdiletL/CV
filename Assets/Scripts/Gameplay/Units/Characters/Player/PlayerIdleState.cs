@@ -81,7 +81,16 @@ namespace Unit.Character.Player
             FindPathToPoint();
             this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
         }
-
+        
+        private void FindPathToPoint()
+        {
+            for (int i = pathToPoint.Count - 1; i >= 0; i--)
+            {
+                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>().ResetColor();
+            }
+            pathToPoint = pathFinding.GetPath(true);
+        }
+        
         private void CheckMove()
         {
             if(!TargetForMove || pathToPoint.Count == 0) return;
@@ -100,14 +109,6 @@ namespace Unit.Character.Player
                 this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
                 this.StateMachine.SetStates(typeof(PlayerSwitchMoveState));
             }
-        }
-        private void FindPathToPoint()
-        {
-            for (int i = pathToPoint.Count - 1; i >= 0; i--)
-            {
-                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>().ResetColor();
-            }
-            pathToPoint = pathFinding.GetPath(true);
         }
         
         private void CheckAttack()

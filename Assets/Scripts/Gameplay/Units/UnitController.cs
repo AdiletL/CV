@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Unit
 {
+    [SelectionBase]
     [RequireComponent(typeof(UnitCenter))]
     public abstract class UnitController : MonoBehaviour, IUnit
     {

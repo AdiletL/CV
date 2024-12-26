@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
+[SelectionBase]
 public class UnitRenderer : MonoBehaviour
 {
     [SerializeField] private Renderer[] baseRenderers;

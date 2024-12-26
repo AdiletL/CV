@@ -46,7 +46,6 @@ namespace Unit.Character
         public virtual void DecreaseMovementSpeed(float value)
         {
             MovementSpeed -= value;
-            Debug.Log(MovementSpeed);
         }
     }
 
