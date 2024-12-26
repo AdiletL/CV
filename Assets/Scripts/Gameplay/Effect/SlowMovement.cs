@@ -1,19 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Calculate;
 using Unit.Character;
 using UnityEngine;
+using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Effect
 {
     public class SlowMovement : Effect
     {
-        private List<CharacterBaseMovementState> movementStates = new ();
+        private struct MovementInfo
+        {
+            public CharacterBaseMovementState MovementState { get; }
+            public int Speed { get; }
+
+            public MovementInfo(CharacterBaseMovementState movementState, int speed)
+            {
+                MovementState = movementState;
+                Speed = speed;
+            }
+        }
+        
+        private List<MovementInfo> movementStates = new ();
         private float value;
         private float duration, countDuration;
+        private ValueType valueType;
         
-        public SlowMovement(float value, float duration) : base()
+        public SlowMovement(SlowMovementInfo slowMovementInfo) : base()
         {
-            this.value = value;
-            this.duration = duration;
+            this.value = slowMovementInfo.Value;
+            this.duration = slowMovementInfo.Duration;
+            this.valueType = slowMovementInfo.ValueType;
         }
 
         public override void ResetEffect()
@@ -39,12 +56,15 @@ namespace Gameplay.Effect
             if(character == null) return;
             
             var movementStates = character.GetStates<CharacterBaseMovementState>();
-
+            var gameValue = new GameValue(value, valueType);
+            var result = 0;
+            
             foreach (var VARIABLE in movementStates)
             {
-                Debug.Log(VARIABLE.GetType());
-                VARIABLE.DecreaseMovementSpeed(value);
-                this.movementStates.Add(VARIABLE);
+                result = gameValue.Calculate(VARIABLE.MovementSpeed);
+                VARIABLE.DecreaseMovementSpeed(result);
+                var movementInfo = new MovementInfo(VARIABLE, result);
+                this.movementStates.Add(movementInfo);
             }
         }
 
@@ -52,9 +72,17 @@ namespace Gameplay.Effect
         {
             foreach (var VARIABLE in movementStates)
             {
-                VARIABLE.IncreaseMovementSpeed(value);
+                VARIABLE.MovementState.IncreaseMovementSpeed(VARIABLE.Speed);
             }
             ResetEffect();
         }
+    }
+
+    [System.Serializable]
+    public class SlowMovementInfo
+    {
+        public int Value;
+        public float Duration;
+        public ValueType ValueType;
     }
 }

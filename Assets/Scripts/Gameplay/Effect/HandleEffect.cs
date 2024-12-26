@@ -7,6 +7,11 @@ namespace Gameplay.Effect
     {
         private List<IEffect> currentEffects = new();
 
+        public bool IsEffectActive(IEffect effect)
+        {
+            return currentEffects.Contains(effect);
+        }
+        
         public void Initialize()
         {
             

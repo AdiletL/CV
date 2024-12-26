@@ -43,7 +43,7 @@ namespace Calculate
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, speed * Time.deltaTime);
         }
         
-        public static bool IsFacingTargetUsingAngle(Vector3 origin, Vector3 forward, Vector3 target, float thresholdDot = 0.01f)
+        public static bool IsFacingTargetUsingAngle(Vector3 origin, Vector3 forward, Vector3 target, float thresholdDot = 0.05f)
         {
             // Направление на цель
             Vector3 directionToTarget = target - origin;

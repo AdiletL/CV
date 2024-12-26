@@ -21,7 +21,7 @@ namespace Gameplay.Weapon.Projectile
                 forwardMovement = new ForwardMovement(gameObject, MovementSpeed);
 
             if (slowMovementEffect == null)
-                slowMovementEffect = new SlowMovement(so_Sphere.decreaseSpeed, so_Sphere.durationEffect);
+                slowMovementEffect = new SlowMovement(so_Sphere.SlowMovementInfo);
             
             forwardMovement.Initialize();
         }
@@ -35,7 +35,7 @@ namespace Gameplay.Weapon.Projectile
         {
             base.ApplyDamage();
             var handleEffect = target.GetComponent<HandleEffect>();
-            if(handleEffect == null) return;
+            if(handleEffect == null || handleEffect.IsEffectActive(slowMovementEffect)) return;
             
             slowMovementEffect.SetTarget(target);
             slowMovementEffect.ApplyEffect();
