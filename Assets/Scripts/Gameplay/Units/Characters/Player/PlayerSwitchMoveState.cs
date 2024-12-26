@@ -20,6 +20,7 @@ namespace Unit.Character.Player
             return (PlayerRunState)new PlayerRunStateBuilder()
                 .SetCharacterController(CharacterController)
                 .SetMoveConfig(so_PlayerMove)
+                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetCenter(Center)
                 .SetCharacterAnimation(this.CharacterAnimation)
                 .SetRunClips(so_PlayerMove.RunClip)

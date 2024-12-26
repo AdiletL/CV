@@ -9,7 +9,6 @@ namespace Unit.Character.Player
     public class PlayerRunState : CharacterRunState
     {
         private PlayerSwitchAttackState playerSwitchAttackState;
-        private PlayerSwitchMoveState playerSwitchMoveState;
         
         private Vector3? currentTargetPosition;
         private Vector3 direction;
@@ -23,10 +22,10 @@ namespace Unit.Character.Player
 
         private Queue<Platform> pathToPoint = new();
 
-        public Transform Center { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
-        
+        public Transform Center { get; set; }
         public CharacterController CharacterController { get; set; }
+        public float RotationSpeed { get; set; }
         
         private bool IsNear(Vector3 current, Vector3 target, float threshold = 0.01f)
         {
@@ -37,7 +36,6 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
-            playerSwitchMoveState = this.StateMachine.GetState<PlayerSwitchMoveState>();
         }
 
         public override void Enter()
@@ -100,12 +98,11 @@ namespace Unit.Character.Player
             {
                 if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTargetPosition.Value))
                 {
-                    Calculate.Move.Rotate(GameObject.transform, currentTargetPosition.Value, playerSwitchMoveState.RotationSpeed, ignoreX: true, ignoreZ: true, ignoreY: false);
+                    Calculate.Move.Rotate(GameObject.transform, currentTargetPosition.Value, RotationSpeed, ignoreX: true, ignoreZ: true, ignoreY: false);
                     return;
                 }
                 direction = (currentTargetPosition.Value - GameObject.transform.position).normalized;
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
-                //GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position, currentTargetPosition.Value, MovementSpeed * Time.deltaTime);
             }
         }
 
@@ -198,6 +195,13 @@ namespace Unit.Character.Player
         {
             if (state is PlayerRunState playerRunState)
                 playerRunState.CharacterController = characterController;
+            
+            return this;  
+        }
+        public PlayerRunStateBuilder SetRotationSpeed(float rotationSpeed)
+        {
+            if (state is PlayerRunState playerRunState)
+                playerRunState.RotationSpeed = rotationSpeed;
             
             return this;  
         }

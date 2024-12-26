@@ -419,10 +419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c5e590c703b4a7e97a59ecb6569a899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <components>k__BackingField:
-    <gameObjects>k__BackingField:
-    - {fileID: 5977742061788822388}
-    - {fileID: 8978075614323205831}
+  components:
+    <gameObjects>k__BackingField: []
   soCreepMove: {fileID: 11400000, guid: c693917f9cd3163428cc976bc8dddab3, type: 2}
   center: {fileID: 2943206695905368765}
   currentStateCategory: 0
@@ -440,7 +438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8350633717745562249}
-  defaultAnimationClip: {fileID: 0}
+  defaultAnimationClip: {fileID: 7400000, guid: a28ecc966e5f4b4a9b3f1cd429280ff0, type: 3}
 --- !u!114 &4909731939361315842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1128,10 +1126,5 @@ PrefabInstance:
 --- !u!4 &1627069634862261511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1796766221899583288, guid: 6ca789dc6ad76b84eb81b08dd33b8e29, type: 3}
-  m_PrefabInstance: {fileID: 1043681097352014399}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8978075614323205831 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8278581871321812216, guid: 6ca789dc6ad76b84eb81b08dd33b8e29, type: 3}
   m_PrefabInstance: {fileID: 1043681097352014399}
   m_PrefabAsset: {fileID: 0}

@@ -1,12 +1,21 @@
 using Cysharp.Threading.Tasks;
+using Unit.Reward;
 using UnityEngine;
+using Zenject;
 
 public class RewardSpawner : MonoBehaviour, ISpawner
 {
     [SerializeField] private GameObject chestPrefab;
 
+    private GameUnits gameUnits;
     private PlatformSpawner platformSpawner;
-    public Reward FinishReward {get; private set;}
+    private ChestController rewardController;
+
+    [Inject]
+    public void Construct(GameUnits gameUnits)
+    {
+        this.gameUnits = gameUnits;
+    }
     
     public async void Initialize()
     {
@@ -26,17 +35,20 @@ public class RewardSpawner : MonoBehaviour, ISpawner
 
     private void SpawnGameObject()
     {
-        var freePlatform = platformSpawner.GetFreePlatform();
-        if (freePlatform != null)
+        var newPlatform = platformSpawner.GetFreePlatform();
+        if (newPlatform != null)
         {
             var newGameObject = Instantiate(chestPrefab);
-            newGameObject.transform.position = freePlatform.transform.position;
-            FinishReward = newGameObject.GetComponent<Reward>();
+            newGameObject.transform.position = newPlatform.transform.position;
+            rewardController = newGameObject.GetComponent<ChestController>();
+            rewardController.OnChestOpen += OnChestOpen;
+            gameUnits.AddUnits(rewardController);
         }
     }
 
-    public void ChangePositionReward()
+    private void OnChestOpen()
     {
-        FinishReward.transform.position = platformSpawner.GetFreePlatform().transform.position;
+        rewardController.transform.position = platformSpawner.GetFreePlatform().transform.position;
     }
+    
 }

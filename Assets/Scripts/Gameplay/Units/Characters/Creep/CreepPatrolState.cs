@@ -12,8 +12,6 @@ namespace Unit.Character.Creep
 
         protected GameObject currentTarget;
 
-        protected CreepSwitchAttackState CreepSwitchAttackState;
-        protected CreepSwitchMoveState CreepSwitchMoveState;
 
         protected Queue<Platform> platformsQueue = new();
         
@@ -22,19 +20,23 @@ namespace Unit.Character.Creep
         public Transform Center { get; set; }
         
         
-        protected bool IsNear(Vector3 current, Vector3 target, float threshold = 0f)
+        protected bool IsNear(Vector3 current, Vector3 target, float threshold = 0.01f)
         {
             return (current - target).sqrMagnitude <= threshold;
         }
 
         protected GameObject GetNextPoint()
         {
-            if(!EndPlatform || !StartPlatform) return null;
-
             if (StartPosition.HasValue && IsNear(GameObject.transform.position, StartPosition.Value))
+            {
+                pathFinding.SetStartPosition(GameObject.transform.position);
                 pathFinding.SetTargetPosition(EndPlatform.transform.position);
+            }
             else if (EndPosition.HasValue && IsNear(GameObject.transform.position, EndPosition.Value))
+            {
+                pathFinding.SetStartPosition(GameObject.transform.position);
                 pathFinding.SetTargetPosition(StartPlatform.transform.position);
+            }
             
             if(platformsQueue.Count == 0)
                 platformsQueue = pathFinding.GetPath();
@@ -52,8 +54,6 @@ namespace Unit.Character.Creep
                 .SetPosition(this.GameObject.transform.position, EndPlatform.transform.position)
                 .Build();
 
-            //enemyAttackState = this.StateMachine.GetState<EnemyAttackState>();
-            CreepSwitchMoveState = this.StateMachine.GetState<CreepSwitchMoveState>();
         }
 
         public override void Enter()
@@ -78,7 +78,7 @@ namespace Unit.Character.Creep
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
-
+            
             if (!IsNear(GameObject.transform.position, currentTarget.transform.position))
             {
                 var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, checkEnemyLayer);
@@ -86,8 +86,8 @@ namespace Unit.Character.Creep
                 {
                     if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTarget.transform.position))
                     {
-                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform,
-                            CreepSwitchMoveState.RotationSpeed);
+                        Calculate.Move.Rotate(GameObject.transform, currentTarget.transform.position,
+                            RotationSpeed, ignoreX: true, ignoreZ: true, ignoreY: false);
                         return;
                     }
                     
@@ -103,14 +103,12 @@ namespace Unit.Character.Creep
             {
                 platformsQueue?.Dequeue();
                 currentTarget = GetNextPoint();
-                //this.StateMachine.ExitCategory(Category);
             }
         }
 
         public override void Exit()
         {
             base.Exit();
-            //platformsQueue.Clear();
             currentTarget = null;
         }
     }

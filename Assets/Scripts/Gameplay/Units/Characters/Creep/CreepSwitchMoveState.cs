@@ -5,7 +5,7 @@ namespace Unit.Character.Creep
 {
     public class CreepSwitchMoveState : CharacterSwitchMoveState
     {
-        private SO_CreepMove soCreepMove;
+        private SO_CreepMove so_CreepMove;
         private GameObject currentTarget;
         
         public Transform Center { get; set; }
@@ -19,7 +19,7 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            soCreepMove = (SO_CreepMove)this.SO_CharacterMove;
+            so_CreepMove = (SO_CreepMove)this.SO_CharacterMove;
         }
         
         

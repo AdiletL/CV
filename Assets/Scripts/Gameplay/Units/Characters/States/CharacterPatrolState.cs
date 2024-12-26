@@ -6,9 +6,10 @@ namespace Unit.Character
     {
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
+        public float RotationSpeed { get; set; }
         
-        public Vector3? StartPosition { get; set; }
-        public Vector3? EndPosition { get; set; }
+        public Vector3? StartPosition { get; protected set; }
+        public Vector3? EndPosition { get; protected set; }
         
 
         public override void Initialize()
@@ -52,6 +53,17 @@ namespace Unit.Character
             if (state is CharacterPatrolState patrolState)
             {
                 patrolState.EndPlatform = endPlatform;
+            }
+
+            return this;
+        }
+        
+        
+        public CharacterPatrolStateBuilder SetRotationSpeed(float rotationSpeed)
+        {
+            if (state is CharacterPatrolState patrolState)
+            {
+                patrolState.RotationSpeed = rotationSpeed;
             }
 
             return this;

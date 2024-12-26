@@ -5,7 +5,7 @@ public enum UnitType
     player,
     creep,
     trap,
-    tower,
+    reward
 }
 
 public interface IUnit

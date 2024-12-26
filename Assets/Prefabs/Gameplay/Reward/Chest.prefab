@@ -130,6 +130,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6936836665048438174}
   - component: {fileID: 8427604131828731690}
+  - component: {fileID: 4991764259617346919}
+  - component: {fileID: 4118173041546084533}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -165,6 +167,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b5662773f451c34298d50d604ed5928, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  components:
+    <gameObjects>k__BackingField: []
+--- !u!114 &4991764259617346919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5729642040203258123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df34fd1111a483493cced643f39b8d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Center>k__BackingField: {fileID: 6936836665048438174}
+--- !u!135 &4118173041546084533
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5729642040203258123}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8248259086131688915
 GameObject:
   m_ObjectHideFlags: 0

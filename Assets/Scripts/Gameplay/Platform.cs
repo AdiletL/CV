@@ -16,6 +16,27 @@ public class Platform : MonoBehaviour
     public Vector2Int CurrentCoordinates { get; private set; }
     
 
+    public bool IsBlocked()
+    {
+        var colliderCount = Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
+        if(colliderCount == 0) return false;
+        
+        for (int i = colliders.Length - 1; i >= 0; i--)
+        {
+            if (colliders[i].TryGetComponent(out BlockGameObject blockGameObject))
+            {
+                return blockGameObject.IsBlocked;
+            }
+        }
+        return false;
+    }
+
+    public bool IsFreeSpawn()
+    {
+        var colliderCount = Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
+        return colliderCount == 0;
+    }
+    
     private void OnEnable()
     {
         PlayerIdleState.ASD += ADS;
@@ -51,18 +72,4 @@ public class Platform : MonoBehaviour
         CurrentCoordinates = coordinates;
     }
 
-    public bool IsBlocked()
-    {
-        var colliderCount = Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
-        if(colliderCount == 0) return false;
-        
-        for (int i = colliders.Length - 1; i >= 0; i--)
-        {
-            if (colliders[i].TryGetComponent(out BlockGameObject blockGameObject))
-            {
-                return blockGameObject.IsBlocked;
-            }
-        }
-        return false;
-    }
 }

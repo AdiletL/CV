@@ -27,6 +27,8 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
+            StateMachine = new StateMachine();
+            
             components.GetComponentFromArray<CharacterUI>()?.Initialize();
             components.GetComponentFromArray<IUnitExperience>()?.Initialize();
         }

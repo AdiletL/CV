@@ -305,9 +305,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffce1299d0734cc394ce2b61836d237b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <components>k__BackingField:
+  components:
     <gameObjects>k__BackingField:
     - {fileID: 1463826657022469569}
+    - {fileID: 4969913234543498068}
     - {fileID: 3596101719792775612}
   soCreepMove: {fileID: 11400000, guid: 7471ba6bdb318d04a89074f6fdbe8e1b, type: 2}
   center: {fileID: 3203932032958634825}
@@ -340,7 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 4146233700179600643}
-  defaultAnimationClip: {fileID: 0}
+  defaultAnimationClip: {fileID: 7400000, guid: 1125a2cce46b489590671831483c9b9f, type: 3}
 --- !u!114 &4482091760253475408
 MonoBehaviour:
   m_ObjectHideFlags: 0

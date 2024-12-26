@@ -36,8 +36,8 @@ namespace Unit.Character.Creep
             if(beholderSwitchMoveState == null 
                && !beholderSwitchMoveState.IsCanMovement()) return;
             
-            this.StateMachine.ExitCategory(Category);
             this.StateMachine.SetStates(typeof(BeholderSwitchMoveState));
+            this.StateMachine.ExitCategory(Category);
         }
 
         private void CheckAttack()

@@ -4,8 +4,8 @@ namespace Unit.Character.Creep
 {
     public class BeholderSwitchMoveState : CreepSwitchMoveState
     {
-        private SO_BeholderMove so_HedgehogMove;
-        private BeholderAnimation hedgehogAnimation;
+        private SO_BeholderMove so_BeholderMove;
+        private BeholderAnimation beholderAnimation;
         
         public Platform StartPlatform { get; set; }
         public Platform EndPlatform { get; set; }
@@ -19,12 +19,13 @@ namespace Unit.Character.Creep
         {
             return (BeholderPatrolState)new BeholderPatrolStateBuilder()
                 .SetCenter(Center)
-                .SetEnemyAnimation(hedgehogAnimation)
-                .SetWalkClip(so_HedgehogMove.WalkClip)
+                .SetEnemyAnimation(beholderAnimation)
+                .SetWalkClip(so_BeholderMove.WalkClip)
+                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetStartPoint(StartPlatform)
                 .SetEndPoint(EndPlatform)
                 .SetGameObject(GameObject)
-                .SetMovementSpeed(so_HedgehogMove.RunSpeed)
+                .SetMovementSpeed(so_BeholderMove.RunSpeed)
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
@@ -32,8 +33,8 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            so_HedgehogMove = (SO_BeholderMove)SO_CharacterMove;
-            hedgehogAnimation = (BeholderAnimation)CharacterAnimation;
+            so_BeholderMove = (SO_BeholderMove)SO_CharacterMove;
+            beholderAnimation = (BeholderAnimation)CharacterAnimation;
         }
 
         protected override void DestermineState()

@@ -18,7 +18,7 @@ public class StateMachine
 
     public bool IsStateNotNull(Type state)
     {
-        return states.ContainsKey(state) && states[state] != null;
+        return FindMostDerivedState(state) != null;
     }
 
     public bool IsActivateType(StateCategory category, Type state)

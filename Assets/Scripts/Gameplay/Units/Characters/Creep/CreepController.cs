@@ -43,6 +43,11 @@ namespace Unit.Character.Creep
         {
             this.StateMachine?.Update();
         }
+
+        public void LateUpdate()
+        {
+            this.StateMachine?.LateUpdate();
+        }
         
         private void OnChangedState(StateCategory category, Machine.IState state)
         {

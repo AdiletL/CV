@@ -63,17 +63,26 @@ namespace Unit.Trap
             isReady = true;
         }
 
-        public override void Activate()
+        private void Reset()
         {
-            isReady = false;
-            
             if(timerCoroutine != null)
                 StopCoroutine(timerCoroutine);
-                
+            
+            if(applyDamageCoroutine != null)
+                StopCoroutine(applyDamageCoroutine);
+        }
+        public override void Activate()
+        {
+            if(!isReady) return;
+            
+            isReady = false;
+            Reset();
             timerCoroutine = StartCoroutine(StartCooldownCoroutine(startTimer, Duration));
         }
         public override void Deactivate()
         {
+            if(isReady) return;
+            
             animator.SetTrigger(DEACTIVATE_NAME);
             if(timerCoroutine != null)
                 StopCoroutine(timerCoroutine);

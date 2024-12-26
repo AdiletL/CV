@@ -39,7 +39,7 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
     private void SpawnGameObject()
     {
         SpawnPlayer();
-        //SpawnEnemies();
+        SpawnEnemies();
     }
 
     public void SetSpawners(PlatformSpawner platformSpawner, RewardSpawner rewardSpawner)

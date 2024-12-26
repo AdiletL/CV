@@ -77,7 +77,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
             randomIndex = Random.Range(0, copyPlatforms.Count);
             var platform = copyPlatforms[randomIndex];
 
-            if (!platform.IsBlocked() && platform.transform.position != currentPosition)
+            if (platform.IsFreeSpawn() && platform.transform.position != currentPosition)
                 return platform.gameObject;
             copyPlatforms.Remove(platform);
         }
