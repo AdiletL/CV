@@ -5,6 +5,12 @@ namespace Calculate
 {
     public class PathFinding
     {
+        private class PlatformData
+        {
+            public bool IsChecked;
+            public int Weight;
+        }
+        
         public Vector3 StartPosition, EndPosition;
 
         private Platform startPlatform;
@@ -222,8 +228,9 @@ namespace Calculate
                 }
                 else if (distance == bestDistance)
                 {
-                    int random = Random.Range(0, 2);
-                    if (random == 0)
+                    var firstDistance = NormalDistance(bestPlatform.transform.position, endPlatform.transform.position);
+                    var secondDistance = NormalDistance(platform.transform.position, endPlatform.transform.position);
+                    if (secondDistance < firstDistance)
                     {
                         bestPlatform = platform;
                         bestDistance = distance;
@@ -234,19 +241,19 @@ namespace Calculate
             return bestPlatform;
         }
 
-        private static int CalculateDistance(Platform platform, Vector2Int endCoordinates)
+        private int CalculateDistance(Platform platform, Vector2Int endCoordinates)
         {
             var coordinates = platform.CurrentCoordinates;
             int result = Mathf.Abs(endCoordinates.x - coordinates.x) + Mathf.Abs(endCoordinates.y - coordinates.y);
             return result;
         }
 
-        // Временная структура для хранения данных платформы
-        private class PlatformData
+        private int NormalDistance(Vector3 origin, Vector3 target)
         {
-            public bool IsChecked;
-            public int Weight;
+            Debug.DrawRay(origin, target - origin, Color.yellow, 2); // Рисуем луч в направлении от origin к target
+            return (int)(origin - target).sqrMagnitude; // Квадрат расстояния
         }
+
     }
 
     public class PathToPointBuilder
