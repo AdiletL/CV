@@ -35,7 +35,7 @@ public class RewardSpawner : MonoBehaviour, ISpawner
 
     private void SpawnGameObject()
     {
-        var newPlatform = platformSpawner.GetFreePlatform();
+        var newPlatform = platformSpawner.GetFreePlace();
         if (newPlatform != null)
         {
             var newGameObject = Instantiate(chestPrefab);
@@ -48,7 +48,7 @@ public class RewardSpawner : MonoBehaviour, ISpawner
 
     private void OnChestOpen()
     {
-        rewardController.transform.position = platformSpawner.GetFreePlatform().transform.position;
+        rewardController.transform.position = platformSpawner.GetFreePlace().transform.position;
     }
     
 }

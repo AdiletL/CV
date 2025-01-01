@@ -3,24 +3,27 @@ using Calculate;
 using Movement;
 using UnityEngine;
 
-namespace Unit.Character.Creep
+namespace Unit.Trap.Tower
 {
-    public class CreepPatrolState : CharacterPatrolState
+    public class TowerPatrolState : TrapMovementState, IPatrol
     {
-        protected PathFinding pathFinding;
-        protected Rotation rotation;
+        private MovementToPoint movementToPoint;
+        private PathFinding pathFinding;
+        private Rotation rotation;
         
-        protected GameObject currentTarget;
-        protected bool isCanMovement;
-        protected Queue<Platform> platformsQueue = new();
+        private GameObject currentTarget;
+        private Queue<Platform> platformsQueue = new();
+
+        private bool isCanMovement;
         
-        public AnimationClip WalkClip { get; set; }
-        public CreepAnimation CreepAnimation { get; set; }
-        public Transform Center { get; set; }
-        public LayerMask EnemyLayer { get; set; }
+        public Transform Start { get; set; }
+        public Transform End { get; set; }
+        public Vector3? StartPosition { get; }
+        public Vector3? EndPosition { get; }
+        public float RotationSpeed { get; set; }
         
-        
-        protected GameObject GetNextTarget()
+
+        private GameObject GetNextTarget()
         {
             if (StartPosition.HasValue && Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, StartPosition.Value))
             {
@@ -41,49 +44,45 @@ namespace Unit.Character.Creep
             
             return platformsQueue?.Peek().gameObject;
         }
-
+        
         public override void Initialize()
         {
-            base.Initialize();
+            movementToPoint = new MovementToPoint(GameObject, MovementSpeed);
             pathFinding = new PathFindingBuilder()
                 .SetStartPosition(StartPosition.Value)
                 .SetEndPosition(EndPosition.Value)
                 .Build();
             rotation = new Rotation(GameObject.transform, RotationSpeed);
+            rotation.SetTarget(currentTarget.transform);
         }
 
         public override void Enter()
         {
-            base.Enter();
-            currentTarget = GetNextTarget();
-            
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
-            
-            rotation.SetTarget(currentTarget.transform);
-            CreepAnimation.ChangeAnimation(WalkClip,  duration: 0.7f);
         }
 
         public override void Update()
         {
-            base.Update();
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
 
-            CheckAttack();
             RotateToTarget();
             Move();
         }
 
+        public override void LateUpdate()
+        {
+        }
+
         public override void Exit()
         {
-            base.Exit();
             currentTarget = null;
         }
 
@@ -93,14 +92,12 @@ namespace Unit.Character.Creep
             {
                 platformsQueue?.Dequeue();
                 currentTarget = GetNextTarget();
-                rotation.SetTarget(currentTarget.transform);
             }
             else
             {
                 if(!isCanMovement) return;
                 
-                GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
-                    currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+                movementToPoint?.Move();
             }
         }
 
@@ -116,57 +113,33 @@ namespace Unit.Character.Creep
                 isCanMovement = false;
             }
         }
-
-        private void CheckAttack()
-        {
-            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, EnemyLayer);
-            if (enemyGameObject)
-                this.StateMachine.ExitCategory(Category);
-        }
     }
-
-    public class CreepPatrolStateBuilder : CharacterPatrolStateBuilder
+    
+    public class TowerPatrolStateBuilder : TrapMovementStateBuilder
     {
-        public CreepPatrolStateBuilder(CharacterPatrolState instance) : base(instance)
+        public TowerPatrolStateBuilder(TrapMovementState instance) : base(instance)
         {
         }
 
-        public CreepPatrolStateBuilder SetEnemyAnimation(CreepAnimation creepAnimation)
+        public TowerPatrolStateBuilder SetStart(Transform start)
         {
-            if (state is CreepPatrolState enemyPatrolState)
-            {
-                enemyPatrolState.CreepAnimation = creepAnimation;
-            }
-
-            return this;
-        }
-
-        public CreepPatrolStateBuilder SetWalkClip(AnimationClip walkClip)
-        {
-            if (state is CreepPatrolState enemyPatrolState)
-            {
-                enemyPatrolState.WalkClip = walkClip;
-            }
+            if(state is TowerPatrolState towerPatrolState)
+                towerPatrolState.Start = start;
 
             return this;
         }
         
-        public CreepPatrolStateBuilder SetCenter(Transform center)
+        public TowerPatrolStateBuilder SetEnd(Transform end)
         {
-            if (state is CreepPatrolState enemyPatrolState)
-            {
-                enemyPatrolState.Center = center;
-            }
+            if(state is TowerPatrolState towerPatrolState)
+                towerPatrolState.End = end;
 
             return this;
         }
-        
-        public CreepPatrolStateBuilder SetEnemyLayer(LayerMask layer)
+        public TowerPatrolStateBuilder SetRotationSpeed(float speed)
         {
-            if (state is CreepPatrolState enemyPatrolState)
-            {
-                enemyPatrolState.EnemyLayer = layer;
-            }
+            if(state is TowerPatrolState towerPatrolState)
+                towerPatrolState.RotationSpeed = speed;
 
             return this;
         }

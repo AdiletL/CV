@@ -6,13 +6,14 @@ namespace Unit.Character
 {
     public class CharacterJumpState : State
     {
-        public override StateCategory Category { get; } = StateCategory.action;
+        public override StateCategory Category { get; } = StateCategory.jump;
 
         protected Gravity gravity;
         
         private Vector3 startPosition;
         private float timer;
         private bool isJumping;
+        private int countJump;
         
         public GameObject GameObject { get; set; }
         public AnimationCurve Curve { get; set; }
@@ -20,6 +21,7 @@ namespace Unit.Character
         public CharacterAnimation CharacterAnimation { get; set; }
         public float JumpDuration { get; set; }
         public float JumpHeight { get; set; }
+        public int MaxJumpCount { get; set; }
         
         public override void Initialize()
         {
@@ -30,9 +32,10 @@ namespace Unit.Character
         {
             startPosition = GameObject.transform.position;
             isJumping = true;
-            CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration);
+            CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration, isForce: true);
             CharacterAnimation.SetBlock(true);
             gravity.ChangeGravity(false);
+            countJump = 1;
         }
 
         public override void Update()
@@ -51,7 +54,7 @@ namespace Unit.Character
                 if (progress >= .5f)
                 {
                     gravity.ChangeGravity(true);
-                    if (progress >= 1f)
+                    if (Physics.Raycast(GameObject.transform.position, Vector3.down,.2f))
                     {
                         isJumping = false;
                         timer = 0f;
@@ -70,7 +73,7 @@ namespace Unit.Character
 
         private void CheckJump()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && countJump < MaxJumpCount)
             {
                 StartJump();
             }
@@ -82,6 +85,7 @@ namespace Unit.Character
             timer = 0f;
             CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration, isForce: true);
             gravity.ChangeGravity(false);
+            countJump++;
         }
         public override void Exit()
         {
@@ -128,6 +132,11 @@ namespace Unit.Character
         public CharacterJumpStateBuilder SetJumpHeight(float jumpHeight)
         {
             state.JumpHeight = jumpHeight;
+            return this;
+        }
+        public CharacterJumpStateBuilder SetMaxJumpCount(int amount)
+        {
+            state.MaxJumpCount = amount;
             return this;
         }
     }

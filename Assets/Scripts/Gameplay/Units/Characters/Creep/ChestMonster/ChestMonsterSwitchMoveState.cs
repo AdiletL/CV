@@ -8,8 +8,9 @@ namespace Unit.Character.Creep
         private SO_ChestMonsterMove so_HedgehogMove;
         private ChestMonsterAnimation hedgehogAnimation;
         
-        public Platform StartPlatform { get; set; }
-        public Platform EndPlatform { get; set; }
+        public Transform Start { get; set; }
+        public Transform End { get; set; }
+        public LayerMask EnemyLayer { get; set; }
         
         
         private ChestMonsterPatrolState CreatePatrolState()
@@ -17,9 +18,10 @@ namespace Unit.Character.Creep
             return (ChestMonsterPatrolState)new ChestMonsterPatrolStateBuilder()
                 .SetCenter(Center)
                 .SetEnemyAnimation(hedgehogAnimation)
+                .SetEnemyLayer(EnemyLayer)
                 .SetWalkClip(so_HedgehogMove.WalkClip)
-                .SetStartPoint(StartPlatform)
-                .SetEndPoint(EndPlatform)
+                .SetStart(Start)
+                .SetEnd(End)
                 .SetGameObject(GameObject)
                 .SetMovementSpeed(so_HedgehogMove.RunSpeed)
                 .SetStateMachine(this.StateMachine)
@@ -52,20 +54,29 @@ namespace Unit.Character.Creep
         public ChestMonsterSwitchMoveStateBuilder() : base(new ChestMonsterSwitchMoveState())
         {
         }
-        public ChestMonsterSwitchMoveStateBuilder SetStartPlatform(Platform startPlatform)
+        public ChestMonsterSwitchMoveStateBuilder SetStart(Transform start)
         {
             if (state is ChestMonsterSwitchMoveState characterSwitchMoveState)
             {
-                characterSwitchMoveState.StartPlatform = startPlatform;
+                characterSwitchMoveState.Start = start;
             }
 
             return this;
         }
-        public ChestMonsterSwitchMoveStateBuilder SetEndPlatform(Platform endPlatform)
+        public ChestMonsterSwitchMoveStateBuilder SetEnd(Transform end)
         {
             if (state is ChestMonsterSwitchMoveState characterSwitchMoveState)
             {
-                characterSwitchMoveState.EndPlatform = endPlatform;
+                characterSwitchMoveState.End = end;
+            }
+
+            return this;
+        }
+        public ChestMonsterSwitchMoveStateBuilder SetEnemyLayer(LayerMask layer)
+        {
+            if (state is ChestMonsterSwitchMoveState characterSwitchMoveState)
+            {
+                characterSwitchMoveState.EnemyLayer = layer;
             }
 
             return this;

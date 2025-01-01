@@ -1,4 +1,5 @@
 ﻿using ScriptableObjects.Unit.Character.Creep;
+using UnityEngine;
 
 namespace Unit.Character.Creep
 {
@@ -7,12 +8,14 @@ namespace Unit.Character.Creep
         private SO_BeholderMove so_BeholderMove;
         private BeholderAnimation beholderAnimation;
         
-        public Platform StartPlatform { get; set; }
-        public Platform EndPlatform { get; set; }
+        public Transform Start { get; set; }
+        public Transform End { get; set; }
+        public LayerMask EnemyLayer { get; set; }
+        
 
         public override bool IsCanMovement()
         {
-            return StartPlatform && EndPlatform;
+            return Start && End;
         }
 
         private BeholderPatrolState CreatePatrolState()
@@ -21,9 +24,10 @@ namespace Unit.Character.Creep
                 .SetCenter(Center)
                 .SetEnemyAnimation(beholderAnimation)
                 .SetWalkClip(so_BeholderMove.WalkClip)
+                .SetEnemyLayer(EnemyLayer)
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
-                .SetStartPoint(StartPlatform)
-                .SetEndPoint(EndPlatform)
+                .SetStart(Start)
+                .SetEnd(End)
                 .SetGameObject(GameObject)
                 .SetMovementSpeed(so_BeholderMove.RunSpeed)
                 .SetStateMachine(this.StateMachine)
@@ -58,20 +62,29 @@ namespace Unit.Character.Creep
         {
         }
         
-        public BeholderSwitchMoveStateBuilder SetStartPlatform(Platform startPlatform)
+        public BeholderSwitchMoveStateBuilder SetStart(Transform start)
         {
             if (state is BeholderSwitchMoveState characterSwitchMoveState)
             {
-                characterSwitchMoveState.StartPlatform = startPlatform;
+                characterSwitchMoveState.Start = start;
             }
 
             return this;
         }
-        public BeholderSwitchMoveStateBuilder SetEndPlatform(Platform endPlatform)
+        public BeholderSwitchMoveStateBuilder SetEnd(Transform end)
         {
             if (state is BeholderSwitchMoveState characterSwitchMoveState)
             {
-                characterSwitchMoveState.EndPlatform = endPlatform;
+                characterSwitchMoveState.End = end;
+            }
+
+            return this;
+        }
+        public BeholderSwitchMoveStateBuilder SetEnemyLayer(LayerMask layer)
+        {
+            if (state is BeholderSwitchMoveState characterSwitchMoveState)
+            {
+                characterSwitchMoveState.EnemyLayer = layer;
             }
 
             return this;

@@ -52,6 +52,7 @@ MonoBehaviour:
   <JumpClip>k__BackingField: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
   <JumpDuration>k__BackingField: 0.85
   <JumpHeight>k__BackingField: 1.4
+  <MaxJumpCount>k__BackingField: 2
   <RunClip>k__BackingField:
   - {fileID: 1827226128182048838, guid: 7d4f9e9da55a3bd4f958a63308a522a1, type: 3}
   - {fileID: 1827226128182048838, guid: 0791e523b7f1b2740a3b1cde42b6aeac, type: 3}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
@@ -8,8 +9,7 @@ namespace Unit.Character.Player
     public class PlayerSwitchMoveState : CharacterSwitchMoveState
     {
         private SO_PlayerMove so_PlayerMove;
-
-        private Queue<Platform> pathToTarget = new();
+        private GameObject currentTarget;
         
         public Transform Center { get; set; }
 
@@ -47,18 +47,21 @@ namespace Unit.Character.Player
                 this.StateMachine.AddStates(newState);
             }
 
-            var runState = this.StateMachine.GetState<PlayerRunState>();
-            runState.SetPathToTarget(pathToTarget);
-            
-            this.StateMachine.SetStates(typeof(PlayerRunState));
+            if (!this.StateMachine.IsActivateType(StateCategory.move, typeof(PlayerRunState)))
+            {
+                var runState = this.StateMachine.GetState<PlayerRunState>();
+                runState.SetTarget(currentTarget);
+                
+                this.StateMachine.SetStates(typeof(PlayerRunState));
+            }
         }
         
-        public void SetPathToTarget(Queue<Platform> path)
+        public void SetTarget(GameObject target)
         {
-            this.pathToTarget = path;
+            currentTarget = target;
             if (this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
-                this.StateMachine.GetState<PlayerRunState>().SetPathToTarget(path);
+                this.StateMachine.GetState<PlayerRunState>().SetTarget(currentTarget);
             }
         }
     }

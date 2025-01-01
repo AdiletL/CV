@@ -7,7 +7,6 @@ namespace Calculate
     {
         private class PlatformData
         {
-            public bool IsChecked;
             public int Weight;
         }
         
@@ -108,9 +107,8 @@ namespace Calculate
                 platformData[currentPlatform] = new PlatformData();
 
             var data = platformData[currentPlatform];
-            if (data.IsChecked) return;
+            if (data.Weight > 0) return;
 
-            data.IsChecked = true;
             data.Weight = weightPlatform += weight;
 
             //currentPlatform.SetColor(Color.yellow);
@@ -130,16 +128,17 @@ namespace Calculate
             {
                 var correctPlatform = GetCorrectPlatform();
                 if (!correctPlatform) break;
-
                 if(this.isUseColor)
                     correctPlatform.SetColor(Color.yellow);
+
                 lastCorrectPlatform = correctPlatform;
                 platformStack.Push(correctPlatform);
             }
 
             while (platformStack.Count > 0)
             {
-                path.Enqueue(platformStack.Pop());
+                var platform = platformStack.Pop();
+                path.Enqueue(platform);
             }
 
            // path.Dequeue();
@@ -191,7 +190,7 @@ namespace Calculate
         {
             for (int i = platforms.Count - 1; i >= 0; i--)
             {
-                if ((platformData.TryGetValue(platforms[i], out var data) && data.IsChecked) || platforms[i].IsBlocked())
+                if ((platformData.TryGetValue(platforms[i], out var data) && data.Weight > 0) || platforms[i].IsBlocked())
                 {
                     if (platforms[i].CurrentCoordinates == endPlatform.CurrentCoordinates)
                     {
@@ -256,14 +255,18 @@ namespace Calculate
 
     }
 
-    public class PathToPointBuilder
+    public class PathFindingBuilder
     {
         private readonly PathFinding pathFinding = new();
 
-        public PathToPointBuilder SetPosition(Vector3 start, Vector3 end)
+        public PathFindingBuilder SetStartPosition(Vector3 start)
         {
             pathFinding.StartPosition = start;
-            pathFinding.EndPosition = end;
+            return this;
+        }
+        public PathFindingBuilder SetEndPosition(Vector3 end)
+        {
+            pathFinding.StartPosition = end;
             return this;
         }
 

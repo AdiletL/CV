@@ -25,13 +25,9 @@ namespace Unit.Character.Player
 
             var hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity);
 
-            previousHit?.GetComponent<UnitRenderer>().ResetColor();
             for (int i = 0; i < hitsCount; i++)
             {
-                // Возвращаем данные о позиции и объекте
-                hitObject = hits[i].collider.gameObject;
-                previousHit = hitObject;
-                hitObject.GetComponent<UnitRenderer>().SetColor(Color.red);
+                hitObject = hits[i].transform.gameObject;
                 return true;
             }
 
@@ -47,6 +43,10 @@ namespace Unit.Character.Player
                 if (tryGetHitPosition(out GameObject hitObject))
                 {
                     playerController.GetState<PlayerIdleState>().SetTarget(hitObject);
+                    previousHit?.GetComponent<UnitRenderer>()?.ResetColor();
+                    previousHit = hitObject;
+                    var unitRenderer = hitObject.GetComponent<UnitRenderer>();
+                    unitRenderer?.SetColor(Color.red);
                 }
             }
         }

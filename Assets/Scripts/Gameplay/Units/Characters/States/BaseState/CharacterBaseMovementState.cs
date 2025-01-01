@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterBaseMovementState : State, IMove
+    public abstract class CharacterBaseMovementState : State, IMove
     {
         public override StateCategory Category { get; } = StateCategory.move;
         
@@ -34,9 +34,7 @@ namespace Unit.Character
             
         }
 
-        public virtual void Move()
-        {
-        }
+        public abstract void Move();
         
         public virtual void IncreaseMovementSpeed(float value)
         {

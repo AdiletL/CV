@@ -12,7 +12,7 @@ namespace Unit.Character.Player
         {
             characterController = GetComponent<CharacterController>();
             characterController.enabled = true;
-            gravityForce = -7;
+            gravityForce = -8.5f;
         }
 
         protected override void UseGravity()

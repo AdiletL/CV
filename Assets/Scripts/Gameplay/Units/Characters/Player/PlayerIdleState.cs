@@ -25,8 +25,6 @@ namespace Unit.Character.Player
         private bool isCheckAttack;
         private bool isCheckJump;
         
-        private Queue<Platform> pathToPoint = new();
-        
         public GameObject TargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
 
@@ -39,8 +37,9 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            pathFinding = new PathToPointBuilder()
-                .SetPosition(this.GameObject.transform.position, GameObject.transform.position)
+            pathFinding = new PathFindingBuilder()
+                .SetStartPosition(Vector3.zero)
+                .SetEndPosition(Vector3.zero)
                 .Build();
             playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
         }
@@ -48,7 +47,6 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            pathToPoint.Clear();
             
             isCheckJump = !this.StateMachine.IsActivateType(StateCategory.action, typeof(PlayerJumpState));
             isCheckAttack = isCheckJump;
@@ -67,6 +65,7 @@ namespace Unit.Character.Player
         public override void Exit()
         {
             base.Exit();
+            TargetForMove = null;
             this.StateMachine.OnExitCategory -= OnExitCategory;
         }
 
@@ -76,38 +75,26 @@ namespace Unit.Character.Player
             //if(!target.TryGetComponent(out Platform platform)) return;
             
             this.TargetForMove = target;
-            pathFinding.SetStartPosition(GameObject.transform.position);
-            pathFinding.SetTargetPosition(target.transform.position);
-            FindPathToPoint();
-            this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
-        }
-        
-        private void FindPathToPoint()
-        {
-            for (int i = pathToPoint.Count - 1; i >= 0; i--)
-            {
-                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>().ResetColor();
-            }
-            pathToPoint = pathFinding.GetPath(true);
+            this.StateMachine.GetState<PlayerSwitchMoveState>().SetTarget(target);
         }
         
         private void CheckMove()
         {
-            if(!TargetForMove || pathToPoint.Count == 0) return;
+            if(!TargetForMove) return;
             
             targetPosition = new Vector3(TargetForMove.transform.position.x, GameObject.transform.position.y, TargetForMove.transform.position.z);
             
-            if (IsNear(GameObject.transform.position, targetPosition))
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, targetPosition))
             {
-                pathToPoint.Clear();
+                TargetForMove = null;
                 ASD?.Invoke();
                 OnFinishedToTarget?.Invoke();
             }
             else
             {
-                this.StateMachine.ExitCategory(Category);
-                this.StateMachine.GetState<PlayerSwitchMoveState>().SetPathToTarget(pathToPoint);
+                this.StateMachine.GetState<PlayerSwitchMoveState>().SetTarget(TargetForMove);
                 this.StateMachine.SetStates(typeof(PlayerSwitchMoveState));
+                this.StateMachine.ExitCategory(Category);
             }
         }
         
@@ -127,10 +114,9 @@ namespace Unit.Character.Player
             }
         }
         
-        private void OnExitCategory(Machine.StateCategory category, Machine.IState state)
+        private void OnExitCategory(Machine.IState state)
         {
-            if (category == Machine.StateCategory.action
-                && state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 PlayAnimation();
                 isCheckJump = true;
@@ -150,6 +136,7 @@ namespace Unit.Character.Player
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
             {
                 var playerJumpState = (PlayerJumpState)new PlayerJumpStateBuilder()
+                    .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
                     .SetAnimationCurve(SO_PlayerMove.JumpCurve)
                     .SetJumpDuration(SO_PlayerMove.JumpDuration)
                     .SetJumpClip(SO_PlayerMove.JumpClip)

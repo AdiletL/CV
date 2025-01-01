@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Weapon;
+using Movement;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Unit.Character
     public class CharacterWeaponState : CharacterBaseAttackState
     {
         protected CharacterSwitchMoveState characterSwitchMoveState;
+        protected Rotation rotation;
         protected AnimationClip cooldownClip;
         protected List<AnimationClip> attackClips;
         
@@ -35,23 +37,13 @@ namespace Unit.Character
         {
             return attackClips[Random.Range(0, attackClips.Count)];
         }
-        
-        protected bool isCheckDistanceToTarget()
-        {
-            float distanceToTarget = (currentTarget.transform.position - GameObject.transform.position).sqrMagnitude;;
-            if (distanceToTarget > (range * range) + .15f)
-            {
-                return false;
-            }
-
-            return true;
-        }
 
 
         public override void Initialize()
         {
             base.Initialize();
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
+            rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
         }
 
         public override void Enter()
@@ -84,14 +76,14 @@ namespace Unit.Character
                 return;
             }
 
-            if(!isCheckDistanceToTarget())
+            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, (range * range) + .15f))
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
 
             if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
-                Calculate.Move.Rotate(this.GameObject.transform, currentTarget.transform.position, characterSwitchMoveState.RotationSpeed, ignoreX: true, ignoreY: false, ignoreZ: true);
+                rotation.Rotate();
                
             if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
@@ -152,6 +144,7 @@ namespace Unit.Character
         {
             currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
             CurrentWeapon.SetTarget(currentTarget);
+            rotation.SetTarget(currentTarget?.transform);
         }
         
 

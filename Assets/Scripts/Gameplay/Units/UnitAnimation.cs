@@ -24,7 +24,7 @@ namespace Unit
         public void ChangeAnimation(AnimationClip clip, float duration = 0,
             float transitionDuration = .1f, bool isForce = false, bool isDefault = false)
         {
-            if(this.isBlock && !isForce) return;
+            if(!isForce && this.isBlock) return;
             
             if (!isDefault)
             {

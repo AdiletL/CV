@@ -16,8 +16,8 @@ namespace Unit.Character.Creep
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
         
-        protected Platform startPlatform;
-        protected Platform endPlatform;
+        protected Transform start;
+        protected Transform end;
         
         public override void Initialize()
         {
@@ -36,8 +36,8 @@ namespace Unit.Character.Creep
         protected abstract void CreateStates();
         
                 
-        public void SetStartPlatform(Platform start) => startPlatform = start;
-        public void SetEndPlatform(Platform end) => endPlatform = end;
+        public void SetStart(Transform start) => this.start = start;
+        public void SetEnd(Transform end) => this.end = end;
 
         public void Update()
         {
@@ -49,9 +49,9 @@ namespace Unit.Character.Creep
             this.StateMachine?.LateUpdate();
         }
         
-        private void OnChangedState(StateCategory category, Machine.IState state)
+        private void OnChangedState(Machine.IState state)
         {
-            currentStateCategory = category;
+            currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
         

@@ -15,8 +15,9 @@
                 .Build();
             
             var moveState = (ChestMonsterSwitchMoveState)new ChestMonsterSwitchMoveStateBuilder()
-                .SetStartPlatform(startPlatform)
-                .SetEndPlatform(endPlatform)
+                .SetStart(start)
+                .SetEnd(end)
+                .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)

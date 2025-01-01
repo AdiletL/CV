@@ -2,7 +2,6 @@
 using ScriptableObjects.Gameplay.Trap.Tower;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Unit.Trap.Tower
 {
@@ -47,9 +46,9 @@ namespace Unit.Trap.Tower
             this.stateMachine?.LateUpdate();
         }
         
-        private void OnChangedState(StateCategory category, Machine.IState state)
+        private void OnChangedState(Machine.IState state)
         {
-            currentStateCategory = category;
+            currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
 

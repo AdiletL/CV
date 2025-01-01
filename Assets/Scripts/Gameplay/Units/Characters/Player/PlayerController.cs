@@ -84,7 +84,7 @@ namespace Unit.Character.Player
             components.GetComponentFromArray<PlayerHealth>()?.Initialize();
             
             //TEST
-            /*var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
+            var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
             var sword = (Sword)new SwordBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetRange(so_Sword.Range)
@@ -93,9 +93,9 @@ namespace Unit.Character.Player
                 .SetDamageable(swordDamageable)
                 .Build();
             sword.Initialize();
-            SetWeapon(sword);*/
+            SetWeapon(sword);
 
-            var projectile = new NormalDamage(so_Bow.Damage, gameObject);
+            /*var projectile = new NormalDamage(so_Bow.Damage, gameObject);
             var bow = (Bow)new BowBuilder()
                 .SetDamageable(projectile)
                 .SetRange(so_Bow.Range)
@@ -105,7 +105,7 @@ namespace Unit.Character.Player
                 .Build();
             diContainer.Inject(bow);
             bow.Initialize();
-            SetWeapon(bow);
+            SetWeapon(bow);*/
             
             StateMachine.OnChangedState += OnChangedState;
             StateMachine.SetStates(typeof(PlayerIdleState));
@@ -152,9 +152,9 @@ namespace Unit.Character.Player
             this.StateMachine?.GetState<PlayerIdleState>()?.SetTarget(finish);
         }
 
-        private void OnChangedState(StateCategory category, Machine.IState state)
+        private void OnChangedState(Machine.IState state)
         {
-            currentStateCategory = category;
+            currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
 

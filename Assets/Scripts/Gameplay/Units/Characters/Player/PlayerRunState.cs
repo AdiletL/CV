@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Calculate;
 using Machine;
+using Movement;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
@@ -9,8 +11,13 @@ namespace Unit.Character.Player
     public class PlayerRunState : CharacterRunState
     {
         private PlayerSwitchAttackState playerSwitchAttackState;
-        
-        private Vector3? currentTargetPosition;
+        private Rotation rotation;
+        private PathFinding pathFinding;
+
+        private GameObject finalTarget;
+        private Transform currentTarget;
+        private Vector3 finalTargetPosition;
+        private Vector3 currentTargetPosition;
         private Vector3 direction;
 
         private readonly float cooldownCheckEnemy = 0.1f;
@@ -27,15 +34,16 @@ namespace Unit.Character.Player
         public CharacterController CharacterController { get; set; }
         public float RotationSpeed { get; set; }
         
-        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0.01f)
-        {
-            return (current - target).sqrMagnitude <= threshold;
-        }
 
         public override void Initialize()
         {
             base.Initialize();
             playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
+            rotation = new Rotation(GameObject.transform, RotationSpeed);
+            pathFinding = new PathFindingBuilder()
+                .SetStartPosition(GameObject.transform.position)
+                .SetEndPosition(GameObject.transform.position)
+                .Build();
         }
 
         public override void Enter()
@@ -53,59 +61,102 @@ namespace Unit.Character.Player
         {
             base.Update();
             
-            if (!currentTargetPosition.HasValue)
+            if (!currentTarget)
                 FindNextPoint();
             
-            if (!currentTargetPosition.HasValue)
+            if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
             }
-            
+
+            CheckFinalTargetPosition();
             Move();
         }   
 
         public override void LateUpdate()
         {
             CheckJump();
-            CheckEnemy();
+            //CheckEnemy();
         }
 
         public override void Exit()
         {
             base.Exit();
-            currentTargetPosition = null;
+            currentTarget = null;
             this.StateMachine.OnExitCategory -= OnExitCategory;
         }
         
-        public void SetPathToTarget(Queue<Platform> pathToPoint)
+        public void SetTarget(GameObject target)
         {
-            currentTargetPosition = null;
-            this.pathToPoint = pathToPoint;
+            currentTarget = null;
+            finalTarget = target;
+            finalTargetPosition = target.transform.position;
+            pathFinding.SetStartPosition(GameObject.transform.position);
+            pathFinding.SetTargetPosition(target.transform.position);
+            ResetColorOnPath();
+        }
+        
+        private void ResetColorOnPath()
+        {
+            for (int i = pathToPoint.Count - 1; i >= 0; i--)
+                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>()?.ResetColor();
+        }
+
+        private void FindPathToPoint()
+        {
+            pathToPoint = pathFinding.GetPath(true);
+        }
+        private void FindNextPoint()
+        {
+            if(pathToPoint.Count == 0)
+                FindPathToPoint();
+            
+            if(pathToPoint.Count == 0) return;
+            
+            currentTarget = pathToPoint.Peek().transform;
+            rotation.SetTarget(currentTarget);
         }
         
         public override void Move()
         {
-            currentTargetPosition = new Vector3(currentTargetPosition.Value.x, GameObject.transform.position.y, currentTargetPosition.Value.z);
+            currentTargetPosition = new Vector3(currentTarget.position.x, GameObject.transform.position.y, currentTarget.position.z);
             
-            if (IsNear(GameObject.transform.position, currentTargetPosition.Value))
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
-                Calculate.FindPlatform.GetPlatform(GameObject.transform.position, Vector3.down)?.GetComponent<UnitRenderer>().ResetColor();
-                currentTargetPosition = null; 
+                pathToPoint.Peek()?.GetComponent<UnitRenderer>().ResetColor();
+                currentTarget = null; 
                 pathToPoint.Dequeue();
+
+                CheckFinishedToFinalTarget();
             }
             else
             {
-                if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTargetPosition.Value))
+                if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTargetPosition))
                 {
-                    Calculate.Move.Rotate(GameObject.transform, currentTargetPosition.Value, RotationSpeed, ignoreX: true, ignoreZ: true, ignoreY: false);
+                    rotation.Rotate();
                     return;
                 }
-                direction = (currentTargetPosition.Value - GameObject.transform.position).normalized;
+                direction = (currentTargetPosition - GameObject.transform.position).normalized;
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
             }
         }
 
+        private void CheckFinalTargetPosition()
+        {
+            if (!Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition))
+            {
+                pathToPoint.Clear();
+                FindNextPoint();
+            }
+        }
+        private void CheckFinishedToFinalTarget()
+        {
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, finalTarget.transform.position)
+                || pathToPoint.Count == 0)
+                this.StateMachine.ExitCategory(Category);
+        }
+        
         private void CheckEnemy()
         {
             if(!isCheckEnemy) return;
@@ -115,23 +166,19 @@ namespace Unit.Character.Player
             {
                 if (playerSwitchAttackState.IsFindUnitInRange())
                 {
-                    this.StateMachine.ExitCategory(Category);
+                    foreach (var VARIABLE in pathToPoint)
+                        VARIABLE.SetColor(Color.white);
+                    
                     this.StateMachine.SetStates(typeof(PlayerSwitchAttackState));
+                    this.StateMachine.ExitCategory(Category);
                 }
                 countCooldownCheckEnemy = 0;
             }
         }
-        
-        private void FindNextPoint()
-        {
-            if (pathToPoint.Count == 0) return;
-            currentTargetPosition = pathToPoint.Peek().transform.position;
-        }
 
-        private void OnExitCategory(Machine.StateCategory category, Machine.IState state)
+        private void OnExitCategory(Machine.IState state)
         {
-            if (category == Machine.StateCategory.action 
-                && state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 PlayAnimation();
                 isCheckEnemy = true;
@@ -151,6 +198,7 @@ namespace Unit.Character.Player
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
             {
                 var playerJumpState = (PlayerJumpState)new PlayerJumpStateBuilder()
+                    .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
                     .SetAnimationCurve(SO_PlayerMove.JumpCurve)
                     .SetJumpDuration(SO_PlayerMove.JumpDuration)
                     .SetJumpClip(SO_PlayerMove.JumpClip)

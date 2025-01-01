@@ -4,8 +4,8 @@ namespace Unit.Character
 {
     public class CharacterPatrolState : CharacterBaseMovementState, IPatrol
     {
-        public Platform StartPlatform { get; set; }
-        public Platform EndPlatform { get; set; }
+        public Transform Start { get; set; }
+        public Transform End { get; set; }
         public float RotationSpeed { get; set; }
         
         public Vector3? StartPosition { get; protected set; }
@@ -14,13 +14,14 @@ namespace Unit.Character
 
         public override void Initialize()
         {
-            
+            StartPosition = Start?.position;
+            EndPosition = End?.position;
         }
 
         public override void Enter()
         {
-            StartPosition = StartPlatform?.transform.position;
-            EndPosition = EndPlatform?.transform.position;
+            StartPosition = Start?.position;
+            EndPosition = End?.position;
         }
 
         public override void Update()
@@ -32,6 +33,10 @@ namespace Unit.Character
         {
         }
 
+        public override void Move()
+        {
+            
+        }
     }
 
     public class CharacterPatrolStateBuilder : CharacterBaseMovementStateBuilder
@@ -40,19 +45,19 @@ namespace Unit.Character
         {
         }
         
-        public CharacterPatrolStateBuilder SetStartPoint(Platform startPlatform)
+        public CharacterPatrolStateBuilder SetStart(Transform start)
         {
             if (state is CharacterPatrolState patrolState)
             {
-                patrolState.StartPlatform = startPlatform;
+                patrolState.Start = start;
             }
             return this;
         }
-        public CharacterPatrolStateBuilder SetEndPoint(Platform endPlatform)
+        public CharacterPatrolStateBuilder SetEnd(Transform end)
         {
             if (state is CharacterPatrolState patrolState)
             {
-                patrolState.EndPlatform = endPlatform;
+                patrolState.End = end;
             }
 
             return this;

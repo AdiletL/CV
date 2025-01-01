@@ -47,16 +47,15 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
         this.platformSpawner = platformSpawner;
         this.rewardSpawner = rewardSpawner;
     }
-
+    
     private void SpawnPlayer()
     {
-        var platform = platformSpawner.GetFreePlatform();
+        var platform = platformSpawner.GetFreePlace();
         if(!platform) return;
         
         var playerGameObject = diContainer.InstantiatePrefabForComponent<PlayerController>(playerPrefab);
         playerGameObject.transform.position = platform.transform.position;
         var player = playerGameObject.GetComponent<PlayerController>();
-        //player.SetFinishTarget(rewardSpawner.FinishReward.gameObject);
         player.Initialize();
         player.GetState<PlayerIdleState>().OnFinishedToTarget += OnFinishedToTargetPlayer;
         playerCharacter = player;
@@ -68,14 +67,14 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
     {
         foreach (var VARIABLE in enemyPrefabs)
         {
-            var platform = platformSpawner.GetFreePlatform();
+            var platform = platformSpawner.GetFreePlace();
             if (!platform) return;
             
             var enemyGameObject = diContainer.InstantiatePrefabForComponent<CreepController>(VARIABLE);
             enemyGameObject.transform.position = platform.transform.position;
             var enemy = enemyGameObject.GetComponent<CreepController>();
-            enemy.SetStartPlatform(platform.GetComponent<Platform>());
-            enemy.SetEndPlatform(platformSpawner.GetFreePlatform(platform.transform.position).GetComponent<Platform>());
+            enemy.SetStart(platform.GetComponent<Platform>().transform);
+            enemy.SetEnd(platformSpawner.GetFreePlace(platform.transform.position).GetComponent<Platform>().transform);
             enemy.Initialize();
             //enemy.SetTarget()
             gameUnits.AddUnits(enemy);

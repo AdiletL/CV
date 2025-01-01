@@ -11,7 +11,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
 
     private Transform platformParent, blockParent;
 
-    private readonly List<Platform> platforms = new(20);
+    private List<Platform> platforms = new(20);
     
 
     public async void Initialize()
@@ -68,7 +68,7 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
         block.transform.SetParent(blockParent);
     }
 
-    public GameObject GetFreePlatform(Vector3 currentPosition = new Vector3())
+    public GameObject GetFreePlace(Vector3 currentPosition = new Vector3())
     {
         var copyPlatforms = new List<Platform>(platforms);
         var randomIndex = 0;

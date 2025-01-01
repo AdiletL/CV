@@ -18,8 +18,9 @@ namespace Unit.Character.Creep
                 .Build();;
             
             var moveState = (HedgehogSwitchMoveState)new HedgehogSwitchMoveStateBuilder()
-                .SetStartPlatform(startPlatform)
-                .SetEndPlatform(endPlatform)
+                .SetStart(start)
+                .SetEnd(end)
+                .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)

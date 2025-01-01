@@ -31,6 +31,11 @@ namespace Unit.Character
             CharacterAnimation.SetSpeedAnimation(getRandomRunClip(), duration: durationAnimation);
         }
 
+        public override void Move()
+        {
+            
+        }
+
         public override void IncreaseMovementSpeed(float value)
         {
             base.IncreaseMovementSpeed(value);

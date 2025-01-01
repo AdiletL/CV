@@ -13,5 +13,6 @@ namespace ScriptableObjects.Unit.Character
         [field: SerializeField] public AnimationClip JumpClip { get; private set; }
         [field: SerializeField] public float JumpDuration { get; private set; } = 1f;
         [field: SerializeField] public float JumpHeight { get; private set; } = 1.5f;
+        [field: SerializeField] public int MaxJumpCount { get; private set; } = 1;
     }
 }

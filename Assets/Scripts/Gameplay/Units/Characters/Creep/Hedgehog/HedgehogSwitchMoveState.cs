@@ -8,9 +8,9 @@ namespace Unit.Character.Creep
         private SO_HedgehogMove so_HedgehogMove;
         private HedgehogAnimation hedgehogAnimation;
         
-        public Platform StartPlatform { get; set; }
-        public Platform EndPlatform { get; set; }
-        
+        public Transform Start { get; set; }
+        public Transform End { get; set; }
+        public LayerMask EnemyLayer { get; set; }
         
         private HedgehogPatrolState CreatePatrolState()
         {
@@ -18,8 +18,9 @@ namespace Unit.Character.Creep
                 .SetCenter(Center)
                 .SetEnemyAnimation(hedgehogAnimation)
                 .SetWalkClip(so_HedgehogMove.WalkClip)
-                .SetStartPoint(StartPlatform)
-                .SetEndPoint(EndPlatform)
+                .SetEnemyLayer(EnemyLayer)
+                .SetStart(Start)
+                .SetEnd(End)
                 .SetGameObject(GameObject)
                 .SetMovementSpeed(so_HedgehogMove.RunSpeed)
                 .SetStateMachine(this.StateMachine)
@@ -54,20 +55,29 @@ namespace Unit.Character.Creep
         {
         }
 
-        public HedgehogSwitchMoveStateBuilder SetStartPlatform(Platform startPlatform)
+        public HedgehogSwitchMoveStateBuilder SetStart(Transform start)
         {
             if (state is HedgehogSwitchMoveState hedgehogMoveState)
             {
-                hedgehogMoveState.StartPlatform = startPlatform;
+                hedgehogMoveState.Start = start;
             }
 
             return this;
         }
-        public HedgehogSwitchMoveStateBuilder SetEndPlatform(Platform endPlatform)
+        public HedgehogSwitchMoveStateBuilder SetEnd(Transform end)
         {
             if (state is HedgehogSwitchMoveState hedgehogMoveState)
             {
-                hedgehogMoveState.EndPlatform = endPlatform;
+                hedgehogMoveState.End = end;
+            }
+
+            return this;
+        }
+        public HedgehogSwitchMoveStateBuilder SetEnemyLayer(LayerMask layer)
+        {
+            if (state is HedgehogSwitchMoveState hedgehogMoveState)
+            {
+                hedgehogMoveState.EnemyLayer = layer;
             }
 
             return this;

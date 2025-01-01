@@ -41,7 +41,7 @@ namespace Gameplay.Spawner
         {
             foreach (var item in trapPrefabs)
             {
-                var platform = platformSpawner.GetFreePlatform();
+                var platform = platformSpawner.GetFreePlace();
                 if(!platform) return;
                 
                 var newGameObject = diContainer.InstantiatePrefabForComponent<TrapController>(item);

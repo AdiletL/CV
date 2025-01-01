@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class StateMachine
 {
-    public event Action<StateCategory, IState> OnChangedState;
-    public event Action<StateCategory, IState> OnExitCategory;
+    public event Action<IState> OnChangedState;
+    public event Action<IState> OnExitCategory;
     
     private readonly Dictionary<StateCategory, IState> activeStates = new();
     private readonly Dictionary<Type, IState> states = new();
@@ -100,7 +100,7 @@ public class StateMachine
                 {
                     activeStates[category] = state;
                     state.Enter();
-                    OnChangedState?.Invoke(category, state);
+                    OnChangedState?.Invoke(state);
                 }
             }
         }
@@ -149,7 +149,7 @@ public class StateMachine
         {
             state.Exit();
             activeStates.Remove(excludedCategory);
-            OnExitCategory?.Invoke(excludedCategory, state);
+            OnExitCategory?.Invoke(state);
         }
     }
 

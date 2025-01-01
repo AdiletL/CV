@@ -15,8 +15,9 @@
                 .Build();
             
             var moveState = (BeholderSwitchMoveState)new BeholderSwitchMoveStateBuilder()
-                .SetStartPlatform(startPlatform)
-                .SetEndPlatform(endPlatform)
+                .SetStart(start)
+                .SetEnd(end)
+                .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)
