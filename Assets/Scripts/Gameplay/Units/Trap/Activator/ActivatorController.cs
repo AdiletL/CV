@@ -19,6 +19,7 @@ namespace Unit.Trap
         {
             foreach (var VARIABLE in testTraps)
             {
+                VARIABLE.SetTarget(CurrentTarget);
                 VARIABLE.Activate();
             }
         }

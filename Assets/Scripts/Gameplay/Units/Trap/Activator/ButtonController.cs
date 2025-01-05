@@ -11,7 +11,7 @@ namespace Unit.Trap.Activator
         private ButtonAnimation buttonAnimation;
         private SphereCollider sphereCollider;
 
-        private Coroutine checkTargetCoroutine;
+        private Coroutine checkTargetCoroutine, startTimerCoroutine;
 
         private float cooldownCheck = 1f, countCooldownCheck;
 
@@ -36,6 +36,23 @@ namespace Unit.Trap.Activator
             checkTargetCoroutine = StartCoroutine(CheckTargetCoroutine());
         }
 
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            if(checkTargetCoroutine != null)
+                StopCoroutine(checkTargetCoroutine);
+            isReady = true;
+            buttonAnimation.ChangeAnimationWithDuration(deactivateClip);
+        }
+
+        private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
+        {
+            yield return new WaitForSeconds(waitTime);
+            callback?.Invoke();
+        }
+        
         private IEnumerator CheckTargetCoroutine()
         {
             while (true)
@@ -48,13 +65,6 @@ namespace Unit.Trap.Activator
             }
         }
 
-        public override void Deactivate()
-        {
-            base.Deactivate();
-            isReady = true;
-            buttonAnimation.ChangeAnimationWithDuration(deactivateClip);
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if(!isReady 
@@ -62,13 +72,14 @@ namespace Unit.Trap.Activator
                || CurrentTarget) return;
             
             CurrentTarget = other.gameObject;
-            Activate();
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(0.3f, Activate));
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if(isReady 
-               || !Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)
+            if(!Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)
                || !CurrentTarget) return;
             
             Deactivate();

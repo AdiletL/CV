@@ -31,11 +31,11 @@ namespace Gameplay.Spawner
             this.platformSpawner = platformSpawner;
         }
 
-        private ThornController thornController;
+        private PushController pushController;
         
         private void ButtonActivator(ButtonController buttonActivator)
         {
-            buttonActivator.AddTrap(thornController);
+            buttonActivator.AddTrap(pushController);
         }
         private void SpawnTraps()
         {
@@ -50,8 +50,8 @@ namespace Gameplay.Spawner
                 diContainer.Inject(trap);
                 trap.Initialize();
                 
-                if(trap is ThornController thornController)
-                    this.thornController = thornController;
+                if(trap is PushController pushController)
+                    this.pushController = pushController;
                 if(trap is ButtonController buttonController)
                     this.ButtonActivator(buttonController);
             }

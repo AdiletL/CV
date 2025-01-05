@@ -12,7 +12,7 @@ namespace Unit.Trap.Hammer
         
         private SO_Hammer so_Hammer;
         private HammerAnimation hammerAnimation;
-        private Coroutine startCooldownCoroutine;
+        private Coroutine startTimerCoroutine;
         private Collider[] checkUnitColliders = new Collider[1];
 
         private float durationAttack;
@@ -29,7 +29,6 @@ namespace Unit.Trap.Hammer
             so_Hammer = (SO_Hammer)so_Trap;
             Damageable = new NormalDamage(so_Hammer.Damage, gameObject);
             durationAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.AmountAttackInSecond);
-            cooldownAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.CooldownAttack);
             cooldownAttack = so_Hammer.CooldownAttack;
             
             GetComponentInUnit<HammerCollision>()?.Initialize();
@@ -52,7 +51,7 @@ namespace Unit.Trap.Hammer
         private void OnHitEnter(GameObject target)
         {
             if(!isReady) return;
-            CurrentTarget = target;
+            SetTarget(target);
             ApplyDamage();
         }
 
@@ -69,9 +68,9 @@ namespace Unit.Trap.Hammer
             isReady = true;
             hammerCollider.isTrigger = true;
             hammerAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
-            if(startCooldownCoroutine != null)
-                StopCoroutine(startCooldownCoroutine);
-            StartCoroutine(StartCooldownCoroutine(durationAttack, AfterActivate));
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, AfterActivate));
         }
 
         private void AfterActivate()
@@ -86,9 +85,9 @@ namespace Unit.Trap.Hammer
             if(colliderCount == 0)
                 hammerCollider.isTrigger = false;
             
-            if(startCooldownCoroutine != null)
-                StopCoroutine(startCooldownCoroutine);
-            StartCoroutine(StartCooldownCoroutine(1, Deactivate));
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, Deactivate));
         }
 
         public override void Deactivate()
@@ -97,22 +96,22 @@ namespace Unit.Trap.Hammer
             
             isReady = false;
             hammerAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
-            if(startCooldownCoroutine != null)
-                StopCoroutine(startCooldownCoroutine);
-            StartCoroutine(StartCooldownCoroutine(cooldownAttack, AfterDeactivate));
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, AfterDeactivate));
         }
 
         private void AfterDeactivate()
         {
-            if(startCooldownCoroutine != null)
-                StopCoroutine(startCooldownCoroutine);
-            StartCoroutine(StartCooldownCoroutine(1, Activate));
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, Activate));
         }
 
-        private IEnumerator StartCooldownCoroutine(float interval, Action action)
+        private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
         {
-            yield return new WaitForSeconds(interval);
-            action?.Invoke();
+            yield return new WaitForSeconds(waitTime);
+            callback?.Invoke();
         } 
 
         public void ApplyDamage()

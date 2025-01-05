@@ -52,7 +52,7 @@ namespace Unit.Trap
 
         private void OnHitEnter(GameObject target)
         {
-            this.CurrentTarget = target;
+            SetTarget(target);
             ApplyDamage();
         }
 

@@ -5,7 +5,7 @@ namespace Unit.Trap
 {
     public class TrapCollision : MonoBehaviour
     {
-        public event Action<GameObject> OnHitEnter;
+        public Action<GameObject> OnHitEnter;
         
         [SerializeField] protected TrapController trapController;
 

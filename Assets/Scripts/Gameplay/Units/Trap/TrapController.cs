@@ -34,5 +34,10 @@ namespace Unit.Trap
         public abstract void Activate();
         public abstract void Deactivate();
 
+        
+        public void SetTarget(GameObject target)
+        {
+            CurrentTarget = target;
+        }
     }
 }

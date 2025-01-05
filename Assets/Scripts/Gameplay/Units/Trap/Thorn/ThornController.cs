@@ -15,7 +15,7 @@ namespace Unit.Trap
         private ThornAnimation thornAnimation;
         private SphereCollider sphereCollider;
 
-        private Coroutine timerCoroutine;
+        private Coroutine startTimerCoroutine;
         private Coroutine applyDamageCoroutine;
 
         private float startTimer;
@@ -52,8 +52,8 @@ namespace Unit.Trap
 
         private void Reset()
         {
-            if(timerCoroutine != null)
-                StopCoroutine(timerCoroutine);
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
             
             if(applyDamageCoroutine != null)
                 StopCoroutine(applyDamageCoroutine);
@@ -62,15 +62,15 @@ namespace Unit.Trap
         {
             isReady = false;
             Reset();
-            timerCoroutine = StartCoroutine(StartCooldownCoroutine(startTimer, Duration));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(startTimer, Duration));
         }
         public override void Deactivate()
         {
             thornAnimation.ChangeAnimationWithDuration(deactivateClip);
-            if(timerCoroutine != null)
-                StopCoroutine(timerCoroutine);
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
                 
-            timerCoroutine = StartCoroutine(StartCooldownCoroutine(cooldown, () =>
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldown, () =>
             {
                 isReady = true;
                 Collider[] colliders = Physics.OverlapSphere(transform.position, radius, Layers.PLAYER_LAYER);
@@ -81,16 +81,16 @@ namespace Unit.Trap
             }));
         }
         
-        private IEnumerator StartCooldownCoroutine(float timer, Action action)
+        private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
         {
             float countTimer = 0;
-            while (countTimer < timer)
+            while (countTimer < waitTime)
             {
                 countTimer += Time.deltaTime;
                 yield return null;
             }
             
-            action?.Invoke();
+            callback?.Invoke();
         }
 
         private void Duration()
