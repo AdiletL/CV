@@ -10,6 +10,5 @@ namespace ScriptableObjects.Gameplay.Trap
         [field: SerializeField] public float ApplyDamageCooldown { get; private set; }
         [field: SerializeField] public float Cooldown { get; private set; }
         [field: SerializeField] public float Radius { get; private set; }
-        [field: SerializeField] public LayerMask[] EnemyLayers { get; private set; }
     }
 }

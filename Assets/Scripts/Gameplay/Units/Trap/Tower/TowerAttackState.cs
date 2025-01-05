@@ -29,13 +29,13 @@ namespace Unit.Trap.Tower
 
         public override void Initialize()
         {
-            var duration = Calculate.Attack.TotalDurationAttack(AmountAttack);
+            var duration = Calculate.Attack.TotalDurationInSecond(AmountAttack);
             timerFire = duration * .55f;
             cooldown = duration;
         }
         public override void Enter()
         {
-            this.TowerAnimation.ChangeAnimation(AttackClip, cooldown);
+            this.TowerAnimation.ChangeAnimationWithDuration(AttackClip, cooldown);
         }
         public override void Exit()
         {

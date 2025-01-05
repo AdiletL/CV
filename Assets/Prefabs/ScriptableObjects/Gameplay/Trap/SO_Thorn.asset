@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: SO_Thorn
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
-  <StartTimer>k__BackingField: 0.5
-  <Duration>k__BackingField: 2
-  <ApplyDamageCooldown>k__BackingField: 0.3
-  <Cooldown>k__BackingField: 1
-  <Radius>k__BackingField: 0.5
+  <ActivateClip>k__BackingField: {fileID: 7400000, guid: b8e94f6931f4a8e4b9ac4691310b1a96, type: 2}
+  <DeactivateClip>k__BackingField: {fileID: 7400000, guid: 1ff35bcd71828584bac4543d1c870560, type: 2}
   <EnemyLayers>k__BackingField:
   - serializedVersion: 2
     m_Bits: 8
+  <StartTimer>k__BackingField: 0.5
+  <Duration>k__BackingField: 2
+  <ApplyDamageCooldown>k__BackingField: 1
+  <Cooldown>k__BackingField: 1
+  <Radius>k__BackingField: 0.5

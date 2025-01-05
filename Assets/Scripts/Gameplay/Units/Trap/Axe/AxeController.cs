@@ -1,65 +1,69 @@
 using System;
 using Gameplay.Damage;
+using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
 namespace Unit.Trap
 {
     public class AxeController : TrapController, IApplyDamage
     {
-        [SerializeField] private Animator animator;
-
-        private GameObject target;
-        
-        private const string ACTIVATE_NAME = "Activate";
-        private const string DEACTIVATE_NAME = "Deactivate";
+        private SO_Axe so_Axe;
+        private AxeAnimation axeAnimation;
+        private AnimationClip playClip;
+        private float speedPlayClip;
         
         public IDamageable Damageable { get; private set; }
         
-        public override T GetComponentInUnit<T>()
-        {
-            return components.GetComponentFromArray<T>();
-        }
 
         public override void Initialize()
         {
             base.Initialize();
-            
             Damageable = new NormalDamage(so_Trap.Damage, gameObject);
-            
+            axeAnimation = components.GetComponentFromArray<AxeAnimation>();
+            so_Axe = (SO_Axe)so_Trap;
+            speedPlayClip = so_Axe.SpeedPlayClip;
+            playClip = so_Axe.PlayClip;
             Activate();
         }
 
         public override void Activate()
         {
-            animator.SetTrigger(ACTIVATE_NAME);
+            axeAnimation.ChangeAnimationWithDuration(activateClip);
         }
 
         public override void Deactivate()
         {
-            animator.SetTrigger(DEACTIVATE_NAME);
+            axeAnimation.ChangeAnimationWithDuration(deactivateClip);
+        }
+
+        public void ChangeOnPlayClip()
+        {
+            axeAnimation.ChangeAnimationWithSpeed(playClip, speedPlayClip);
         }
 
         private void OnEnable()
         {
-            GetComponentInUnit<AxeCollision>().OnHit += OnHit;
+            GetComponentInUnit<AxeCollision>().OnHitEnter += OnHitEnter;
         }
         private void OnDisable()
         {
-            GetComponentInUnit<AxeCollision>().OnHit -= OnHit;
+            GetComponentInUnit<AxeCollision>().OnHitEnter -= OnHitEnter;
         }
 
-        private void OnHit(GameObject target)
+        private void OnHitEnter(GameObject target)
         {
-            this.target = target;
+            this.CurrentTarget = target;
             ApplyDamage();
         }
 
 
         public void ApplyDamage()
         {
-            if (target.TryGetComponent(out IHealth health) && health.IsLive)
+            if (CurrentTarget.TryGetComponent(out IHealth health) 
+                && health.IsLive)
             {
                 health.TakeDamage(Damageable);
+                CurrentTarget = null;
             }
         }
     }

@@ -12,33 +12,21 @@ namespace Unit.Trap
     public class ThornController : TrapController, IApplyDamage
     {
         private SO_Thorn so_Thorn;
-
+        private ThornAnimation thornAnimation;
         private SphereCollider sphereCollider;
-        private Animator animator;
 
         private Coroutine timerCoroutine;
         private Coroutine applyDamageCoroutine;
-
-        private GameObject target;
-        private LayerMask[] enemyLayers;
 
         private float startTimer;
         private float duration;
         private float applyDamageCooldown;
         private float cooldown;
         private float radius;
-
-        private bool isReady;
         
-        private const string ACTIVATE_NAME = "Activate";
-        private const string DEACTIVATE_NAME = "Deactivate";
+        private bool isReady = true;
         
         public IDamageable Damageable { get; private set; }
-
-        public override T GetComponentInUnit<T>()
-        {
-            return GetComponent<T>();
-        }
         
 
         public override void Initialize()
@@ -50,16 +38,15 @@ namespace Unit.Trap
             applyDamageCooldown = so_Thorn.ApplyDamageCooldown;
             cooldown = so_Thorn.Cooldown;
             radius = so_Thorn.Radius;
-            enemyLayers = so_Thorn.EnemyLayers;
+            EnemyLayers = so_Thorn.EnemyLayers;
             
             Damageable = new NormalDamage(so_Thorn.Damage, gameObject);
 
             sphereCollider = GetComponent<SphereCollider>();
             sphereCollider.isTrigger = true;
             sphereCollider.radius = radius;
-            
-            animator = GetComponent<Animator>();
 
+            thornAnimation = components.GetComponentFromArray<ThornAnimation>();
             isReady = true;
         }
 
@@ -73,17 +60,13 @@ namespace Unit.Trap
         }
         public override void Activate()
         {
-            if(!isReady) return;
-            
             isReady = false;
             Reset();
             timerCoroutine = StartCoroutine(StartCooldownCoroutine(startTimer, Duration));
         }
         public override void Deactivate()
         {
-            if(isReady) return;
-            
-            animator.SetTrigger(DEACTIVATE_NAME);
+            thornAnimation.ChangeAnimationWithDuration(deactivateClip);
             if(timerCoroutine != null)
                 StopCoroutine(timerCoroutine);
                 
@@ -123,13 +106,15 @@ namespace Unit.Trap
             float countTimer = 0;
 
             HashSet<GameObject> affectedEnemies = new HashSet<GameObject>();
-            animator.SetTrigger(ACTIVATE_NAME);
-
+            thornAnimation.ChangeAnimationWithDuration(activateClip);
+            var interval = activateClip.length;
+            
+            yield return new WaitForSeconds(interval - .1f);
             while (countTimer < duration)
             {
                 affectedEnemies.Clear();
 
-                foreach (var enemyLayer in enemyLayers)
+                foreach (var enemyLayer in EnemyLayers)
                 {
                     var colliders = Physics.OverlapSphere(transform.position, radius, enemyLayer);
 
@@ -138,7 +123,7 @@ namespace Unit.Trap
                         if (!affectedEnemies.Contains(collider.gameObject)) // Check if not already affected
                         {
                             affectedEnemies.Add(collider.gameObject);
-                            target = collider.gameObject;
+                            CurrentTarget = collider.gameObject;
                             ApplyDamage();
                         }
                     }
@@ -154,32 +139,15 @@ namespace Unit.Trap
 
         public void ApplyDamage()
         {
-            if(target.TryGetComponent(out IHealth health) && health.IsLive)
-                health.TakeDamage(Damageable);
-        }
-
-        private void ApplyDamage(IHealth health)
-        {
-            if(health.IsLive)
+            if(CurrentTarget.TryGetComponent(out IHealth health) && health.IsLive)
                 health.TakeDamage(Damageable);
         }
         
+        
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out PlayerController player))
-            {
-                if (!isReady)
-                {
-                    if (player.TryGetComponent(out IHealth health))
-                    {
-                        ApplyDamage(health);
-                    }
-                }
-                else
-                {
-                    Activate();
-                }
-            }
+            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)) return;
+            Activate();
         }
     }
 }

@@ -22,13 +22,13 @@ namespace Unit.Character
         protected void PlayAnimation()
         {
             SetDurationAnimation();
-            CharacterAnimation.ChangeAnimation(getRandomRunClip(), duration: durationAnimation);
+            CharacterAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation);
         }
 
         protected void SetDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeed;
-            CharacterAnimation.SetSpeedAnimation(getRandomRunClip(), duration: durationAnimation);
+            CharacterAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
         }
 
         public override void Move()

@@ -25,7 +25,7 @@ namespace Unit.Character
 
         protected void PlayAnimation()
         {
-            CharacterAnimation.ChangeAnimation(getRandomIdleClip(), transitionDuration: .5f);
+            CharacterAnimation.ChangeAnimationWithDuration(getRandomIdleClip(), transitionDuration: .5f);
         }
     }
 

@@ -7,7 +7,7 @@ namespace Unit
         public override StateCategory Category { get; } = StateCategory.attack;
         
         public IDamageable Damageable { get; set; }
-        public int AmountAttack { get; set; }
+        public float AmountAttack { get; set; }
 
         public abstract void Attack();
         public abstract void ApplyDamage();
@@ -26,7 +26,7 @@ namespace Unit
             return this;
         }
 
-        public UnitBaseAttackStateBuilder SetAmountAttack(int amount)
+        public UnitBaseAttackStateBuilder SetAmountAttack(float amount)
         {
             state.AmountAttack = amount;
             return this;

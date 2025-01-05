@@ -62,7 +62,7 @@ namespace Unit.Character
             }
             
             CurrentWeapon.Show();
-            CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+            CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             Restart();
         }
 
@@ -90,7 +90,7 @@ namespace Unit.Character
 
             if (!isAttack)
             {
-                CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+                CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
             }
 
@@ -116,7 +116,7 @@ namespace Unit.Character
         public virtual void SetWeapon(Weapon weapon)
         {
             CurrentWeapon = weapon;
-            durationAttack = Calculate.Attack.TotalDurationAttack(CurrentWeapon.AmountAttack);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(CurrentWeapon.AmountAttack);
             timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack;
             range = CurrentWeapon.Range;
@@ -168,16 +168,17 @@ namespace Unit.Character
             if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
             {
                 if (health.IsLive)
-                    CurrentWeapon.ApplyDamage();
+                    CurrentWeapon.Fire();
                 else
                     currentTarget = null;
             }
-            this.CharacterAnimation?.ChangeAnimation(cooldownClip);
+            this.CharacterAnimation?.ChangeAnimationWithDuration(cooldownClip);
             isAttack = false;
             FindUnit();
         }
         public override void ApplyDamage()
         {
+            
         }
 
         protected virtual void Cooldown()
@@ -196,7 +197,7 @@ namespace Unit.Character
                         return;
                     }
                     
-                    this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
+                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
                     isApplyDamage = true;
                 }
                 else

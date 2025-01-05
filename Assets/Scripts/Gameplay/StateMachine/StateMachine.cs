@@ -21,9 +21,18 @@ public class StateMachine
         return FindMostDerivedState(state) != null;
     }
 
-    public bool IsActivateType(StateCategory category, Type state)
+    public bool IsActivateType(Type state)
     {
-        return activeStates.ContainsKey(category) &&  activeStates[category].GetType().IsAssignableFrom(state);
+        foreach (var item in activeStates.Values)
+        {
+            // Проверяем, что состояние является наследником baseType
+            if (state.IsAssignableFrom(item.GetType()))
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     public T GetState<T>() where T : IState

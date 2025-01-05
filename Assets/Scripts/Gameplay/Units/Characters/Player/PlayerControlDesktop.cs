@@ -42,9 +42,12 @@ namespace Unit.Character.Player
             {
                 if (tryGetHitPosition(out GameObject hitObject))
                 {
+                    playerController.StateMachine.ExitOtherStates(typeof(PlayerIdleState));
                     playerController.GetState<PlayerIdleState>().SetTarget(hitObject);
+                    
                     previousHit?.GetComponent<UnitRenderer>()?.ResetColor();
                     previousHit = hitObject;
+                    
                     var unitRenderer = hitObject.GetComponent<UnitRenderer>();
                     unitRenderer?.SetColor(Color.red);
                 }

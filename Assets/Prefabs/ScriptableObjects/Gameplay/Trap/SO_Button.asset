@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c3f1da878e542479891796097791299, type: 3}
+  m_Name: SO_Button
+  m_EditorClassIdentifier: 
+  <Damage>k__BackingField: 0
+  <ActivateClip>k__BackingField: {fileID: 7400000, guid: 988b2b4d7cd4947478330eb9f5d94c71, type: 2}
+  <DeactivateClip>k__BackingField: {fileID: 7400000, guid: 6073824739b04754dbc450716b21c564, type: 2}
+  <EnemyLayers>k__BackingField:
+  - serializedVersion: 2
+    m_Bits: 8

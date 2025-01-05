@@ -12,7 +12,7 @@ namespace Unit.Character.Player
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
         private float rangeAttack;
-        private int amountAttack;
+        private float amountAttack;
         
         protected Collider[] findUnitColliders = new Collider[1];
         
@@ -59,7 +59,7 @@ namespace Unit.Character.Player
             playerAnimation = (PlayerAnimation)CharacterAnimation;
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
             Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
-            amountAttack = so_PlayerAttack.AmountAttack;
+            amountAttack = so_PlayerAttack.AmountAttackInSecond;
         }
 
         protected override void DestermineState()

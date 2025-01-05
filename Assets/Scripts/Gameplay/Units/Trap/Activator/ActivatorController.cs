@@ -14,11 +14,6 @@ namespace Unit.Trap
         {
             testTraps.Add(trap);
         }
-        
-        public override T GetComponentInUnit<T>()
-        {
-            return components.GetComponentFromArray<T>();
-        }
 
         public override void Activate()
         {

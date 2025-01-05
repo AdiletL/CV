@@ -21,6 +21,9 @@ MonoBehaviour:
   <Speed>k__BackingField: 2
   <Height>k__BackingField: 0
   <TimerDestroy>k__BackingField: 5
+  <EnemyLayers>k__BackingField:
+  - serializedVersion: 2
+    m_Bits: 8
   <SlowMovementInfo>k__BackingField:
     Value: 50
     Duration: 10

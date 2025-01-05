@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 509b06a28add4ad59cafbb7d975aa842, type: 3}
+  m_Name: SO_Hammer
+  m_EditorClassIdentifier: 
+  <Damage>k__BackingField: 1
+  <ActivateClip>k__BackingField: {fileID: 7400000, guid: 9945d0aaa03e25249bb07df33fbb13fa, type: 2}
+  <DeactivateClip>k__BackingField: {fileID: 7400000, guid: ae619c27a9947c64dacc0445a5ceaf67, type: 2}
+  <EnemyLayers>k__BackingField:
+  - serializedVersion: 2
+    m_Bits: 8
+  <AmountAttackInSecond>k__BackingField: 0.5
+  <CooldownAttack>k__BackingField: 2

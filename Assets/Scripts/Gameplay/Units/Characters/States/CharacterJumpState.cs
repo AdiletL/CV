@@ -32,7 +32,7 @@ namespace Unit.Character
         {
             startPosition = GameObject.transform.position;
             isJumping = true;
-            CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration, isForce: true);
+            CharacterAnimation.ChangeAnimationWithDuration(JumpClip, duration: JumpDuration, isForce: true);
             CharacterAnimation.SetBlock(true);
             gravity.ChangeGravity(false);
             countJump = 1;
@@ -83,7 +83,7 @@ namespace Unit.Character
         {
             startPosition = GameObject.transform.position;
             timer = 0f;
-            CharacterAnimation.ChangeAnimation(JumpClip, duration: JumpDuration, isForce: true);
+            CharacterAnimation.ChangeAnimationWithDuration(JumpClip, duration: JumpDuration, isForce: true);
             gravity.ChangeGravity(false);
             countJump++;
         }

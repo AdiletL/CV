@@ -2,7 +2,7 @@
 
 namespace ScriptableObjects.Unit.Character.Creep
 {
-    [CreateAssetMenu(fileName = "SO_BeholderExperience", menuName = "SO/Gameplay/Character/Creep/Beholder/Experience", order = 51)]
+    [CreateAssetMenu(fileName = "SO_BeholderExperience", menuName = "SO/Gameplay/Unit/Character/Creep/Beholder/Experience", order = 51)]
     public class SO_BeholderExperience : SO_CreepExperience
     {
         

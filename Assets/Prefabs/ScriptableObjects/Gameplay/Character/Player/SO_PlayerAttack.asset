@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_PlayerAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 2
-  <AmountAttack>k__BackingField: 3
+  <AmountAttackInSecond>k__BackingField: 3
   <Range>k__BackingField: 2
   <DefaultAttackClips>k__BackingField:
   - {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}

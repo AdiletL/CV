@@ -33,7 +33,7 @@ namespace Unit.Trap.Tower
         {
             base.Enter();
             
-            this.TowerAnimation.ChangeAnimation(IdleClip);
+            this.TowerAnimation.ChangeAnimationWithDuration(IdleClip);
             
             if (attackState == null)
             {

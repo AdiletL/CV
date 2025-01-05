@@ -39,6 +39,11 @@ namespace Gameplay.Weapon
 
         public virtual void ApplyDamage()
         {
+            if (CurrentTarget.TryGetComponent(out IHealth health)
+                && health.IsLive)
+            {
+                health.TakeDamage(Damageable);    
+            }
         }
 
         public void Show() => weapon.SetActive(true);

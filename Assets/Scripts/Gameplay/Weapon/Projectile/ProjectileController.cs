@@ -11,6 +11,7 @@ namespace Gameplay.Weapon.Projectile
 
         protected IPoolable poolable;
         protected GameObject target;
+        protected LayerMask[] enemyLayers;
         
         public IDamageable Damageable { get; private set; }
         public AnimationCurve moveCurve { get; protected set; }
@@ -30,6 +31,7 @@ namespace Gameplay.Weapon.Projectile
             moveCurve = so_Projectile.Curve;
             MovementSpeed = so_Projectile.Speed;
             height = so_Projectile.Height;
+            enemyLayers = so_Projectile.EnemyLayers;
         }
 
         private void Update()
@@ -66,7 +68,7 @@ namespace Gameplay.Weapon.Projectile
         
         private void OnTriggerEnter(Collider other)
         {
-            if(other.TryGetComponent(out ProjectileController projectileController) 
+            if(!Calculate.GameLayer.IsTarget(enemyLayers, other.gameObject.layer)
             || other.gameObject == Damageable.Owner) return;
             
             SetTriggerTarget(other.gameObject);

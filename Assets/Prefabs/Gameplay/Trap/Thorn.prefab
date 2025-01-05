@@ -634,6 +634,7 @@ GameObject:
   - component: {fileID: 4990338914982831286}
   - component: {fileID: 6028429460141191813}
   - component: {fileID: 7515741223901743711}
+  - component: {fileID: 4611693155493569767}
   m_Layer: 0
   m_Name: Thorn
   m_TagString: Untagged
@@ -705,7 +706,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   components:
-    <gameObjects>k__BackingField: []
+    <gameObjects>k__BackingField:
+    - {fileID: 6906124403529321363}
   so_Trap: {fileID: 11400000, guid: e64eac36ac1729c449cfc42d0c4fc636, type: 2}
 --- !u!54 &6028429460141191813
 Rigidbody:
@@ -756,6 +758,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4611693155493569767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6906124403529321363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109bf3e33ff94592906e25182ca701b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 7515741223901743711}
+  defaultAnimationClip: {fileID: 0}
 --- !u!1 &7386611360851638074
 GameObject:
   m_ObjectHideFlags: 0

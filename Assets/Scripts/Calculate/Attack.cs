@@ -7,7 +7,7 @@ namespace Calculate
     {
         private static RaycastHit[] enemyHits = new RaycastHit[1];
         
-        public static float TotalDurationAttack(float countAttack)
+        public static float TotalDurationInSecond(float countAttack)
         {
             return 1 / countAttack;
         }

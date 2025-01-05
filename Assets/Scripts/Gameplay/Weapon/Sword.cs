@@ -4,11 +4,7 @@
     {
         public override void Fire()
         {
-            if (CurrentTarget.TryGetComponent(out IHealth health)
-                &&  health.IsLive)
-            {
-                health.TakeDamage(Damageable);    
-            }
+            ApplyDamage();
         }
     }
 

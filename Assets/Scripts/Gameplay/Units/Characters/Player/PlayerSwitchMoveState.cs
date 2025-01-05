@@ -47,7 +47,7 @@ namespace Unit.Character.Player
                 this.StateMachine.AddStates(newState);
             }
 
-            if (!this.StateMachine.IsActivateType(StateCategory.move, typeof(PlayerRunState)))
+            if (!this.StateMachine.IsActivateType(typeof(PlayerRunState)))
             {
                 var runState = this.StateMachine.GetState<PlayerRunState>();
                 runState.SetTarget(currentTarget);

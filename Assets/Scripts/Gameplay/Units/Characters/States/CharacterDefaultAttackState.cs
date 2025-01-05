@@ -54,7 +54,7 @@ namespace Unit.Character
                 return;
             }
             
-            CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+            CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             Restart();
         }
 
@@ -82,7 +82,7 @@ namespace Unit.Character
 
             if (!isAttack)
             {
-                CharacterAnimation?.ChangeAnimation(null, isDefault: true);
+                CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace Unit.Character
                 else
                     currentTarget = null;
             }
-            this.CharacterAnimation?.ChangeAnimation(CooldownClip);
+            this.CharacterAnimation?.ChangeAnimationWithDuration(CooldownClip);
             isAttack = false;
             FindUnit();
         }
@@ -156,7 +156,7 @@ namespace Unit.Character
                         return;
                     }
                     
-                    this.CharacterAnimation?.ChangeAnimation(getRandomAnimationClip(), duration: durationAttack);
+                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
                     isApplyDamage = true;
                 }
                 else

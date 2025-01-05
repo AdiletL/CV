@@ -51,7 +51,7 @@ namespace Unit.Character.Player
             base.Enter();
             countCooldownCheckEnemy = cooldownCheckEnemy;
             
-            isCheckJump = !this.StateMachine.IsActivateType(StateCategory.action, typeof(PlayerJumpState));
+            isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
             isCheckEnemy = isCheckJump;
             
             this.StateMachine.OnExitCategory += OnExitCategory;

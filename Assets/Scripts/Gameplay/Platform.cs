@@ -8,6 +8,8 @@ using UnityEngine;
 [SelectionBase]
 public class Platform : MonoBehaviour
 {
+    public static float Radius = .3f;
+    
     [SerializeField] private TextMeshPro platformText;
     
     private UnitRenderer unitRenderer;
@@ -36,25 +38,10 @@ public class Platform : MonoBehaviour
         var colliderCount = Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
         return colliderCount == 0;
     }
-    
-    private void OnEnable()
-    {
-        PlayerIdleState.ASD += ADS;
-    }
-    private void OnDisable()
-    {
-        PlayerIdleState.ASD -= ADS;
-    }
 
     private void Start()
     {
         unitRenderer = GetComponent<UnitRenderer>();
-    }
-    
-    private void ADS()
-    {
-        unitRenderer.ResetColor();
-        platformText.enabled = false;
     }
     
     public void SetColor(Color color)

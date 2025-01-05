@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
 {
-    [CreateAssetMenu(fileName = "SO_PlayerMove", menuName = "SO/Gameplay/Character/Player/Move", order = 51)]
+    [CreateAssetMenu(fileName = "SO_PlayerMove", menuName = "SO/Gameplay/Unit/Character/Player/Move", order = 51)]
     public class SO_PlayerMove : SO_CharacterMove
     {
         [field: SerializeField, Space(5), Header("Run")]

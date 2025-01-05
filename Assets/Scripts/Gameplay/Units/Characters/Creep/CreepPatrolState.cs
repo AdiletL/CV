@@ -64,7 +64,7 @@ namespace Unit.Character.Creep
             }
             
             rotation.SetTarget(currentTarget.transform);
-            CreepAnimation.ChangeAnimation(WalkClip,  duration: 0.7f);
+            CreepAnimation.ChangeAnimationWithDuration(WalkClip,  duration: 0.7f);
         }
 
         public override void Update()

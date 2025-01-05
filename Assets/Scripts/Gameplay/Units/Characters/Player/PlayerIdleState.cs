@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using Calculate;
-using Machine;
+using System.Collections;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
@@ -11,36 +9,25 @@ namespace Unit.Character.Player
     public class PlayerIdleState : CharacterIdleState
     {
         public event Action OnFinishedToTarget;
-        public static event Action ASD;
         
-        private PathFinding pathFinding;
         private PlayerSwitchAttackState playerSwitchAttackState;
-        
+
         private Vector3 targetPosition;
 
-        private float checkEnemyCooldown = .01f;
-        private float countCheckEnemyCooldown;
-        private int asdf;
+        private float cooldownCheckAttack = 1, countCooldownCheckAttack;
+        private float cooldownCheckEnemy = .01f;
+        private float countCooldownCheckEnemy;
 
         private bool isCheckAttack;
         private bool isCheckJump;
         
         public GameObject TargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
-
         
-        private bool IsNear(Vector3 current, Vector3 target, float threshold = 0.01f)
-        {
-            return (current - target).sqrMagnitude <= threshold;
-        }
         
         public override void Initialize()
         {
             base.Initialize();
-            pathFinding = new PathFindingBuilder()
-                .SetStartPosition(Vector3.zero)
-                .SetEndPosition(Vector3.zero)
-                .Build();
             playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
         }
 
@@ -48,8 +35,9 @@ namespace Unit.Character.Player
         {
             base.Enter();
             
-            isCheckJump = !this.StateMachine.IsActivateType(StateCategory.action, typeof(PlayerJumpState));
+            isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
             isCheckAttack = isCheckJump;
+            countCooldownCheckAttack = 0;
             
             this.StateMachine.OnExitCategory += OnExitCategory;
         }
@@ -72,10 +60,9 @@ namespace Unit.Character.Player
         
         public void SetTarget(GameObject target)
         {
-            //if(!target.TryGetComponent(out Platform platform)) return;
-            
             this.TargetForMove = target;
             this.StateMachine.GetState<PlayerSwitchMoveState>().SetTarget(target);
+            countCooldownCheckAttack = cooldownCheckAttack;
         }
         
         private void CheckMove()
@@ -87,7 +74,6 @@ namespace Unit.Character.Player
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, targetPosition))
             {
                 TargetForMove = null;
-                ASD?.Invoke();
                 OnFinishedToTarget?.Invoke();
             }
             else
@@ -101,16 +87,27 @@ namespace Unit.Character.Player
         private void CheckAttack()
         {
             if(!isCheckAttack) return;
+
+            if (countCooldownCheckAttack <= 0)
+            {
+                countCooldownCheckAttack = 0;
+            }
+            else
+            {
+                countCooldownCheckAttack -= Time.deltaTime;
+                return;
+            }
+                
             
-            countCheckEnemyCooldown += Time.deltaTime;
-            if (countCheckEnemyCooldown > checkEnemyCooldown)
+            countCooldownCheckEnemy += Time.deltaTime;
+            if (countCooldownCheckEnemy > cooldownCheckEnemy)
             {
                 if (playerSwitchAttackState.IsFindUnitInRange())
                 {
                     this.StateMachine.ExitOtherStates(typeof(PlayerSwitchAttackState));
                 }
 
-                countCheckEnemyCooldown = 0;
+                countCooldownCheckEnemy = 0;
             }
         }
         
