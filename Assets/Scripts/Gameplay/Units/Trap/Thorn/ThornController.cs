@@ -58,6 +58,13 @@ namespace Unit.Trap
             if(applyDamageCoroutine != null)
                 StopCoroutine(applyDamageCoroutine);
         }
+        
+        public override void Appear()
+        {
+            
+        }
+        
+        
         public override void Activate()
         {
             isReady = false;

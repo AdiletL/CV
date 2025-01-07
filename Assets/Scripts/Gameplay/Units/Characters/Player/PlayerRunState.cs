@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
-using Machine;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
+using Unit.Platform;
 using UnityEngine;
 
 namespace Unit.Character.Player
@@ -27,7 +27,7 @@ namespace Unit.Character.Player
         private bool isCheckEnemy;
         private bool isCheckJump;
 
-        private Queue<Platform> pathToPoint = new();
+        private Queue<CellController> pathToPoint = new();
 
         public SO_PlayerMove SO_PlayerMove { get; set; }
         public Transform Center { get; set; }

@@ -20,6 +20,7 @@ namespace Unit.Character
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
         protected float range;
+        private float rangeSqr;
 
         protected bool isApplyDamage;
         protected bool isAttack;
@@ -76,7 +77,7 @@ namespace Unit.Character
                 return;
             }
 
-            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, (range * range) + .15f))
+            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, rangeSqr))
             {
                 this.StateMachine.ExitCategory(Category);
                 return;
@@ -120,6 +121,7 @@ namespace Unit.Character
             timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack;
             range = CurrentWeapon.Range;
+            rangeSqr = range * range;
 
             switch (weapon)
             {

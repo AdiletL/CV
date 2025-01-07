@@ -125,6 +125,11 @@ namespace Unit.Character.Player
             StateMachine.AddStates(idleState, attackState, moveState);
         }
 
+        
+        public override void Appear()
+        {
+            
+        }
 
         private void Update()
         {

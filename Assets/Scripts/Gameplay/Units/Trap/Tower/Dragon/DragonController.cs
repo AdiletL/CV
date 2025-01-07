@@ -10,24 +10,6 @@ namespace Unit.Trap.Tower
         
         protected SO_Dragon so_Dragon;
 
-        public override T GetComponentInUnit<T>()
-        {
-            return GetComponent<T>();
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            
-            stateMachine.SetStates(typeof(DragonIdleState));
-        }
-
-        protected override void InitializeConfig()
-        {
-            base.InitializeConfig();
-            so_Dragon = (SO_Dragon)so_Tower;
-        }
-
         protected override void CreateState()
         {
             var idle = (DragonIdleState)new DragonIdleStateBuilder()
@@ -45,6 +27,23 @@ namespace Unit.Trap.Tower
             this.stateMachine.AddStates(idle);
         }
         
+        public override void Initialize()
+        {
+            base.Initialize();
+            
+            stateMachine.SetStates(typeof(DragonIdleState));
+        }
+
+        protected override void InitializeConfig()
+        {
+            base.InitializeConfig();
+            so_Dragon = (SO_Dragon)so_Tower;
+        }
+        
+        public override void Appear()
+        {
+            
+        }
         
         public override void Activate()
         {

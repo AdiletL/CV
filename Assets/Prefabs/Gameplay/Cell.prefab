@@ -274,8 +274,9 @@ GameObject:
   - component: {fileID: 8754585680503715061}
   - component: {fileID: 6533177454188079626}
   - component: {fileID: 3918903221378114931}
+  - component: {fileID: 1471724553134719840}
   m_Layer: 6
-  m_Name: Platform
+  m_Name: Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -311,6 +312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c0c8f849b07a943bcabd22fc89781e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  components:
+    <gameObjects>k__BackingField:
+    - {fileID: 7336186292366945002}
+  visualParent: {fileID: 5274432219506277438}
   platformText: {fileID: 5568411240746634969}
 --- !u!65 &6533177454188079626
 BoxCollider:
@@ -347,6 +352,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRenderers:
   - {fileID: 5922919985975680491}
+--- !u!114 &1471724553134719840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7336186292366945002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df34fd1111a483493cced643f39b8d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Center>k__BackingField: {fileID: 422975684627558623}
 --- !u!1001 &8895950182853377278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -423,6 +441,11 @@ PrefabInstance:
 --- !u!4 &4789961400845575812 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4111116904279595642, guid: 60d65e4eed2ca444d9a5224665294248, type: 3}
+  m_PrefabInstance: {fileID: 8895950182853377278}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5274432219506277438 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3622670526511579328, guid: 60d65e4eed2ca444d9a5224665294248, type: 3}
   m_PrefabInstance: {fileID: 8895950182853377278}
   m_PrefabAsset: {fileID: 0}
 --- !u!23 &5922919985975680491 stripped

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Calculate;
 using Movement;
+using Unit.Platform;
 using UnityEngine;
 
 namespace Unit.Character.Creep
@@ -12,7 +13,7 @@ namespace Unit.Character.Creep
         
         protected GameObject currentTarget;
         protected bool isCanMovement;
-        protected Queue<Platform> platformsQueue = new();
+        protected Queue<CellController> platformsQueue = new();
         
         public AnimationClip WalkClip { get; set; }
         public CreepAnimation CreepAnimation { get; set; }

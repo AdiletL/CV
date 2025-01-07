@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Calculate;
 using Movement;
+using Unit.Platform;
 using UnityEngine;
 
 namespace Unit.Trap.Tower
@@ -12,7 +13,7 @@ namespace Unit.Trap.Tower
         private Rotation rotation;
         
         private GameObject currentTarget;
-        private Queue<Platform> platformsQueue = new();
+        private Queue<CellController> platformsQueue = new();
 
         private bool isCanMovement;
         

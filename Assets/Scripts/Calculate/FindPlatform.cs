@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit.Platform;
+using UnityEngine;
 
 namespace Calculate
 {
@@ -16,23 +17,23 @@ namespace Calculate
 
             if (hitCount > 0)
             {
-                Platform platform = hits[0].transform.GetComponent<Platform>();
-                if (platform != null)
+                CellController cell = hits[0].transform.GetComponent<CellController>();
+                if (cell != null)
                 {
-                    return platform.CurrentCoordinates;
+                    return cell.CurrentCoordinates;
                 }
             }
 
             return Vector2Int.zero;
         }
 
-        public static Platform GetPlatform(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
+        public static CellController GetPlatform(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
         {
             int hitCount = Physics.RaycastNonAlloc(start + StartRayCheckOffset, rayDirection, hits, 100, Layers.PLATFORM_LAYER);
 
             if (hitCount > 0)
             {
-                return hits[0].transform.GetComponent<Platform>();
+                return hits[0].transform.GetComponent<CellController>();
             }
             else
             {
@@ -41,7 +42,7 @@ namespace Calculate
                 int colliderCount = Physics.OverlapSphereNonAlloc(start, 1, colliders, Layers.PLATFORM_LAYER);
                 
                 if(colliderCount > 0)
-                    return colliders[0].transform.GetComponent<Platform>();
+                    return colliders[0].transform.GetComponent<CellController>();
             }
 
             return null;

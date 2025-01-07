@@ -28,5 +28,9 @@
             this.StateMachine.AddStates(idleState, moveState);
         }
         
+        public override void Appear()
+        {
+            
+        }
     }
 }

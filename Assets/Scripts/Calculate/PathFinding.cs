@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unit.Platform;
 using UnityEngine;
 
 namespace Calculate
@@ -12,10 +13,10 @@ namespace Calculate
         
         public Vector3 StartPosition, EndPosition;
 
-        private Platform startPlatform;
-        private Platform currentPlatform;
-        private Platform lastCorrectPlatform;
-        private Platform endPlatform;
+        private CellController _startCell;
+        private CellController _currentCell;
+        private CellController _lastCorrectCell;
+        private CellController _endCell;
         
         private RaycastHit hitResult;
 
@@ -26,11 +27,11 @@ namespace Calculate
         private Vector3 correctPlatformPosition;
         private int weightPlatform;
 
-        private List<Platform> nearPlatforms = new();
-        private Stack<Platform> platformStack = new();
-        private Queue<Platform> pathToPoint =  new();
-        private Stack<Platform> unverifiedPlatforms = new();
-        private Dictionary<Platform, PlatformData> platformData = new(); // Временные данные платформ
+        private List<CellController> nearPlatforms = new();
+        private Stack<CellController> platformStack = new();
+        private Queue<CellController> pathToPoint =  new();
+        private Stack<CellController> unverifiedPlatforms = new();
+        private Dictionary<CellController, PlatformData> platformData = new(); // Временные данные платформ
 
         private bool isUseColor;
 
@@ -45,8 +46,8 @@ namespace Calculate
 
         private void SetCurrentPlatform()
         {
-            startPlatform = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
-            currentPlatform = startPlatform;
+            _startCell = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
+            _currentCell = _startCell;
         }
 
         private void ClearData()
@@ -56,21 +57,21 @@ namespace Calculate
             platformData.Clear(); // Очищаем временные данные после завершения
         }
 
-        public Queue<Platform> GetPath(bool isUseColor = false)
+        public Queue<CellController> GetPath(bool isUseColor = false)
         {
             weightPlatform = 0;
             SetCurrentPlatform();
             
             pathToPoint.Clear();
-            if (!currentPlatform) return pathToPoint;
+            if (!_currentCell) return pathToPoint;
 
-            endPlatform = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
-            if (!endPlatform) return pathToPoint;
+            _endCell = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
+            if (!_endCell) return pathToPoint;
 
             this.isUseColor = isUseColor;
             ClearData();
 
-            while (currentPlatform.CurrentCoordinates != endPlatform.CurrentCoordinates)
+            while (_currentCell.CurrentCoordinates != _endCell.CurrentCoordinates)
             {
                 nearPlatforms = GetNearPlatforms();
                 if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
@@ -78,7 +79,7 @@ namespace Calculate
                     if (unverifiedPlatforms.TryPop(out var newPlatform))
                     {
                         //newPlatform.SetColor(Color.red);
-                        currentPlatform = newPlatform;
+                        _currentCell = newPlatform;
                     }
                     else
                     {
@@ -88,9 +89,9 @@ namespace Calculate
                 else
                 {
                     AddPlatformToVerified(1);
-                    if (currentPlatform.CurrentCoordinates == endPlatform.CurrentCoordinates) break;
+                    if (_currentCell.CurrentCoordinates == _endCell.CurrentCoordinates) break;
 
-                    currentPlatform = GetNextPlatform(nearPlatforms, endPlatform.CurrentCoordinates);
+                    _currentCell = GetNextPlatform(nearPlatforms, _endCell.CurrentCoordinates);
                     AddPlatformToVerified(2);
                 }
             }
@@ -103,10 +104,10 @@ namespace Calculate
 
         private void AddPlatformToVerified(int weight)
         {
-            if (!platformData.ContainsKey(currentPlatform))
-                platformData[currentPlatform] = new PlatformData();
+            if (!platformData.ContainsKey(_currentCell))
+                platformData[_currentCell] = new PlatformData();
 
-            var data = platformData[currentPlatform];
+            var data = platformData[_currentCell];
             if (data.Weight > 0) return;
 
             data.Weight = weightPlatform += weight;
@@ -115,23 +116,23 @@ namespace Calculate
             //currentPlatform.SetText(data.Weight.ToString());
         }
 
-        private void BuildPath(Queue<Platform> path)
+        private void BuildPath(Queue<CellController> path)
         {
             platformStack.Clear();
-            if(!endPlatform.IsBlocked())
-                platformStack.Push(endPlatform);
+            if(!_endCell.IsBlocked())
+                platformStack.Push(_endCell);
             
             //endPlatform.SetColor(Color.white);
-            lastCorrectPlatform = endPlatform;
+            _lastCorrectCell = _endCell;
 
-            while (lastCorrectPlatform != startPlatform)
+            while (_lastCorrectCell != _startCell)
             {
                 var correctPlatform = GetCorrectPlatform();
                 if (!correctPlatform) break;
                 if(this.isUseColor)
                     correctPlatform.SetColor(Color.yellow);
 
-                lastCorrectPlatform = correctPlatform;
+                _lastCorrectCell = correctPlatform;
                 platformStack.Push(correctPlatform);
             }
 
@@ -144,40 +145,40 @@ namespace Calculate
            // path.Dequeue();
         }
 
-        private Platform GetCorrectPlatform()
+        private CellController GetCorrectPlatform()
         {
-            Platform correctPlatform = null;
+            CellController correctCell = null;
             var lastWeight = weightPlatform;
             correctPlatformPosition += startRayPositionPlatform;
 
             foreach (var direction in rayDirectionsPlatform)
             {
                 if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 100, Layers.PLATFORM_LAYER) ||
-                    !hitResult.transform.TryGetComponent(out Platform platform) ||
+                    !hitResult.transform.TryGetComponent(out CellController platform) ||
                     !platformData.TryGetValue(platform, out var data) ||
-                    platform == lastCorrectPlatform ||
+                    platform == _lastCorrectCell ||
                     data.Weight >= lastWeight) continue;
                 
-                correctPlatform = platform;
+                correctCell = platform;
                 lastWeight = data.Weight;
             }
 
-            if (correctPlatform)
-                correctPlatformPosition = correctPlatform.transform.position;
+            if (correctCell)
+                correctPlatformPosition = correctCell.transform.position;
 
-            return correctPlatform;
+            return correctCell;
         }
 
-        private List<Platform> GetNearPlatforms()
+        private List<CellController> GetNearPlatforms()
         {
-            var platforms = new List<Platform>(4);
-            var origin = currentPlatform.transform.position + startRayPositionPlatform;
+            var platforms = new List<CellController>(4);
+            var origin = _currentCell.transform.position + startRayPositionPlatform;
 
             foreach (var direction in rayDirectionsPlatform)
             {
                 Debug.DrawRay(origin, direction, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, 100, Layers.PLATFORM_LAYER) &&
-                    hitResult.transform.TryGetComponent(out Platform platform))
+                    hitResult.transform.TryGetComponent(out CellController platform))
                 {
                     platforms.Add(platform);
                 }
@@ -186,13 +187,13 @@ namespace Calculate
             return platforms;
         }
 
-        private List<Platform> CheckAndAddPlatforms(ref List<Platform> platforms)
+        private List<CellController> CheckAndAddPlatforms(ref List<CellController> platforms)
         {
             for (int i = platforms.Count - 1; i >= 0; i--)
             {
                 if ((platformData.TryGetValue(platforms[i], out var data) && data.Weight > 0) || platforms[i].IsBlocked())
                 {
-                    if (platforms[i].CurrentCoordinates == endPlatform.CurrentCoordinates)
+                    if (platforms[i].CurrentCoordinates == _endCell.CurrentCoordinates)
                     {
                         unverifiedPlatforms.Push(platforms[i]);
                         return platforms;
@@ -210,39 +211,39 @@ namespace Calculate
             return platforms;
         }
 
-        private Platform GetNextPlatform(List<Platform> nearAccessiblePlatforms, Vector2Int endCoordinates)
+        private CellController GetNextPlatform(List<CellController> nearAccessiblePlatforms, Vector2Int endCoordinates)
         {
-            if (nearAccessiblePlatforms.Count == 0) return currentPlatform;
+            if (nearAccessiblePlatforms.Count == 0) return _currentCell;
 
-            Platform bestPlatform = nearAccessiblePlatforms[0];
-            int bestDistance = CalculateDistance(bestPlatform, endCoordinates);
+            CellController bestCell = nearAccessiblePlatforms[0];
+            int bestDistance = CalculateDistance(bestCell, endCoordinates);
 
             foreach (var platform in nearAccessiblePlatforms)
             {
                 int distance = CalculateDistance(platform, endCoordinates);
                 if (distance < bestDistance)
                 {
-                    bestPlatform = platform;
+                    bestCell = platform;
                     bestDistance = distance;
                 }
                 else if (distance == bestDistance)
                 {
-                    var firstDistance = NormalDistance(bestPlatform.transform.position, endPlatform.transform.position);
-                    var secondDistance = NormalDistance(platform.transform.position, endPlatform.transform.position);
+                    var firstDistance = NormalDistance(bestCell.transform.position, _endCell.transform.position);
+                    var secondDistance = NormalDistance(platform.transform.position, _endCell.transform.position);
                     if (secondDistance < firstDistance)
                     {
-                        bestPlatform = platform;
+                        bestCell = platform;
                         bestDistance = distance;
                     }
                 }
             }
 
-            return bestPlatform;
+            return bestCell;
         }
 
-        private int CalculateDistance(Platform platform, Vector2Int endCoordinates)
+        private int CalculateDistance(CellController cell, Vector2Int endCoordinates)
         {
-            var coordinates = platform.CurrentCoordinates;
+            var coordinates = cell.CurrentCoordinates;
             int result = Mathf.Abs(endCoordinates.x - coordinates.x) + Mathf.Abs(endCoordinates.y - coordinates.y);
             return result;
         }

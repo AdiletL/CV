@@ -31,5 +31,10 @@ namespace Unit.Character.Creep
             this.StateMachine.AddStates(idleState, moveState);
         }
 
+        
+        public override void Appear()
+        {
+            
+        }
     }
 }

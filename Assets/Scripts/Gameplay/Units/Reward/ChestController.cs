@@ -7,10 +7,11 @@ namespace Unit.Reward
     public class ChestController : RewardController
     {
         public event Action OnChestOpen;
+
         
-        public override T GetComponentInUnit<T>()
+        public override void Appear()
         {
-            throw new System.NotImplementedException();
+            
         }
         
         private void OnTriggerEnter(Collider other)

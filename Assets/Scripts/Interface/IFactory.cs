@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
 
 public interface IFactory
 {
-    public GameObject Create<T>();
+    public T Create<T>(Type type);
 }

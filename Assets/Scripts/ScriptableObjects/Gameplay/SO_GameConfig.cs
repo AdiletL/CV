@@ -6,5 +6,6 @@ namespace ScriptableObjects.Gameplay
     public class SO_GameConfig : ScriptableObject
     {
         [field: SerializeField] public int Experience { get; private set; }
+        [field: SerializeField] public float BaseWaitTimeTrap { get; private set; }
     }
 }

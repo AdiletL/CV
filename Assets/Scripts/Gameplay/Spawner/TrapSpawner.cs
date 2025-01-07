@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Factory;
 using Unit.Trap;
 using Unit.Trap.Activator;
 using UnityEngine;
@@ -9,26 +10,32 @@ namespace Gameplay.Spawner
     public class TrapSpawner : MonoBehaviour, ISpawner
     {
         [Inject] private DiContainer diContainer;
-        
-        [SerializeField] private GameObject[] trapPrefabs;
-        
+
+        private TrapController[] traps;
         private PlatformSpawner platformSpawner;
+        private TrapFactoryMethod trapFactoryMethod;
         
         public async void Initialize()
         {
+            trapFactoryMethod = new TrapFactoryMethod();
+            diContainer.Inject(trapFactoryMethod);
             await UniTask.WaitForEndOfFrame();
         }
 
         public async UniTask Execute()
         {
             SpawnTraps();
-
             await UniTask.WaitForEndOfFrame();
         }
         
         public void SetSpawners(PlatformSpawner platformSpawner)
         {
             this.platformSpawner = platformSpawner;
+        }
+
+        public void SetTraps(TrapController[] traps)
+        {
+            this.traps = traps;
         }
 
         private PushController pushController;
@@ -39,12 +46,12 @@ namespace Gameplay.Spawner
         }
         private void SpawnTraps()
         {
-            foreach (var item in trapPrefabs)
+            foreach (var item in traps)
             {
                 var platform = platformSpawner.GetFreePlace();
                 if(!platform) return;
                 
-                var newGameObject = diContainer.InstantiatePrefabForComponent<TrapController>(item);
+                var newGameObject = trapFactoryMethod.Create(item.GetType());
                 newGameObject.transform.position = platform.transform.position;
                 var trap = newGameObject.GetComponent<TrapController>();
                 diContainer.Inject(trap);

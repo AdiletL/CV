@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unit.Platform;
 using UnityEngine;
 using Zenject;
 
 public class PlatformSpawner : MonoBehaviour, ISpawner
 {
+    [Inject] private DiContainer diContainer;
+    
     [SerializeField] private Vector2Int length;
     [SerializeField] private GameObject platformPrefab;
     [SerializeField] private GameObject blockPrefab;
 
     private Transform platformParent, blockParent;
 
-    private List<Platform> platforms = new(20);
+    private List<CellController> platforms = new(20);
     
 
     public async void Initialize()
@@ -49,28 +52,30 @@ public class PlatformSpawner : MonoBehaviour, ISpawner
                 newGameObject.transform.localPosition = new Vector3(
                     (x * platformPrefab.transform.localScale.x) + intervalX, 0,
                     (y * platformPrefab.transform.localScale.z) + intervalZ);
-                var platform = newGameObject.GetComponent<Platform>();
+                var platform = newGameObject.GetComponent<CellController>();
                 platform.SetCoordinates(new Vector2Int(x + 1, y + 1));
                 var isBlock = Random.Range(0, 6) == 0;
                 if (isBlock)
                     CreateBlock(platform);
 
+                diContainer.Inject(platform);
+                platform.Initialize();
                 platforms.Add(platform);
             }
         }
     }
 
-    private void CreateBlock(Platform platform)
+    private void CreateBlock(CellController cell)
     {
         var block = Instantiate(blockPrefab);
-        block.transform.position = platform.transform.position;
+        block.transform.position = cell.transform.position;
         block.transform.localScale = platformPrefab.transform.localScale;
         block.transform.SetParent(blockParent);
     }
 
     public GameObject GetFreePlace(Vector3 currentPosition = new Vector3())
     {
-        var copyPlatforms = new List<Platform>(platforms);
+        var copyPlatforms = new List<CellController>(platforms);
         var randomIndex = 0;
         foreach (var item in platforms)
         {

@@ -4,11 +4,10 @@ using UnityEngine;
 
 namespace Unit
 {
-    public abstract class UnitHealth : MonoBehaviour, IHealth, IUnit
+    public abstract class UnitHealth : MonoBehaviour, IHealth
     {
         public event Action<IHealthInfo> OnChangedHealth;
         public event Action OnDeath;
-        public abstract UnitType UnitType { get; }
         
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitHealth so_UnitHealth;

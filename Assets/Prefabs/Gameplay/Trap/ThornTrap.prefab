@@ -636,7 +636,7 @@ GameObject:
   - component: {fileID: 7515741223901743711}
   - component: {fileID: 4611693155493569767}
   m_Layer: 0
-  m_Name: Thorn
+  m_Name: ThornTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

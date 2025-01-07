@@ -3,6 +3,7 @@ using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 using System.Collections;
+using Unit.Platform;
 
 namespace Unit.Trap.Hammer
 {
@@ -35,6 +36,12 @@ namespace Unit.Trap.Hammer
             
             Activate();
         }
+        
+        public override void Appear()
+        {
+            
+        }
+        
 
         private void OnEnable()
         {
@@ -78,7 +85,7 @@ namespace Unit.Trap.Hammer
             int colliderCount = 0;
             foreach (var VARIABLE in EnemyLayers)
             {
-                colliderCount = Physics.OverlapSphereNonAlloc(transform.position, Platform.Radius, checkUnitColliders, VARIABLE);
+                colliderCount = Physics.OverlapSphereNonAlloc(transform.position, CellController.Radius, checkUnitColliders, VARIABLE);
                 if(colliderCount > 0) break;
             }
             

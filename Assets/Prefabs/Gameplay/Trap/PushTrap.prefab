@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 2971985073276771896}
   - component: {fileID: 2000377768906576652}
   m_Layer: 0
-  m_Name: Push
+  m_Name: PushTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

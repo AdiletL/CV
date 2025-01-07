@@ -5,7 +5,9 @@ public enum UnitType
     player,
     creep,
     trap,
-    reward
+    reward,
+    platform,
+    environment
 }
 
 public interface IUnit
@@ -13,4 +15,7 @@ public interface IUnit
     public UnitType UnitType { get; }
     
     public void Initialize();
+
+    public void Show();
+    public void Hide();
 }

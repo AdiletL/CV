@@ -30,6 +30,11 @@ namespace Unit.Trap
             Damageable = new NormalDamage(so_Push.Damage, gameObject);
         }
 
+        public override void Appear()
+        {
+            
+        }
+        
         private void OnEnable()
         {
             GetComponentInUnit<PushCollision>().OnHitEnter += OnHitEnter;

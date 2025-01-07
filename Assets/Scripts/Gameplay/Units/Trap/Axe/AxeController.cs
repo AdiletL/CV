@@ -26,6 +26,12 @@ namespace Unit.Trap
             Activate();
         }
 
+        public override void Appear()
+        {
+            
+        }
+        
+        
         public override void Activate()
         {
             axeAnimation.ChangeAnimationWithDuration(activateClip);

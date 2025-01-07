@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 504424119386925090}
   - component: {fileID: -2519855945761410814}
   m_Layer: 0
-  m_Name: TrapButtonActivator
+  m_Name: ButtonActivatorTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

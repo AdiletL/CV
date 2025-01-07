@@ -24,6 +24,12 @@ namespace Unit.Trap.Activator
             buttonAnimation = components.GetComponentFromArray<ButtonAnimation>();
         }
 
+        public override void Appear()
+        {
+            
+        }
+        
+        
         public override void Activate()
         {
             base.Activate();

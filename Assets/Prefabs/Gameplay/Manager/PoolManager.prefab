@@ -47,3 +47,11 @@ MonoBehaviour:
   poolObjects:
   - {fileID: 6368304539323796127, guid: f5a37937cec6dc54a83f6296af992f2b, type: 3}
   - {fileID: 6809310797489446093, guid: 8d7390fc2ffd5ea4ab42dfe9617aeabb, type: 3}
+  - {fileID: 6528987841846448985, guid: 001e3c9053fd86942823b14cf192edc9, type: 3}
+  - {fileID: 5607831497185780342, guid: 54632a598d4729842a96cfc7c1f9295b, type: 3}
+  - {fileID: 4981433481888039619, guid: 5b657a6c2fcfb694e8759f7ba19aaf3e, type: 3}
+  - {fileID: 4519091569372874392, guid: 06d4f9d2c446b314aba5a49922a39d27, type: 3}
+  - {fileID: 7122447132236307003, guid: a7e267a72b663af499cc9e950ceeaff2, type: 3}
+  - {fileID: 8339732657233027589, guid: 38a6441ca31beaf4484d429fe20d1415, type: 3}
+  - {fileID: 6906124403529321363, guid: aea17a65a16a47748aaafbbeb925650d, type: 3}
+  - {fileID: 5729642040203258123, guid: daaba75080e55e64fba178105613b63a, type: 3}

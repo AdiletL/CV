@@ -8,10 +8,6 @@ namespace Unit.Character
     {
         public StateMachine StateMachine { get; protected set; }
         
-        public override T GetComponentInUnit<T>() where T : class
-        {
-            return components.GetComponentFromArray<T>();
-        }
 
         public T GetState<T>() where T : Machine.IState
         {

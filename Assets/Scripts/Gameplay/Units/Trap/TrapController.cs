@@ -16,12 +16,6 @@ namespace Unit.Trap
         public GameObject CurrentTarget { get; protected set; }
         public LayerMask[] EnemyLayers { get; protected set; }
         
-        
-        public override T GetComponentInUnit<T>()
-        {
-            return components.GetComponentFromArray<T>();
-        }
-        
 
         public override void Initialize()
         {

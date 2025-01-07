@@ -11,6 +11,8 @@ namespace Gameplay.Damage
         {
             this.Amount = amount;
             this.Owner = gameObject;
+
+            if (Amount < 0) Amount = 999999;
         }
         
         public int GetTotalDamage(GameObject gameObject)

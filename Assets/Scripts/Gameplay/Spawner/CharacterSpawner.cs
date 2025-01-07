@@ -2,6 +2,7 @@ using System;
 using Unit.Character.Creep;
 using Unit.Character.Player;
 using Cysharp.Threading.Tasks;
+using Unit.Platform;
 using UnityEngine;
 using Zenject;
 
@@ -73,8 +74,8 @@ public class CharacterSpawner : MonoBehaviour, ISpawner
             var enemyGameObject = diContainer.InstantiatePrefabForComponent<CreepController>(VARIABLE);
             enemyGameObject.transform.position = platform.transform.position;
             var enemy = enemyGameObject.GetComponent<CreepController>();
-            enemy.SetStart(platform.GetComponent<Platform>().transform);
-            enemy.SetEnd(platformSpawner.GetFreePlace(platform.transform.position).GetComponent<Platform>().transform);
+            enemy.SetStart(platform.GetComponent<CellController>().transform);
+            enemy.SetEnd(platformSpawner.GetFreePlace(platform.transform.position).GetComponent<CellController>().transform);
             enemy.Initialize();
             //enemy.SetTarget()
             gameUnits.AddUnits(enemy);

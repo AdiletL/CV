@@ -6,8 +6,6 @@ namespace Unit.Character.Creep
 {
     public abstract class CreepHealth : CharacterHealth
     {
-        public override UnitType UnitType { get; } = UnitType.creep;
-        
         protected CreepController CreepController;
         protected CharacterAnimation characterAnimation;
         protected SO_CreepHealth so_CreepHealth;

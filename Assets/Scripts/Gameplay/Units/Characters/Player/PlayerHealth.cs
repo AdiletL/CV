@@ -1,16 +1,11 @@
 ﻿using Machine;
-using ScriptableObjects.Unit.Character.Creep;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Character;
-using Unit.Character.Creep;
 using UnityEngine;
 
 namespace Unit.Character.Player
 {
     public class PlayerHealth : CharacterHealth
     {
-        public override UnitType UnitType { get; } = UnitType.player;
-        
         protected PlayerController playerController;
         protected CharacterAnimation characterAnimation;
         protected SO_PlayerHealth so_PlayerHealth;
