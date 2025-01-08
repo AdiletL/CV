@@ -32,18 +32,8 @@ namespace Gameplay.Spawner
         {
             this.platformSpawner = platformSpawner;
         }
-
-        public void SetTraps(TrapController[] traps)
-        {
-            this.traps = traps;
-        }
-
-        private PushController pushController;
         
-        private void ButtonActivator(ButtonController buttonActivator)
-        {
-            buttonActivator.AddTrap(pushController);
-        }
+        
         private void SpawnTraps()
         {
             foreach (var item in traps)
@@ -56,11 +46,6 @@ namespace Gameplay.Spawner
                 var trap = newGameObject.GetComponent<TrapController>();
                 diContainer.Inject(trap);
                 trap.Initialize();
-                
-                if(trap is PushController pushController)
-                    this.pushController = pushController;
-                if(trap is ButtonController buttonController)
-                    this.ButtonActivator(buttonController);
             }
         }
     }

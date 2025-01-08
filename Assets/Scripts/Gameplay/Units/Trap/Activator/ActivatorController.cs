@@ -6,18 +6,10 @@ namespace Unit.Trap
     public abstract class ActivatorController : TrapController
     {
         [SerializeField] private TrapController[] traps;
-
-        //Test
-                
-        private List<TrapController> testTraps = new List<TrapController>();
-        public void AddTrap(TrapController trap)
-        {
-            testTraps.Add(trap);
-        }
-
+        
         public override void Activate()
         {
-            foreach (var VARIABLE in testTraps)
+            foreach (var VARIABLE in traps)
             {
                 VARIABLE.SetTarget(CurrentTarget);
                 VARIABLE.Activate();
@@ -26,7 +18,7 @@ namespace Unit.Trap
 
         public override void Deactivate()
         {
-            foreach (var VARIABLE in testTraps)
+            foreach (var VARIABLE in traps)
             {
                 VARIABLE.Deactivate();
             }

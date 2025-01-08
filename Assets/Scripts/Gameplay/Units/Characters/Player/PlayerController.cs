@@ -133,7 +133,7 @@ namespace Unit.Character.Player
 
         private void Update()
         {
-            unitControlDesktop.HandleInput();
+            unitControlDesktop?.HandleInput();
             StateMachine?.Update();
         }
 

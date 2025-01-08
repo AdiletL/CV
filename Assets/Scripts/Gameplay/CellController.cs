@@ -1,7 +1,7 @@
 ﻿using System;
 using Gameplay;
 using TMPro;
-using Unit;
+using UnityEditor;
 using UnityEngine;
 
 namespace Unit.Cell
@@ -17,8 +17,7 @@ namespace Unit.Cell
         private Collider[] colliders = new Collider[1];
 
         public override UnitType UnitType { get; } = UnitType.platform;
-        public Vector2Int CurrentCoordinates { get; private set; }
-        
+       [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
 
         public bool IsBlocked()
         {
@@ -51,9 +50,9 @@ namespace Unit.Cell
 
         public override void Appear()
         {
-            
+            //Debug.Log(CurrentCoordinates);
         }
-
+        
         public void SetColor(Color color)
         {
             unitRenderer.SetColor(color);
@@ -68,6 +67,14 @@ namespace Unit.Cell
         public void SetCoordinates(Vector2Int coordinates)
         {
             CurrentCoordinates = coordinates;
+            MarkDirty();
+        }
+        
+        public void MarkDirty()
+        {
+            #if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+            #endif
         }
     }
 }

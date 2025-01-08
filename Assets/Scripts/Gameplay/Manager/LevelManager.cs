@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using ScriptableObjects.Gameplay;
+using Unit;
+using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -8,14 +10,23 @@ namespace Gameplay.Manager
 {
     public class LevelManager : MonoBehaviour, IManager
     {
-        [Inject] private DiContainer diContainer;
+        private DiContainer diContainer;
+        private GameUnits gameUnits;
         
         [SerializeField] private SO_LevelContainer so_LevelContainer;
 
         private LevelController levelController;
+        private PlayerController playerController;
 
         private int currentLevelIndex;
         private int currentGameFieldIndex;
+
+        [Inject]
+        private void Construct(DiContainer diContainer, GameUnits gameUnits)
+        {
+            this.diContainer = diContainer;
+            this.gameUnits = gameUnits;
+        }
         
         private SO_Level GetLevel(int levelNumber)
         {
@@ -28,6 +39,9 @@ namespace Gameplay.Manager
         private GameFieldController GetGameField(int levelIndex, int gameFieldIndex)
         {
             var level = GetLevel(levelIndex);
+            if (level == null)
+                throw new NullReferenceException();
+            
             if(level.GameFieldControllers.Length < gameFieldIndex)
                 throw new IndexOutOfRangeException();
             
@@ -50,14 +64,26 @@ namespace Gameplay.Manager
         }
 
 
-        public void StartLevel()
+        public void StartLevel(UnitController playerPrefab)
         {
             var gameField = GetGameField(currentLevelIndex, currentGameFieldIndex);
-            var newGameObject = diContainer.InstantiatePrefab(gameField);
-            newGameObject.transform.SetParent(levelController.transform);
-            var gameFieldController = newGameObject.GetComponent<GameFieldController>();
+            var newGameField = diContainer.InstantiatePrefab(gameField);
+            newGameField.transform.SetParent(levelController.transform);
+            var gameFieldController = newGameField.GetComponent<GameFieldController>();
             gameFieldController.Initialize();
             gameFieldController.StartGame();
+            
+            levelController.SetGameField(gameFieldController);
+            
+            var newPlayer = diContainer.InstantiatePrefab(playerPrefab);
+            var playerController = newPlayer.GetComponent<PlayerController>();
+            playerController.GetComponent<CharacterController>().enabled = false;
+            diContainer.Inject(playerController);
+            playerController.transform.position = levelController.CurrentGameField.PlayerSpawnPoint.position;
+            playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;
+            playerController.Initialize();
+            playerController.GetComponent<CharacterController>().enabled = true;
+            gameUnits.AddUnits(playerController);
         }
 
 

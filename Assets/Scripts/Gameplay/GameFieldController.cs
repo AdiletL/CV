@@ -10,7 +10,8 @@ namespace Gameplay
 {
     public class GameFieldController : MonoBehaviour
     {
-        [Inject] private DiContainer diContainer;
+        private DiContainer diContainer;
+        private GameUnits gameUnits;
         
         [SerializeField] private CellController[] platforms;
         [SerializeField] private CharacterMainController[] characters;
@@ -19,9 +20,18 @@ namespace Gameplay
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
         [field: SerializeField] public Transform EndPoint { get; private set; } 
         
+        [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
+        
         private Stack<CellController> platformStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
+        
+        [Inject]
+        private void Construct(DiContainer diContainer, GameUnits gameUnits)
+        {
+            this.diContainer = diContainer;
+            this.gameUnits = gameUnits;
+        }
         
         
         #region Editor
@@ -66,6 +76,7 @@ namespace Gameplay
         {
             foreach (var VARIABLE in platforms)
             {
+                gameUnits.AddUnits(VARIABLE);
                 if (!VARIABLE.gameObject.activeInHierarchy) continue;
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
@@ -77,6 +88,7 @@ namespace Gameplay
         {
             foreach (var VARIABLE in characters)
             {
+                gameUnits.AddUnits(VARIABLE);
                 if (!VARIABLE.gameObject.activeInHierarchy) continue;
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
@@ -88,6 +100,7 @@ namespace Gameplay
         {
             foreach (var VARIABLE in traps)
             {
+                gameUnits.AddUnits(VARIABLE);
                 if (!VARIABLE.gameObject.activeInHierarchy) continue;
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();

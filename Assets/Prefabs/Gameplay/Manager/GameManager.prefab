@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolManagerPrefab: {fileID: 8146648330832776951, guid: 87a42cd633f67ff438fae477282073b8, type: 3}
   levelManagerPrefab: {fileID: 2512201642712999411, guid: b2011922e5429744fa179c7ff7339eaf, type: 3}
+  playerPrefab: {fileID: 6200176588022165938, guid: 55c878377383c1149a6449ecfdcace72, type: 3}

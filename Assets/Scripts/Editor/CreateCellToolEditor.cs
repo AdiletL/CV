@@ -11,10 +11,6 @@ public class CreateCellToolEditor : Editor
         
         var createCell = (CreateCellTool)target;
         
-        if (GUILayout.Button("Create Cells"))
-        {
-            createCell.CreateCells();
-        }
         if (GUILayout.Button("Destroy Cells"))
         {
             createCell.DestroyCells();

@@ -4,6 +4,7 @@ using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 using System.Collections;
 using Unit.Cell;
+using Random = UnityEngine.Random;
 
 namespace Unit.Trap.Hammer
 {
@@ -38,7 +39,8 @@ namespace Unit.Trap.Hammer
         
         public override void Appear()
         {
-            Activate();
+            int random = Random.Range(0, 4);
+            Invoke(nameof(Deactivate), random);
         }
         
 
@@ -69,8 +71,6 @@ namespace Unit.Trap.Hammer
 
         public override void Activate()
         {
-            if(isReady) return;
-            
             isReady = true;
             hammerCollider.isTrigger = true;
             hammerAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
@@ -98,8 +98,6 @@ namespace Unit.Trap.Hammer
 
         public override void Deactivate()
         {
-            if(!isReady) return;
-            
             isReady = false;
             hammerAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
             if(startTimerCoroutine != null)

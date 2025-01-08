@@ -18,5 +18,5 @@ MonoBehaviour:
   <EnemyLayers>k__BackingField:
   - serializedVersion: 2
     m_Bits: 8
-  <AmountAttackInSecond>k__BackingField: 0.5
+  <AmountAttackInSecond>k__BackingField: 4
   <CooldownAttack>k__BackingField: 2

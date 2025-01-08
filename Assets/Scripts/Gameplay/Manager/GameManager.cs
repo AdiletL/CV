@@ -1,4 +1,5 @@
 ﻿using System;
+using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -11,6 +12,7 @@ namespace Gameplay.Manager
         
         [SerializeField] private PoolManager poolManagerPrefab;
         [SerializeField] private LevelManager levelManagerPrefab;
+        [SerializeField] private PlayerController playerPrefab;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
@@ -60,7 +62,7 @@ namespace Gameplay.Manager
 
         private void StartGame()
         {
-            levelManager.StartLevel();
+            levelManager.StartLevel(playerPrefab);
         }
     }
 }

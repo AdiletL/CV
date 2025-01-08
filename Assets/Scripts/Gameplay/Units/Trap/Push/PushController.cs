@@ -54,33 +54,38 @@ namespace Unit.Trap
         {
             if(isReady) return;
             isReady = true;
+            
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(.5f, AfterActivate));
+        }
+
+        private void AfterActivate()
+        {
             pushAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, PreDeactivate));
-        }
-
-        private void PreActivate()
-        {
-            if(startTimerCoroutine != null)
-                StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, PreActivate));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, Deactivate));
         }
 
         public override void Deactivate()
         {
-            isReady = false;
+            if(startTimerCoroutine != null)
+                StopCoroutine(startTimerCoroutine);
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, AfterDeactivate));
+        }
+
+        private void AfterDeactivate()
+        {
             pushAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, PreActivate));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, ChangeReady));
         }
 
-        private void PreDeactivate()
+        private void ChangeReady()
         {
-            if(startTimerCoroutine != null)
-                StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, PreActivate));
+            this.isReady = !isReady;
         }
         
         private IEnumerator StartTimerCoroutine(float waitTime, Action callback)

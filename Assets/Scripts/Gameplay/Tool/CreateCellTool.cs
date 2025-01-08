@@ -1,16 +1,13 @@
-﻿using System;
-using Unit.Cell;
+﻿using Unit.Cell;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Gameplay.Tool
 {
     [ExecuteInEditMode]
+    [RequireComponent(typeof(CreateDefaultCellTool))]
     public class CreateCellTool : ToolEditor
     {
-        [SerializeField] private Vector2Int length;
-        
         [Space, Header("Prefab to create")]
         [SerializeField] private GameObject cellPrefab;
         
@@ -19,27 +16,21 @@ namespace Gameplay.Tool
         
         [Space, Header("Active/InActive (Button: Escape)"), Tooltip("Click button Escape")]
         [SerializeField] private bool isActive;
-
+        
         private CreateGameFieldTool createGameFieldTool;
         private float radius;
         
-        private Vector3? GetMouseWorldPosition()
+        private GameObject GetRayHitGameObject(Event e)
         {
-            Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity))
+            Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity)
+                && hitInfo.transform.TryGetComponent(out DefaultCell defaultCell))
             {
-                return hitInfo.point;
+                return hitInfo.transform.gameObject;
             }
             return null;
         }
-
-        private void Reset()
-        {
-            var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.localScale = new Vector3(1000, 1, 1000);
-            plane.GetComponent<Renderer>().enabled = false;
-        }
-
+        
         private void CheckLink()
         {
             if(createGameFieldTool == null)
@@ -71,20 +62,16 @@ namespace Gameplay.Tool
             // Проверка нажатий мыши
             if (e.type == EventType.MouseDown && e.button == 0) // Левая кнопка
             {
-                PlacePrefabAtMousePosition();
+                PlacePrefabAtMousePosition(e);
             }
             else if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
             {
                 isActive = !isActive;
                 Debug.LogWarning(isActive ? "Active Paint Cell " : "InActive Paint Cell");
             }
-            /*else if (e.type == EventType.MouseDown && e.button == 2) // Правая кнопка
-            {
-                RemovePrefabAtMousePosition();
-            }*/
         }
         
-        private void PlacePrefabAtMousePosition()
+        private void PlacePrefabAtMousePosition(Event e)
         {
             CheckLink();
             if (!isActive)
@@ -102,81 +89,22 @@ namespace Gameplay.Tool
                 return;
             }
             
-            Vector3? mouseWorldPosition = GetMouseWorldPosition();
-            if (mouseWorldPosition.HasValue)
+            var hitObject = GetRayHitGameObject(e);
+            if (hitObject)
             {
-                Vector3 position = mouseWorldPosition.Value;
-                position.y = 0;
-                // Проверяем, есть ли объект с нужным скриптом
-                if (Physics.CheckSphere(position, radius, Layers.CELL_LAYER))
-                {
-                    Debug.LogWarning("На этой позиции уже есть объект");
-                    return;
-                }
-                
                 var newGameObject = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab.gameObject);
-                newGameObject.transform.position = position;
+                newGameObject.transform.position = hitObject.transform.position;
                 newGameObject.transform.SetParent(parent);
+                
+                var cellController = newGameObject.GetComponent<CellController>();
+                var defaultCell = hitObject.GetComponent<DefaultCell>();
+                cellController.SetCoordinates(defaultCell.Coordinates);
             }
 
             MarkDirty();
             createGameFieldTool.CurrentGameField.SortingArray();
         }
         
-        private void RemovePrefabAtMousePosition()
-        {
-            CheckLink();
-            Vector3? mouseWorldPosition = GetMouseWorldPosition();
-            if (mouseWorldPosition.HasValue)
-            {
-                Vector3 position = mouseWorldPosition.Value;
-
-                // Поиск объекта на указанной позиции
-                Collider[] colliders = Physics.OverlapSphere(position, radius, Layers.CELL_LAYER);
-                foreach (Collider col in colliders)
-                {
-                    if (col.gameObject == null) continue;
-                    Undo.DestroyObjectImmediate(col.gameObject);
-                    return;
-                }
-            }
-
-            createGameFieldTool.CurrentGameField.SortingArray();
-        }
-        
-        public void CreateCells()
-        {
-            CheckLink();
-            if (cellPrefab.GetComponent<CellController>() == null)
-            {
-                Debug.LogError("Prefab does not have a CellController");
-                return;
-            }
-            else if (parent == null)
-            {
-                Debug.LogError("Parent is null");
-                return;
-            }
-            
-            float intervalX = 0;
-            float intervalZ = 0;
-            for (var x = 0; x < length.x; x++)
-            {
-                intervalX = x * .05f;
-                for (var y = 0; y < length.y; y++)
-                {
-                    intervalZ = y * .05f;
-                    
-                    var newGameObject = (GameObject)PrefabUtility.InstantiatePrefab(cellPrefab.gameObject, parent.transform);
-                    newGameObject.transform.localPosition = new Vector3(
-                        (x * cellPrefab.transform.localScale.x) + intervalX, 0,
-                        (y * cellPrefab.transform.localScale.z) + intervalZ);
-                }
-            }
-            
-            MarkDirty();
-            createGameFieldTool.CurrentGameField.SortingArray();
-        }
 
         public void DestroyCells()
         {

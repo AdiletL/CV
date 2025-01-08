@@ -1098,6 +1098,7 @@ MonoBehaviour:
     - {fileID: 4609764714971673307}
     - {fileID: 5211477448136618235}
     - {fileID: 494537826249438319}
+  <VisualParent>k__BackingField: {fileID: 5211477448136618235}
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
   so_Sword: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}
