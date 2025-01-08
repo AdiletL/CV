@@ -127,6 +127,7 @@ MonoBehaviour:
   components:
     <gameObjects>k__BackingField:
     - {fileID: 4519091569372874392}
+  <VisualParent>k__BackingField: {fileID: 2768081241283831782}
   so_Trap: {fileID: 11400000, guid: 7b75b654e3bd56a4f8226d1d5d163d73, type: 2}
 --- !u!135 &3421865284547963949
 SphereCollider:

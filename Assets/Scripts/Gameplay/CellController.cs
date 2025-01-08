@@ -4,7 +4,7 @@ using TMPro;
 using Unit;
 using UnityEngine;
 
-namespace Unit.Platform
+namespace Unit.Cell
 {
     [SelectionBase]
     public class CellController : UnitController
@@ -23,7 +23,7 @@ namespace Unit.Platform
         public bool IsBlocked()
         {
             var colliderCount =
-                Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
+                Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
             if (colliderCount == 0) return false;
 
             for (int i = colliders.Length - 1; i >= 0; i--)
@@ -40,7 +40,7 @@ namespace Unit.Platform
         public bool IsFreeSpawn()
         {
             var colliderCount =
-                Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.PLATFORM_LAYER);
+                Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
             return colliderCount == 0;
         }
 

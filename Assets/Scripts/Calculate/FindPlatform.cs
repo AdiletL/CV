@@ -1,4 +1,4 @@
-﻿using Unit.Platform;
+﻿using Unit.Cell;
 using UnityEngine;
 
 namespace Calculate
@@ -13,7 +13,7 @@ namespace Calculate
         {
             Vector3 rayOrigin = origin + StartRayCheckOffset;
 
-            int hitCount = Physics.RaycastNonAlloc(rayOrigin, Vector3.down, hits, 100, Layers.PLATFORM_LAYER);
+            int hitCount = Physics.RaycastNonAlloc(rayOrigin, Vector3.down, hits, 100, Layers.CELL_LAYER);
 
             if (hitCount > 0)
             {
@@ -29,7 +29,7 @@ namespace Calculate
 
         public static CellController GetPlatform(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
         {
-            int hitCount = Physics.RaycastNonAlloc(start + StartRayCheckOffset, rayDirection, hits, 100, Layers.PLATFORM_LAYER);
+            int hitCount = Physics.RaycastNonAlloc(start + StartRayCheckOffset, rayDirection, hits, 100, Layers.CELL_LAYER);
 
             if (hitCount > 0)
             {
@@ -39,7 +39,7 @@ namespace Calculate
             {
                 if (!isUseOverlapSphere) return null;
                 
-                int colliderCount = Physics.OverlapSphereNonAlloc(start, 1, colliders, Layers.PLATFORM_LAYER);
+                int colliderCount = Physics.OverlapSphereNonAlloc(start, 1, colliders, Layers.CELL_LAYER);
                 
                 if(colliderCount > 0)
                     return colliders[0].transform.GetComponent<CellController>();

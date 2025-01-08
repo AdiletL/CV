@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Calculate;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Platform;
+using Unit.Cell;
 using UnityEngine;
 
 namespace Unit.Character.Player

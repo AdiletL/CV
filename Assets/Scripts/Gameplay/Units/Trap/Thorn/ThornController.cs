@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
-using Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Trap
@@ -24,7 +23,7 @@ namespace Unit.Trap
         private float cooldown;
         private float radius;
         
-        private bool isReady = true;
+        private bool isReady;
         
         public IDamageable Damageable { get; private set; }
         

@@ -3,7 +3,7 @@ using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 using System.Collections;
-using Unit.Platform;
+using Unit.Cell;
 
 namespace Unit.Trap.Hammer
 {
@@ -33,13 +33,12 @@ namespace Unit.Trap.Hammer
             cooldownAttack = so_Hammer.CooldownAttack;
             
             GetComponentInUnit<HammerCollision>()?.Initialize();
-            
-            Activate();
+
         }
         
         public override void Appear()
         {
-            
+            Activate();
         }
         
 

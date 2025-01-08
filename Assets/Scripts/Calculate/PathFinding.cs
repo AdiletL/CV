@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unit.Platform;
+using Unit.Cell;
 using UnityEngine;
 
 namespace Calculate
@@ -13,10 +13,10 @@ namespace Calculate
         
         public Vector3 StartPosition, EndPosition;
 
-        private CellController _startCell;
-        private CellController _currentCell;
-        private CellController _lastCorrectCell;
-        private CellController _endCell;
+        private CellController startCell;
+        private CellController currentCell;
+        private CellController lastCorrectCell;
+        private CellController endCell;
         
         private RaycastHit hitResult;
 
@@ -46,8 +46,8 @@ namespace Calculate
 
         private void SetCurrentPlatform()
         {
-            _startCell = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
-            _currentCell = _startCell;
+            startCell = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
+            currentCell = startCell;
         }
 
         private void ClearData()
@@ -63,15 +63,15 @@ namespace Calculate
             SetCurrentPlatform();
             
             pathToPoint.Clear();
-            if (!_currentCell) return pathToPoint;
+            if (!currentCell) return pathToPoint;
 
-            _endCell = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
-            if (!_endCell) return pathToPoint;
+            endCell = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
+            if (!endCell) return pathToPoint;
 
             this.isUseColor = isUseColor;
             ClearData();
 
-            while (_currentCell.CurrentCoordinates != _endCell.CurrentCoordinates)
+            while (currentCell.CurrentCoordinates != endCell.CurrentCoordinates)
             {
                 nearPlatforms = GetNearPlatforms();
                 if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
@@ -79,7 +79,7 @@ namespace Calculate
                     if (unverifiedPlatforms.TryPop(out var newPlatform))
                     {
                         //newPlatform.SetColor(Color.red);
-                        _currentCell = newPlatform;
+                        currentCell = newPlatform;
                     }
                     else
                     {
@@ -89,9 +89,9 @@ namespace Calculate
                 else
                 {
                     AddPlatformToVerified(1);
-                    if (_currentCell.CurrentCoordinates == _endCell.CurrentCoordinates) break;
+                    if (currentCell.CurrentCoordinates == endCell.CurrentCoordinates) break;
 
-                    _currentCell = GetNextPlatform(nearPlatforms, _endCell.CurrentCoordinates);
+                    currentCell = GetNextPlatform(nearPlatforms, endCell.CurrentCoordinates);
                     AddPlatformToVerified(2);
                 }
             }
@@ -104,10 +104,10 @@ namespace Calculate
 
         private void AddPlatformToVerified(int weight)
         {
-            if (!platformData.ContainsKey(_currentCell))
-                platformData[_currentCell] = new PlatformData();
+            if (!platformData.ContainsKey(currentCell))
+                platformData[currentCell] = new PlatformData();
 
-            var data = platformData[_currentCell];
+            var data = platformData[currentCell];
             if (data.Weight > 0) return;
 
             data.Weight = weightPlatform += weight;
@@ -119,20 +119,20 @@ namespace Calculate
         private void BuildPath(Queue<CellController> path)
         {
             platformStack.Clear();
-            if(!_endCell.IsBlocked())
-                platformStack.Push(_endCell);
+            if(!endCell.IsBlocked())
+                platformStack.Push(endCell);
             
             //endPlatform.SetColor(Color.white);
-            _lastCorrectCell = _endCell;
+            lastCorrectCell = endCell;
 
-            while (_lastCorrectCell != _startCell)
+            while (lastCorrectCell != startCell)
             {
                 var correctPlatform = GetCorrectPlatform();
                 if (!correctPlatform) break;
                 if(this.isUseColor)
                     correctPlatform.SetColor(Color.yellow);
 
-                _lastCorrectCell = correctPlatform;
+                lastCorrectCell = correctPlatform;
                 platformStack.Push(correctPlatform);
             }
 
@@ -150,13 +150,17 @@ namespace Calculate
             CellController correctCell = null;
             var lastWeight = weightPlatform;
             correctPlatformPosition += startRayPositionPlatform;
-
+            float rayLenght = 100;
+            Vector3 objectScale = currentCell.transform.localScale;
+            
             foreach (var direction in rayDirectionsPlatform)
             {
-                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, 100, Layers.PLATFORM_LAYER) ||
+                rayLenght = Mathf.Abs(Vector3.Dot(direction, objectScale)) / 2f;
+                
+                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, rayLenght, Layers.CELL_LAYER) ||
                     !hitResult.transform.TryGetComponent(out CellController platform) ||
                     !platformData.TryGetValue(platform, out var data) ||
-                    platform == _lastCorrectCell ||
+                    platform == lastCorrectCell ||
                     data.Weight >= lastWeight) continue;
                 
                 correctCell = platform;
@@ -172,12 +176,15 @@ namespace Calculate
         private List<CellController> GetNearPlatforms()
         {
             var platforms = new List<CellController>(4);
-            var origin = _currentCell.transform.position + startRayPositionPlatform;
-
+            var origin = currentCell.transform.position + startRayPositionPlatform;
+            float rayLenght = 100;
+            Vector3 objectScale = currentCell.transform.localScale;
+            
             foreach (var direction in rayDirectionsPlatform)
             {
-                Debug.DrawRay(origin, direction, Color.red, 2);
-                if (Physics.Raycast(origin, direction, out hitResult, 100, Layers.PLATFORM_LAYER) &&
+                rayLenght = Mathf.Abs(Vector3.Dot(direction, objectScale)) / 2f;
+                Debug.DrawRay(origin, direction * rayLenght, Color.red, 2);
+                if (Physics.Raycast(origin, direction, out hitResult, rayLenght, Layers.CELL_LAYER) &&
                     hitResult.transform.TryGetComponent(out CellController platform))
                 {
                     platforms.Add(platform);
@@ -193,7 +200,7 @@ namespace Calculate
             {
                 if ((platformData.TryGetValue(platforms[i], out var data) && data.Weight > 0) || platforms[i].IsBlocked())
                 {
-                    if (platforms[i].CurrentCoordinates == _endCell.CurrentCoordinates)
+                    if (platforms[i].CurrentCoordinates == endCell.CurrentCoordinates)
                     {
                         unverifiedPlatforms.Push(platforms[i]);
                         return platforms;
@@ -213,7 +220,7 @@ namespace Calculate
 
         private CellController GetNextPlatform(List<CellController> nearAccessiblePlatforms, Vector2Int endCoordinates)
         {
-            if (nearAccessiblePlatforms.Count == 0) return _currentCell;
+            if (nearAccessiblePlatforms.Count == 0) return currentCell;
 
             CellController bestCell = nearAccessiblePlatforms[0];
             int bestDistance = CalculateDistance(bestCell, endCoordinates);
@@ -228,8 +235,8 @@ namespace Calculate
                 }
                 else if (distance == bestDistance)
                 {
-                    var firstDistance = NormalDistance(bestCell.transform.position, _endCell.transform.position);
-                    var secondDistance = NormalDistance(platform.transform.position, _endCell.transform.position);
+                    var firstDistance = NormalDistance(bestCell.transform.position, endCell.transform.position);
+                    var secondDistance = NormalDistance(platform.transform.position, endCell.transform.position);
                     if (secondDistance < firstDistance)
                     {
                         bestCell = platform;

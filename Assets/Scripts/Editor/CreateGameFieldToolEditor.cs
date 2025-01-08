@@ -2,14 +2,14 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(CreateGameFieldITool))]
+[CustomEditor(typeof(CreateGameFieldTool))]
 public class CreateGameFieldToolEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
         
-        var tool = (CreateGameFieldITool)target;
+        var tool = (CreateGameFieldTool)target;
 
         if (GUILayout.Button("Create Game Field"))
         {

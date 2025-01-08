@@ -1,21 +1,26 @@
 ﻿using System;
-using Unit.Platform;
+using Unit.Cell;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Tool
 {
     [ExecuteInEditMode]
-    public class CreatePlatformsITool : MonoBehaviour, IToolEditor
+    public class CreateCellTool : ToolEditor
     {
         [SerializeField] private Vector2Int length;
         
-        [Space]
+        [Space, Header("Prefab to create")]
         [SerializeField] private GameObject cellPrefab;
-        [SerializeField] private bool isPaintCell;
+        
+        [Space, Header("Place to spawn")]
         [SerializeField] private Transform parent;
+        
+        [Space, Header("Active/InActive (Button: Escape)"), Tooltip("Click button Escape")]
+        [SerializeField] private bool isActive;
 
-        private CreateGameFieldITool createGameFieldITool;
+        private CreateGameFieldTool createGameFieldTool;
         private float radius;
         
         private Vector3? GetMouseWorldPosition()
@@ -27,12 +32,6 @@ namespace Gameplay.Tool
             }
             return null;
         }
-        
-        public void MarkDirty()
-        {
-            // Уведомляем Unity Editor о необходимости пересохранить объект
-            EditorUtility.SetDirty(this);
-        }
 
         private void Reset()
         {
@@ -43,8 +42,8 @@ namespace Gameplay.Tool
 
         private void CheckLink()
         {
-            if(createGameFieldITool == null)
-                createGameFieldITool = GetComponent<CreateGameFieldITool>();
+            if(createGameFieldTool == null)
+                createGameFieldTool = GetComponent<CreateGameFieldTool>();
             if (radius == 0)
                 radius = cellPrefab.transform.localScale.x / 2.5f;
         }
@@ -61,38 +60,34 @@ namespace Gameplay.Tool
         
         private void OnSceneGUI(SceneView sceneView)
         {
-            CheckClickedCell();
+            CheckClicked();
         }
 
-        #region Cell
-        private void CheckClickedCell()
+        private void CheckClicked()
         {
             Event e = Event.current; // Получение текущего события
             if (e == null) return;
             
-            if (e.type == EventType.KeyDown && e.keyCode == KeyCode.CapsLock)
-            {
-                isPaintCell = !isPaintCell;
-                Debug.LogWarning(isPaintCell ? "ENABLE: Paint Cell " : "DISABLE: Paint Cell");
-            }
-            
-            if(!isPaintCell) return;
-
             // Проверка нажатий мыши
             if (e.type == EventType.MouseDown && e.button == 0) // Левая кнопка
             {
                 PlacePrefabAtMousePosition();
             }
-            else if (e.type == EventType.MouseDown && e.button == 2) // Правая кнопка
+            else if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
+            {
+                isActive = !isActive;
+                Debug.LogWarning(isActive ? "Active Paint Cell " : "InActive Paint Cell");
+            }
+            /*else if (e.type == EventType.MouseDown && e.button == 2) // Правая кнопка
             {
                 RemovePrefabAtMousePosition();
-            }
+            }*/
         }
         
         private void PlacePrefabAtMousePosition()
         {
             CheckLink();
-            if (!isPaintCell)
+            if (!isActive)
             {
                 return;
             }
@@ -113,7 +108,7 @@ namespace Gameplay.Tool
                 Vector3 position = mouseWorldPosition.Value;
                 position.y = 0;
                 // Проверяем, есть ли объект с нужным скриптом
-                if (Physics.CheckSphere(position, radius, Layers.PLATFORM_LAYER))
+                if (Physics.CheckSphere(position, radius, Layers.CELL_LAYER))
                 {
                     Debug.LogWarning("На этой позиции уже есть объект");
                     return;
@@ -125,7 +120,7 @@ namespace Gameplay.Tool
             }
 
             MarkDirty();
-            createGameFieldITool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentGameField.SortingArray();
         }
         
         private void RemovePrefabAtMousePosition()
@@ -137,7 +132,7 @@ namespace Gameplay.Tool
                 Vector3 position = mouseWorldPosition.Value;
 
                 // Поиск объекта на указанной позиции
-                Collider[] colliders = Physics.OverlapSphere(position, radius, Layers.PLATFORM_LAYER);
+                Collider[] colliders = Physics.OverlapSphere(position, radius, Layers.CELL_LAYER);
                 foreach (Collider col in colliders)
                 {
                     if (col.gameObject == null) continue;
@@ -146,18 +141,13 @@ namespace Gameplay.Tool
                 }
             }
 
-            createGameFieldITool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentGameField.SortingArray();
         }
         
         public void CreateCells()
         {
             CheckLink();
-            if (isPaintCell)
-            {
-                Debug.LogError("Drawing platform included");
-                return;
-            }
-            else if (cellPrefab.GetComponent<CellController>() == null)
+            if (cellPrefab.GetComponent<CellController>() == null)
             {
                 Debug.LogError("Prefab does not have a CellController");
                 return;
@@ -185,7 +175,7 @@ namespace Gameplay.Tool
             }
             
             MarkDirty();
-            createGameFieldITool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentGameField.SortingArray();
         }
 
         public void DestroyCells()
@@ -197,14 +187,15 @@ namespace Gameplay.Tool
                 return;
             }
             
-            while (parent.childCount > 0)
+            var cells = parent.GetComponentsInChildren<CellController>();
+
+            for (int i = cells.Length - 1; i >= 0; i--)
             {
-                DestroyImmediate(parent.GetChild(0).gameObject);
+                DestroyImmediate(cells[i].gameObject);
             }
 
             MarkDirty();
-            createGameFieldITool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentGameField.SortingArray();
         }
-        #endregion
     }
 }

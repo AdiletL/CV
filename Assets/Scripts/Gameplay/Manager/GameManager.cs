@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -16,11 +17,26 @@ namespace Gameplay.Manager
         
         private void Awake()
         {
-            Initialize();
-        }
+            DontDestroyOnLoad(gameObject);
 
+            // Подписываемся на событие загрузки сцены
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "Bootstrap") return;
+            
+            Debug.Log(SceneManager.GetActiveScene().name);
+            Initialize();
+            Invoke(nameof(StartGame), .01f);
+            // Отписываемся от события, чтобы избежать многократных вызовов
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+        
         public void Initialize()
         {
+            Debug.Log("Initializing Game Manager");
             InstantiateLevelManager();
             InstantiatePoolManager();
         }
@@ -30,6 +46,7 @@ namespace Gameplay.Manager
         {
             levelManager = diContainer.InstantiatePrefabForComponent<LevelManager>(levelManagerPrefab);
             diContainer.BindInstance(levelManager).AsSingle();
+            levelManager.transform.SetParent(transform);
             levelManager.Initialize();
         }
 
@@ -37,10 +54,11 @@ namespace Gameplay.Manager
         {
             poolManager = diContainer.InstantiatePrefabForComponent<PoolManager>(poolManagerPrefab);
             diContainer.BindInstance(poolManager).AsSingle();
+            poolManager.transform.SetParent(transform);
             poolManager.Initialize();
         }
 
-        private void Start()
+        private void StartGame()
         {
             levelManager.StartLevel();
         }

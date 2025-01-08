@@ -708,6 +708,7 @@ MonoBehaviour:
   components:
     <gameObjects>k__BackingField:
     - {fileID: 6906124403529321363}
+  <VisualParent>k__BackingField: {fileID: 6465382566851581128}
   so_Trap: {fileID: 11400000, guid: e64eac36ac1729c449cfc42d0c4fc636, type: 2}
 --- !u!54 &6028429460141191813
 Rigidbody:

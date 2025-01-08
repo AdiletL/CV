@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[SelectionBase]
 public class UnitRenderer : MonoBehaviour
 {
     [SerializeField] private Renderer[] baseRenderers;

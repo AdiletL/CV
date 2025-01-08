@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
 using Zenject;
@@ -21,15 +22,16 @@ namespace Gameplay.Manager
             if (so_LevelContainer.levels.Length < levelNumber)
                 throw new IndexOutOfRangeException();
             
-            return so_LevelContainer.levels[levelNumber - 1];
+            return so_LevelContainer.levels[levelNumber];
         }
 
-        private GameFieldController GetGameField(int levelNumber, int index)
+        private GameFieldController GetGameField(int levelIndex, int gameFieldIndex)
         {
-            if(GetLevel(levelNumber).GameFieldControllers.Length < index)
+            var level = GetLevel(levelIndex);
+            if(level.GameFieldControllers.Length < gameFieldIndex)
                 throw new IndexOutOfRangeException();
             
-            return GetLevel(levelNumber).GameFieldControllers[index];
+            return level.GameFieldControllers[gameFieldIndex];
         }
         
         private LevelController CreateLevelController()
@@ -50,11 +52,14 @@ namespace Gameplay.Manager
 
         public void StartLevel()
         {
-            var gameFieldController = diContainer.InstantiatePrefabForComponent<GameFieldController>(GetGameField(currentLevelIndex, currentGameFieldIndex));
-            gameFieldController.transform.SetParent(levelController.transform);
-            gameFieldController.GetComponent<GameFieldController>().Initialize();
+            var gameField = GetGameField(currentLevelIndex, currentGameFieldIndex);
+            var newGameObject = diContainer.InstantiatePrefab(gameField);
+            newGameObject.transform.SetParent(levelController.transform);
+            var gameFieldController = newGameObject.GetComponent<GameFieldController>();
+            gameFieldController.Initialize();
             gameFieldController.StartGame();
         }
+
 
         public void RestartLevel()
         {

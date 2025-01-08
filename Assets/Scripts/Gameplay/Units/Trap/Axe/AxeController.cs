@@ -23,12 +23,11 @@ namespace Unit.Trap
             so_Axe = (SO_Axe)so_Trap;
             speedPlayClip = so_Axe.SpeedPlayClip;
             playClip = so_Axe.PlayClip;
-            Activate();
         }
 
         public override void Appear()
         {
-            
+            Activate();
         }
         
         

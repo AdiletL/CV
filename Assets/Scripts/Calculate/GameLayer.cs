@@ -6,6 +6,8 @@ namespace Calculate
     {
         public static bool IsTarget(LayerMask[] origin, LayerMask target)
         {
+            if(origin is null) return false;
+            
             foreach (var VARIABLE in origin)
             {
                 // Проверяем, входит ли слой в маску

@@ -9,8 +9,7 @@ namespace Unit
     {
         [SerializeField] protected ComponentsInGameObjects components;
         
-        [Space(10)]
-        [SerializeField] protected GameObject visualParent;
+        [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set;}
 
         public abstract UnitType UnitType { get; }
         
@@ -25,8 +24,8 @@ namespace Unit
             components.Initialize();
         }
 
-        public void Show() => visualParent?.SetActive(true);
-        public void Hide() => visualParent?.SetActive(false);
+        public void Show() => VisualParent?.SetActive(true);
+        public void Hide() => VisualParent?.SetActive(false);
 
         public abstract void Appear();
     }

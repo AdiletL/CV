@@ -2,22 +2,22 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(CreatePlatformsITool))]
-public class CreatePlatformsToolEditor : Editor
+[CustomEditor(typeof(CreateCellTool))]
+public class CreateCellToolEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
         
-        var createPlatforms = (CreatePlatformsITool)target;
+        var createCell = (CreateCellTool)target;
         
         if (GUILayout.Button("Create Cells"))
         {
-            createPlatforms.CreateCells();
+            createCell.CreateCells();
         }
         if (GUILayout.Button("Destroy Cells"))
         {
-            createPlatforms.DestroyCells();
+            createCell.DestroyCells();
         }
     }
 }

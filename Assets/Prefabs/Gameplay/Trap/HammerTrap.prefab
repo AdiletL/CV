@@ -301,6 +301,7 @@ MonoBehaviour:
     <gameObjects>k__BackingField:
     - {fileID: 7122447132236307003}
     - {fileID: 742942650613264107}
+  <VisualParent>k__BackingField: {fileID: 471340717892392025}
   so_Trap: {fileID: 11400000, guid: 1c0072669e2e3874287ce6fd0cfac24e, type: 2}
   hammerCollider: {fileID: 8525518601057622279}
 --- !u!114 &2547267640572484487

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unit.Character;
-using Unit.Platform;
+using Unit.Cell;
 using Unit.Trap;
 using UnityEngine;
 using Zenject;
@@ -43,7 +43,7 @@ namespace Gameplay
 
             yield return null;
             MarkDirty();
-            Debug.Log("Finished Sorting");
+            //Debug.Log("Finished Sorting");
         }
         
         public void MarkDirty()
@@ -57,9 +57,9 @@ namespace Gameplay
         #region Initialize
         public void Initialize()
         {
-            InitializePlatforms();
-            InitializeTraps();
             InitializeCharacters();
+            InitializeTraps();
+            InitializePlatforms();
         }
 
         private void InitializePlatforms()
