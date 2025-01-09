@@ -269,6 +269,7 @@ MonoBehaviour:
   components:
     <gameObjects>k__BackingField:
     - {fileID: 6528987841846448985}
+  <VisualParent>k__BackingField: {fileID: 6637096747971640474}
   so_Trap: {fileID: 11400000, guid: 31914f4f61da1934e9dd467d2c2aff5a, type: 2}
   pointSpawnProjectile: {fileID: 1777627349215838221}
   currentStateCategory: 0

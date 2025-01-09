@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit.Cell;
+using UnityEngine;
 
 namespace Unit.Character.Player
 {
@@ -40,7 +41,7 @@ namespace Unit.Character.Player
         {
             if (Input.GetMouseButtonDown(1))
             {
-                if (tryGetHitPosition(out GameObject hitObject))
+                if (tryGetHitPosition(out GameObject hitObject) && hitObject.TryGetComponent(out CellController cellController))
                 {
                     playerController.StateMachine.ExitOtherStates(typeof(PlayerIdleState));
                     playerController.GetState<PlayerIdleState>().SetTarget(hitObject);

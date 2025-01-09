@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cd79d216eff44c09009a32c2020a1c7, type: 3}
   m_Name: SO_Fall
   m_EditorClassIdentifier: 
-  <Damage>k__BackingField: 0
+  <Damage>k__BackingField: -1
   <ActivateClip>k__BackingField: {fileID: 0}
   <DeactivateClip>k__BackingField: {fileID: 0}
-  <EnemyLayers>k__BackingField: []
-  <Radius>k__BackingField: 0
-  <Speed>k__BackingField: 0
+  <EnemyLayers>k__BackingField:
+  - serializedVersion: 2
+    m_Bits: 8
+  <Radius>k__BackingField: 0.2
+  <Speed>k__BackingField: 1000

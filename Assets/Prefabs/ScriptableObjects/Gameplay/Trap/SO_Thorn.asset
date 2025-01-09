@@ -18,8 +18,8 @@ MonoBehaviour:
   <EnemyLayers>k__BackingField:
   - serializedVersion: 2
     m_Bits: 8
-  <StartTimer>k__BackingField: 0.5
+  <StartTimer>k__BackingField: 0.2
   <Duration>k__BackingField: 2
-  <ApplyDamageCooldown>k__BackingField: 1
+  <ApplyDamageCooldown>k__BackingField: 0.5
   <Cooldown>k__BackingField: 1
   <Radius>k__BackingField: 0.5

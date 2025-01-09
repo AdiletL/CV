@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unit.Cell;
 using UnityEngine;
 
 namespace Unit.Trap.Activator
@@ -12,9 +13,12 @@ namespace Unit.Trap.Activator
         private SphereCollider sphereCollider;
 
         private Coroutine checkTargetCoroutine, startTimerCoroutine;
+        private Coroutine cellMoveDirectionCoroutine;
 
         private float cooldownCheck = 1f, countCooldownCheck;
-
+        private float radius;
+        private float speed;
+        
         private bool isReady = true;
         
         public override void Initialize()
@@ -22,6 +26,8 @@ namespace Unit.Trap.Activator
             base.Initialize();
 
             buttonAnimation = components.GetComponentFromArray<ButtonAnimation>();
+            radius = .2f;
+            speed = 100;
         }
 
         public override void Appear()
@@ -36,6 +42,14 @@ namespace Unit.Trap.Activator
             isReady = false;
             buttonAnimation.ChangeAnimationWithDuration(activateClip);
             
+            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
+            if (colliders.Length > 0)
+            {
+                var cell = colliders[0].GetComponent<CellController>();
+                if(cellMoveDirectionCoroutine != null) StopCoroutine(cellMoveDirectionCoroutine);
+                cellMoveDirectionCoroutine = StartCoroutine(CellMoveDirectionCoroutine(cell, Vector3.down));
+            }
+
             if(checkTargetCoroutine != null)
                 StopCoroutine(checkTargetCoroutine);
             
@@ -51,6 +65,14 @@ namespace Unit.Trap.Activator
                 StopCoroutine(checkTargetCoroutine);
             isReady = true;
             buttonAnimation.ChangeAnimationWithDuration(deactivateClip);
+            
+            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
+            if (colliders.Length > 0)
+            {
+                var cell = colliders[0].GetComponent<CellController>();
+                if(cellMoveDirectionCoroutine != null) StopCoroutine(cellMoveDirectionCoroutine);
+                cellMoveDirectionCoroutine = StartCoroutine(CellMoveDirectionCoroutine(cell, Vector3.up));
+            }
         }
 
         private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
@@ -71,6 +93,23 @@ namespace Unit.Trap.Activator
             }
         }
 
+        private IEnumerator CellMoveDirectionCoroutine(CellController cell, Vector3 direction)
+        {
+            float maxDistance = .2f; // Сдвиг вниз на 2 единицы
+            Vector3 startPos = cell.transform.position; // Начальная позиция
+            Vector3 targetPos = startPos + direction * maxDistance; // Конечная позиция
+            var cellTransform = cell.transform; // Кэширование transform
+            float speedPerFrame;
+
+            while ((cellTransform.position - targetPos).sqrMagnitude > 0.01f) // Проверка, пока не достигнута цель
+            {
+                yield return null; // Ожидание следующего кадра
+        
+                speedPerFrame = Time.deltaTime * speed; // Расстояние для перемещения за кадр
+                cell.MoveDirection(direction, speedPerFrame);
+            }
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if(!isReady 
@@ -80,7 +119,7 @@ namespace Unit.Trap.Activator
             CurrentTarget = other.gameObject;
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(0.3f, Activate));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(0.1f, Activate));
         }
 
         private void OnTriggerExit(Collider other)

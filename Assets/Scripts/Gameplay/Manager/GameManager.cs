@@ -29,7 +29,7 @@ namespace Gameplay.Manager
         {
             if (scene.name == "Bootstrap") return;
             
-            Debug.Log(SceneManager.GetActiveScene().name);
+            Debug.Log("Current: " + SceneManager.GetActiveScene().name);
             Initialize();
             Invoke(nameof(StartGame), .01f);
             // Отписываемся от события, чтобы избежать многократных вызовов

@@ -77,7 +77,6 @@ namespace Calculate
 
             this.isUseColor = isUseColor;
             this.isCompareDistance = isCompareDistance;
-            Debug.Log("asd");
             for (int i = 0; i < maxCheck; i++)
             {
                 if (currentCell.CurrentCoordinates != endCell.CurrentCoordinates)

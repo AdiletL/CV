@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gameplay.Damage;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Trap;
+using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -51,10 +52,11 @@ namespace Unit.Trap.Fall
         
         public override void Activate()
         {
-            if(isReady) return;
-            isReady = true;
+            if(!isReady) return;
+            isReady = false;
             
             CheckUnitInRadius();
+            Fall();
         }
 
         private void CheckUnitInRadius()
@@ -63,6 +65,10 @@ namespace Unit.Trap.Fall
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
                 UnitController unit = null;
+                if(colliders[i].TryGetComponent(out FallController fallController)
+                   && fallController == this)
+                    continue;
+                
                 if (colliders[i].TryGetComponent(out UnitController unitController))
                 {
                     unit = unitController;
@@ -77,9 +83,8 @@ namespace Unit.Trap.Fall
         
         public override void Deactivate()
         {
-            if(!isReady) return;
-            isReady = false;
-            
+            if(isReady) return;
+            isReady = true;
         }
 
         public void ApplyDamage()
@@ -109,7 +114,7 @@ namespace Unit.Trap.Fall
 
         private IEnumerator FallUpdateCoroutine()
         {
-            float distance = 50;
+            float distance = 500;
             var startPos = transform.position;
             while ((startPos - transform.position).sqrMagnitude < distance)
             {
@@ -123,8 +128,8 @@ namespace Unit.Trap.Fall
                         targetUnits.RemoveAt(i);
                         continue;
                     }
-                    
-                    targetUnits[i].transform.position += Vector3.down * (Speed * Time.deltaTime);
+
+                    targetUnits[i].MoveDirection(Vector3.down, Speed * Time.deltaTime);
                 }
             }
 

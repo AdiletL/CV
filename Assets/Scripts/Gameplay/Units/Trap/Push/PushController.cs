@@ -14,7 +14,7 @@ namespace Unit.Trap
 
         private float durationAttack;
         private float cooldownAttack;
-        private bool isReady;
+        private bool isReady = true;
         
         public IDamageable Damageable { get; private set; }
 
@@ -52,8 +52,8 @@ namespace Unit.Trap
 
         public override void Activate()
         {
-            if(isReady) return;
-            isReady = true;
+            if(!isReady) return;
+            isReady = false;
             
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
@@ -65,14 +65,18 @@ namespace Unit.Trap
             pushAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, Deactivate));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, Restart));
         }
 
-        public override void Deactivate()
+        private void Restart()
         {
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, AfterDeactivate));
+        }
+        public override void Deactivate()
+        {
+            
         }
 
         private void AfterDeactivate()

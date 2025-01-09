@@ -28,5 +28,10 @@ namespace Unit
         public void Hide() => VisualParent?.SetActive(false);
 
         public abstract void Appear();
+
+        public virtual void MoveDirection(Vector3 direction, float speed)
+        {
+            transform.Translate(direction * (speed * Time.deltaTime));
+        }
     }
 }
