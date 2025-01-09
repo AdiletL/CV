@@ -61,7 +61,7 @@ namespace Unit.Trap.Tower
         {
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
         }
@@ -70,7 +70,7 @@ namespace Unit.Trap.Tower
         {
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
 

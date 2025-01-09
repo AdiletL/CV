@@ -10,7 +10,11 @@ public class CreateDefaultCellToolEditor : Editor
         base.OnInspectorGUI();
         CreateDefaultCellTool defaultCellTool = (CreateDefaultCellTool)target;
 
-        if (GUILayout.Button("Setting game cell"))
+        if (GUILayout.Button("Create Default Cells"))
+        {
+            defaultCellTool.CreateCells();
+        }
+        else if (GUILayout.Button("Setting game cell"))
         {
             defaultCellTool.Setting();
         }

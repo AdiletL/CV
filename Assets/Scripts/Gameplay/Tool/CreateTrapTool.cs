@@ -10,7 +10,7 @@ namespace Gameplay.Tool
     public class CreateTrapTool : ToolEditor
     {
         [Space, Header("Prefab to create")]
-        [SerializeField] private GameObject trapPrefab;
+        [SerializeField] private TrapController trapPrefab;
         
         [Space, Header("Place to destroy")]
         [SerializeField] private Transform parent;

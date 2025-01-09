@@ -58,7 +58,7 @@ namespace Unit.Character
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
             
@@ -73,13 +73,13 @@ namespace Unit.Character
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
 
             if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, rangeSqr))
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
 

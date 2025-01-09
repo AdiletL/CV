@@ -23,7 +23,20 @@ namespace Unit.Character.Player
         
         public GameObject TargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
-        
+
+        private PlayerJumpState CreatePlayerJumpState()
+        {
+            return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
+                .SetAnimationCurve(SO_PlayerMove.JumpCurve)
+                .SetJumpDuration(SO_PlayerMove.JumpDuration)
+                .SetJumpClip(SO_PlayerMove.JumpClip)
+                .SetJumpHeight(SO_PlayerMove.JumpHeight)
+                .SetGameObject(GameObject)
+                .SetCharacterAnimation(CharacterAnimation)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
         
         public override void Initialize()
         {
@@ -45,7 +58,7 @@ namespace Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            CheckAttack();
+            //CheckAttack();
             CheckMove();
             CheckJump();
         }
@@ -56,7 +69,15 @@ namespace Unit.Character.Player
             TargetForMove = null;
             this.StateMachine.OnExitCategory -= OnExitCategory;
         }
-
+        
+        private void OnExitCategory(Machine.IState state)
+        {
+            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            {
+                PlayAnimation();
+                isCheckJump = true;
+            }
+        }
         
         public void SetTarget(GameObject target)
         {
@@ -78,9 +99,7 @@ namespace Unit.Character.Player
             }
             else
             {
-                this.StateMachine.GetState<PlayerSwitchMoveState>().SetTarget(TargetForMove);
-                this.StateMachine.SetStates(typeof(PlayerSwitchMoveState));
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, typeof(PlayerSwitchMoveState));
             }
         }
         
@@ -111,15 +130,6 @@ namespace Unit.Character.Player
             }
         }
         
-        private void OnExitCategory(Machine.IState state)
-        {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
-            {
-                PlayAnimation();
-                isCheckJump = true;
-            }
-        }
-        
 
         private void CheckJump()
         {
@@ -132,17 +142,7 @@ namespace Unit.Character.Player
         {
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
             {
-                var playerJumpState = (PlayerJumpState)new PlayerJumpStateBuilder()
-                    .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
-                    .SetAnimationCurve(SO_PlayerMove.JumpCurve)
-                    .SetJumpDuration(SO_PlayerMove.JumpDuration)
-                    .SetJumpClip(SO_PlayerMove.JumpClip)
-                    .SetJumpHeight(SO_PlayerMove.JumpHeight)
-                    .SetGameObject(GameObject)
-                    .SetCharacterAnimation(CharacterAnimation)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
-                        
+                var playerJumpState = CreatePlayerJumpState();
                 playerJumpState.Initialize();
                 this.StateMachine.AddStates(playerJumpState);
             }

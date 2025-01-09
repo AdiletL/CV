@@ -59,7 +59,7 @@ namespace Unit.Character
                         isJumping = false;
                         timer = 0f;
                         CharacterAnimation.SetBlock(false);
-                        this.StateMachine.ExitCategory(Category);
+                        this.StateMachine.ExitCategory(Category, null);
                     }
                 }
                 else

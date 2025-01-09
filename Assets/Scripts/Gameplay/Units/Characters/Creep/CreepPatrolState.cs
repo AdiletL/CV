@@ -60,7 +60,7 @@ namespace Unit.Character.Creep
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
             
@@ -73,7 +73,7 @@ namespace Unit.Character.Creep
             base.Update();
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
 
@@ -122,7 +122,7 @@ namespace Unit.Character.Creep
         {
             var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, EnemyLayer);
             if (enemyGameObject)
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
         }
     }
 

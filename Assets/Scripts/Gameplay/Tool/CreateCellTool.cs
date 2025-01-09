@@ -9,7 +9,7 @@ namespace Gameplay.Tool
     public class CreateCellTool : ToolEditor
     {
         [Space, Header("Prefab to create")]
-        [SerializeField] private GameObject cellPrefab;
+        [SerializeField] private CellController cellPrefab;
         
         [Space, Header("Place to spawn")]
         [SerializeField] private Transform parent;

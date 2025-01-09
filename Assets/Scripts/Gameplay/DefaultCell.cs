@@ -20,6 +20,7 @@ namespace Gameplay
             if (colliders.Length > 0)
             {
                 colliders[0].transform.GetComponent<CellController>().SetCoordinates(Coordinates);
+                colliders[0].transform.position = new Vector3(transform.position.x, colliders[0].transform.position.y, transform.position.z);
             }
 
             MarkDirty();

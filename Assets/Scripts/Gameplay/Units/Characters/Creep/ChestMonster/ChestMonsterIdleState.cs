@@ -33,8 +33,7 @@
             if(chestMonsterSwitchMoveState == null 
                && !chestMonsterSwitchMoveState.IsCanMovement()) return;
             
-            this.StateMachine.ExitCategory(Category);
-            this.StateMachine.SetStates(typeof(ChestMonsterSwitchMoveState));
+            this.StateMachine.ExitCategory(Category, typeof(ChestMonsterSwitchMoveState));
         }
     }
 

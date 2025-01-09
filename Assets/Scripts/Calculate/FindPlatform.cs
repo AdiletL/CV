@@ -35,15 +35,13 @@ namespace Calculate
             {
                 return hits[0].transform.GetComponent<CellController>();
             }
-            else
-            {
-                if (!isUseOverlapSphere) return null;
-                
-                int colliderCount = Physics.OverlapSphereNonAlloc(start, 1, colliders, Layers.CELL_LAYER);
-                
-                if(colliderCount > 0)
-                    return colliders[0].transform.GetComponent<CellController>();
-            }
+
+            if (!isUseOverlapSphere) return null;
+            
+            int colliderCount = Physics.OverlapSphereNonAlloc(start, .2f, colliders, Layers.CELL_LAYER);
+            
+            if(colliderCount > 0)
+                return colliders[0].transform.GetComponent<CellController>();
 
             return null;
         }

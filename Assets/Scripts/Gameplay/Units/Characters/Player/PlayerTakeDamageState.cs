@@ -5,7 +5,7 @@
         public override void Enter()
         {
             base.Enter();
-            this.StateMachine.ExitCategory(Category);
+            this.StateMachine.ExitCategory(Category, null);
         }
     }
     

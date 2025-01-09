@@ -31,8 +31,7 @@ namespace Unit.Character.Player
         {
             base.TakeDamage(damageable);
             
-            playerController.StateMachine.ExitCategory(StateCategory.action);
-            playerController.StateMachine.SetStates(typeof(PlayerTakeDamageState));
+            playerController.StateMachine.ExitCategory(StateCategory.action, typeof(PlayerTakeDamageState));
             //CreepController.StateMachine.ExitOtherCategories(StateCategory.action);
         }
     }

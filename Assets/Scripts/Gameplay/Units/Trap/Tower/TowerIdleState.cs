@@ -44,8 +44,7 @@ namespace Unit.Trap.Tower
                 this.StateMachine.AddStates(attackState);
             }
             
-            this.StateMachine.ExitCategory(Category);
-            this.StateMachine.SetStates(typeof(TowerAttackState));
+            this.StateMachine.ExitCategory(Category, typeof(TowerAttackState));
         }
         
     }

@@ -11,17 +11,24 @@ namespace Unit.Character.Player
     public class PlayerRunState : CharacterRunState
     {
         private PlayerSwitchAttackState playerSwitchAttackState;
-        private Rotation rotation;
         private PathFinding pathFinding;
+        private Rotation rotation;
 
         private GameObject finalTarget;
-        private Transform currentTarget;
+        private GameObject currentTarget;
+
         private Vector3 finalTargetPosition;
         private Vector3 currentTargetPosition;
         private Vector3 direction;
+        
+        private Vector2Int finalTargetCoordinates;
+        private Vector2Int currentTargetCoordinates;
+        private Vector2Int previousTargetCoordinates;
 
         private readonly float cooldownCheckEnemy = 0.1f;
+        private readonly float cooldownCheckTarget = .2f;
         private float countCooldownCheckEnemy;
+        private float countCooldownCheckTarget;
 
         private bool isRotate;
         private bool isCheckEnemy;
@@ -33,7 +40,20 @@ namespace Unit.Character.Player
         public Transform Center { get; set; }
         public CharacterController CharacterController { get; set; }
         public float RotationSpeed { get; set; }
-        
+
+        private PlayerJumpState CreatePlayerJumpState()
+        {
+            return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
+                .SetAnimationCurve(SO_PlayerMove.JumpCurve)
+                .SetJumpDuration(SO_PlayerMove.JumpDuration)
+                .SetJumpClip(SO_PlayerMove.JumpClip)
+                .SetJumpHeight(SO_PlayerMove.JumpHeight)
+                .SetGameObject(GameObject)
+                .SetCharacterAnimation(CharacterAnimation)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
 
         public override void Initialize()
         {
@@ -60,16 +80,16 @@ namespace Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            
             if (!currentTarget)
                 FindNextPoint();
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category);
+                this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-
+            
+            CheckCurrentTarget();
             CheckFinalTargetPosition();
             Move();
         }   
@@ -87,44 +107,103 @@ namespace Unit.Character.Player
             this.StateMachine.OnExitCategory -= OnExitCategory;
         }
         
+        private void OnExitCategory(Machine.IState state)
+        {
+            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            {
+                PlayAnimation();
+                isCheckEnemy = true;
+                isCheckJump = true;
+            }
+        }
+        
         public void SetTarget(GameObject target)
         {
             currentTarget = null;
             finalTarget = target;
             finalTargetPosition = target.transform.position;
+            finalTargetCoordinates = target.GetComponent<CellController>().CurrentCoordinates;
             pathFinding.SetStartPosition(GameObject.transform.position);
             pathFinding.SetTargetPosition(target.transform.position);
             ResetColorOnPath();
         }
         
-        private void ResetColorOnPath()
+        private void ResetColorOnPath(bool isTarget = true)
         {
+            CellController cellController;
             for (int i = pathToPoint.Count - 1; i >= 0; i--)
-                pathToPoint.Dequeue()?.GetComponent<UnitRenderer>()?.ResetColor();
+            {
+                cellController = pathToPoint.Dequeue();
+                if (cellController && cellController.TryGetComponent(out UnitRenderer unitRenderer))
+                {
+                    if(!isTarget && cellController.CurrentCoordinates == finalTargetCoordinates)
+                        continue;
+                    
+                    unitRenderer?.ResetColor();
+                }
+            }
         }
 
-        private void FindPathToPoint()
+        private void FindNewPathToPoint()
         {
-            pathToPoint = pathFinding.GetPath(true);
+            ResetColorOnPath(false);
+            pathToPoint.Clear();
+            pathFinding.SetStartPosition(GameObject.transform.position);
+            FindNextPoint();
         }
+
         private void FindNextPoint()
         {
             if(pathToPoint.Count == 0)
-                FindPathToPoint();
-            
+                pathToPoint = pathFinding.GetPath(true);
+                
             if(pathToPoint.Count == 0) return;
             
-            currentTarget = pathToPoint.Peek().transform;
-            rotation.SetTarget(currentTarget);
+            currentTarget = pathToPoint.Peek()?.gameObject;
+            rotation.SetTarget(currentTarget.transform);
+            currentTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
         }
+
+        private void CheckCurrentTarget()
+        {
+            countCooldownCheckTarget += Time.deltaTime;
+            if (countCooldownCheckTarget < cooldownCheckTarget) return;
+            countCooldownCheckTarget = 0;
+            
+            var hitInCell = Calculate.FindPlatform.GetPlatform(GameObject.transform.position, Vector3.down);
+            
+            if(!hitInCell || previousTargetCoordinates == Vector2Int.zero) return;
+            
+            if(currentTargetCoordinates == hitInCell.CurrentCoordinates || previousTargetCoordinates == hitInCell.CurrentCoordinates)
+                return;
+
+            FindNewPathToPoint();
+        }
+        private void CheckFinalTargetPosition()
+        {
+            if (!Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition))
+            {
+                pathToPoint.Clear();
+                FindNextPoint();
+            }
+        }
+        
+        private void CheckFinishedToFinalTarget()
+        {
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, finalTarget.transform.position)
+                || pathToPoint.Count == 0)
+                this.StateMachine.ExitCategory(Category, null);
+        }
+
         
         public override void Move()
         {
-            currentTargetPosition = new Vector3(currentTarget.position.x, GameObject.transform.position.y, currentTarget.position.z);
+            currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
             
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
                 pathToPoint.Peek()?.GetComponent<UnitRenderer>().ResetColor();
+                previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
                 currentTarget = null; 
                 pathToPoint.Dequeue();
 
@@ -142,21 +221,7 @@ namespace Unit.Character.Player
             }
         }
 
-        private void CheckFinalTargetPosition()
-        {
-            if (!Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition))
-            {
-                pathToPoint.Clear();
-                FindNextPoint();
-            }
-        }
-        private void CheckFinishedToFinalTarget()
-        {
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, finalTarget.transform.position)
-                || pathToPoint.Count == 0)
-                this.StateMachine.ExitCategory(Category);
-        }
-        
+ 
         private void CheckEnemy()
         {
             if(!isCheckEnemy) return;
@@ -169,20 +234,9 @@ namespace Unit.Character.Player
                     foreach (var VARIABLE in pathToPoint)
                         VARIABLE.SetColor(Color.white);
                     
-                    this.StateMachine.SetStates(typeof(PlayerSwitchAttackState));
-                    this.StateMachine.ExitCategory(Category);
+                    this.StateMachine.ExitCategory(Category, typeof(PlayerSwitchAttackState));
                 }
                 countCooldownCheckEnemy = 0;
-            }
-        }
-
-        private void OnExitCategory(Machine.IState state)
-        {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
-            {
-                PlayAnimation();
-                isCheckEnemy = true;
-                isCheckJump = true;
             }
         }
 
@@ -197,17 +251,7 @@ namespace Unit.Character.Player
         {
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
             {
-                var playerJumpState = (PlayerJumpState)new PlayerJumpStateBuilder()
-                    .SetMaxJumpCount(SO_PlayerMove.MaxJumpCount)
-                    .SetAnimationCurve(SO_PlayerMove.JumpCurve)
-                    .SetJumpDuration(SO_PlayerMove.JumpDuration)
-                    .SetJumpClip(SO_PlayerMove.JumpClip)
-                    .SetJumpHeight(SO_PlayerMove.JumpHeight)
-                    .SetGameObject(GameObject)
-                    .SetCharacterAnimation(CharacterAnimation)
-                    .SetStateMachine(this.StateMachine)
-                    .Build();
-                        
+                var playerJumpState = CreatePlayerJumpState();           
                 playerJumpState.Initialize();
                 this.StateMachine.AddStates(playerJumpState);
             }

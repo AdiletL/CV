@@ -35,18 +35,17 @@ namespace Unit.Character.Player
             base.Initialize();
             so_PlayerMove = (SO_PlayerMove)SO_CharacterMove;
         }
-        
+
         protected override void DestermineState()
         {
             //TODO: Select type move
-
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
                 var newState = CreateRunState();
                 newState.Initialize();
                 this.StateMachine.AddStates(newState);
             }
-
+            
             if (!this.StateMachine.IsActivateType(typeof(PlayerRunState)))
             {
                 var runState = this.StateMachine.GetState<PlayerRunState>();

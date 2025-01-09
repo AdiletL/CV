@@ -8,7 +8,7 @@ namespace Gameplay.Tool
     public class CreateBlockTool : ToolEditor
     {
         [Space, Header("Prefab to create")]
-        [SerializeField] private GameObject blockPrefab;
+        [SerializeField] private BlockGameObject blockPrefab;
         
         [Space, Header("Place to destroy")]
         [SerializeField] private Transform parent;

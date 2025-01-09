@@ -35,8 +35,7 @@ namespace Unit.Character.Creep
             if(hedgehogSwitchMoveState == null 
                && !hedgehogSwitchMoveState.IsCanMovement()) return;
             
-            this.StateMachine.ExitCategory(Category);
-            this.StateMachine.SetStates(typeof(HedgehogSwitchMoveState));
+            this.StateMachine.ExitCategory(Category, typeof(HedgehogSwitchMoveState));
         }
     }
 

@@ -15,6 +15,8 @@ public class StateMachine
     
     // Cache the default idle state
     private IState defaultIdleState;
+    private IState mostDerivedState;
+    private IState targetState;
 
     public bool IsStateNotNull(Type state)
     {
@@ -119,7 +121,7 @@ public class StateMachine
 // Метод поиска самого глубокого состояния в иерархии для данного базового типа
     private IState FindMostDerivedState(Type baseType)
     {
-        IState mostDerivedState = null;
+        mostDerivedState = null;
 
         foreach (var state in states.Values)
         {
@@ -139,9 +141,12 @@ public class StateMachine
     {
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
+        targetState = FindMostDerivedState(installationState);
 
         foreach (var category in cachedCategories)
         {
+            if(category == targetState.Category) continue;
+            
             activeStates[category].Exit();
             activeStates.Remove(category);
         }
@@ -152,7 +157,7 @@ public class StateMachine
             SetDefaultState();
     }
 
-    public void ExitCategory(StateCategory excludedCategory)
+    public void ExitCategory(StateCategory excludedCategory, Type installationState)
     {
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
@@ -160,6 +165,17 @@ public class StateMachine
             activeStates.Remove(excludedCategory);
             OnExitCategory?.Invoke(state);
         }
+
+        if (installationState != null)
+        {
+            cachedCategories.Clear();
+            cachedCategories.AddRange(activeStates.Keys);
+
+            SetStates(installationState);
+        }
+
+        if (activeStates.Count == 0)
+            SetDefaultState();
     }
 
     private void SetDefaultState()
@@ -172,6 +188,11 @@ public class StateMachine
 
     public void Update()
     {
+        if (activeStates.Count == 0)
+        {
+            Debug.Log("activeStates.Count == 0");
+            return;
+        }
         updateStates.Clear();
         updateStates.AddRange(activeStates.Values);
         
@@ -183,9 +204,6 @@ public class StateMachine
     
     public void LateUpdate()
     {
-        if (activeStates.Count == 0)
-            SetDefaultState();
-        
         updateStates.Clear();
         updateStates.AddRange(activeStates.Values);
 
