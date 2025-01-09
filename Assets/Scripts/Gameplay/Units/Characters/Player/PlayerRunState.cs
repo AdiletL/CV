@@ -54,6 +54,11 @@ namespace Unit.Character.Player
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
+        
+        private bool isFinalPositionCorrect()
+        {
+            return Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition);
+        }
 
         public override void Initialize()
         {
@@ -89,8 +94,7 @@ namespace Unit.Character.Player
                 return;
             }
             
-            CheckCurrentTarget();
-            CheckFinalTargetPosition();
+            CheckPath();
             Move();
         }   
 
@@ -144,18 +148,20 @@ namespace Unit.Character.Player
             }
         }
 
-        private void FindNewPathToPoint()
+        private void FindNewPathToPoint(bool isCompareDistance = false)
         {
             ResetColorOnPath(false);
             pathToPoint.Clear();
+            finalTargetPosition = finalTarget.transform.position;
             pathFinding.SetStartPosition(GameObject.transform.position);
-            FindNextPoint();
+            pathFinding.SetTargetPosition(finalTargetPosition);
+            FindNextPoint(isCompareDistance);
         }
 
-        private void FindNextPoint()
+        private void FindNextPoint(bool isCompareDistance = false)
         {
             if(pathToPoint.Count == 0)
-                pathToPoint = pathFinding.GetPath(true);
+                pathToPoint = pathFinding.GetPath(true, isCompareDistance);
                 
             if(pathToPoint.Count == 0) return;
             
@@ -164,13 +170,19 @@ namespace Unit.Character.Player
             currentTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
         }
 
-        private void CheckCurrentTarget()
+        private void CheckPath()
         {
             countCooldownCheckTarget += Time.deltaTime;
             if (countCooldownCheckTarget < cooldownCheckTarget) return;
             countCooldownCheckTarget = 0;
+
+            if (!isFinalPositionCorrect())
+            {
+                FindNewPathToPoint(true);
+                return;
+            }
             
-            var hitInCell = Calculate.FindPlatform.GetPlatform(GameObject.transform.position, Vector3.down);
+            var hitInCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
             
             if(!hitInCell || previousTargetCoordinates == Vector2Int.zero) return;
             
@@ -179,14 +191,7 @@ namespace Unit.Character.Player
 
             FindNewPathToPoint();
         }
-        private void CheckFinalTargetPosition()
-        {
-            if (!Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition))
-            {
-                pathToPoint.Clear();
-                FindNextPoint();
-            }
-        }
+        
         
         private void CheckFinishedToFinalTarget()
         {
@@ -198,11 +203,13 @@ namespace Unit.Character.Player
         
         public override void Move()
         {
+            if(pathToPoint.Count == 0) return;
+            
             currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
             
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
-                pathToPoint.Peek()?.GetComponent<UnitRenderer>().ResetColor();
+                pathToPoint.Peek()?.GetComponent<UnitRenderer>()?.ResetColor();
                 previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
                 currentTarget = null; 
                 pathToPoint.Dequeue();

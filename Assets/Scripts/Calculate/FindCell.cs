@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Calculate
 {
-    public static class FindPlatform
+    public static class FindCell
     {
         private static readonly Vector3 StartRayCheckOffset = Vector3.up;
         private static readonly RaycastHit[] hits = new RaycastHit[1];
@@ -27,7 +27,7 @@ namespace Calculate
             return Vector2Int.zero;
         }
 
-        public static CellController GetPlatform(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
+        public static CellController GetCell(Vector3 start, Vector3 rayDirection, bool isUseOverlapSphere = true)
         {
             int hitCount = Physics.RaycastNonAlloc(start + StartRayCheckOffset, rayDirection, hits, 100, Layers.CELL_LAYER);
 

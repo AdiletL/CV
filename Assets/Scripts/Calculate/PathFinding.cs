@@ -18,6 +18,7 @@ namespace Calculate
         private CellController lastCorrectCell;
         private CellController endCell;
         private CellController correctCell;
+        private CellController bestCell;
         
         private RaycastHit hitResult;
 
@@ -38,6 +39,7 @@ namespace Calculate
         private Dictionary<CellController, CellData> cellData = new(); // Временные данные платформ
 
         private bool isUseColor;
+        private bool isCompareDistance;
 
         public void SetStartPosition(Vector3 position)
         {
@@ -48,9 +50,10 @@ namespace Calculate
             EndPosition = target;
         }
 
-        private void SetCurrentPlatform()
+        private void SetCurrentAndEndCells()
         {
-            startCell = FindPlatform.GetPlatform(StartPosition + startRayOnPlatform, Vector3.down);
+            startCell = FindCell.GetCell(StartPosition + startRayOnPlatform, Vector3.down);
+            endCell = FindCell.GetCell(EndPosition + startRayOnPlatform, Vector3.down);
             currentCell = startCell;
         }
 
@@ -64,19 +67,17 @@ namespace Calculate
             cellData.Clear(); // Очищаем временные данные после завершения
         }
 
-        public Queue<CellController> GetPath(bool isUseColor = false)
+        public Queue<CellController> GetPath(bool isUseColor = false, bool isCompareDistance = false)
         {
             weightCell = 0;
-            SetCurrentPlatform();
+            SetCurrentAndEndCells();
             ClearData();
             
-            if (!currentCell) return pathToPoint;
-
-            endCell = FindPlatform.GetPlatform(EndPosition + startRayOnPlatform, Vector3.down);
-            if (!endCell) return pathToPoint;
+            if (!currentCell || !endCell) return pathToPoint;
 
             this.isUseColor = isUseColor;
-
+            this.isCompareDistance = isCompareDistance;
+            Debug.Log("asd");
             for (int i = 0; i < maxCheck; i++)
             {
                 if (currentCell.CurrentCoordinates != endCell.CurrentCoordinates)
@@ -193,7 +194,7 @@ namespace Calculate
 
         private List<CellController> GetNearPlatforms()
         {
-            var platforms = new List<CellController>(4);
+            var cells = new List<CellController>(4);
             var origin = currentCell.transform.position + startRayPositionPlatform;
             currentCellScale = currentCell.transform.localScale;
             
@@ -202,13 +203,13 @@ namespace Calculate
                 rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + .1f;
                 Debug.DrawRay(origin, direction * rayLenght, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, rayLenght, Layers.CELL_LAYER) &&
-                    hitResult.transform.TryGetComponent(out CellController platform))
+                    hitResult.transform.TryGetComponent(out CellController cell))
                 {
-                    platforms.Add(platform);
+                    cells.Add(cell);
                 }
             }
 
-            return platforms;
+            return cells;
         }
 
         private List<CellController> CheckAndAddPlatforms(ref List<CellController> platforms)
@@ -239,24 +240,27 @@ namespace Calculate
         {
             if (nearAccessiblePlatforms.Count == 0) return currentCell;
 
-            CellController bestCell = nearAccessiblePlatforms[0];
+            bestCell = nearAccessiblePlatforms[0];
             int bestDistance = CalculateDistance(bestCell, endCoordinates);
 
-            foreach (var platform in nearAccessiblePlatforms)
+            if(isCompareDistance)
+                bestDistance = NormalDistance(bestCell.transform.position, endCell.transform.position);
+
+            foreach (var cell in nearAccessiblePlatforms)
             {
-                int distance = CalculateDistance(platform, endCoordinates);
-                if (distance < bestDistance)
+                int distance = CalculateDistance(cell, endCoordinates);
+                if (!isCompareDistance && distance < bestDistance)
                 {
-                    bestCell = platform;
+                    bestCell = cell;
                     bestDistance = distance;
                 }
                 else if (distance == bestDistance)
                 {
                     var firstDistance = NormalDistance(bestCell.transform.position, endCell.transform.position);
-                    var secondDistance = NormalDistance(platform.transform.position, endCell.transform.position);
+                    var secondDistance = NormalDistance(cell.transform.position, endCell.transform.position);
                     if (secondDistance < firstDistance)
                     {
-                        bestCell = platform;
+                        bestCell = cell;
                         bestDistance = distance;
                     }
                 }

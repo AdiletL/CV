@@ -6,7 +6,7 @@ namespace Gameplay
 {
     public class DefaultCell : MonoBehaviour
     {
-        public Vector2Int Coordinates { get; private set; }
+        [field: SerializeField] public Vector2Int Coordinates { get; private set; }
         
         public void SetCoordinates(int x, int y)
         {
