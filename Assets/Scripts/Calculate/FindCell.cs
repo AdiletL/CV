@@ -38,7 +38,7 @@ namespace Calculate
 
             if (!isUseOverlapSphere) return null;
             
-            int colliderCount = Physics.OverlapSphereNonAlloc(start, .2f, colliders, Layers.CELL_LAYER);
+            int colliderCount = Physics.OverlapSphereNonAlloc(start, .5f, colliders, Layers.CELL_LAYER);
             
             if(colliderCount > 0)
                 return colliders[0].transform.GetComponent<CellController>();

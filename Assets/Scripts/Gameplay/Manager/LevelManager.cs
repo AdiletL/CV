@@ -13,7 +13,7 @@ namespace Gameplay.Manager
         private DiContainer diContainer;
         private GameUnits gameUnits;
         
-        [SerializeField] private SO_LevelContainer so_LevelContainer;
+        [SerializeField] protected SO_LevelContainer so_LevelContainer;
 
         private LevelController levelController;
         private PlayerController playerController;
@@ -28,12 +28,12 @@ namespace Gameplay.Manager
             this.gameUnits = gameUnits;
         }
         
-        private SO_Level GetLevel(int levelNumber)
+        protected virtual SO_Level GetLevel(int levelNumber)
         {
-            if (so_LevelContainer.levels.Length < levelNumber)
+            if (so_LevelContainer.Levels.Length < levelNumber)
                 throw new IndexOutOfRangeException();
             
-            return so_LevelContainer.levels[levelNumber];
+            return so_LevelContainer.Levels[levelNumber];
         }
 
         private GameFieldController GetGameField(int levelIndex, int gameFieldIndex)

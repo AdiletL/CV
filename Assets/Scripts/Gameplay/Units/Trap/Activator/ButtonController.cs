@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unit.Cell;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Unit.Trap.Activator
 {
@@ -11,9 +11,13 @@ namespace Unit.Trap.Activator
     {
         private ButtonAnimation buttonAnimation;
         private SphereCollider sphereCollider;
+        
+        private CellController currentCell;
 
         private Coroutine checkTargetCoroutine, startTimerCoroutine;
         private Coroutine cellMoveDirectionCoroutine;
+
+        private Vector3 baseCellPosition;
 
         private float cooldownCheck = 1f, countCooldownCheck;
         private float radius;
@@ -27,7 +31,7 @@ namespace Unit.Trap.Activator
 
             buttonAnimation = components.GetComponentFromArray<ButtonAnimation>();
             radius = .2f;
-            speed = 100;
+            speed = 20;
         }
 
         public override void Appear()
@@ -41,15 +45,19 @@ namespace Unit.Trap.Activator
             base.Activate();
             isReady = false;
             buttonAnimation.ChangeAnimationWithDuration(activateClip);
-            
-            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
-            if (colliders.Length > 0)
+
+            if (!currentCell)
             {
-                var cell = colliders[0].GetComponent<CellController>();
-                if(cellMoveDirectionCoroutine != null) StopCoroutine(cellMoveDirectionCoroutine);
-                cellMoveDirectionCoroutine = StartCoroutine(CellMoveDirectionCoroutine(cell, Vector3.down));
+                var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
+                if (colliders.Length > 0)
+                {
+                    currentCell = colliders[0].GetComponent<CellController>();
+                    baseCellPosition = currentCell.transform.position;
+                }
             }
 
+            if(cellMoveDirectionCoroutine != null) StopCoroutine(cellMoveDirectionCoroutine);
+            cellMoveDirectionCoroutine = StartCoroutine(CellMoveDirectionCoroutine(currentCell, Vector3.down));
             if(checkTargetCoroutine != null)
                 StopCoroutine(checkTargetCoroutine);
             
@@ -65,16 +73,15 @@ namespace Unit.Trap.Activator
                 StopCoroutine(checkTargetCoroutine);
             isReady = true;
             buttonAnimation.ChangeAnimationWithDuration(deactivateClip);
-            
-            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
-            if (colliders.Length > 0)
-            {
-                var cell = colliders[0].GetComponent<CellController>();
-                if(cellMoveDirectionCoroutine != null) StopCoroutine(cellMoveDirectionCoroutine);
-                cellMoveDirectionCoroutine = StartCoroutine(CellMoveDirectionCoroutine(cell, Vector3.up));
-            }
+
+            ResetTargetPosition();
         }
 
+        private void ResetTargetPosition()
+        {
+            currentCell.transform.position = baseCellPosition;
+        }
+        
         private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
         {
             yield return new WaitForSeconds(waitTime);
@@ -95,18 +102,17 @@ namespace Unit.Trap.Activator
 
         private IEnumerator CellMoveDirectionCoroutine(CellController cell, Vector3 direction)
         {
-            float maxDistance = .2f; // Сдвиг вниз на 2 единицы
-            Vector3 startPos = cell.transform.position; // Начальная позиция
-            Vector3 targetPos = startPos + direction * maxDistance; // Конечная позиция
-            var cellTransform = cell.transform; // Кэширование transform
-            float speedPerFrame;
+            float maxDistance = .15f;
+            Vector3 startPos = cell.transform.position;
+            Vector3 targetPos = startPos + direction * maxDistance;
+            Vector3 currentPos = cell.transform.position;
+            var cellTransform = cell.transform;
 
             while ((cellTransform.position - targetPos).sqrMagnitude > 0.01f) // Проверка, пока не достигнута цель
             {
-                yield return null; // Ожидание следующего кадра
-        
-                speedPerFrame = Time.deltaTime * speed; // Расстояние для перемещения за кадр
-                cell.MoveDirection(direction, speedPerFrame);
+                yield return null; 
+                currentPos = Vector3.MoveTowards(currentPos, targetPos, speed * Time.deltaTime);
+                cell.ChangePosition(currentPos);
             }
         }
 

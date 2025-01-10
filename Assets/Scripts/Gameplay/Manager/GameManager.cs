@@ -25,11 +25,10 @@ namespace Gameplay.Manager
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Bootstrap") return;
             
-            Debug.Log("Current: " + SceneManager.GetActiveScene().name);
             Initialize();
             Invoke(nameof(StartGame), .01f);
             // Отписываемся от события, чтобы избежать многократных вызовов

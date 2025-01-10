@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,12 +7,31 @@ public class Bootstrap : MonoBehaviour
 {
     [SerializeField] private GameInstaller gameInstaller;
     [SerializeField] private Gameplay.Manager.GameManager gameManager;
-    [SerializeField] private string sceneName;
+    [SerializeField] private Laboratory.Manager.LaboratoryManager laboratoryManager;
+
+    private GameInstaller currentGameInstaller;
     
-    private void Awake()
+    public void Initialize()
     {
-        var installer = Instantiate(gameInstaller).GetComponent<GameInstaller>();
-        installer.InstantiatePrefab(gameManager.gameObject).GetComponent<Gameplay.Manager.GameManager>();
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        currentGameInstaller = Instantiate(gameInstaller).GetComponent<GameInstaller>();
+    }
+
+    public void TransitionToScene(string sceneName)
+    {
+        CreateManager(sceneName);
+        Scenes.TransitionToScene(sceneName);
+    }
+
+    private void CreateManager(string sceneName)
+    {
+        switch (sceneName)
+        {
+            case Scenes.GAMEPLAY_NAME:
+                currentGameInstaller.InstantiatePrefab(gameManager.gameObject).GetComponent<Gameplay.Manager.GameManager>();
+                break;
+            case Scenes.LABORATORY_NAME:
+                currentGameInstaller.InstantiatePrefab(laboratoryManager.gameObject).GetComponent<Laboratory.Manager.LaboratoryManager>();
+                break;
+        }
     }
 }

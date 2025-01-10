@@ -58,7 +58,7 @@ namespace Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            //CheckAttack();
+            CheckAttack();
             CheckMove();
             CheckJump();
         }
@@ -76,6 +76,7 @@ namespace Unit.Character.Player
             {
                 PlayAnimation();
                 isCheckJump = true;
+                isCheckAttack = true;
             }
         }
         

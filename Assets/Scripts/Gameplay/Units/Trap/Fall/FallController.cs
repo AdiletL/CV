@@ -121,9 +121,7 @@ namespace Unit.Trap.Fall
                 yield return null;
                 for (int i = targetUnits.Count - 1; i >= 0; i--)
                 {
-                    if (!targetUnits[i].gameObject.activeSelf
-                        || targetUnits[i].TryGetComponent(out IHealth health)
-                        && !health.IsLive)
+                    if (!targetUnits[i].gameObject.activeSelf)
                     {
                         targetUnits.RemoveAt(i);
                         continue;

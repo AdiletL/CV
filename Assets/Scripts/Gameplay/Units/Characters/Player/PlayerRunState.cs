@@ -33,6 +33,7 @@ namespace Unit.Character.Player
         private bool isRotate;
         private bool isCheckEnemy;
         private bool isCheckJump;
+        private bool isCheckPath;
 
         private Queue<CellController> pathToPoint = new();
 
@@ -78,6 +79,7 @@ namespace Unit.Character.Player
             
             isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
             isCheckEnemy = isCheckJump;
+            isCheckPath = isCheckJump;
             
             this.StateMachine.OnExitCategory += OnExitCategory;
         }
@@ -118,6 +120,7 @@ namespace Unit.Character.Player
                 PlayAnimation();
                 isCheckEnemy = true;
                 isCheckJump = true;
+                isCheckPath = true;
             }
         }
         
@@ -125,14 +128,11 @@ namespace Unit.Character.Player
         {
             currentTarget = null;
             finalTarget = target;
-            finalTargetPosition = target.transform.position;
             finalTargetCoordinates = target.GetComponent<CellController>().CurrentCoordinates;
-            pathFinding.SetStartPosition(GameObject.transform.position);
-            pathFinding.SetTargetPosition(target.transform.position);
-            ResetColorOnPath();
+            FindNewPathToPoint(false);
         }
         
-        private void ResetColorOnPath(bool isTarget = true)
+        private void ResetColorOnPath(bool isTargetResetColor = true)
         {
             CellController cellController;
             for (int i = pathToPoint.Count - 1; i >= 0; i--)
@@ -140,7 +140,7 @@ namespace Unit.Character.Player
                 cellController = pathToPoint.Dequeue();
                 if (cellController && cellController.TryGetComponent(out UnitRenderer unitRenderer))
                 {
-                    if(!isTarget && cellController.CurrentCoordinates == finalTargetCoordinates)
+                    if(!isTargetResetColor && cellController.CurrentCoordinates == finalTargetCoordinates)
                         continue;
                     
                     unitRenderer?.ResetColor();
@@ -148,9 +148,9 @@ namespace Unit.Character.Player
             }
         }
 
-        private void FindNewPathToPoint(bool isCompareDistance = false)
+        private void FindNewPathToPoint(bool isTargetResetColor = true, bool isCompareDistance = false)
         {
-            ResetColorOnPath(false);
+            ResetColorOnPath(isTargetResetColor);
             pathToPoint.Clear();
             finalTargetPosition = finalTarget.transform.position;
             pathFinding.SetStartPosition(GameObject.transform.position);
@@ -172,13 +172,15 @@ namespace Unit.Character.Player
 
         private void CheckPath()
         {
+            if(!isCheckPath) return;
+            
             countCooldownCheckTarget += Time.deltaTime;
             if (countCooldownCheckTarget < cooldownCheckTarget) return;
             countCooldownCheckTarget = 0;
 
             if (!isFinalPositionCorrect())
             {
-                FindNewPathToPoint(true);
+                FindNewPathToPoint(false);
                 return;
             }
             
@@ -189,7 +191,7 @@ namespace Unit.Character.Player
             if(currentTargetCoordinates == hitInCell.CurrentCoordinates || previousTargetCoordinates == hitInCell.CurrentCoordinates)
                 return;
 
-            FindNewPathToPoint();
+            FindNewPathToPoint(false);
         }
         
         
@@ -203,10 +205,8 @@ namespace Unit.Character.Player
         
         public override void Move()
         {
-            if(pathToPoint.Count == 0) return;
-            
             currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
-            
+
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
                 pathToPoint.Peek()?.GetComponent<UnitRenderer>()?.ResetColor();
@@ -263,6 +263,7 @@ namespace Unit.Character.Player
                 this.StateMachine.AddStates(playerJumpState);
             }
             this.StateMachine.SetStates(typeof(PlayerJumpState));
+            isCheckPath = false;
             isCheckEnemy = false;
             isCheckJump = false;
         }

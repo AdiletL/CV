@@ -165,7 +165,7 @@ namespace Calculate
             
             foreach (var direction in rayDirectionsPlatform)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + .1f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + 10f;
                 
                 if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, rayLenght, Layers.CELL_LAYER) ||
                     !hitResult.transform.TryGetComponent(out CellController cell) ||
@@ -199,7 +199,7 @@ namespace Calculate
             
             foreach (var direction in rayDirectionsPlatform)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + .1f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + 10f;
                 Debug.DrawRay(origin, direction * rayLenght, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, rayLenght, Layers.CELL_LAYER) &&
                     hitResult.transform.TryGetComponent(out CellController cell))

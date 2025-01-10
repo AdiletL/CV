@@ -17,6 +17,8 @@ public class StateMachine
     private IState defaultIdleState;
     private IState mostDerivedState;
     private IState targetState;
+    
+    public Dictionary<StateCategory, IState> ActiveStates => activeStates;
 
     public bool IsStateNotNull(Type state)
     {
@@ -101,7 +103,7 @@ public class StateMachine
                 var category = state.Category;
 
                 // Если состояние этой категории уже активно, заменяем его новым
-                if (activeStates.TryGetValue(category, out var activeState) && activeState != state)
+                if (activeStates.TryGetValue(category, out var activeState) && activeState.GetType() != state.GetType())
                 {
                     activeState.Exit();
                 }

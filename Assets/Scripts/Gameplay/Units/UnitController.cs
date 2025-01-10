@@ -33,5 +33,10 @@ namespace Unit
         {
             transform.Translate(direction * (speed * Time.deltaTime));
         }
+
+        public virtual void ChangePosition(Vector3 position)
+        {
+            transform.position = position;
+        }
     }
 }

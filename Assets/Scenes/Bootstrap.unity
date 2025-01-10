@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameInstaller: {fileID: 7675124488934118779, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
   gameManager: {fileID: 9219043855927957937, guid: 323f2059c6360b348ae88126a5ab27da, type: 3}
-  sceneName: Gameplay
+  laboratoryManager: {fileID: 1413289591137737379, guid: dbc6e935c7c1aee48a1e5707702822ed, type: 3}
 --- !u!4 &2010510990
 Transform:
   m_ObjectHideFlags: 0

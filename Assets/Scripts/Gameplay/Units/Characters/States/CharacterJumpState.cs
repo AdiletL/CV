@@ -11,9 +11,10 @@ namespace Unit.Character
         protected Gravity gravity;
         
         private Vector3 startPosition;
-        private float timer;
-        private bool isJumping;
         private int countJump;
+        private float timer;
+        private float progress;
+        private bool isJumping;
         
         public GameObject GameObject { get; set; }
         public AnimationCurve Curve { get; set; }
@@ -36,20 +37,20 @@ namespace Unit.Character
             CharacterAnimation.SetBlock(true);
             gravity.ChangeGravity(false);
             countJump = 1;
+            progress = 0;
         }
-
+        
         public override void Update()
         {
-            
+            CheckJump();
         }
         
         public override void LateUpdate()
         {
-            CheckJump();
             if (isJumping)
             {
                 timer += Time.deltaTime;
-                float progress = (timer / JumpDuration);
+                progress = (timer / JumpDuration);
 
                 if (progress >= .5f)
                 {
@@ -86,6 +87,7 @@ namespace Unit.Character
             CharacterAnimation.ChangeAnimationWithDuration(JumpClip, duration: JumpDuration, isForce: true);
             gravity.ChangeGravity(false);
             countJump++;
+            progress = 0;
         }
         public override void Exit()
         {
