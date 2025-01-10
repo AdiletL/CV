@@ -1,5 +1,6 @@
 ﻿using System;
 using ScriptableObjects.Gameplay.Trap.Tower.Dragon;
+using UnityEngine;
 using Zenject;
 
 namespace Unit.Trap.Tower
@@ -9,6 +10,12 @@ namespace Unit.Trap.Tower
         [Inject] private DiContainer diContainer;
         
         protected SO_Dragon so_Dragon;
+
+        [Inject]
+        private void Construct(DiContainer diContainer)
+        {
+            this.diContainer = diContainer;
+        }
 
         protected override void CreateState()
         {
@@ -26,13 +33,6 @@ namespace Unit.Trap.Tower
             
             this.stateMachine.AddStates(idle);
         }
-        
-        public override void Initialize()
-        {
-            base.Initialize();
-            
-            stateMachine.SetStates(typeof(DragonIdleState));
-        }
 
         protected override void InitializeConfig()
         {
@@ -42,7 +42,7 @@ namespace Unit.Trap.Tower
         
         public override void Appear()
         {
-            
+            stateMachine.SetStates(typeof(DragonIdleState));
         }
         
         public override void Activate()

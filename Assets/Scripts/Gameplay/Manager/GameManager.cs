@@ -46,7 +46,8 @@ namespace Gameplay.Manager
         private void InstantiateLevelManager()
         {
             levelManager = diContainer.InstantiatePrefabForComponent<LevelManager>(levelManagerPrefab);
-            diContainer.BindInstance(levelManager).AsSingle();
+            diContainer.Bind<LevelManager>().FromInstance(levelManager).AsSingle();
+            diContainer.Inject(levelManager);
             levelManager.transform.SetParent(transform);
             levelManager.Initialize();
         }
@@ -54,7 +55,8 @@ namespace Gameplay.Manager
         private void InstantiatePoolManager()
         {
             poolManager = diContainer.InstantiatePrefabForComponent<PoolManager>(poolManagerPrefab);
-            diContainer.BindInstance(poolManager).AsSingle();
+            diContainer.Bind<IPoolable>().FromInstance(poolManager).AsSingle();
+            diContainer.Inject(poolManager);
             poolManager.transform.SetParent(transform);
             poolManager.Initialize();
         }

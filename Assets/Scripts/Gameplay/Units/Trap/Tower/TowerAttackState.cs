@@ -24,11 +24,13 @@ namespace Unit.Trap.Tower
         [Inject]
         public void Construct(IPoolable pool)
         {
+            Debug.Log(pool);
             this.pool = pool;
         }
 
         public override void Initialize()
         {
+
             var duration = Calculate.Attack.TotalDurationInSecond(AmountAttack);
             timerFire = duration * .55f;
             cooldown = duration;
