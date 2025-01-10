@@ -58,6 +58,11 @@ namespace Unit.Cell
             unitRenderer.SetColor(color);
         }
 
+        public void ResetColor()
+        {
+            unitRenderer.ResetColor();
+        }
+
         public void SetText(string weight)
         {
             platformText.text = weight;

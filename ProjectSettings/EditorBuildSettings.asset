@@ -15,5 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Laboratory/Laboratory.unity
     guid: 970af68b58309924fb8c970ed4c7116e
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 2090c748ca68d294d8fc7bb9f0a5b5fc, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

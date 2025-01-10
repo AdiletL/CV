@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Gameplay.Factory;
 using Unit.Trap;
 using Unit.Trap.Activator;
@@ -24,8 +25,7 @@ namespace Gameplay.Spawner
 
         public async UniTask Execute()
         {
-            SpawnTraps();
-            await UniTask.WaitForEndOfFrame();
+            await SpawnTraps();
         }
         
         public void SetSpawners(PlatformSpawner platformSpawner)
@@ -34,14 +34,14 @@ namespace Gameplay.Spawner
         }
         
         
-        private void SpawnTraps()
+        private async Task SpawnTraps()
         {
             foreach (var item in traps)
             {
                 var platform = platformSpawner.GetFreePlace();
                 if(!platform) return;
                 
-                var newGameObject = trapFactoryMethod.Create(item.GetType());
+                var newGameObject = await trapFactoryMethod.Create(item.GetType());
                 newGameObject.transform.position = platform.transform.position;
                 var trap = newGameObject.GetComponent<TrapController>();
                 diContainer.Inject(trap);

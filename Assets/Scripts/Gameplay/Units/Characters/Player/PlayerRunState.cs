@@ -89,13 +89,13 @@ namespace Unit.Character.Player
             base.Update();
             if (!currentTarget)
                 FindNextPoint();
-            
+
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-            
+
             CheckPath();
             Move();
         }   

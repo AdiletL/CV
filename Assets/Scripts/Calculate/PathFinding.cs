@@ -152,8 +152,9 @@ namespace Calculate
                 var platform = platformStack.Pop();
                 path.Enqueue(platform);
             }
-
-            // path.Dequeue();
+            
+            path.Peek().ResetColor();
+            path.Dequeue();
         }
 
         private CellController GetCorrectPlatform()

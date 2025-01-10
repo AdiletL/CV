@@ -170,7 +170,7 @@ namespace Unit.Character
             if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
             {
                 if (health.IsLive)
-                    CurrentWeapon.Fire();
+                    CurrentWeapon.FireAsync();
                 else
                     currentTarget = null;
             }

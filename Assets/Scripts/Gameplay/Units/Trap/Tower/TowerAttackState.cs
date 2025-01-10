@@ -1,4 +1,5 @@
-﻿using Gameplay.Weapon.Projectile;
+﻿using System.Threading.Tasks;
+using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
 
@@ -6,6 +7,7 @@ namespace Unit.Trap.Tower
 {
     public class TowerAttackState : UnitBaseAttackState
     {
+        private DiContainer diContainer;
         private IPoolable pool;
         
         protected float durationAttack, countDurationAttack;
@@ -22,9 +24,9 @@ namespace Unit.Trap.Tower
         
 
         [Inject]
-        public void Construct(IPoolable pool)
+        public void Construct(IPoolable pool, DiContainer diContainer)
         {
-            Debug.Log(pool);
+            this.diContainer = diContainer;
             this.pool = pool;
         }
 
@@ -70,9 +72,9 @@ namespace Unit.Trap.Tower
             
         }
 
-        protected virtual void Fire()
+        protected virtual async Task Fire()
         {
-            var newGameObject = this.pool.GetObject<SphereController>();
+            var newGameObject = await this.pool.GetObjectAsync<SphereController>();
             newGameObject.transform.position = PointSpawnProjectile.position;
             newGameObject.transform.rotation = PointSpawnProjectile.rotation;
             var projectile = newGameObject.GetComponent<SphereController>();

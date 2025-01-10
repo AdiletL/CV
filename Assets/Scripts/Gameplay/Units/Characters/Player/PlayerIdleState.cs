@@ -90,7 +90,7 @@ namespace Unit.Character.Player
         private void CheckMove()
         {
             if(!TargetForMove) return;
-            
+
             targetPosition = new Vector3(TargetForMove.transform.position.x, GameObject.transform.position.y, TargetForMove.transform.position.z);
             
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, targetPosition))

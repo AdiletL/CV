@@ -1,4 +1,5 @@
-﻿using Gameplay.Weapon.Projectile;
+﻿using System.Threading.Tasks;
+using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
 
@@ -21,9 +22,9 @@ namespace Gameplay.Weapon
             pointSpawnProjectile = weapon.transform.GetChild(0);
         }
 
-        public override void Fire()
+        public override async Task FireAsync()
         {
-            var newGameObject = this.pool.GetObject<ArrowController>();
+            var newGameObject = await this.pool.GetObjectAsync<ArrowController>();
             newGameObject.transform.position = pointSpawnProjectile.position;
             newGameObject.transform.rotation = pointSpawnProjectile.rotation;
             var arrow = newGameObject.GetComponent<ArrowController>();

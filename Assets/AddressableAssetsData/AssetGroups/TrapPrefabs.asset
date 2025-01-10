@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: TrapPrefabs
+  m_EditorClassIdentifier: 
+  m_GroupName: TrapPrefabs
+  m_GUID: baf03a2f0c46d4848bf0897d1bf0a0a4
+  m_SerializeEntries:
+  - m_GUID: 001e3c9053fd86942823b14cf192edc9
+    m_Address: DragonTower
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06d4f9d2c446b314aba5a49922a39d27
+    m_Address: FallTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38a6441ca31beaf4484d429fe20d1415
+    m_Address: PushTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54632a598d4729842a96cfc7c1f9295b
+    m_Address: AxeTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b657a6c2fcfb694e8759f7ba19aaf3e
+    m_Address: ButtonActivatorTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7e267a72b663af499cc9e950ceeaff2
+    m_Address: HammerTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aea17a65a16a47748aaafbbeb925650d
+    m_Address: ThornTrap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 089150fb234ebe74f8e1580f0723d344, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 935ffee2cdff56b4db2a2bf920e4b283, type: 2}
+    - {fileID: 11400000, guid: dd134db8c9f274f46bafc32114ecdc25, type: 2}

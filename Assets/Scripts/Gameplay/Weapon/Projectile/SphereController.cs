@@ -28,6 +28,7 @@ namespace Gameplay.Weapon.Projectile
 
         public override void Move()
         {
+            if(forwardMovement == null) return;
             forwardMovement.Move();
         }
 

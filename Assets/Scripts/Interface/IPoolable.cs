@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public interface IPoolable
@@ -6,7 +7,7 @@ public interface IPoolable
     Transform poolParent { get; }
     List<GameObject> PoolObjects { get; }
     
-    public GameObject GetObject<T>();
+    public Task<GameObject> GetObjectAsync<T>();
     
     public void ReturnToPool(GameObject obj);
 }

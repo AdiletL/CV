@@ -20,7 +20,7 @@ namespace Gameplay.Weapon.Projectile
         protected float height;
         
         [Inject]
-        public void Construct(IPoolable poolable)
+        private void Construct(IPoolable poolable)
         {
             this.poolable = poolable;
         }
