@@ -11,8 +11,6 @@ namespace Unit
         
         [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set;}
 
-        public abstract UnitType UnitType { get; }
-        
 
         public T GetComponentInUnit<T>()
         {

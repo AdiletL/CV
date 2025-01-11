@@ -1,5 +1,4 @@
-﻿
-using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public interface IWeapon : IApplyDamage
@@ -10,7 +9,7 @@ public interface IWeapon : IApplyDamage
     
     public void Initialize();
 
-    public Task FireAsync();
+    public UniTask FireAsync();
     public void SetTarget(GameObject target);
     public void IncreaseStates(Unit.IState state);
 }

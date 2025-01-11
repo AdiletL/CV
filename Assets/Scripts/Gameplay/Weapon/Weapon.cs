@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Unit;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Weapon
 {
@@ -36,7 +35,7 @@ namespace Gameplay.Weapon
             CurrentTarget = target;
         }
 
-        public abstract Task FireAsync();
+        public abstract UniTask FireAsync();
 
         public virtual void ApplyDamage()
         {

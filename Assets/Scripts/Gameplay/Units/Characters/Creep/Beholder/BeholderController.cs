@@ -1,7 +1,11 @@
-﻿namespace Unit.Character.Creep
+﻿using UnityEngine;
+
+namespace Unit.Character.Creep
 {
     public class BeholderController : CreepController
     {
+        [SerializeField] private Transform finalPath;
+        
         protected override void CreateStates()
         {
             var animation = components.GetComponentFromArray<BeholderAnimation>();
@@ -15,8 +19,8 @@
                 .Build();
             
             var moveState = (BeholderSwitchMoveState)new BeholderSwitchMoveStateBuilder()
-                .SetStart(start)
-                .SetEnd(end)
+                .SetStart(gameObject.transform)
+                .SetEnd(finalPath)
                 .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)

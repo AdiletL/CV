@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Gameplay.Manager;
 using Unit.Trap;
 using Unit.Trap.Activator;
@@ -26,7 +26,7 @@ namespace Gameplay.Factory
             throw new ArgumentException();
         }
 
-        public async Task<GameObject> Create(Type type)
+        public async UniTask<GameObject> Create(Type type)
         {
             GameObject result = type switch
             {

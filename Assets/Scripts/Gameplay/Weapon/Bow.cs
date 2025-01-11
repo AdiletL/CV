@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
@@ -22,7 +22,7 @@ namespace Gameplay.Weapon
             pointSpawnProjectile = weapon.transform.GetChild(0);
         }
 
-        public override async Task FireAsync()
+        public override async UniTask FireAsync()
         {
             var newGameObject = await this.pool.GetObjectAsync<ArrowController>();
             newGameObject.transform.position = pointSpawnProjectile.position;

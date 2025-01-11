@@ -8,16 +8,11 @@ namespace Unit.Character.Creep
 {
     public abstract class CreepController : CharacterMainController
     {
-        public override UnitType UnitType { get; } = UnitType.creep;
-
         [FormerlySerializedAs("so_EnemyMove")] [SerializeField] protected SO_CreepMove soCreepMove;
         [SerializeField] protected Transform center;
         
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
-        
-        protected Transform start;
-        protected Transform end;
         
         public override void Initialize()
         {
@@ -34,10 +29,6 @@ namespace Unit.Character.Creep
         }
 
         protected abstract void CreateStates();
-        
-                
-        public void SetStart(Transform start) => this.start = start;
-        public void SetEnd(Transform end) => this.end = end;
 
         public void Update()
         {

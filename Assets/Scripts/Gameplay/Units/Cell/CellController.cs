@@ -16,7 +16,6 @@ namespace Unit.Cell
         private UnitRenderer unitRenderer;
         private Collider[] colliders = new Collider[1];
 
-        public override UnitType UnitType { get; } = UnitType.platform;
        [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
 
         public bool IsBlocked()

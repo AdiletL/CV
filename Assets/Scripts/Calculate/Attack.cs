@@ -12,7 +12,7 @@ namespace Calculate
             return 1 / countAttack;
         }
         
-        public static GameObject CheckForwardEnemy(GameObject gameObject, Vector3 center, int layerMask, float distance = .6f)
+        public static GameObject CheckForwardEnemy(GameObject gameObject, Vector3 center, LayerMask layerMask, float distance = .6f)
         {
             var hitCount = Physics.RaycastNonAlloc(center,
                 gameObject.transform.forward, enemyHits,

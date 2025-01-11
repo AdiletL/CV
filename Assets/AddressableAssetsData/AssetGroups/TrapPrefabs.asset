@@ -20,33 +20,33 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 06d4f9d2c446b314aba5a49922a39d27
-    m_Address: FallTrap
+  - m_GUID: 2f5fe9ac045b34247badb547c871e540
+    m_Address: ButtonActivatorTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 38a6441ca31beaf4484d429fe20d1415
-    m_Address: PushTrap
+  - m_GUID: 5527beb5437490d419158bc91dc0eab9
+    m_Address: ThornTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 54632a598d4729842a96cfc7c1f9295b
-    m_Address: AxeTrap
+  - m_GUID: 6259d3acb893455429a65e364dfa9f3b
+    m_Address: FallTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5b657a6c2fcfb694e8759f7ba19aaf3e
-    m_Address: ButtonActivatorTrap
+  - m_GUID: 765c17cfa63493c4aba8268315b7d495
+    m_Address: AxeTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a7e267a72b663af499cc9e950ceeaff2
-    m_Address: HammerTrap
+  - m_GUID: a8bd393ea986f0b45bd6c9550ea410e1
+    m_Address: HammerTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: aea17a65a16a47748aaafbbeb925650d
-    m_Address: ThornTrap
+  - m_GUID: e2f30885e0a4f5243ab2d14cce94a4e3
+    m_Address: PushTrap Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -16,43 +16,44 @@ MonoBehaviour:
   - {fileID: 1827226128182048838, guid: 0308cf4e83cf517488b60af58b290fe0, type: 3}
   - {fileID: 1827226128182048838, guid: 423aabfede0896f4db862ab8e54dde30, type: 3}
   <RotateSpeed>k__BackingField: 800
-  <JumpCurve>k__BackingField:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 4.615959
-      outSlope: 4.615959
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.05105106
-    - serializedVersion: 3
-      time: 0.3678708
-      value: 1.0038931
-      inSlope: 0.3339382
-      outSlope: 0.3339382
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.22857757
-      outWeight: 0.10902494
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -1.1081514
-      outSlope: -1.1081514
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.10451339
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  <JumpClip>k__BackingField: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
-  <JumpDuration>k__BackingField: 0.85
-  <JumpHeight>k__BackingField: 1.4
-  <MaxJumpCount>k__BackingField: 2
+  <JumpInfo>k__BackingField:
+    Curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 4.615959
+        outSlope: 4.615959
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.05105106
+      - serializedVersion: 3
+        time: 0.3678708
+        value: 1.0038931
+        inSlope: 0.3339382
+        outSlope: 0.3339382
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.22857757
+        outWeight: 0.10902494
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -1.1081514
+        outSlope: -1.1081514
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.10451339
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
+    Duration: 0.85
+    Height: 1.4
+    MaxCount: 2
   <RunClip>k__BackingField:
   - {fileID: 1827226128182048838, guid: 7d4f9e9da55a3bd4f958a63308a522a1, type: 3}
   - {fileID: 1827226128182048838, guid: 0791e523b7f1b2740a3b1cde42b6aeac, type: 3}

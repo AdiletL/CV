@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
@@ -72,7 +72,7 @@ namespace Unit.Trap.Tower
             
         }
 
-        protected virtual async Task Fire()
+        protected virtual async UniTask Fire()
         {
             var newGameObject = await this.pool.GetObjectAsync<SphereController>();
             newGameObject.transform.position = PointSpawnProjectile.position;

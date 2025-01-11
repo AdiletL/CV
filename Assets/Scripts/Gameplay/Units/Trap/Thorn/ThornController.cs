@@ -37,7 +37,7 @@ namespace Unit.Trap
             applyDamageCooldown = so_Thorn.ApplyDamageCooldown;
             cooldown = so_Thorn.Cooldown;
             radius = so_Thorn.Radius;
-            EnemyLayers = so_Thorn.EnemyLayers;
+            EnemyLayer = so_Thorn.EnemyLayer;
             
             Damageable = new NormalDamage(so_Thorn.Damage, gameObject);
 
@@ -120,18 +120,15 @@ namespace Unit.Trap
             {
                 affectedEnemies.Clear();
 
-                foreach (var enemyLayer in EnemyLayers)
-                {
-                    var colliders = Physics.OverlapSphere(transform.position, radius, enemyLayer);
+                var colliders = Physics.OverlapSphere(transform.position, radius, EnemyLayer);
 
-                    foreach (var collider in colliders)
+                foreach (var collider in colliders)
+                {
+                    if (!affectedEnemies.Contains(collider.gameObject)) // Check if not already affected
                     {
-                        if (!affectedEnemies.Contains(collider.gameObject)) // Check if not already affected
-                        {
-                            affectedEnemies.Add(collider.gameObject);
-                            CurrentTarget = collider.gameObject;
-                            ApplyDamage();
-                        }
+                        affectedEnemies.Add(collider.gameObject);
+                        CurrentTarget = collider.gameObject;
+                        ApplyDamage();
                     }
                 }
 
@@ -152,7 +149,7 @@ namespace Unit.Trap
         
         private void OnTriggerEnter(Collider other)
         {
-            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)) return;
+            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;
             Activate();
         }
     }

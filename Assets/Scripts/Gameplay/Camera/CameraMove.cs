@@ -21,7 +21,7 @@ public class CameraMove : MonoBehaviour
         }
         else
         {
-            currentPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z - 3);
+            currentPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z - 2);
             transform.position = Vector3.Lerp(transform.position, currentPosition, 5 * Time.deltaTime);
         }
     }

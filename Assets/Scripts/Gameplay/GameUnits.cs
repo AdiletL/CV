@@ -1,46 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+
 
 public class GameUnits
 {
-    private Dictionary<UnitType, List<IUnit>> allUnits = new();
-    private List<IUnitExperience> experienceUnits = new();
+    private List<IUnit> units = new ();
     
-    public void AddUnits(params IUnit[] units)
+    public void AddUnits(params IUnit[] newUnits)
     {
-        foreach (var VARIABLE in units)
+        foreach (var unit in newUnits)
         {
-            if (!allUnits.ContainsKey(VARIABLE.UnitType))
+            if (!units.Contains(unit))
             {
-                allUnits[VARIABLE.UnitType] = new List<IUnit>();
-            }
-
-            allUnits[VARIABLE.UnitType].Add(VARIABLE);
-
-            if (VARIABLE is MonoBehaviour monoBehaviour)
-            {
-                if (monoBehaviour.TryGetComponent(out IUnitExperience unitExperience))
-                    experienceUnits.Add(unitExperience);
+                units.Add(unit);
             }
         }
     }
-
-    public void RemoveUnits(params IUnit[] units)
+    
+    public void RemoveUnits(params IUnit[] removeUnits)
     {
-        foreach (var VARIABLE in units)
+        foreach (var unit in removeUnits)
         {
-            allUnits[VARIABLE.UnitType].Remove(VARIABLE);
-            if (VARIABLE is MonoBehaviour monoBehaviour)
-            {
-                if (monoBehaviour.TryGetComponent(out IUnitExperience unitExperience))
-                    experienceUnits.Add(unitExperience);
-            }
+            units.Remove(unit);
         }
     }
-
-    public List<IUnitExperience> GetListUnitsExperience()
+    
+    public List<T> GetUnits<T>() where T : class
     {
-        return experienceUnits;
+        return units.OfType<T>().ToList();
     }
 }

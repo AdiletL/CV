@@ -1,7 +1,12 @@
-﻿namespace Unit.Character.Creep
+﻿using UnityEngine;
+using UnityEngine.Serialization;
+
+namespace Unit.Character.Creep
 {
     public class ChestMonsterController : CreepController
     {
+        [SerializeField] private Transform finalPath;
+        
         protected override void CreateStates()
         {
             var animation = components.GetComponentFromArray<ChestMonsterAnimation>();
@@ -15,8 +20,8 @@
                 .Build();
             
             var moveState = (ChestMonsterSwitchMoveState)new ChestMonsterSwitchMoveStateBuilder()
-                .SetStart(start)
-                .SetEnd(end)
+                .SetStart(gameObject.transform)
+                .SetEnd(finalPath)
                 .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)

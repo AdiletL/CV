@@ -11,7 +11,7 @@ namespace Unit.Trap
 
         private void OnTriggerEnter(Collider other)
         {
-            if(!Calculate.GameLayer.IsTarget(trapController.EnemyLayers, other.gameObject.layer)) return;
+            if(!Calculate.GameLayer.IsTarget(trapController.EnemyLayer, other.gameObject.layer)) return;
             
             OnHitEnter?.Invoke(other.gameObject);
         }

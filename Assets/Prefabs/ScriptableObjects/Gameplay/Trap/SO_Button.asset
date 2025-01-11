@@ -15,6 +15,6 @@ MonoBehaviour:
   <Damage>k__BackingField: 0
   <ActivateClip>k__BackingField: {fileID: 7400000, guid: 988b2b4d7cd4947478330eb9f5d94c71, type: 2}
   <DeactivateClip>k__BackingField: {fileID: 7400000, guid: 6073824739b04754dbc450716b21c564, type: 2}
-  <EnemyLayers>k__BackingField:
-  - serializedVersion: 2
+  <EnemyLayer>k__BackingField:
+    serializedVersion: 2
     m_Bits: 8

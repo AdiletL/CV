@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Unit.Character.Creep
 {
     public class HedgehogController : CreepController
     {
+        [SerializeField] private Transform finalPath;
         
         protected override void CreateStates()
         {
@@ -18,8 +20,8 @@ namespace Unit.Character.Creep
                 .Build();;
             
             var moveState = (HedgehogSwitchMoveState)new HedgehogSwitchMoveStateBuilder()
-                .SetStart(start)
-                .SetEnd(end)
+                .SetStart(gameObject.transform)
+                .SetEnd(finalPath)
                 .SetEnemyLayer(Layers.PLAYER_LAYER)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)

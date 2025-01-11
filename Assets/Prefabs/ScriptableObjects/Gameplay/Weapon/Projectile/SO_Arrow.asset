@@ -48,6 +48,6 @@ MonoBehaviour:
   <Speed>k__BackingField: 4
   <Height>k__BackingField: 3
   <TimerDestroy>k__BackingField: 2
-  <EnemyLayers>k__BackingField:
-  - serializedVersion: 2
-    m_Bits: 8
+  <EnemyLayer>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 9

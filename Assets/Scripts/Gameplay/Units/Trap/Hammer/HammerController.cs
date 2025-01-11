@@ -82,11 +82,7 @@ namespace Unit.Trap.Hammer
         private void AfterActivate()
         {
             int colliderCount = 0;
-            foreach (var VARIABLE in EnemyLayers)
-            {
-                colliderCount = Physics.OverlapSphereNonAlloc(transform.position, CellController.Radius, checkUnitColliders, VARIABLE);
-                if(colliderCount > 0) break;
-            }
+            colliderCount = Physics.OverlapSphereNonAlloc(transform.position, CellController.Radius, checkUnitColliders, EnemyLayer);
             
             if(colliderCount == 0)
                 hammerCollider.isTrigger = false;

@@ -12,8 +12,10 @@ namespace Unit.Character.Creep
         protected Rotation rotation;
         
         protected GameObject currentTarget;
+
         protected bool isCanMovement;
-        protected Queue<CellController> platformsQueue = new();
+        
+        protected Queue<CellController> cellQueue = new();
         
         public AnimationClip WalkClip { get; set; }
         public CreepAnimation CreepAnimation { get; set; }
@@ -34,13 +36,13 @@ namespace Unit.Character.Creep
                 pathFinding.SetTargetPosition(Start.transform.position);
             }
             
-            if(platformsQueue.Count == 0)
-                platformsQueue = pathFinding.GetPath();
+            if(cellQueue.Count == 0)
+                cellQueue = pathFinding.GetPath();
 
-            if (platformsQueue.Count == 0)
+            if (cellQueue.Count == 0)
                 return null;
             
-            return platformsQueue?.Peek().gameObject;
+            return cellQueue?.Peek().gameObject;
         }
 
         public override void Initialize()
@@ -92,7 +94,7 @@ namespace Unit.Character.Creep
         {
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position))
             {
-                platformsQueue?.Dequeue();
+                cellQueue?.Dequeue();
                 currentTarget = GetNextTarget();
                 rotation.SetTarget(currentTarget.transform);
             }

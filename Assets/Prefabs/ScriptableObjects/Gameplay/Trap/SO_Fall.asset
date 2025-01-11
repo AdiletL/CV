@@ -15,8 +15,8 @@ MonoBehaviour:
   <Damage>k__BackingField: -1
   <ActivateClip>k__BackingField: {fileID: 0}
   <DeactivateClip>k__BackingField: {fileID: 0}
-  <EnemyLayers>k__BackingField:
-  - serializedVersion: 2
+  <EnemyLayer>k__BackingField:
+    serializedVersion: 2
     m_Bits: 8
   <Radius>k__BackingField: 0.2
   <Speed>k__BackingField: 1000

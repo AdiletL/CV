@@ -1,3 +1,4 @@
+using Movement;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character
@@ -9,10 +10,6 @@ namespace ScriptableObjects.Unit.Character
 
         [field: SerializeField, Space(10), Header("Rotate")] public float RotateSpeed { get; private set; } = 800;
         
-        [field: SerializeField, Space(10), Header("Jump")] public AnimationCurve JumpCurve { get; private set; }
-        [field: SerializeField] public AnimationClip JumpClip { get; private set; }
-        [field: SerializeField] public float JumpDuration { get; private set; } = 1f;
-        [field: SerializeField] public float JumpHeight { get; private set; } = 1.5f;
-        [field: SerializeField] public int MaxJumpCount { get; private set; } = 1;
+        [field: SerializeField, Space(10), Header("Jump")] public JumpInfo JumpInfo { get; private set; }
     }
 }

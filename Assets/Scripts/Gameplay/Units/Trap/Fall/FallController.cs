@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gameplay.Damage;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Trap;
+using Unit.Cell;
 using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
@@ -76,7 +77,7 @@ namespace Unit.Trap.Fall
                         unit = unitCollision.UnitController;
                 }
                 
-                if(unit && unitController.UnitType != UnitType.environment) 
+                if(unit && unitController.GetType().IsAssignableFrom(typeof(CellController))) 
                     targetUnits.Add(unit);
             }
         }
@@ -114,7 +115,7 @@ namespace Unit.Trap.Fall
 
         private IEnumerator FallUpdateCoroutine()
         {
-            float distance = 500;
+            float distance = 750;
             var startPos = transform.position;
             while ((startPos - transform.position).sqrMagnitude < distance)
             {
@@ -137,7 +138,7 @@ namespace Unit.Trap.Fall
 
         private void OnTriggerEnter(Collider other)
         {
-            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)) return;
+            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;
 
             if(startTimerCoroutine != null) StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(gameConfig.BaseWaitTimeTrap, Activate));

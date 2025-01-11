@@ -6,6 +6,5 @@ namespace Unit.Reward
 {
     public abstract class RewardController : UnitController
     {
-        public override UnitType UnitType { get; } = UnitType.reward;
     }
 }

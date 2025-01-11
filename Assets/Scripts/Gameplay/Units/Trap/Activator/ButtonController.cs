@@ -119,7 +119,7 @@ namespace Unit.Trap.Activator
         private void OnTriggerEnter(Collider other)
         {
             if(!isReady 
-               || !Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)
+               || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)
                || CurrentTarget) return;
             
             CurrentTarget = other.gameObject;
@@ -130,7 +130,7 @@ namespace Unit.Trap.Activator
 
         private void OnTriggerExit(Collider other)
         {
-            if(!Calculate.GameLayer.IsTarget(EnemyLayers, other.gameObject.layer)
+            if(!Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)
                || !CurrentTarget) return;
             
             Deactivate();

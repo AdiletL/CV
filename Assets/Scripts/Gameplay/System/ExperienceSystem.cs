@@ -25,7 +25,7 @@ public class ExperienceSystem : IInitializable, IDisposable
 
     private void OnGiveAoeExperience(Unit.AoeExperienceInfo info)
     {
-        var experienceUnits = gameUnits.GetListUnitsExperience();
+        var experienceUnits = gameUnits.GetUnits<IUnitExperience>();
         var sortingUnits = new List<IUnitExperience>();
      
         var damagingExperience = info.Damaging.GetComponent<IUnitExperience>();

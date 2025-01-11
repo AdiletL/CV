@@ -16,7 +16,7 @@ namespace Unit.Trap.Hammer
 
         private void OnTriggerExit(Collider other)
         {
-            if(!Calculate.GameLayer.IsTarget(hammerController.EnemyLayers, other.gameObject.layer)) return;
+            if(!Calculate.GameLayer.IsTarget(hammerController.EnemyLayer, other.gameObject.layer)) return;
             
             OnHitExit?.Invoke(other.gameObject);
         }

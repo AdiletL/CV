@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 
 namespace Gameplay.Weapon
 {
     public class Sword : Weapon
     {
-        public override async Task FireAsync()
+        public override async UniTask FireAsync()
         {
             ApplyDamage();
-            await Task.CompletedTask;
+            await UniTask.CompletedTask;
         }
     }
 

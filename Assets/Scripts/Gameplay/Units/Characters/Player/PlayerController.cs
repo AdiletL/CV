@@ -14,7 +14,6 @@ namespace Unit.Character.Player
     public class PlayerController : CharacterMainController
     {
         [Inject] private DiContainer diContainer;
-        public override UnitType UnitType { get; } = UnitType.player;
         
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;

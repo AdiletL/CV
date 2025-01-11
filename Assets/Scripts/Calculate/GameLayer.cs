@@ -4,17 +4,12 @@ namespace Calculate
 {
     public static class GameLayer
     {
-        public static bool IsTarget(LayerMask[] origin, LayerMask target)
+        public static bool IsTarget(LayerMask origin, LayerMask target)
         {
-            if(origin is null) return false;
-            
-            foreach (var VARIABLE in origin)
+            // Проверяем, входит ли слой в маску. Для нескольких слоев проверяем каждый.
+            if ((origin.value & (1 << target)) != 0)
             {
-                // Проверяем, входит ли слой в маску
-                if ((VARIABLE.value & (1 << target)) != 0)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
