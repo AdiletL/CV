@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0c596028cfd41038a4cc570c3d4720f, type: 3}
+  m_Name: SO_BeholderAttack
+  m_EditorClassIdentifier: 
+  <Damage>k__BackingField: 10
+  <AmountAttackInSecond>k__BackingField: 0.5
+  <EnemyLayer>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 8
+  <Range>k__BackingField: 2
+  <AttackClips>k__BackingField:
+  - {fileID: 7400000, guid: 0be5f44ec700489faeb0ae9c20edd329, type: 3}
+  - {fileID: 7400000, guid: b1522de0f5934d5a8f7086ec995cab43, type: 3}
+  - {fileID: 7400000, guid: a5aa3ce397c24155845dba13bc634b36, type: 3}
+  - {fileID: 7400000, guid: e9a3d959a28a4f02940e36a70434d669, type: 3}
+  <CooldownClip>k__BackingField: {fileID: 7400000, guid: d7a9297b2394411eb911484794b32687, type: 3}

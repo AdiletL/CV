@@ -7,7 +7,9 @@ namespace Unit.Character.Creep
     {
         private SO_BeholderMove so_BeholderMove;
         private BeholderAnimation beholderAnimation;
+        private GameObject currentTarget;
         
+        public CharacterController CharacterController { get; set; }
         public Transform Start { get; set; }
         public Transform End { get; set; }
         public LayerMask EnemyLayer { get; set; }
@@ -15,12 +17,13 @@ namespace Unit.Character.Creep
 
         public override bool IsCanMovement()
         {
-            return Start && End;
+            return Start && End || currentTarget;
         }
 
         private BeholderPatrolState CreatePatrolState()
         {
             return (BeholderPatrolState)new BeholderPatrolStateBuilder()
+                .SetCharacterController(CharacterController)
                 .SetCenter(Center)
                 .SetEnemyAnimation(beholderAnimation)
                 .SetWalkClip(so_BeholderMove.WalkClip)
@@ -34,6 +37,21 @@ namespace Unit.Character.Creep
                 .Build();
         }
 
+        private BeholderRunState CreateRunState()
+        {
+            return (BeholderRunState)new BeholderRunStateBuilder()
+                .SetCenter(Center)
+                .SetCharacterController(CharacterController)
+                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
+                .SetCharacterAnimation(beholderAnimation)
+                .SetRunClips(so_BeholderMove.RunClip)
+                .SetGameObject(GameObject)
+                .SetMovementSpeed(so_BeholderMove.RunSpeed)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
+        
+
         public override void Initialize()
         {
             base.Initialize();
@@ -44,15 +62,39 @@ namespace Unit.Character.Creep
         protected override void DestermineState()
         {
             base.DestermineState();
-            if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
+            if (currentTarget)
             {
-                var patrolState = CreatePatrolState();
+                Debug.Log("run");
+                if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
+                {
+                    var runState = CreateRunState();
+                    runState.Initialize();
+                    this.StateMachine.AddStates(runState);
+                }
                 
-                patrolState.Initialize();
-                this.StateMachine.AddStates(patrolState);
+                this.StateMachine.SetStates(typeof(BeholderRunState));
+                currentTarget = null;
             }
-            
-            this.StateMachine.SetStates(typeof(BeholderPatrolState));
+            else 
+            {
+                if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
+                {
+                    var patrolState = CreatePatrolState();
+                    patrolState.Initialize();
+                    this.StateMachine.AddStates(patrolState);
+                }
+                
+                this.StateMachine.SetStates(typeof(BeholderPatrolState));
+            }
+        }
+        
+        public void SetTarget(GameObject target)
+        {
+            currentTarget = target;
+            if (this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
+            {
+                this.StateMachine.GetState<BeholderRunState>().SetTarget(currentTarget);
+            }
         }
     }
     
@@ -85,6 +127,15 @@ namespace Unit.Character.Creep
             if (state is BeholderSwitchMoveState characterSwitchMoveState)
             {
                 characterSwitchMoveState.EnemyLayer = layer;
+            }
+
+            return this;
+        }
+        public BeholderSwitchMoveStateBuilder SetCharacterController(CharacterController characterController)
+        {
+            if (state is BeholderSwitchMoveState characterSwitchMoveState)
+            {
+                characterSwitchMoveState.CharacterController = characterController;
             }
 
             return this;

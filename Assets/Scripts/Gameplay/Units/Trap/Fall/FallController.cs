@@ -115,7 +115,7 @@ namespace Unit.Trap.Fall
 
         private IEnumerator FallUpdateCoroutine()
         {
-            float distance = 750;
+            float distance = 500;
             var startPos = transform.position;
             while ((startPos - transform.position).sqrMagnitude < distance)
             {

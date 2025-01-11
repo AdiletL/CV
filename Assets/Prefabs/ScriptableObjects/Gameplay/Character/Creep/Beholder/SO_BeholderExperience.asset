@@ -15,6 +15,6 @@ MonoBehaviour:
   <StartLevel>k__BackingField: 1
   <GiveExperience>k__BackingField: 10
   <RangeTakeExperience>k__BackingField: 100
-  <IsTakeLevel>k__BackingField: 1
+  <IsTakeLevel>k__BackingField: 0
   <IsGiveExperience>k__BackingField: 1
-  <IsTakeExperience>k__BackingField: 1
+  <IsTakeExperience>k__BackingField: 0

@@ -20,16 +20,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5bd00ca7b4a4a5744b95ea8881fbc574
-    m_Address: Hedgehog
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: beb3c8c0b22302e4e958c3b5cb32fb69
-    m_Address: ChestMonster
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 089150fb234ebe74f8e1580f0723d344, type: 2}
   m_SchemaSet:

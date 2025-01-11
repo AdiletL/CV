@@ -5,8 +5,6 @@ namespace Unit.Character.Creep
 {
     public class BeholderIdleState : CreepIdleState
     { 
-        private int checkEnemyLayer { get; } = Layers.PLAYER_LAYER;
-
         private BeholderSwitchMoveState beholderSwitchMoveState;
         private BeholderSwitchAttackState beholderSwitchAttackState;
         
@@ -14,6 +12,7 @@ namespace Unit.Character.Creep
         private float countCheckEnemyCooldown;
         
         private bool isCheckAttack;
+        
 
         public override void Initialize()
         {
@@ -27,7 +26,7 @@ namespace Unit.Character.Creep
         {
             base.Update();
 
-            //CheckAttack();
+            CheckAttack();
             CheckPatrol();
         }
 
@@ -48,7 +47,7 @@ namespace Unit.Character.Creep
             {
                 if (beholderSwitchAttackState.IsFindUnitInRange())
                 {
-                    this.StateMachine.ExitOtherStates(typeof(BeholderSwitchAttackState));
+                    this.StateMachine.ExitCategory(Category, typeof(BeholderSwitchAttackState));
                 }
 
                 countCheckEnemyCooldown = 0;

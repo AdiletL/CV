@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Calculate;
 using Movement;
-using ScriptableObjects.Unit.Character.Player;
 using Unit.Cell;
 using UnityEngine;
 
-namespace Unit.Character.Player
+namespace Unit.Character.Creep
 {
-    public class PlayerRunState : CharacterRunState
+    public class CreepRunState : CharacterRunState
     {
-        private PlayerSwitchAttackState playerSwitchAttackState;
         private PathFinding pathFinding;
         private Rotation rotation;
 
@@ -21,40 +18,22 @@ namespace Unit.Character.Player
         private Vector3 currentTargetPosition;
         private Vector3 direction;
         
-        private Vector2Int finalTargetCoordinates;
         private Vector2Int currentTargetCoordinates;
         private Vector2Int previousTargetCoordinates;
 
-        private readonly float cooldownCheckEnemy = 0.1f;
         private readonly float cooldownCheckTarget = .2f;
-        private float countCooldownCheckEnemy;
         private float countCooldownCheckTarget;
 
         private bool isRotate;
-        private bool isCheckEnemy;
-        private bool isCheckJump;
         private bool isCheckPath;
 
         private Queue<CellController> pathToPoint = new();
+        
 
-        public SO_PlayerMove SO_PlayerMove { get; set; }
         public Transform Center { get; set; }
         public CharacterController CharacterController { get; set; }
         public float RotationSpeed { get; set; }
-
-        private PlayerJumpState CreatePlayerJumpState()
-        {
-            return (PlayerJumpState)new PlayerJumpStateBuilder()
-                .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-                .SetAnimationCurve(SO_PlayerMove.JumpInfo.Curve)
-                .SetJumpDuration(SO_PlayerMove.JumpInfo.Duration)
-                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
-                .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
-                .SetGameObject(GameObject)
-                .SetCharacterAnimation(CharacterAnimation)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-        }
+        
         
         private bool isFinalPositionCorrect()
         {
@@ -64,7 +43,6 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
             rotation = new Rotation(GameObject.transform, RotationSpeed);
             pathFinding = new PathFindingBuilder()
                 .SetStartPosition(GameObject.transform.position)
@@ -75,13 +53,7 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            countCooldownCheckEnemy = cooldownCheckEnemy;
-            
-            isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
-            isCheckEnemy = isCheckJump;
-            isCheckPath = isCheckJump;
-            
-            this.StateMachine.OnExitCategory += OnExitCategory;
+
         }
 
         public override void Update()
@@ -99,69 +71,36 @@ namespace Unit.Character.Player
             CheckPath();
             Move();
         }   
-
-        public override void LateUpdate()
-        {
-            CheckJump();
-            //CheckEnemy();
-        }
+        
 
         public override void Exit()
         {
             base.Exit();
             currentTarget = null;
-            this.StateMachine.OnExitCategory -= OnExitCategory;
         }
         
-        private void OnExitCategory(Machine.IState state)
-        {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
-            {
-                PlayAnimation();
-                isCheckEnemy = true;
-                isCheckJump = true;
-                isCheckPath = true;
-            }
-        }
-        
+
         public void SetTarget(GameObject target)
         {
             currentTarget = null;
             finalTarget = target;
-            finalTargetCoordinates = target.GetComponent<CellController>().CurrentCoordinates;
             FindNewPathToPoint();
         }
         
-        private void ResetColorOnPath()
-        {
-            CellController cellController;
-            for (int i = pathToPoint.Count - 1; i >= 0; i--)
-            {
-                cellController = pathToPoint.Dequeue();
-                if (cellController && cellController.TryGetComponent(out UnitRenderer unitRenderer))
-                {
-                    if(cellController.CurrentCoordinates == finalTargetCoordinates)
-                        continue;
-                    
-                    unitRenderer?.ResetColor();
-                }
-            }
-        }
 
-        private void FindNewPathToPoint(bool isCompareDistance = false)
+        private void FindNewPathToPoint()
         {
-            ResetColorOnPath();
             pathToPoint.Clear();
             finalTargetPosition = finalTarget.transform.position;
             pathFinding.SetStartPosition(GameObject.transform.position);
             pathFinding.SetTargetPosition(finalTargetPosition);
-            NewCurrentTarget(isCompareDistance);
+            NewCurrentTarget();
         }
 
-        private void NewCurrentTarget(bool isCompareDistance = false)
+        private void NewCurrentTarget()
         {
             if(pathToPoint.Count == 0)
-                pathToPoint = pathFinding.GetPath(true, isCompareDistance);
+                pathToPoint = pathFinding.GetPath(true);
                 
             if(pathToPoint.Count == 0) return;
             
@@ -180,7 +119,7 @@ namespace Unit.Character.Player
 
             if (!isFinalPositionCorrect())
             {
-                FindNewPathToPoint(true);
+                FindNewPathToPoint();
                 return;
             }
             
@@ -209,7 +148,6 @@ namespace Unit.Character.Player
 
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
-                pathToPoint.Peek()?.GetComponent<UnitRenderer>()?.ResetColor();
                 previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
                 currentTarget = null; 
                 pathToPoint.Dequeue();
@@ -227,80 +165,34 @@ namespace Unit.Character.Player
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
             }
         }
-
- 
-        private void CheckEnemy()
-        {
-            if(!isCheckEnemy) return;
-            
-            countCooldownCheckEnemy += Time.deltaTime;
-            if (countCooldownCheckEnemy > cooldownCheckEnemy)
-            {
-                if (playerSwitchAttackState.IsFindUnitInRange())
-                {
-                    foreach (var VARIABLE in pathToPoint)
-                        VARIABLE.SetColor(Color.white);
-                    
-                    this.StateMachine.ExitCategory(Category, typeof(PlayerSwitchAttackState));
-                }
-                countCooldownCheckEnemy = 0;
-            }
-        }
-
-        private void CheckJump()
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && isCheckJump)
-            {
-                StartJump();
-            }
-        }
-        private void StartJump()
-        {
-            if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
-            {
-                var playerJumpState = CreatePlayerJumpState();           
-                playerJumpState.Initialize();
-                this.StateMachine.AddStates(playerJumpState);
-            }
-            this.StateMachine.SetStates(typeof(PlayerJumpState));
-            isCheckPath = false;
-            isCheckEnemy = false;
-            isCheckJump = false;
-        }
+        
     }
-
-    public class PlayerRunStateBuilder : CharacterRunStateBuilder
+    
+    public class CreepRunStateBuilder : CharacterRunStateBuilder
     {
-        public PlayerRunStateBuilder() : base(new PlayerRunState())
+        public CreepRunStateBuilder(CreepRunState instance) : base(instance)
         {
         }
         
         
-        public PlayerRunStateBuilder SetCenter(Transform center)
+        public CreepRunStateBuilder SetCenter(Transform center)
         {
-            if (state is PlayerRunState playerRunState)
+            if (state is CreepRunState playerRunState)
                 playerRunState.Center = center;
             
             return this;
         }
 
-        public PlayerRunStateBuilder SetMoveConfig(SO_PlayerMove config)
+        public CreepRunStateBuilder SetCharacterController(CharacterController characterController)
         {
-            if (state is PlayerRunState playerRunState)
-                playerRunState.SO_PlayerMove = config;
-            
-            return this;  
-        }
-        public PlayerRunStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if (state is PlayerRunState playerRunState)
+            if (state is CreepRunState playerRunState)
                 playerRunState.CharacterController = characterController;
             
             return this;  
         }
-        public PlayerRunStateBuilder SetRotationSpeed(float rotationSpeed)
+        public CreepRunStateBuilder SetRotationSpeed(float rotationSpeed)
         {
-            if (state is PlayerRunState playerRunState)
+            if (state is CreepRunState playerRunState)
                 playerRunState.RotationSpeed = rotationSpeed;
             
             return this;  

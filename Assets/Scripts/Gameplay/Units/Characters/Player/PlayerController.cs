@@ -60,7 +60,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchAttackState)new PlayerSwitchAttackStateBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetCenter(center)
-                .SetEnemyLayer(Layers.CREEP_LAYER)
+                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerAttack)

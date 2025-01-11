@@ -7,5 +7,6 @@ namespace ScriptableObjects.Unit
     {
         [field: SerializeField] public int Damage { get; set; }
         [field: SerializeField] public float AmountAttackInSecond { get; set; }
+        [field: SerializeField] public LayerMask EnemyLayer { get; set; }
     }
 }

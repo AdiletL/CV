@@ -1,6 +1,6 @@
 ﻿namespace ScriptableObjects.Unit.Character.Creep
 {
-    public class SO_HedgehogAttack : SO_CharacterAttack
+    public abstract class SO_CreepAttack : SO_CharacterAttack
     {
         
     }

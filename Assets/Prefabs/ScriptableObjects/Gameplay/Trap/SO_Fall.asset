@@ -19,4 +19,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   <Radius>k__BackingField: 0.2
-  <Speed>k__BackingField: 1000
+  <Speed>k__BackingField: 1500

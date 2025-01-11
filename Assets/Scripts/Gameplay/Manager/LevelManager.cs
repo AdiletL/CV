@@ -74,16 +74,8 @@ namespace Gameplay.Manager
             gameFieldController.StartGame();
             
             levelController.SetGameField(gameFieldController);
-            
-            var newPlayer = diContainer.InstantiatePrefab(playerPrefab);
-            var playerController = newPlayer.GetComponent<PlayerController>();
-            playerController.GetComponent<CharacterController>().enabled = false;
-            diContainer.Inject(playerController);
-            playerController.transform.position = levelController.CurrentGameField.PlayerSpawnPoint.position;
-            playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;
-            playerController.Initialize();
-            playerController.GetComponent<CharacterController>().enabled = true;
-            gameUnits.AddUnits(playerController);
+
+            InstantiatePlayer(playerPrefab);
         }
 
 
@@ -95,6 +87,19 @@ namespace Gameplay.Manager
         public void StopLevel()
         {
             
+        }
+
+        private void InstantiatePlayer(UnitController playerPrefab)
+        {
+            var newPlayer = diContainer.InstantiatePrefab(playerPrefab);
+            var playerController = newPlayer.GetComponent<PlayerController>();
+            playerController.GetComponent<CharacterController>().enabled = false;
+            diContainer.Inject(playerController);
+            playerController.transform.position = levelController.CurrentGameField.PlayerSpawnPoint.position;
+            playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;
+            playerController.Initialize();
+            playerController.GetComponent<CharacterController>().enabled = true;
+            gameUnits.AddUnits(playerController);
         }
     }
 }

@@ -190,11 +190,6 @@ public class StateMachine
 
     public void Update()
     {
-        if (activeStates.Count == 0)
-        {
-            Debug.Log("activeStates.Count == 0");
-            return;
-        }
         updateStates.Clear();
         updateStates.AddRange(activeStates.Values);
         

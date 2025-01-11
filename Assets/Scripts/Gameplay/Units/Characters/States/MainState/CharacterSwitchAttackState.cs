@@ -17,7 +17,7 @@ namespace Unit.Character
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
-        public int EnemyLayer { get; set; }
+        public LayerMask EnemyLayer { get; set; }
 
 
         public virtual bool IsFindUnitInRange()
@@ -33,11 +33,11 @@ namespace Unit.Character
         
         public override void Enter()
         {
-            DestermineState();
         }
 
         public override void Update()
         {
+            DestermineState();
         }
         public override void LateUpdate()
         {
@@ -83,10 +83,10 @@ namespace Unit.Character
                 characterSwitchAttackState.Center = center;
             return this;
         }
-        public CharacterSwitchAttackStateBuilder SetEnemyLayer(int index)
+        public CharacterSwitchAttackStateBuilder SetEnemyLayer(LayerMask layer)
         {
             if(state is CharacterSwitchAttackState characterSwitchAttackState)
-                characterSwitchAttackState.EnemyLayer = index;
+                characterSwitchAttackState.EnemyLayer = layer;
             return this;
         }
     }

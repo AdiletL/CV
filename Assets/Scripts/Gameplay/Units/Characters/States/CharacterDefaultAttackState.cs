@@ -26,13 +26,13 @@ namespace Unit.Character
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public AnimationClip CooldownClip { get; set; }
-        public List<AnimationClip> AttackClips { get; set; }
+        public AnimationClip[] AttackClips { get; set; }
         public int EnemyLayer { get; set; }
         
 
         protected AnimationClip getRandomAnimationClip()
         {
-            return AttackClips[Random.Range(0, AttackClips.Count)];
+            return AttackClips[Random.Range(0, AttackClips.Length)];
         }
 
         public override void Initialize()
@@ -217,7 +217,7 @@ namespace Unit.Character
             return this;
         }
 
-        public CharacterDefaultAttackStateBuilder SetAttackClips(List<AnimationClip> animationClip)
+        public CharacterDefaultAttackStateBuilder SetAttackClips(AnimationClip[] animationClip)
         {
             if (state is CharacterDefaultAttackState characterWeapon)
             {

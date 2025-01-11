@@ -11,7 +11,7 @@ namespace Unit.Character
         protected CharacterSwitchMoveState characterSwitchMoveState;
         protected Rotation rotation;
         protected AnimationClip cooldownClip;
-        protected List<AnimationClip> attackClips;
+        protected AnimationClip[] attackClips;
         
         protected Collider[] findUnitColliders = new Collider[10];
 
@@ -36,7 +36,7 @@ namespace Unit.Character
 
         protected AnimationClip getRandomAnimationClip()
         {
-            return attackClips[Random.Range(0, attackClips.Count)];
+            return attackClips[Random.Range(0, attackClips.Length)];
         }
 
 
@@ -136,7 +136,7 @@ namespace Unit.Character
             Restart();
         }
 
-        public virtual void SetAnimationClip(List<AnimationClip> attackClips, AnimationClip cooldownClip)
+        public virtual void SetAnimationClip(AnimationClip[] attackClips, AnimationClip cooldownClip)
         {
             this.attackClips = attackClips;
             this.cooldownClip = cooldownClip;

@@ -22,20 +22,20 @@ namespace Calculate
         
         private RaycastHit hitResult;
 
-        private readonly Vector3 startRayOnPlatform = Vector3.up * .5f;
-        private readonly Vector3 startRayPositionPlatform = new(0, -.2f, 0);
-        private readonly Vector3[] rayDirectionsPlatform = { Vector3.forward, Vector3.back, Vector3.right, Vector3.left };
+        private readonly Vector3 startRayOnCell = Vector3.up * .5f;
+        private readonly Vector3 startRayPositionCell = new(0, -.2f, 0);
+        private readonly Vector3[] rayDirectionsCell = { Vector3.forward, Vector3.back, Vector3.right, Vector3.left };
 
-        private Vector3 correctPlatformPosition;
+        private Vector3 correctCellPosition;
         private Vector3 currentCellScale;
         private int weightCell;
         private int maxCheck = 100;
         private float rayLenght;
 
-        private List<CellController> nearPlatforms = new();
+        private List<CellController> nearCells = new();
         private Queue<CellController> pathToPoint =  new();
         private Stack<CellController> platformStack = new();
-        private Stack<CellController> unverifiedPlatforms = new();
+        private Stack<CellController> unverifiedCells = new();
         private Dictionary<CellController, CellData> cellData = new(); // Временные данные платформ
 
         private bool isUseColor;
@@ -52,8 +52,8 @@ namespace Calculate
 
         private void SetCurrentAndEndCells()
         {
-            startCell = FindCell.GetCell(StartPosition + startRayOnPlatform, Vector3.down);
-            endCell = FindCell.GetCell(EndPosition + startRayOnPlatform, Vector3.down);
+            startCell = FindCell.GetCell(StartPosition + startRayOnCell, Vector3.down);
+            endCell = FindCell.GetCell(EndPosition + startRayOnCell, Vector3.down);
             currentCell = startCell;
         }
 
@@ -62,8 +62,8 @@ namespace Calculate
             platformStack.Clear();
             pathToPoint.Clear();
             
-            unverifiedPlatforms.Clear();
-            nearPlatforms.Clear();
+            unverifiedCells.Clear();
+            nearCells.Clear();
             cellData.Clear(); // Очищаем временные данные после завершения
         }
 
@@ -81,10 +81,10 @@ namespace Calculate
             {
                 if (currentCell.CurrentCoordinates != endCell.CurrentCoordinates)
                 {
-                    nearPlatforms = GetNearPlatforms();
-                    if (CheckAndAddPlatforms(ref nearPlatforms).Count == 0)
+                    nearCells = GetNearPlatforms();
+                    if (CheckAndAddPlatforms(ref nearCells).Count == 0)
                     {
-                        if (unverifiedPlatforms.TryPop(out var newPlatform))
+                        if (unverifiedCells.TryPop(out var newPlatform))
                         {
                             //newPlatform.SetColor(Color.red);
                             currentCell = newPlatform;
@@ -99,13 +99,13 @@ namespace Calculate
                         AddPlatformToVerified(1);
                         if (currentCell.CurrentCoordinates == endCell.CurrentCoordinates) break;
 
-                        currentCell = GetNextPlatform(nearPlatforms, endCell.CurrentCoordinates);
+                        currentCell = GetNextPlatform(nearCells, endCell.CurrentCoordinates);
                         AddPlatformToVerified(2);
                     }
                 }
             }
 
-            correctPlatformPosition = EndPosition;
+            correctCellPosition = EndPosition;
             BuildPath(pathToPoint);
             
             return pathToPoint;
@@ -161,14 +161,14 @@ namespace Calculate
         {
             correctCell = null;
             var lastWeight = weightCell;
-            correctPlatformPosition += startRayPositionPlatform;
+            correctCellPosition += startRayPositionCell;
             currentCellScale = currentCell.transform.localScale;
             
-            foreach (var direction in rayDirectionsPlatform)
+            foreach (var direction in rayDirectionsCell)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + 10f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + 1f;
                 
-                if (!Physics.Raycast(correctPlatformPosition, direction, out hitResult, rayLenght, Layers.CELL_LAYER) ||
+                if (!Physics.Raycast(correctCellPosition, direction, out hitResult, rayLenght, Layers.CELL_LAYER) ||
                     !hitResult.transform.TryGetComponent(out CellController cell) ||
                     cell == lastCorrectCell) continue;
 
@@ -187,7 +187,7 @@ namespace Calculate
             }
 
             if (correctCell)
-                correctPlatformPosition = correctCell.transform.position;
+                correctCellPosition = correctCell.transform.position;
 
             return correctCell;
         }
@@ -195,12 +195,12 @@ namespace Calculate
         private List<CellController> GetNearPlatforms()
         {
             var cells = new List<CellController>(4);
-            var origin = currentCell.transform.position + startRayPositionPlatform;
+            var origin = currentCell.transform.position + startRayPositionCell;
             currentCellScale = currentCell.transform.localScale;
             
-            foreach (var direction in rayDirectionsPlatform)
+            foreach (var direction in rayDirectionsCell)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + 10f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + 1f;
                 Debug.DrawRay(origin, direction * rayLenght, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, rayLenght, Layers.CELL_LAYER) &&
                     hitResult.transform.TryGetComponent(out CellController cell))
@@ -220,7 +220,7 @@ namespace Calculate
                 {
                     if (platforms[i].CurrentCoordinates == endCell.CurrentCoordinates)
                     {
-                        unverifiedPlatforms.Push(platforms[i]);
+                        unverifiedCells.Push(platforms[i]);
                         return platforms;
                     }
                     
@@ -228,7 +228,7 @@ namespace Calculate
                 }
                 else
                 {
-                    unverifiedPlatforms.Push(platforms[i]);
+                    unverifiedCells.Push(platforms[i]);
                     //platforms[i].SetColor(Color.blue);
                 }
             }
@@ -295,7 +295,7 @@ namespace Calculate
         }
         public PathFindingBuilder SetEndPosition(Vector3 end)
         {
-            pathFinding.StartPosition = end;
+            pathFinding.EndPosition = end;
             return this;
         }
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Machine;
-using ScriptableObjects.Unit.Character.Player;
+﻿using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character.Player
@@ -38,7 +35,6 @@ namespace Unit.Character.Player
 
         protected override void DestermineState()
         {
-            //TODO: Select type move
             if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
                 var newState = CreateRunState();

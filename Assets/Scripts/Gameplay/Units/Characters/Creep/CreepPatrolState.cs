@@ -12,13 +12,16 @@ namespace Unit.Character.Creep
         protected Rotation rotation;
         
         protected GameObject currentTarget;
+        protected Vector3 direction;
+        protected Vector3 currentTargetPosition;
 
         protected bool isCanMovement;
         
-        protected Queue<CellController> cellQueue = new();
-        
+        protected Queue<CellController> pathToPoint = new();
+
         public AnimationClip WalkClip { get; set; }
         public CreepAnimation CreepAnimation { get; set; }
+        public CharacterController CharacterController { get; set; }
         public Transform Center { get; set; }
         public LayerMask EnemyLayer { get; set; }
         
@@ -36,13 +39,13 @@ namespace Unit.Character.Creep
                 pathFinding.SetTargetPosition(Start.transform.position);
             }
             
-            if(cellQueue.Count == 0)
-                cellQueue = pathFinding.GetPath();
+            if(pathToPoint.Count == 0)
+                pathToPoint = pathFinding.GetPath();
 
-            if (cellQueue.Count == 0)
+            if (pathToPoint.Count == 0)
                 return null;
             
-            return cellQueue?.Peek().gameObject;
+            return pathToPoint?.Peek().gameObject;
         }
 
         public override void Initialize()
@@ -58,7 +61,9 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
-            currentTarget = GetNextTarget();
+
+            pathToPoint.Clear();
+            FindNewPath();
             
             if (!currentTarget)
             {
@@ -66,7 +71,6 @@ namespace Unit.Character.Creep
                 return;
             }
             
-            rotation.SetTarget(currentTarget.transform);
             CreepAnimation.ChangeAnimationWithDuration(WalkClip,  duration: 0.7f);
         }
 
@@ -90,11 +94,27 @@ namespace Unit.Character.Creep
             currentTarget = null;
         }
 
+        private void FindNewPath()
+        {
+            if (pathToPoint.Count == 0)
+            {
+                pathFinding.SetStartPosition(GameObject.transform.position);
+                pathToPoint = pathFinding.GetPath();
+            }
+            
+            if(pathToPoint.Count == 0) return;
+            
+            currentTarget = pathToPoint?.Peek()?.gameObject;
+            rotation.SetTarget(currentTarget.transform);
+        }
+
         public override void Move()
         {
+            currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
+            
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position))
             {
-                cellQueue?.Dequeue();
+                pathToPoint?.Dequeue();
                 currentTarget = GetNextTarget();
                 rotation.SetTarget(currentTarget.transform);
             }
@@ -102,8 +122,11 @@ namespace Unit.Character.Creep
             {
                 if(!isCanMovement) return;
                 
-                GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
-                    currentTarget.transform.position, MovementSpeed * Time.deltaTime);
+                direction = (currentTargetPosition - GameObject.transform.position).normalized;
+                CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
+                
+                //GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
+                    //currentTarget.transform.position, MovementSpeed * Time.deltaTime);
             }
         }
 
@@ -173,5 +196,15 @@ namespace Unit.Character.Creep
 
             return this;
         }
+        
+        public CreepPatrolStateBuilder SetCharacterController(CharacterController characterController)
+        {
+            if (state is CreepPatrolState enemyPatrolState)
+            {
+                enemyPatrolState.CharacterController = characterController;
+            }
+
+            return this;
+        } 
     }
 }

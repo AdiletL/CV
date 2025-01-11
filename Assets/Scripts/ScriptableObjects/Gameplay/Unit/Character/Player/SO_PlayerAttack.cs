@@ -7,17 +7,17 @@ namespace ScriptableObjects.Unit.Character.Player
     public class SO_PlayerAttack: SO_CharacterAttack
     {
         [field: SerializeField, Space(10), Header("Default")] 
-        public List<AnimationClip> DefaultAttackClips { get; private set; }
+        public AnimationClip[] DefaultAttackClips { get; private set; }
         [field: SerializeField] public AnimationClip DefaultCooldownClip { get; private set; }
         
         
         [field: SerializeField, Space(10), Header("SwordClips")] 
-        public List<AnimationClip> SwordAttackClip { get; private set; }
+        public AnimationClip[] SwordAttackClip { get; private set; }
         [field: SerializeField] public AnimationClip SwordCooldownClip { get; private set; }
         
         
         [field: SerializeField, Space(10), Header("BowClips")] 
-        public List<AnimationClip> BowAttackClip { get; private set; }
+        public AnimationClip[] BowAttackClip { get; private set; }
         [field: SerializeField] public AnimationClip BowCooldownClip { get; private set; }
     }
 }

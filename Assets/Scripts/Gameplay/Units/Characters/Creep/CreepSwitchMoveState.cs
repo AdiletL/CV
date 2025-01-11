@@ -6,7 +6,6 @@ namespace Unit.Character.Creep
     public class CreepSwitchMoveState : CharacterSwitchMoveState
     {
         private SO_CreepMove so_CreepMove;
-        private GameObject currentTarget;
         
         public Transform Center { get; set; }
 
