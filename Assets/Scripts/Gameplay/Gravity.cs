@@ -7,9 +7,13 @@ public abstract class Gravity : MonoBehaviour
     
     protected bool isGravity = true;
 
-    public void ChangeGravity(bool isGravity)
+    public void ActivateGravity()
     {
-        this.isGravity = isGravity;
+        this.isGravity = true;
+    }
+    public void InActivateGravity()
+    {
+        this.isGravity = false;
     }
 
     private void LateUpdate()

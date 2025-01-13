@@ -23,7 +23,6 @@ namespace Unit.Character.Creep
         public CreepAnimation CreepAnimation { get; set; }
         public CharacterController CharacterController { get; set; }
         public Transform Center { get; set; }
-        public LayerMask EnemyLayer { get; set; }
         
         
         protected GameObject GetNextTarget()
@@ -83,7 +82,6 @@ namespace Unit.Character.Creep
                 return;
             }
 
-            CheckAttack();
             RotateToTarget();
             Move();
         }
@@ -142,13 +140,6 @@ namespace Unit.Character.Creep
                 isCanMovement = false;
             }
         }
-
-        private void CheckAttack()
-        {
-            var enemyGameObject = Calculate.Attack.CheckForwardEnemy(this.GameObject, Center.position, EnemyLayer);
-            if (enemyGameObject)
-                this.StateMachine.ExitCategory(Category, null);
-        }
     }
 
     public class CreepPatrolStateBuilder : CharacterPatrolStateBuilder
@@ -182,16 +173,6 @@ namespace Unit.Character.Creep
             if (state is CreepPatrolState enemyPatrolState)
             {
                 enemyPatrolState.Center = center;
-            }
-
-            return this;
-        }
-        
-        public CreepPatrolStateBuilder SetEnemyLayer(LayerMask layer)
-        {
-            if (state is CreepPatrolState enemyPatrolState)
-            {
-                enemyPatrolState.EnemyLayer = layer;
             }
 
             return this;

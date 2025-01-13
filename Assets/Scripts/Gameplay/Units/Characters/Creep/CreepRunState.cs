@@ -49,13 +49,7 @@ namespace Unit.Character.Creep
                 .SetEndPosition(GameObject.transform.position)
                 .Build();
         }
-
-        public override void Enter()
-        {
-            base.Enter();
-
-        }
-
+        
         public override void Update()
         {
             base.Update();
@@ -99,10 +93,10 @@ namespace Unit.Character.Creep
 
         private void NewCurrentTarget()
         {
-            if(pathToPoint.Count == 0)
-                pathToPoint = pathFinding.GetPath(true);
+            if(pathToPoint.Count is 0)
+                pathToPoint = pathFinding.GetPath();
                 
-            if(pathToPoint.Count == 0) return;
+            if(pathToPoint.Count is 0) return;
             
             currentTarget = pathToPoint.Peek()?.gameObject;
             rotation.SetTarget(currentTarget.transform);
@@ -111,7 +105,7 @@ namespace Unit.Character.Creep
 
         private void CheckPath()
         {
-            if(!isCheckPath) return;
+            //if(!isCheckPath) return;
             
             countCooldownCheckTarget += Time.deltaTime;
             if (countCooldownCheckTarget < cooldownCheckTarget) return;
@@ -165,7 +159,6 @@ namespace Unit.Character.Creep
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
             }
         }
-        
     }
     
     public class CreepRunStateBuilder : CharacterRunStateBuilder

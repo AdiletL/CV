@@ -24,12 +24,10 @@ namespace Gameplay.Weapon
             Hide(); 
         }
         
+        public void Show() => weapon.SetActive(true);
 
-        public virtual void IncreaseStates(IState state)
-        {
-            
-        }
-
+        public void Hide() => weapon.SetActive(false);
+        
         public void SetTarget(GameObject target)
         {
             CurrentTarget = target;
@@ -42,13 +40,15 @@ namespace Gameplay.Weapon
             if (CurrentTarget.TryGetComponent(out IHealth health)
                 && health.IsLive)
             {
-                health.TakeDamage(Damageable);    
+                health.TakeDamage(Damageable);
             }
         }
+        
+        public virtual void IncreaseStates(IState state)
+        {
+            
+        }
 
-        public void Show() => weapon.SetActive(true);
-
-        public void Hide() => weapon.SetActive(false);
     }
 
     public abstract class WeaponBuilder

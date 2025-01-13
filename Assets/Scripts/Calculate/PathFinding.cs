@@ -153,6 +153,8 @@ namespace Calculate
                 path.Enqueue(platform);
             }
             
+            if(path.Count == 0) return;
+            
             path.Peek().ResetColor();
             path.Dequeue();
         }
@@ -166,7 +168,7 @@ namespace Calculate
             
             foreach (var direction in rayDirectionsCell)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + 1f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f) + 2f;
                 
                 if (!Physics.Raycast(correctCellPosition, direction, out hitResult, rayLenght, Layers.CELL_LAYER) ||
                     !hitResult.transform.TryGetComponent(out CellController cell) ||
@@ -200,7 +202,7 @@ namespace Calculate
             
             foreach (var direction in rayDirectionsCell)
             {
-                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + 1f;
+                rayLenght = (Mathf.Abs(Vector3.Dot(direction, currentCellScale)) / 2f)  + 2f;
                 Debug.DrawRay(origin, direction * rayLenght, Color.red, 2);
                 if (Physics.Raycast(origin, direction, out hitResult, rayLenght, Layers.CELL_LAYER) &&
                     hitResult.transform.TryGetComponent(out CellController cell))

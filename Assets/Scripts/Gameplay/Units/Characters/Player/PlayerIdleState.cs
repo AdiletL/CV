@@ -58,7 +58,7 @@ namespace Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            CheckAttack();
+            CheckEnemy();
             CheckMove();
             CheckJump();
         }
@@ -104,7 +104,7 @@ namespace Unit.Character.Player
             }
         }
         
-        private void CheckAttack()
+        private void CheckEnemy()
         {
             if(!isCheckAttack) return;
 

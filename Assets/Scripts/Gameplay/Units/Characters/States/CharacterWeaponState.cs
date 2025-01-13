@@ -20,7 +20,7 @@ namespace Unit.Character
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
         protected float range;
-        private float rangeSqr;
+        protected float rangeSqr;
 
         protected bool isApplyDamage;
         protected bool isAttack;
@@ -112,16 +112,20 @@ namespace Unit.Character
             isApplyDamage = false;
             countDurationAttack = 0;
             countTimerApplyDamage = 0;
-            countCooldown = cooldown;
+            countCooldown = 0;
         }
         public virtual void SetWeapon(Weapon weapon)
         {
+            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.Amount);
+            
             CurrentWeapon = weapon;
             durationAttack = Calculate.Attack.TotalDurationInSecond(CurrentWeapon.AmountAttack);
             timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack;
             range = CurrentWeapon.Range;
             rangeSqr = range * range;
+
+            CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.Amount);
 
             switch (weapon)
             {
@@ -136,7 +140,7 @@ namespace Unit.Character
             Restart();
         }
 
-        public virtual void SetAnimationClip(AnimationClip[] attackClips, AnimationClip cooldownClip)
+        protected virtual void SetAnimationClip(AnimationClip[] attackClips, AnimationClip cooldownClip)
         {
             this.attackClips = attackClips;
             this.cooldownClip = cooldownClip;

@@ -1,5 +1,6 @@
 ﻿using Gameplay.Damage;
 using ScriptableObjects.Unit.Character.Creep;
+using UnityEngine;
 using Zenject;
 
 namespace Unit.Character.Creep
@@ -26,12 +27,23 @@ namespace Unit.Character.Creep
                 .SetGameObject(GameObject)
                 .SetAttackClips(so_BeholderAttack.AttackClips)
                 .SetCooldownClip(so_BeholderAttack.CooldownClip)
+                .SetRange(so_BeholderAttack.Range)
+                .SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
                 .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetAmountAttack(so_BeholderAttack.AmountAttackInSecond)
                 .SetDamageable(new NormalDamage(so_BeholderAttack.Damage, GameObject))
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            so_BeholderAttack = (SO_BeholderAttack)so_CharacterAttack;
+            rangeAttack = so_BeholderAttack.Range;
+        }
+
 
         protected override void DestermineState()
         {

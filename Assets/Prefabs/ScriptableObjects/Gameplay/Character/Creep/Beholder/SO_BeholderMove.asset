@@ -29,6 +29,6 @@ MonoBehaviour:
     MaxCount: 1
   <RunClip>k__BackingField:
   - {fileID: 7400000, guid: cabb129121944e2dbd3866b6deba6b9d, type: 3}
-  <RunSpeed>k__BackingField: 1
+  <RunSpeed>k__BackingField: 2.5
   <WalkClip>k__BackingField: {fileID: 7400000, guid: 38b0b6ad62ca4f8fa72ac537c889c8dc, type: 3}
   <WalkSpeed>k__BackingField: 1

@@ -5,7 +5,17 @@ namespace Gameplay.Damage
     public class NormalDamage : IDamageable
     {
         public GameObject Owner { get; set; }
-        public int Amount { get; set; }
+        public int Amount { get; }
+        public int AdditionalDamage { get; private set; }
+        
+        public void AddAdditionalDamage(int value)
+        {
+            AdditionalDamage += value;
+        }
+        public void RemoveAdditionalDamage(int value)
+        {
+            AdditionalDamage -= value;
+        }
 
         public NormalDamage(int amount, GameObject gameObject)
         {
@@ -18,7 +28,7 @@ namespace Gameplay.Damage
         public int GetTotalDamage(GameObject gameObject)
         {
             var result = 0;
-            result = Amount;
+            result = Amount + AdditionalDamage;
             return result;
         }
     }

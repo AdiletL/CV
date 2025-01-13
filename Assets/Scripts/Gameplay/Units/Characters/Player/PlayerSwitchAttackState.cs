@@ -11,10 +11,7 @@ namespace Unit.Character.Player
         private PlayerAnimation playerAnimation;
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
-        private float rangeAttack;
         private float amountAttack;
-        
-        protected Collider[] findUnitColliders = new Collider[1];
         
         public Transform WeaponParent { get; set; }
         
@@ -46,11 +43,6 @@ namespace Unit.Character.Player
                 .SetDamageable(Damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
-        }
-        
-        public override bool IsFindUnitInRange()
-        {
-            return Calculate.Attack.IsFindUnitInRange(Center.position, rangeAttack, EnemyLayer, findUnitColliders);
         }
         
         public override void Initialize()

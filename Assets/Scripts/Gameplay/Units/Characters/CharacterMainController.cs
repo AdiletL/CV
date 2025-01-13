@@ -24,14 +24,31 @@ namespace Unit.Character
         {
             base.Initialize();
             StateMachine = new StateMachine();
+
+            InitializeMediator();
             
-            components.GetComponentFromArray<CharacterUI>()?.Initialize();
-            components.GetComponentFromArray<IUnitExperience>()?.Initialize();
+            GetComponentInUnit<CharacterUI>()?.Initialize();
+            GetComponentInUnit<IUnitExperience>()?.Initialize();
+        }
+
+        private void InitializeMediator()
+        {
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangeHealth;
+        }
+
+        protected virtual void DeInitializeMediator()
+        {
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangeHealth;
         }
 
         protected virtual void OnEnable()
         {
             this.StateMachine?.ExitOtherStates(typeof(CharacterIdleState));
+        }
+
+        protected virtual void OnDestroy()
+        {
+            DeInitializeMediator();
         }
     }
 }

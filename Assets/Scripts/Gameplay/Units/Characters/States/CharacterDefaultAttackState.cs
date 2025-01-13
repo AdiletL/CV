@@ -17,7 +17,7 @@ namespace Unit.Character
         protected float applyDamage, countApplyDamage;
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
-        protected float range;
+        protected float rangeSqr;
 
         protected bool isApplyDamage;
         protected bool isAttack;
@@ -27,7 +27,9 @@ namespace Unit.Character
         public Transform Center { get; set; }
         public AnimationClip CooldownClip { get; set; }
         public AnimationClip[] AttackClips { get; set; }
-        public int EnemyLayer { get; set; }
+        public LayerMask EnemyLayer { get; set; }
+        public float Range { get; set; }
+        public float AmountAttackInSecond { get; set; }
         
 
         protected AnimationClip getRandomAnimationClip()
@@ -40,6 +42,10 @@ namespace Unit.Character
             base.Initialize();
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
             rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
+            cooldown = durationAttack;
+            applyDamage = durationAttack * .55f;
+            rangeSqr = Range * Range;
         }
 
         public override void Enter()
@@ -67,25 +73,25 @@ namespace Unit.Character
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-
-            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.range + .15f))
+            
+            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr))
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-
+            
             if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
                 rotation.Rotate();
-               
+            
             if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
-
+            
             if (!isAttack)
             {
                 CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
             }
-
+            
             Cooldown();
             Attack();
         }
@@ -102,13 +108,13 @@ namespace Unit.Character
             isApplyDamage = false;
             countDurationAttack = 0;
             countApplyDamage = 0;
-            countCooldown = cooldown;
+            countCooldown = 0;
         }
 
         protected void FindUnit()
         {
-            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
-            rotation.SetTarget(currentTarget.transform);
+            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, Range, EnemyLayer, ref findUnitColliders);
+            rotation.SetTarget(currentTarget?.transform);
         }
         
         public override void Attack()
@@ -152,6 +158,7 @@ namespace Unit.Character
                 {
                     if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                     {
+                        Debug.Log("Update5");
                         currentTarget = null;
                         return;
                     }
@@ -178,9 +185,9 @@ namespace Unit.Character
         
         public CharacterDefaultAttackStateBuilder SetGameObject(GameObject gameObject)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.GameObject = gameObject;
+                characterDefaultAttackState.GameObject = gameObject;
             }
 
             return this;
@@ -188,20 +195,20 @@ namespace Unit.Character
         
         public CharacterDefaultAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.CharacterAnimation = characterAnimation;
+                characterDefaultAttackState.CharacterAnimation = characterAnimation;
             }
 
             return this;
         }
         
 
-        public CharacterDefaultAttackStateBuilder SetEnemyLayer(int index)
+        public CharacterDefaultAttackStateBuilder SetEnemyLayer(LayerMask layer)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.EnemyLayer = index;
+                characterDefaultAttackState.EnemyLayer = layer;
             }
 
             return this;
@@ -209,9 +216,9 @@ namespace Unit.Character
         
         public CharacterDefaultAttackStateBuilder SetCenter(Transform center)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.Center = center;
+                characterDefaultAttackState.Center = center;
             }
 
             return this;
@@ -219,9 +226,9 @@ namespace Unit.Character
 
         public CharacterDefaultAttackStateBuilder SetAttackClips(AnimationClip[] animationClip)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.AttackClips = animationClip;
+                characterDefaultAttackState.AttackClips = animationClip;
             }
 
             return this;
@@ -229,12 +236,33 @@ namespace Unit.Character
         
         public CharacterDefaultAttackStateBuilder SetCooldownClip(AnimationClip animationClip)
         {
-            if (state is CharacterDefaultAttackState characterWeapon)
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterWeapon.CooldownClip = animationClip;
+                characterDefaultAttackState.CooldownClip = animationClip;
             }
 
             return this;
         }
+        
+        public CharacterDefaultAttackStateBuilder SetRange(float range)
+        {
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
+            {
+                characterDefaultAttackState.Range = range;
+            }
+
+            return this;
+        }
+        
+        public CharacterDefaultAttackStateBuilder SetAmountAttackInSecond(float value)
+        {
+            if (state is CharacterDefaultAttackState characterDefaultAttackState)
+            {
+                characterDefaultAttackState.AmountAttackInSecond = value;
+            }
+
+            return this;
+        }
+        
     }
 }

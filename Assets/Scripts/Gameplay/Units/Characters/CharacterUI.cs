@@ -21,10 +21,10 @@ namespace Unit.Character
         
         public virtual void Initialize()
         {
-            characterMainController.GetComponentInUnit<CharacterHealth>().OnChangedHealth += OnChangeHealth;
+            
         }
 
-        protected virtual void OnChangeHealth(IHealthInfo healthInfo)
+        public virtual void OnChangeHealth(IHealthInfo healthInfo)
         {
             UpdateHealthBar(healthInfo.CurrentHealth, healthInfo.MaxHealth);
         }
@@ -34,11 +34,6 @@ namespace Unit.Character
             var result = (float)current/max;
             healthBar.fillAmount = result;
             healthBar.color = so_GameUIColor.healthBarGradient.Evaluate(result);
-        }
-
-        private void OnDestroy()
-        {
-            characterMainController.GetComponentInUnit<CharacterHealth>().OnChangedHealth -= OnChangeHealth;
         }
     }
 }

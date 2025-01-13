@@ -1,13 +1,22 @@
 ﻿using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Creep
 {
     public class BeholderController : CreepController
     {
+        private DiContainer diContainer;
+        
         [SerializeField] private Transform finalPath;
         [SerializeField] private SO_BeholderAttack so_BeholderAttack;
-        
+
+
+        [Inject]
+        private void Construct(DiContainer diContainer)
+        {
+            this.diContainer = diContainer;
+        }
         
         protected override void CreateStates()
         {
@@ -20,18 +29,19 @@ namespace Unit.Character.Creep
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+            diContainer.Inject(idleState);
             
             var moveState = (BeholderSwitchMoveState)new BeholderSwitchMoveStateBuilder()
                 .SetCharacterController(GetComponent<CharacterController>())
                 .SetStart(Calculate.FindCell.GetCell(transform.position, Vector3.down).transform)
                 .SetEnd(finalPath)
-                .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetCenter(center)
                 .SetCharacterAnimation(animation)
                 .SetConfig(soCreepMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+            diContainer.Inject(moveState);
 
             var attackState = (BeholderSwitchAttackState)new BeholderSwitchAttackStateBuilder()
                 .SetCenter(center)
@@ -41,6 +51,7 @@ namespace Unit.Character.Creep
                 .SetConfig(so_BeholderAttack)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+            diContainer.Inject(attackState);
 
             this.StateMachine.AddStates(idleState, moveState, attackState);
         }

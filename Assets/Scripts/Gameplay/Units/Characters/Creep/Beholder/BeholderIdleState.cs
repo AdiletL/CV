@@ -11,22 +11,26 @@ namespace Unit.Character.Creep
         private float checkEnemyCooldown = .03f;
         private float countCheckEnemyCooldown;
         
-        private bool isCheckAttack;
+        private bool isCheckAttack = true;
         
 
         public override void Initialize()
         {
             base.Initialize();
             beholderSwitchMoveState = this.StateMachine.GetState<BeholderSwitchMoveState>();
-            //beholderSwitchAttackState = this.StateMachine.GetState<BeholderSwitchAttackState>();
+            beholderSwitchAttackState = this.StateMachine.GetState<BeholderSwitchAttackState>();
         }
-
-
+        
         public override void Update()
         {
             base.Update();
 
             CheckAttack();
+        }
+
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
             CheckPatrol();
         }
 

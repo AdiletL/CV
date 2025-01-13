@@ -80,8 +80,36 @@ namespace Unit.Character.Player
             
             StateMachine.Initialize();
             
-            components.GetComponentFromArray<PlayerHealth>()?.Initialize();
+            GetComponentInUnit<PlayerHealth>()?.Initialize();
+
+            TestWeapon();
+                        
+            StateMachine.OnChangedState += OnChangedState;
+            StateMachine.SetStates(typeof(PlayerIdleState));
+        }
+
+        private void CreateStates()
+        {
+            StateMachine = new StateMachine();
+
+            var characterAnimation = GetComponentInUnit<CharacterAnimation>();
+            var center = GetComponentInUnit<UnitCenter>().Center;
+
+            var idleState = CreateIdleState(characterAnimation, center);
+            var moveState = CreateSwitchMoveState(characterAnimation, center);
+            var attackState = CreateSwitchAttackState(characterAnimation, center);
             
+            StateMachine.AddStates(idleState, attackState, moveState);
+        }
+
+        
+        public override void Appear()
+        {
+            
+        }
+
+        private void TestWeapon()
+        {
             //TEST
             var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
             var sword = (Sword)new SwordBuilder()
@@ -105,29 +133,6 @@ namespace Unit.Character.Player
             diContainer.Inject(bow);
             bow.Initialize();
             SetWeapon(bow);*/
-            
-            StateMachine.OnChangedState += OnChangedState;
-            StateMachine.SetStates(typeof(PlayerIdleState));
-        }
-
-        private void CreateStates()
-        {
-            StateMachine = new StateMachine();
-
-            var characterAnimation = components.GetComponentFromArray<CharacterAnimation>();
-            var center = components.GetComponentFromArray<UnitCenter>().Center;
-
-            var idleState = CreateIdleState(characterAnimation, center);
-            var moveState = CreateSwitchMoveState(characterAnimation, center);
-            var attackState = CreateSwitchAttackState(characterAnimation, center);
-            
-            StateMachine.AddStates(idleState, attackState, moveState);
-        }
-
-        
-        public override void Appear()
-        {
-            
         }
 
         private void Update()
@@ -162,7 +167,7 @@ namespace Unit.Character.Player
             currentStateName = state.GetType().Name;
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             StateMachine.OnChangedState -= OnChangedState;
         }

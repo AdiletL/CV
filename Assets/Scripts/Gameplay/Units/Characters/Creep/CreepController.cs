@@ -21,7 +21,7 @@ namespace Unit.Character.Creep
             CreateStates();
             
             this.StateMachine.Initialize();
-            components.GetComponentFromArray<CreepHealth>()?.Initialize();
+            GetComponentInUnit<CreepHealth>()?.Initialize();
             
             this.StateMachine.SetStates(typeof(CreepIdleState));
             

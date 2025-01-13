@@ -13,6 +13,8 @@ namespace Unit.Character
         protected SO_CharacterAttack so_CharacterAttack;
 
         protected IDamageable Damageable;
+        protected Collider[] findUnitColliders = new Collider[1];
+        protected float rangeAttack;
 
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
@@ -22,7 +24,7 @@ namespace Unit.Character
 
         public virtual bool IsFindUnitInRange()
         {
-            throw new NotImplementedException();
+            return Calculate.Attack.IsFindUnitInRange(Center.position, rangeAttack, EnemyLayer, ref findUnitColliders);
         }
 
 

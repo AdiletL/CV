@@ -35,7 +35,7 @@ namespace Unit.Character
             isJumping = true;
             CharacterAnimation.ChangeAnimationWithDuration(JumpClip, duration: JumpDuration, isForce: true);
             CharacterAnimation.SetBlock(true);
-            gravity.ChangeGravity(false);
+            gravity.InActivateGravity();
             countJump = 1;
             progress = 0;
         }
@@ -54,7 +54,7 @@ namespace Unit.Character
 
                 if (progress >= .5f)
                 {
-                    gravity.ChangeGravity(true);
+                    gravity.ActivateGravity();
                     if (Physics.Raycast(GameObject.transform.position, Vector3.down,.2f))
                     {
                         isJumping = false;
@@ -85,7 +85,7 @@ namespace Unit.Character
             startPosition = GameObject.transform.position;
             timer = 0f;
             CharacterAnimation.ChangeAnimationWithDuration(JumpClip, duration: JumpDuration, isForce: true);
-            gravity.ChangeGravity(false);
+            gravity.InActivateGravity();
             countJump++;
             progress = 0;
         }

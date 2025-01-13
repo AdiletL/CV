@@ -12,7 +12,6 @@ namespace Unit.Character.Creep
         public CharacterController CharacterController { get; set; }
         public Transform Start { get; set; }
         public Transform End { get; set; }
-        public LayerMask EnemyLayer { get; set; }
         
 
         public override bool IsCanMovement()
@@ -27,12 +26,11 @@ namespace Unit.Character.Creep
                 .SetCenter(Center)
                 .SetEnemyAnimation(beholderAnimation)
                 .SetWalkClip(so_BeholderMove.WalkClip)
-                .SetEnemyLayer(EnemyLayer)
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetStart(Start)
                 .SetEnd(End)
                 .SetGameObject(GameObject)
-                .SetMovementSpeed(so_BeholderMove.RunSpeed)
+                .SetMovementSpeed(so_BeholderMove.WalkSpeed)
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
@@ -58,13 +56,12 @@ namespace Unit.Character.Creep
             so_BeholderMove = (SO_BeholderMove)SO_CharacterMove;
             beholderAnimation = (BeholderAnimation)CharacterAnimation;
         }
-
+        
         protected override void DestermineState()
         {
             base.DestermineState();
             if (currentTarget)
             {
-                Debug.Log("run");
                 if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
                 {
                     var runState = CreateRunState();
@@ -72,6 +69,7 @@ namespace Unit.Character.Creep
                     this.StateMachine.AddStates(runState);
                 }
                 
+                this.StateMachine.GetState<BeholderRunState>().SetTarget(currentTarget);
                 this.StateMachine.SetStates(typeof(BeholderRunState));
                 currentTarget = null;
             }
@@ -122,15 +120,7 @@ namespace Unit.Character.Creep
 
             return this;
         }
-        public BeholderSwitchMoveStateBuilder SetEnemyLayer(LayerMask layer)
-        {
-            if (state is BeholderSwitchMoveState characterSwitchMoveState)
-            {
-                characterSwitchMoveState.EnemyLayer = layer;
-            }
 
-            return this;
-        }
         public BeholderSwitchMoveStateBuilder SetCharacterController(CharacterController characterController)
         {
             if (state is BeholderSwitchMoveState characterSwitchMoveState)
