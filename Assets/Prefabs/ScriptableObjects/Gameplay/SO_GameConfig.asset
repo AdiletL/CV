@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d804997c0e0342aaa6326a8828b2bb35, type: 3}
   m_Name: SO_GameConfig
   m_EditorClassIdentifier: 
-  <Experience>k__BackingField: 100
+  <CooldownDecreaseEndurance>k__BackingField: 0.2
+  <AmountDecreaseEndurance>k__BackingField: 0.1
   <BaseWaitTimeTrap>k__BackingField: 0.3

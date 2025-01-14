@@ -28,17 +28,23 @@ namespace Unit.Character
             InitializeMediator();
             
             GetComponentInUnit<CharacterUI>()?.Initialize();
-            GetComponentInUnit<IUnitExperience>()?.Initialize();
+            GetComponentInUnit<CharacterExperience>()?.Initialize();
+            GetComponentInUnit<CharacterHealth>()?.Initialize();
+            GetComponentInUnit<CharacterEndurance>()?.Initialize();
         }
 
         private void InitializeMediator()
         {
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangeHealth;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().OnDeath += GetComponentInUnit<CharacterExperience>().OnDeath;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
         protected virtual void DeInitializeMediator()
         {
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangeHealth;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().OnDeath -= GetComponentInUnit<CharacterExperience>().OnDeath;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
         protected virtual void OnEnable()

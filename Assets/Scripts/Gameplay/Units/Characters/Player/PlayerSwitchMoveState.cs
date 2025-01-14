@@ -11,6 +11,7 @@ namespace Unit.Character.Player
         public Transform Center { get; set; }
 
         public CharacterController CharacterController { get; set; }
+        public PlayerEndurance PlayerEndurance { get; set; }
 
         private PlayerRunState CreateRunState()
         {
@@ -18,6 +19,8 @@ namespace Unit.Character.Player
                 .SetCharacterController(CharacterController)
                 .SetMoveConfig(so_PlayerMove)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
+                .SetRunDecreaseEndurance(so_PlayerMove.RunDecreaseEndurance)
+                .SetPlayerEndurance(PlayerEndurance)
                 .SetCenter(Center)
                 .SetCharacterAnimation(this.CharacterAnimation)
                 .SetRunClips(so_PlayerMove.RunClip)
@@ -79,6 +82,13 @@ namespace Unit.Character.Player
         {
             if(state is PlayerSwitchMoveState playerSwitchMoveState)
                 playerSwitchMoveState.CharacterController = characterController;
+
+            return this;
+        }
+        public PlayerMoveStateBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
+        {
+            if(state is PlayerSwitchMoveState playerSwitchMoveState)
+                playerSwitchMoveState.PlayerEndurance = playerEndurance;
 
             return this;
         }

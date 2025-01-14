@@ -68,7 +68,6 @@ namespace Unit.Character
                     float jumpOffset = Curve.Evaluate(progress) * JumpHeight;
                     GameObject.transform.position = new Vector3(GameObject.transform.position.x, startPosition.y + jumpOffset, GameObject.transform.position.z);
                 }
-
             }
         }
 
@@ -80,7 +79,7 @@ namespace Unit.Character
             }
         }
         
-        private void StartJump()
+        protected virtual void StartJump()
         {
             startPosition = GameObject.transform.position;
             timer = 0f;

@@ -17,6 +17,6 @@ MonoBehaviour:
   <DeactivateClip>k__BackingField: {fileID: 7400000, guid: ae619c27a9947c64dacc0445a5ceaf67, type: 2}
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 136
   <AmountAttackInSecond>k__BackingField: 4
   <CooldownAttack>k__BackingField: 2

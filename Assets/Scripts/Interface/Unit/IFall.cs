@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 
-namespace Unit
+public interface IFall
 {
-    public interface IFall
-    {
-        public float Speed { get; }
+    public float Speed { get; }
 
-        public void Initialize();
-        public void Fall();
-    }
+    public void Initialize();
+    public void Fall();
+}
 
-    public interface IFallGravity
-    {
-        public Rigidbody Rigidbody { get; }
-        public float Mass { get; }
-        
-        public void Initialize();
-        public void FallGravity();
-    }
+public interface IFallGravity
+{
+    public Rigidbody Rigidbody { get; }
+    public float Mass { get; }
+    
+    public void Initialize();
+    public void FallGravity();
 }

@@ -6,12 +6,18 @@ using Zenject;
 
 namespace Unit.Character
 {
-    public abstract class CharacterUI : MonoBehaviour, ICharacter
+    public abstract class CharacterUI : UnitUI, ICharacter
     {
         [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected Image healthBar;
+        [SerializeField] protected Image enduranceBar;
         
         protected SO_GameUIColor so_GameUIColor;
+        
+        protected Gradient healthBarGradient;
+        protected Gradient enduranceBarGradient;
+        protected float resultHealth;
+        protected float resultEndurance;
 
         [Inject]
         public void Construct(SO_GameUIColor so_GameUIColor)
@@ -21,19 +27,31 @@ namespace Unit.Character
         
         public virtual void Initialize()
         {
-            
+            healthBarGradient = so_GameUIColor.HealthBarGradient;
+            enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
         }
 
-        public virtual void OnChangeHealth(IHealthInfo healthInfo)
+        public virtual void OnChangedHealth(HealthInfo healthInfo)
         {
             UpdateHealthBar(healthInfo.CurrentHealth, healthInfo.MaxHealth);
         }
 
         protected virtual void UpdateHealthBar(int current, int max)
         {
-            var result = (float)current/max;
-            healthBar.fillAmount = result;
-            healthBar.color = so_GameUIColor.healthBarGradient.Evaluate(result);
+            resultHealth = (float)current/max;
+            healthBar.fillAmount = resultHealth;
+            healthBar.color = healthBarGradient.Evaluate(resultHealth);
+        }
+
+        public virtual void OnChangedEndurance(EnduranceInfo enduranceInfo)
+        {
+            UpdateEnduranceBar(enduranceInfo.CurrentEndurance, enduranceInfo.MaxEndurance);
+        }
+        protected virtual void UpdateEnduranceBar(float current, float max)
+        {
+            resultEndurance = current/max;
+            enduranceBar.fillAmount = resultEndurance;
+            enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
         }
     }
 }

@@ -9,6 +9,10 @@ namespace Unit.Character.Creep
 
         public override void LateUpdate()
         {
+            base.LateUpdate();
+            
+            if(!currentTarget) return;
+            
             if (!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {

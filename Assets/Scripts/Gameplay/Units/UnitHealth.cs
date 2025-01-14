@@ -6,7 +6,7 @@ namespace Unit
 {
     public abstract class UnitHealth : MonoBehaviour, IHealth
     {
-        public event Action<IHealthInfo> OnChangedHealth;
+        public event Action<HealthInfo> OnChangedHealth;
         public event Action OnDeath;
         
         [SerializeField] protected UnitController unitController;
@@ -71,7 +71,7 @@ namespace Unit
 
         protected virtual void ExecuteEventChangedHealth()
         {
-            healthInfo.CurrentHealth = currentHealth;
+            healthInfo.CurrentHealth = CurrentHealth;
             healthInfo.MaxHealth = MaxHealth;
             OnChangedHealth?.Invoke(healthInfo);
         }
@@ -89,14 +89,6 @@ namespace Unit
             
         }
 
-        public virtual void IncreaseStates(IState state)
-        {
-            if (state is UnitStateHealth characterHealthStates)
-            {
-                CurrentHealth += characterHealthStates.Health;
-                MaxHealth += characterHealthStates.MaxHealth;
-            }
-        }
         
         public virtual void TakeDamage(IDamageable damageable)
         {
@@ -108,7 +100,7 @@ namespace Unit
         }
     }
     
-    public class HealthInfo : IHealthInfo
+    public class HealthInfo
     {
         public int CurrentHealth { get; set; }
         public int MaxHealth { get; set; }

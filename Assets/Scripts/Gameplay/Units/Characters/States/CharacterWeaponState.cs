@@ -116,7 +116,7 @@ namespace Unit.Character
         }
         public virtual void SetWeapon(Weapon weapon)
         {
-            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.Amount);
+            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
             
             CurrentWeapon = weapon;
             durationAttack = Calculate.Attack.TotalDurationInSecond(CurrentWeapon.AmountAttack);
@@ -125,7 +125,7 @@ namespace Unit.Character
             range = CurrentWeapon.Range;
             rangeSqr = range * range;
 
-            CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.Amount);
+            CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.CurrentDamage);
 
             switch (weapon)
             {

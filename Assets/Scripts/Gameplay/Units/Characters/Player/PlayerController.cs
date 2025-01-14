@@ -34,6 +34,7 @@ namespace Unit.Character.Player
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetMoveConfig(so_PlayerMove)
+                .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetFinishTargetToMove(finish)
                 .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
@@ -48,6 +49,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchMoveState)new PlayerMoveStateBuilder()
                 .SetCharacterController(characterController)
                 .SetCenter(center)
+                .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
@@ -80,8 +82,6 @@ namespace Unit.Character.Player
             
             StateMachine.Initialize();
             
-            GetComponentInUnit<PlayerHealth>()?.Initialize();
-
             TestWeapon();
                         
             StateMachine.OnChangedState += OnChangedState;

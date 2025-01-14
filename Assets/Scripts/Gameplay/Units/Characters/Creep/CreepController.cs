@@ -21,7 +21,6 @@ namespace Unit.Character.Creep
             CreateStates();
             
             this.StateMachine.Initialize();
-            GetComponentInUnit<CreepHealth>()?.Initialize();
             
             this.StateMachine.SetStates(typeof(CreepIdleState));
             

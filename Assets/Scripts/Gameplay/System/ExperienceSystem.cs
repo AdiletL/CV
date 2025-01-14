@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+using Unit;
 using Zenject;
 
 public class ExperienceSystem : IInitializable, IDisposable
@@ -25,34 +24,26 @@ public class ExperienceSystem : IInitializable, IDisposable
 
     private void OnGiveAoeExperience(Unit.AoeExperienceInfo info)
     {
-        var experienceUnits = gameUnits.GetUnits<IUnitExperience>();
-        var sortingUnits = new List<IUnitExperience>();
-     
-        var damagingExperience = info.Damaging.GetComponent<IUnitExperience>();
+        var experienceUnits = gameUnits.GetUnits<UnitExperience>();
+        var distanceSqr = info.RangeTakeExperience * info.RangeTakeExperience;
         
         for (int i = experienceUnits.Count - 1; i >= 0; i--)
         {
-            if (experienceUnits[i] == null)
+            if (!experienceUnits[i] 
+                || !experienceUnits[i].gameObject.activeInHierarchy
+                || !experienceUnits[i].IsTakeExperience
+                || !experienceUnits[i].TryGetComponent(out IHealth health)
+                || !health.IsLive
+                || !Calculate.Distance.IsNearUsingSqr(info.GameObject.transform.position, experienceUnits[i].transform.position, distanceSqr))
             {
                 experienceUnits.RemoveAt(i);
-                continue;
-            }
-
-            if (experienceUnits[i] is MonoBehaviour monoBehaviour
-                && monoBehaviour.TryGetComponent(out IHealth healthComponent)
-                && healthComponent.IsLive
-                && experienceUnits[i].IsTakeExperience
-                && experienceUnits[i].IsRangeTakeExperience(info.GameObject))
-            {
-                if(damagingExperience != null && experienceUnits[i] != damagingExperience)
-                    sortingUnits.Add(experienceUnits[i]);
             }
         }
 
-        if(sortingUnits.Count == 0) return;
+        if(experienceUnits.Count == 0) return;
         
-        int resultExperience = info.TotalExperience / sortingUnits.Count;
-        foreach (var VARIABLE in sortingUnits)
+        int resultExperience = info.TotalExperience / experienceUnits.Count;
+        foreach (var VARIABLE in experienceUnits)
         {
             VARIABLE.AddExperience(resultExperience);
         }

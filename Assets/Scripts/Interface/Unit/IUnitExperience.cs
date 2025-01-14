@@ -7,7 +7,7 @@ public interface IUnitLevel
     public bool IsTakeLevel { get; }
 
     public void LevelUp(int amount);
-    public void IncreaseLevel(Unit.IState states);
+    public void IncreaseLevel(int value);
 }
 
 public interface IUnitExperience
@@ -20,8 +20,6 @@ public interface IUnitExperience
     public bool IsTakeExperience { get; }
     public bool IsGiveExperience { get; }
 
-    public bool IsRangeTakeExperience(GameObject target);
-    
     public void Initialize();
 
     public void AddExperience(int experience);

@@ -23,10 +23,13 @@ namespace Unit.Character.Player
         
         public GameObject TargetForMove { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
+        public PlayerEndurance PlayerEndurance { get; set; }
 
         private PlayerJumpState CreatePlayerJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetPlayerEndurance(PlayerEndurance)
+                .SetDecreaseEndurance(SO_PlayerMove.JumpDecreaseEndurance)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
                 .SetAnimationCurve(SO_PlayerMove.JumpInfo.Curve)
                 .SetJumpDuration(SO_PlayerMove.JumpInfo.Duration)
@@ -173,6 +176,14 @@ namespace Unit.Character.Player
         {
             if (state is PlayerIdleState playerIdleState)
                 playerIdleState.SO_PlayerMove = config;
+
+            return this;
+        }
+        
+        public PlayerIdleStateBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
+        {
+            if (state is PlayerIdleState playerIdleState)
+                playerIdleState.PlayerEndurance = playerEndurance;
 
             return this;
         }

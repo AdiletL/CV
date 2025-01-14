@@ -58,7 +58,6 @@ namespace Unit.Character.Creep
 
         public override void Appear()
         {
-            Debug.Log("Appeared");
             this.StateMachine.SetStates(typeof(BeholderIdleState));
         }
     }

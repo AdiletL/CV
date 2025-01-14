@@ -38,13 +38,17 @@ namespace Unit.Character.Player
         private Queue<CellController> pathToPoint = new();
 
         public SO_PlayerMove SO_PlayerMove { get; set; }
+        public PlayerEndurance PlayerEndurance { get; set; }
         public Transform Center { get; set; }
         public CharacterController CharacterController { get; set; }
         public float RotationSpeed { get; set; }
+        public float RunDecreaseEndurance { get; set; }
 
         private PlayerJumpState CreatePlayerJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetPlayerEndurance(PlayerEndurance)
+                .SetDecreaseEndurance(SO_PlayerMove.JumpDecreaseEndurance)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
                 .SetAnimationCurve(SO_PlayerMove.JumpInfo.Curve)
                 .SetJumpDuration(SO_PlayerMove.JumpInfo.Duration)
@@ -134,6 +138,13 @@ namespace Unit.Character.Player
         
         private void ResetColorOnPath()
         {
+            var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
+            if (currentCell && currentCell.TryGetComponent(out UnitRenderer renderer))
+            {
+                if(currentCell.CurrentCoordinates != finalTargetCoordinates)
+                    renderer?.ResetColor();
+            }
+            
             CellController cellController;
             for (int i = pathToPoint.Count - 1; i >= 0; i--)
             {
@@ -223,8 +234,11 @@ namespace Unit.Character.Player
                     rotation.Rotate();
                     return;
                 }
+                
                 direction = (currentTargetPosition - GameObject.transform.position).normalized;
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
+
+                DecreaseEndurance();
             }
         }
 
@@ -267,6 +281,11 @@ namespace Unit.Character.Player
             isCheckEnemy = false;
             isCheckJump = false;
         }
+
+        private void DecreaseEndurance()
+        {
+            PlayerEndurance.RemoveEndurance(RunDecreaseEndurance);
+        }
     }
 
     public class PlayerRunStateBuilder : CharacterRunStateBuilder
@@ -302,6 +321,20 @@ namespace Unit.Character.Player
         {
             if (state is PlayerRunState playerRunState)
                 playerRunState.RotationSpeed = rotationSpeed;
+            
+            return this;  
+        }
+        public PlayerRunStateBuilder SetRunDecreaseEndurance(float value)
+        {
+            if (state is PlayerRunState playerRunState)
+                playerRunState.RunDecreaseEndurance = value;
+            
+            return this;  
+        }
+        public PlayerRunStateBuilder SetPlayerEndurance(PlayerEndurance endurance)
+        {
+            if (state is PlayerRunState playerRunState)
+                playerRunState.PlayerEndurance = endurance;
             
             return this;  
         }

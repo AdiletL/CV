@@ -13,9 +13,9 @@ namespace Gameplay.Experience
             this.so_GameConfig = so_GameConfig;
         }
         
-        public int CalculateExperienceForNextLevel(int currentLevel)
+        public int CalculateExperienceForNextLevel(int level, int experience)
         {
-            return currentLevel * so_GameConfig.Experience;
+            return level * experience;
         }
     }
 }

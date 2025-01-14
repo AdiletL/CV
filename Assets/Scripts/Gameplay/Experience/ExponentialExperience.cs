@@ -14,9 +14,9 @@ namespace Gameplay.Experience
             this.so_GameConfig = so_GameConfig;
         }
         
-        public int CalculateExperienceForNextLevel(int currentLevel)
+        public int CalculateExperienceForNextLevel(int level, int experience)
         {
-            return (int)(so_GameConfig.Experience * Mathf.Pow(1.5f, currentLevel - 1)); // Экспоненциальный рост опыта
+            return (int)(experience * Mathf.Pow(1.5f, level - 1)); // Экспоненциальный рост опыта
         }
     }
 }
