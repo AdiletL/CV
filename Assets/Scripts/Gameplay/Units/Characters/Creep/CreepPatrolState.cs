@@ -64,6 +64,7 @@ namespace Unit.Character.Creep
             pathToPoint.Clear();
             FindNewPath();
             
+            //Debug.Log(currentTarget);
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);

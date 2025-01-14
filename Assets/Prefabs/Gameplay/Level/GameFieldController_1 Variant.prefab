@@ -20728,6 +20728,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameFieldController_1 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6995952949732066269, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.41016
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995952949732066269, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 29.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995952949732066269, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995952949732066269, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12.88
+      objectReference: {fileID: 0}
     - target: {fileID: 8641291860690897369, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
       propertyPath: traps.Array.size
       value: 14

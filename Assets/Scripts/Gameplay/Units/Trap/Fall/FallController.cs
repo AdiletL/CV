@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Gameplay;
 using Gameplay.Damage;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Trap;
@@ -115,9 +116,9 @@ namespace Unit.Trap.Fall
 
         private IEnumerator FallUpdateCoroutine()
         {
-            float distance = 500;
-            var startPos = transform.position;
-            while ((startPos - transform.position).sqrMagnitude < distance)
+            float timer = 30;
+            float countTimer = 0;
+            while (timer > countTimer)
             {
                 yield return null;
                 for (int i = targetUnits.Count - 1; i >= 0; i--)
@@ -129,6 +130,7 @@ namespace Unit.Trap.Fall
                     }
 
                     targetUnits[i].MoveDirection(Vector3.down, Speed * Time.deltaTime);
+                    countTimer += Time.deltaTime;
                 }
             }
 
@@ -138,6 +140,13 @@ namespace Unit.Trap.Fall
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.TryGetComponent(out DeathPlane deathPlane))
+            {
+                StopCoroutine(fallUpdateCoroutine);
+                ApplyDamage();
+                gameObject.SetActive(false);
+            }
+            
             if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;
 
             if(startTimerCoroutine != null) StopCoroutine(startTimerCoroutine);

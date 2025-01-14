@@ -115,7 +115,6 @@ namespace Unit.Character.Player
             var sword = (Sword)new SwordBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetRange(so_Sword.Range)
-                .SetAmountAttack(so_Sword.AmountAttackInSecond)
                 .SetWeaponPrefab(so_Sword.WeaponPrefab)
                 .SetDamageable(swordDamageable)
                 .Build();

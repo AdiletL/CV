@@ -12,7 +12,6 @@ namespace Gameplay.Weapon
         public Transform WeaponParent { get; set; }
         public GameObject CurrentTarget { get; private set; }
         public IDamageable Damageable { get; set; }
-        public int AmountAttack { get; set; }
         public float Range { get; set; }
         
         
@@ -71,14 +70,6 @@ namespace Gameplay.Weapon
             weapon.Range = range;
             return this;
         }
-
-
-        public WeaponBuilder SetAmountAttack(int amount)
-        {
-            weapon.AmountAttack = amount;
-            return this;
-        }
-
         public WeaponBuilder SetWeaponPrefab(GameObject prefab)
         {
             weapon.WeaponPrefab = prefab;

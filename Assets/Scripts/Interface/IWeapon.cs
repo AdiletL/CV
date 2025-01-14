@@ -5,7 +5,6 @@ public interface IWeapon : IApplyDamage
 {
     GameObject WeaponPrefab { get; }
     GameObject CurrentTarget { get; }
-    public int AmountAttack { get; }
     
     public void Initialize();
 

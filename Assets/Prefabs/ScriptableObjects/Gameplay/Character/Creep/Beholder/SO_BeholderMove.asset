@@ -15,7 +15,7 @@ MonoBehaviour:
   <IdleClip>k__BackingField:
   - {fileID: 7400000, guid: 1125a2cce46b489590671831483c9b9f, type: 3}
   - {fileID: 7400000, guid: d7a9297b2394411eb911484794b32687, type: 3}
-  <RotateSpeed>k__BackingField: 800
+  <RotateSpeed>k__BackingField: 400
   <JumpInfo>k__BackingField:
     Curve:
       serializedVersion: 2

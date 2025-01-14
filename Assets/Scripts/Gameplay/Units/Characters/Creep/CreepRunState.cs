@@ -144,7 +144,8 @@ namespace Unit.Character.Creep
             {
                 previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
                 currentTarget = null; 
-                pathToPoint.Dequeue();
+                if(pathToPoint.Count != 0)
+                    pathToPoint.Dequeue();
 
                 CheckFinishedToFinalTarget();
             }

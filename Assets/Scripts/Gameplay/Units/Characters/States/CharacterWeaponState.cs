@@ -45,6 +45,9 @@ namespace Unit.Character
             base.Initialize();
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
             rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttack);
+            timerApplyDamage = durationAttack * .55f;
+            cooldown = durationAttack * .5f;
         }
 
         public override void Enter()
@@ -119,9 +122,6 @@ namespace Unit.Character
             CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
             
             CurrentWeapon = weapon;
-            durationAttack = Calculate.Attack.TotalDurationInSecond(CurrentWeapon.AmountAttack);
-            timerApplyDamage = durationAttack * .55f;
-            cooldown = durationAttack;
             range = CurrentWeapon.Range;
             rangeSqr = range * range;
 
@@ -194,8 +194,7 @@ namespace Unit.Character
             
             if (countCooldown > cooldown)
             {
-                if (currentTarget 
-                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
+                if (currentTarget)
                 {
                     if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                     {

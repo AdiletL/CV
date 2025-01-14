@@ -11,7 +11,6 @@ namespace Unit.Character.Player
         private PlayerAnimation playerAnimation;
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
-        private float amountAttack;
         
         public Transform WeaponParent { get; set; }
         
@@ -25,7 +24,7 @@ namespace Unit.Character.Player
                 .SetCenter(Center)
                 .SetCharacterAnimation(CharacterAnimation)
                 .SetEnemyLayer(EnemyLayer)
-                .SetAmountAttack(amountAttack)
+                .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
                 .SetDamageable(Damageable)
                 .SetStateMachine(StateMachine)
                 .Build();
@@ -40,6 +39,7 @@ namespace Unit.Character.Player
                 .SetCenter(Center)
                 .SetGameObject(this.GameObject)
                 .SetCharacterAnimation(playerAnimation)
+                .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
                 .SetDamageable(Damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
@@ -51,7 +51,6 @@ namespace Unit.Character.Player
             playerAnimation = (PlayerAnimation)CharacterAnimation;
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
             Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
-            amountAttack = so_PlayerAttack.AmountAttackInSecond;
         }
 
         protected override void DestermineState()

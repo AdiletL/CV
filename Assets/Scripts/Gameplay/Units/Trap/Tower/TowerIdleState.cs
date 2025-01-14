@@ -23,7 +23,7 @@ namespace Unit.Trap.Tower
                 .SetTowerAnimation(TowerAnimation)
                 .SetAttackClip(SO_Tower.AttackClip)
                 .SetPointSpawnProjectile(PointSpawnProjectile)
-                .SetAmountAttack(SO_Tower.AmountAttack)
+                .SetAmountAttackInSecond(SO_Tower.AmountAttack)
                 .SetDamageable(new NormalDamage(SO_Tower.Damage, this.GameObject))
                 .SetStateMachine(this.StateMachine)
                 .Build();

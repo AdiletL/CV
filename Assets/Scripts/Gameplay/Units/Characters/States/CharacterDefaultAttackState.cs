@@ -43,7 +43,7 @@ namespace Unit.Character
             characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
             rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
             durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
-            cooldown = durationAttack;
+            cooldown = durationAttack * .5f;
             applyDamage = durationAttack * .55f;
             rangeSqr = Range * Range;
         }
@@ -68,26 +68,22 @@ namespace Unit.Character
         {
             base.Update();
             
-            if (!currentTarget)
+            if (!currentTarget
+                || (!isAttack && !Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr)))
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
             
-            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr))
-            {
-                this.StateMachine.ExitCategory(Category, null);
-                return;
-            }
-            
-            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
-                rotation.Rotate();
-            
-            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
-                isAttack = true;
-            
+            //if (!isAttack && !Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
+
             if (!isAttack)
             {
+                if (Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
+                    isAttack = true;
+                else
+                    rotation.Rotate();
+                
                 CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
             }
@@ -117,6 +113,33 @@ namespace Unit.Character
             rotation.SetTarget(currentTarget?.transform);
         }
         
+        protected virtual void Cooldown()
+        {
+            if(isApplyDamage) return;
+            countCooldown += Time.deltaTime;
+            
+            if (countCooldown > cooldown)
+            {
+                if (currentTarget)
+                {
+                    if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
+                    {
+                        currentTarget = null;
+                        return;
+                    }
+                    
+                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
+                    isApplyDamage = true;
+                }
+                else
+                {
+                    isAttack = false;
+                }
+
+                countCooldown = 0;
+            }
+        }
+        
         public override void Attack()
         {
             base.Attack();
@@ -134,7 +157,11 @@ namespace Unit.Character
         
         public override void ApplyDamage()
         {
-            if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
+            if (currentTarget
+                && currentTarget.TryGetComponent(out IHealth health)
+                && Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr)
+                && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position,
+                    this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
             {
                 if (health.IsLive)
                     health.TakeDamage(Damageable);
@@ -144,35 +171,6 @@ namespace Unit.Character
             this.CharacterAnimation?.ChangeAnimationWithDuration(CooldownClip);
             isAttack = false;
             FindUnit();
-        }
-
-        protected virtual void Cooldown()
-        {
-            if(isApplyDamage) return;
-            countCooldown += Time.deltaTime;
-            
-            if (countCooldown > cooldown)
-            {
-                if (currentTarget 
-                    && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
-                {
-                    if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
-                    {
-                        Debug.Log("Update5");
-                        currentTarget = null;
-                        return;
-                    }
-                    
-                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
-                    isApplyDamage = true;
-                }
-                else
-                {
-                    isAttack = false;
-                }
-
-                countCooldown = 0;
-            }
         }
     }
     

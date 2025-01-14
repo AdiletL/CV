@@ -40,7 +40,7 @@ namespace Unit.Character
         {
             resultHealth = (float)current/max;
             healthBar.fillAmount = resultHealth;
-            healthBar.color = healthBarGradient.Evaluate(resultHealth);
+            healthBar.material.color = healthBarGradient.Evaluate(resultHealth);
         }
 
         public virtual void OnChangedEndurance(EnduranceInfo enduranceInfo)
@@ -51,7 +51,7 @@ namespace Unit.Character
         {
             resultEndurance = current/max;
             enduranceBar.fillAmount = resultEndurance;
-            enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
+            enduranceBar.material.color = enduranceBarGradient.Evaluate(resultEndurance);
         }
     }
 }

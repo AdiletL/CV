@@ -59,22 +59,27 @@ namespace Unit.Trap.Hammer
         private void OnHitEnter(GameObject target)
         {
             if(isReady) return;
-            
+
             hammerCollider.isTrigger = true;
             SetTarget(target);
             ApplyDamage();
         }
-
+        
         private void OnHitExit(GameObject target)
         {
-            if(CurrentTarget == null || target != CurrentTarget) return;
-            hammerCollider.isTrigger = false;
-        }
+            if(!isReady) return;
 
+            hammerCollider.isTrigger = false;
+            SetTarget(null);
+        }
+        
         public override void Activate()
         {
             isReady = false;
-            hammerCollider.isTrigger = true;
+            
+            if(!CurrentTarget)
+                hammerCollider.isTrigger = false;
+            
             hammerAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
@@ -83,7 +88,6 @@ namespace Unit.Trap.Hammer
 
         private void AfterActivate()
         {
-            
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, Deactivate));

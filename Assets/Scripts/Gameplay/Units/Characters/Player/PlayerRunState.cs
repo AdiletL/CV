@@ -220,10 +220,14 @@ namespace Unit.Character.Player
 
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
             {
-                pathToPoint.Peek()?.GetComponent<UnitRenderer>()?.ResetColor();
-                previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
-                currentTarget = null; 
-                pathToPoint.Dequeue();
+                if (currentTarget)
+                {
+                    currentTarget?.GetComponent<UnitRenderer>()?.ResetColor();
+                    previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
+                    currentTarget = null;
+                    if(pathToPoint.Count != 0)
+                        pathToPoint.Dequeue();
+                }
 
                 CheckFinishedToFinalTarget();
             }

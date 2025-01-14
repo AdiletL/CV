@@ -43,8 +43,6 @@ GameObject:
   - component: {fileID: 8622132646473180277}
   - component: {fileID: 2763396219701831666}
   - component: {fileID: 5236683920707982251}
-  - component: {fileID: 3787226041188912336}
-  - component: {fileID: 9127090529912382927}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -141,26 +139,60 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3787226041188912336
+--- !u!1 &9041979291788728846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1219294134110350323}
+  - component: {fileID: 3280049594514763054}
+  - component: {fileID: 71598871785750484}
+  - component: {fileID: 7063447752330291005}
+  m_Layer: 0
+  m_Name: Cube_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1219294134110350323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041979291788728846}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.773, z: 0}
+  m_LocalScale: {x: 0.32748362, y: 0.32748362, z: 0.32748362}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3649179437391657913}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3280049594514763054
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890312456627453843}
+  m_GameObject: {fileID: 9041979291788728846}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 300e23bd2a564c19bafa783d4592c79c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   trapController: {fileID: 8306266683199361015}
---- !u!54 &9127090529912382927
+--- !u!54 &71598871785750484
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890312456627453843}
+  m_GameObject: {fileID: 9041979291788728846}
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
@@ -181,6 +213,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!135 &7063447752330291005
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041979291788728846}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &3299531836430318917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -199,7 +252,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5669366350346612118, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
       propertyPath: m_Name
-      value: Trap Variant
+      value: HammerTrap Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8810709713694460316, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
       propertyPath: m_LocalPosition.x
@@ -250,6 +303,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2264809115222460156, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4005336209423517247}
+    - targetCorrespondingSourceObject: {fileID: 2264809115222460156, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1219294134110350323}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5669366350346612118, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
       insertIndex: -1
@@ -334,7 +390,7 @@ MonoBehaviour:
   components:
     <gameObjects>k__BackingField:
     - {fileID: 7162948893384315091}
-    - {fileID: 1890312456627453843}
+    - {fileID: 9041979291788728846}
   <VisualParent>k__BackingField: {fileID: 2415772823614516651}
   so_Trap: {fileID: 11400000, guid: 1c0072669e2e3874287ce6fd0cfac24e, type: 2}
   hammerCollider: {fileID: 5236683920707982251}

@@ -14,13 +14,6 @@ namespace Unit.Trap.Hammer
             hammerController = (HammerController)trapController;
         }
 
-        private void OnCollisionEnter(Collision other)
-        {
-            if(!Calculate.GameLayer.IsTarget(hammerController.EnemyLayer, other.gameObject.layer)) return;
-            
-            OnHitEnter?.Invoke(other.gameObject);
-        }
-
         private void OnTriggerExit(Collider other)
         {
             if(!Calculate.GameLayer.IsTarget(hammerController.EnemyLayer, other.gameObject.layer)) return;

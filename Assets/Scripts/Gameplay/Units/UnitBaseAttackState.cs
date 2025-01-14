@@ -26,7 +26,7 @@ namespace Unit
             return this;
         }
 
-        public UnitBaseAttackStateBuilder SetAmountAttack(float amount)
+        public UnitBaseAttackStateBuilder SetAmountAttackInSecond(float amount)
         {
             state.AmountAttack = amount;
             return this;
