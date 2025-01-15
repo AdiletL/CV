@@ -30,9 +30,9 @@ namespace Gameplay.Weapon.Projectile
         }
 
 
-        public override void Move()
+        public override void ExecuteMovement()
         {
-            arcMovement.Move();
+            arcMovement.ExecuteMovement();
         }
 
         public void UpdateData(Vector3 targetPosition)

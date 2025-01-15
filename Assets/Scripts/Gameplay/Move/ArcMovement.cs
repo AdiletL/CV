@@ -40,7 +40,7 @@ namespace  Movement
 
 
 
-        public void Move()
+        public void ExecuteMovement()
         {
             if (isMoveable)
             {

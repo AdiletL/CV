@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -14,6 +15,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject[] poolPrefabReferences;
 
         private AssetReference suitablePrefab;
+        private SemaphoreSlim semaphore = new(System.Environment.ProcessorCount / 2);
         
         public Transform poolParent { get; private set; }
         public List<GameObject> PoolObjects { get; private set; } = new();
@@ -56,53 +58,63 @@ namespace Gameplay.Manager
 
         private async UniTask<GameObject> GetObjectFromPrefabsAsync<T>()
         {
-            suitablePrefab = null;
+            await semaphore.WaitAsync();
 
-            // Перебираем все префабы и ищем подходящий
-            foreach (var prefabReference in poolPrefabReferences)
+            try
             {
-                // Загружаем префаб асинхронно
-                var prefabHandle = Addressables.LoadAssetAsync<GameObject>(prefabReference);
-                await prefabHandle.Task;
+                suitablePrefab = null;
 
-                if (prefabHandle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                // Перебираем все префабы и ищем подходящий
+                foreach (var prefabReference in poolPrefabReferences)
                 {
-                    var prefab = prefabHandle.Result;
-                    if (prefab != null && prefab.GetComponent<T>() != null)
+                    // Загружаем префаб асинхронно
+                    var prefabHandle = Addressables.LoadAssetAsync<GameObject>(prefabReference);
+                    await prefabHandle.Task;
+
+                    if (prefabHandle.Status ==
+                        UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
                     {
-                        suitablePrefab = prefabReference;
-                        break;
+                        var prefab = prefabHandle.Result;
+                        if (prefab != null && prefab.GetComponent<T>() != null)
+                        {
+                            suitablePrefab = prefabReference;
+                            break;
+                        }
                     }
+                    else
+                    {
+                        Debug.LogError("Failed to load prefab via Addressables.");
+                    }
+
+                    // Освобождаем ресурсы после завершения загрузки
+                    Addressables.Release(prefabHandle);
+                }
+
+                // Если не нашли подходящий префаб, выбрасываем исключение
+                if (suitablePrefab == null)
+                {
+                    throw new NullReferenceException("No suitable prefab found for the requested type.");
+                }
+
+                // Создаем объект из найденного префаба
+                var handle = suitablePrefab.InstantiateAsync();
+                await handle.Task;
+
+                if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                {
+                    GameObject newGameObject = handle.Result;
+                    diContainer.Inject(newGameObject.GetComponent<T>());
+                    return newGameObject;
                 }
                 else
                 {
-                    Debug.LogError("Failed to load prefab via Addressables.");
+                    Debug.LogError("Failed to instantiate object from suitable prefab.");
+                    throw new NullReferenceException("Failed to instantiate object.");
                 }
-                
-                // Освобождаем ресурсы после завершения загрузки
-                Addressables.Release(prefabHandle);
             }
-
-            // Если не нашли подходящий префаб, выбрасываем исключение
-            if (suitablePrefab == null)
+            finally
             {
-                throw new NullReferenceException("No suitable prefab found for the requested type.");
-            }
-
-            // Создаем объект из найденного префаба
-            var handle = suitablePrefab.InstantiateAsync();
-            await handle.Task;
-
-            if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-            {
-                GameObject newGameObject = handle.Result;
-                diContainer.Inject(newGameObject.GetComponent<T>());
-                return newGameObject;
-            }
-            else
-            {
-                Debug.LogError("Failed to instantiate object from suitable prefab.");
-                throw new NullReferenceException("Failed to instantiate object.");
+                semaphore.Release();
             }
         }
 

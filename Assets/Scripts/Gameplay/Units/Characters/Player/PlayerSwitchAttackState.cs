@@ -3,11 +3,13 @@ using Gameplay.Damage;
 using Gameplay.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Player
 {
     public class PlayerSwitchAttackState : CharacterSwitchAttackState
     {
+        private DiContainer diContainer;
         private PlayerAnimation playerAnimation;
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
@@ -25,24 +27,31 @@ namespace Unit.Character.Player
                 .SetCharacterAnimation(CharacterAnimation)
                 .SetEnemyLayer(EnemyLayer)
                 .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
-                .SetDamageable(Damageable)
+                .SetDamageable(base.damageable)
                 .SetStateMachine(StateMachine)
                 .Build();
         }
         
-        private PlayerWeaponState CreateWeaponState()
+        private PlayerWeaponAttackState CreateWeaponState()
         {
-            return (PlayerWeaponState)new PlayerWeaponBuilder()
+            return (PlayerWeaponAttackState)new PlayerWeaponAttackStateStateBuilder()
                 .SetConfig(so_PlayerAttack)
                 .SetWeaponParent(WeaponParent)
                 .SetEnemyLayer(EnemyLayer)
                 .SetCenter(Center)
+                .SetCharacterEndurance(CharacterEndurance)
                 .SetGameObject(this.GameObject)
                 .SetCharacterAnimation(playerAnimation)
                 .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
-                .SetDamageable(Damageable)
+                .SetDamageable(base.damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+        }
+
+        [Inject]
+        private void Construct(DiContainer diContainer)
+        {
+            this.diContainer = diContainer;
         }
         
         public override void Initialize()
@@ -50,7 +59,8 @@ namespace Unit.Character.Player
             base.Initialize();
             playerAnimation = (PlayerAnimation)CharacterAnimation;
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
-            Damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
+            damageable = new NormalDamage(so_PlayerAttack.Damage, this.GameObject);
+            diContainer.Inject(damageable);
         }
 
         protected override void DestermineState()
@@ -59,7 +69,7 @@ namespace Unit.Character.Player
 
             if (currentWeapon != null)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
                 {
                     var newState = CreateWeaponState();
                     
@@ -68,7 +78,7 @@ namespace Unit.Character.Player
                 }
 
                 rangeAttack = currentWeapon.Range;
-                this.StateMachine.SetStates(typeof(PlayerWeaponState));
+                this.StateMachine.SetStates(typeof(PlayerWeaponAttackState));
             }
             else
             {
@@ -91,7 +101,7 @@ namespace Unit.Character.Player
             currentWeapon = weapon;
             rangeAttack = currentWeapon.Range;
             
-            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponState)))
+            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
             {
                 var newState = CreateWeaponState();
                 
@@ -99,7 +109,7 @@ namespace Unit.Character.Player
                 this.StateMachine.AddStates(newState);
             }
 
-            this.StateMachine.GetState<PlayerWeaponState>().SetWeapon(currentWeapon);
+            this.StateMachine.GetState<PlayerWeaponAttackState>().SetWeapon(currentWeapon);
         }
     }
 

@@ -88,6 +88,28 @@ public class StateMachine
     }
 
     public void SetStates(params Type[] desiredStates)
+{
+    foreach (var baseType in desiredStates)
+    {
+        if (!states.TryGetValue(baseType, out var state))
+            continue;
+
+        var category = state.Category;
+
+        if (activeStates.TryGetValue(category, out var activeState))
+        {
+            if (activeState.GetType() == state.GetType())
+                continue;
+
+            activeState.Exit();
+        }
+
+        activeStates[category] = state;
+        state.Enter();
+        OnChangedState?.Invoke(state);
+    }
+}
+    /* public void SetStates(params Type[] desiredStates)
     {
         foreach (var baseType in desiredStates)
         {
@@ -117,7 +139,7 @@ public class StateMachine
                 }
             }
         }
-    }
+    }*/
     
 
 // Метод поиска самого глубокого состояния в иерархии для данного базового типа

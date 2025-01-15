@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: WorldUIPrefabs
+  m_EditorClassIdentifier: 
+  m_GroupName: WorldUIPrefabs
+  m_GUID: ff34e415201e1e04f9cc7d0d13569fd2
+  m_SerializeEntries:
+  - m_GUID: 6999ec052f4c3dc4cb3ead18bca6e320
+    m_Address: DamageUI Variant
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 089150fb234ebe74f8e1580f0723d344, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7a5ab850222531345802691b83c4ffa5, type: 2}
+    - {fileID: 11400000, guid: 4bc488421fc2f1242b8736ce95b61032, type: 2}

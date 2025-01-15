@@ -36,9 +36,9 @@ namespace Gameplay.Weapon.Projectile
 
         private void Update()
         {
-            Move();
+            ExecuteMovement();
         }
-        public abstract void Move();
+        public abstract void ExecuteMovement();
 
         public virtual void ApplyDamage()
         {

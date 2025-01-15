@@ -11,7 +11,6 @@ namespace Unit.Character.Creep
         
         private SO_BeholderAttack so_BeholderAttack;
 
-
         [Inject]
         private void Construct(DiContainer diContainer)
         {
@@ -21,16 +20,17 @@ namespace Unit.Character.Creep
         
         private BeholderDefaultAttackState CreateDefaultAttack()
         {
-            return (BeholderDefaultAttackState)((UnitBaseAttackStateBuilder)new BeholderDefaultAttackStateBuilder()
-                    .SetCenter(Center)
-                    .SetCharacterAnimation(CharacterAnimation)
-                    .SetGameObject(GameObject)
-                    .SetAttackClips(so_BeholderAttack.AttackClips)
-                    .SetCooldownClip(so_BeholderAttack.CooldownClip)
-                    .SetRange(so_BeholderAttack.Range)
-                    .SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
-                    .SetEnemyLayer(so_BeholderAttack.EnemyLayer)).SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
-                .SetDamageable(new NormalDamage(so_BeholderAttack.Damage, GameObject))
+            return (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
+                .SetCenter(Center)
+                .SetCharacterAnimation(CharacterAnimation)
+                .SetGameObject(GameObject)
+                .SetAttackClips(so_BeholderAttack.AttackClips)
+                .SetCooldownClip(so_BeholderAttack.CooldownClip)
+                .SetRange(so_BeholderAttack.Range)
+                .SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
+                .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
+                .SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
+                .SetDamageable(damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
@@ -41,6 +41,8 @@ namespace Unit.Character.Creep
 
             so_BeholderAttack = (SO_BeholderAttack)so_CharacterAttack;
             rangeAttack = so_BeholderAttack.Range;
+            damageable = new NormalDamage(so_BeholderAttack.Damage, GameObject);
+            diContainer.Inject(damageable);
         }
 
 

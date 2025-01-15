@@ -3,5 +3,5 @@
 public interface IMove
 {
     public float MovementSpeed { get; }
-    public void Move();
+    public void ExecuteMovement();
 }

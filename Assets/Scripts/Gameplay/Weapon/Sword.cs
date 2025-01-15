@@ -4,9 +4,12 @@ namespace Gameplay.Weapon
 {
     public class Sword : Weapon
     {
+        private float angleToTarget = 10;
+        
         public override async UniTask FireAsync()
         {
-            ApplyDamage();
+            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, CurrentTarget.transform.position, angleToTarget))
+                ApplyDamage();
             await UniTask.CompletedTask;
         }
     }

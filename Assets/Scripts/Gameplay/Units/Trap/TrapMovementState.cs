@@ -11,7 +11,7 @@ namespace Unit.Trap
         
         public float MovementSpeed { get; }
 
-        public abstract void Move();
+        public abstract void ExecuteMovement();
     }
 
     public class TrapMovementStateBuilder : StateBuilder<TrapMovementState>

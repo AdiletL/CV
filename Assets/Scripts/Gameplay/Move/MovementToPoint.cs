@@ -25,7 +25,7 @@ namespace Movement
             this.point = point;
         }
         
-        public void Move()
+        public void ExecuteMovement()
         {
             gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, MovementSpeed * Time.deltaTime);
         }

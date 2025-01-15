@@ -10,9 +10,11 @@ namespace Gameplay.Weapon
         
         public GameObject WeaponPrefab { get; set; }
         public Transform WeaponParent { get; set; }
+        public GameObject GameObject { get; set; }
         public GameObject CurrentTarget { get; private set; }
         public IDamageable Damageable { get; set; }
         public float Range { get; set; }
+        public float DecreaseEndurance { get; set; }
         
         
         public virtual void Initialize()
@@ -79,6 +81,16 @@ namespace Gameplay.Weapon
         public WeaponBuilder SetWeaponParent(Transform parent)
         {
             weapon.WeaponParent = parent;
+            return this;
+        }
+        public WeaponBuilder SetGameObject(GameObject gameObject)
+        {
+            weapon.GameObject = gameObject;
+            return this;
+        }
+        public WeaponBuilder SetDecreaseEndurance(float value)
+        {
+            weapon.DecreaseEndurance = value;
             return this;
         }
         public Weapon Build()

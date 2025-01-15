@@ -14,8 +14,10 @@ public class Bootstrap : MonoBehaviour
     public void Initialize()
     {
         currentGameInstaller = Instantiate(gameInstaller).GetComponent<GameInstaller>();
+
     }
 
+    
     public void TransitionToScene(string sceneName)
     {
         CreateManager(sceneName);

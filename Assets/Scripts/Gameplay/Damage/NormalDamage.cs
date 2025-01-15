@@ -1,9 +1,14 @@
-﻿using UnityEngine;
+﻿using Gameplay.Spawner;
+using Unit;
+using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Damage
 {
     public class NormalDamage : IDamageable
     {
+        private DamagePopUpSpawner damagePopUpSpawner;
+        
         public GameObject Owner { get; set; }
         public int CurrentDamage { get; }
         public int AdditionalDamage { get; private set; }
@@ -14,6 +19,12 @@ namespace Gameplay.Damage
             this.Owner = gameObject;
 
             if (CurrentDamage < 0) CurrentDamage = 999999;
+        }
+
+        [Inject]
+        private void Construct(DamagePopUpSpawner damagePopUpSpawner)
+        {
+            this.damagePopUpSpawner = damagePopUpSpawner;
         }
         
         public void AddAdditionalDamage(int value)
@@ -29,6 +40,13 @@ namespace Gameplay.Damage
         {
             var result = 0;
             result = CurrentDamage + AdditionalDamage;
+
+            if (damagePopUpSpawner)
+            {
+                var unitCenter = gameObject.GetComponent<UnitCenter>();
+                damagePopUpSpawner.CreatePopUp(unitCenter.Center.position, result);
+            }
+            
             return result;
         }
     }

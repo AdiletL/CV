@@ -31,7 +31,7 @@ namespace Unit.Character
             CharacterAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
         }
 
-        public override void Move()
+        public override void ExecuteMovement()
         {
             
         }

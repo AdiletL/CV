@@ -84,7 +84,7 @@ namespace Unit.Character.Creep
             }
 
             RotateToTarget();
-            Move();
+            ExecuteMovement();
         }
 
         public override void Exit()
@@ -107,7 +107,7 @@ namespace Unit.Character.Creep
             rotation.SetTarget(currentTarget.transform);
         }
 
-        public override void Move()
+        public override void ExecuteMovement()
         {
             currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
             

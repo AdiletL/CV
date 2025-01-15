@@ -12,10 +12,11 @@ namespace Unit.Character
         
         protected SO_CharacterAttack so_CharacterAttack;
 
-        protected IDamageable Damageable;
+        protected IDamageable damageable;
         protected Collider[] findUnitColliders = new Collider[1];
         protected float rangeAttack;
 
+        public CharacterEndurance CharacterEndurance { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
@@ -89,6 +90,12 @@ namespace Unit.Character
         {
             if(state is CharacterSwitchAttackState characterSwitchAttackState)
                 characterSwitchAttackState.EnemyLayer = layer;
+            return this;
+        }
+        public CharacterSwitchAttackStateBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
+        {
+            if(state is CharacterSwitchAttackState characterSwitchAttackState)
+                characterSwitchAttackState.CharacterEndurance = characterEndurance;
             return this;
         }
     }

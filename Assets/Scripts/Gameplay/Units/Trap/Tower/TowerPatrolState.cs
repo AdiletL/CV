@@ -75,7 +75,7 @@ namespace Unit.Trap.Tower
             }
 
             RotateToTarget();
-            Move();
+            ExecuteMovement();
         }
 
         public override void LateUpdate()
@@ -87,7 +87,7 @@ namespace Unit.Trap.Tower
             currentTarget = null;
         }
 
-        public override void Move()
+        public override void ExecuteMovement()
         {
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position))
             {
@@ -98,7 +98,7 @@ namespace Unit.Trap.Tower
             {
                 if(!isCanMovement) return;
                 
-                movementToPoint?.Move();
+                movementToPoint?.ExecuteMovement();
             }
         }
 

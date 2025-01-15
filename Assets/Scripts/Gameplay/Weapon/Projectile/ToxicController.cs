@@ -17,9 +17,9 @@ namespace Gameplay.Weapon.Projectile
             forwardMovement.Initialize();
         }
         
-        public override void Move()
+        public override void ExecuteMovement()
         {
-            forwardMovement.Move();
+            forwardMovement.ExecuteMovement();
         }
 
         public override void ApplyDamage()

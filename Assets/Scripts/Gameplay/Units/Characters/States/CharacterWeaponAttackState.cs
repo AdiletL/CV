@@ -2,11 +2,12 @@
 using Gameplay.Weapon;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
+using Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterWeaponState : CharacterBaseAttackState
+    public class CharacterWeaponAttackState : CharacterBaseAttackState
     {
         protected CharacterSwitchMoveState characterSwitchMoveState;
         protected Rotation rotation;
@@ -21,10 +22,12 @@ namespace Unit.Character
         protected float angleToTarget = 10;
         protected float range;
         protected float rangeSqr;
+        protected float attackDecreaseEndurance;
 
         protected bool isApplyDamage;
         protected bool isAttack;
         
+        public CharacterEndurance CharacterEndurance { get; set; }
         public SO_PlayerAttack SO_PlayerAttack { get; set; }
         public Weapon CurrentWeapon { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
@@ -124,6 +127,7 @@ namespace Unit.Character
             CurrentWeapon = weapon;
             range = CurrentWeapon.Range;
             rangeSqr = range * range;
+            attackDecreaseEndurance = weapon.DecreaseEndurance;
 
             CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.CurrentDamage);
 
@@ -166,7 +170,7 @@ namespace Unit.Character
                 isApplyDamage = false;
                 countTimerApplyDamage = 0;
             }
-            
+            CharacterEndurance.RemoveEndurance(attackDecreaseEndurance);
         }
 
         protected virtual void Fire()
@@ -215,15 +219,15 @@ namespace Unit.Character
         }
     }
 
-    public class CharacterWeaponBuilder : CharacterBaseAttackStateBuilder
+    public class CharacterWeaponAttackStateBuilder : CharacterBaseAttackStateBuilder
     {
-        public CharacterWeaponBuilder(CharacterWeaponState instance) : base(instance)
+        public CharacterWeaponAttackStateBuilder(CharacterWeaponAttackState instance) : base(instance)
         {
         }
 
-        public CharacterWeaponBuilder SetGameObject(GameObject gameObject)
+        public CharacterWeaponAttackStateBuilder SetGameObject(GameObject gameObject)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.GameObject = gameObject;
             }
@@ -231,9 +235,9 @@ namespace Unit.Character
             return this;
         }
         
-        public CharacterWeaponBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterWeaponAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.CharacterAnimation = characterAnimation;
             }
@@ -242,9 +246,9 @@ namespace Unit.Character
         }
         
 
-        public CharacterWeaponBuilder SetEnemyLayer(int index)
+        public CharacterWeaponAttackStateBuilder SetEnemyLayer(int index)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.EnemyLayer = index;
             }
@@ -252,9 +256,9 @@ namespace Unit.Character
             return this;
         }
         
-        public CharacterWeaponBuilder SetCenter(Transform center)
+        public CharacterWeaponAttackStateBuilder SetCenter(Transform center)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.Center = center;
             }
@@ -262,9 +266,9 @@ namespace Unit.Character
             return this;
         }
 
-        public CharacterWeaponBuilder SetWeaponParent(Transform parent)
+        public CharacterWeaponAttackStateBuilder SetWeaponParent(Transform parent)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.WeaponParent = parent;
             }
@@ -272,11 +276,20 @@ namespace Unit.Character
             return this;
         }
 
-        public CharacterWeaponBuilder SetConfig(SO_PlayerAttack config)
+        public CharacterWeaponAttackStateBuilder SetConfig(SO_PlayerAttack config)
         {
-            if (state is CharacterWeaponState characterWeapon)
+            if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.SO_PlayerAttack = config;
+            }
+
+            return this;
+        }
+        public CharacterWeaponAttackStateBuilder SetCharacterEndurance(CharacterEndurance endurance)
+        {
+            if (state is CharacterWeaponAttackState characterWeapon)
+            {
+                characterWeapon.CharacterEndurance = endurance;
             }
 
             return this;

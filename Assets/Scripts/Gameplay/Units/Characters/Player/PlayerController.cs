@@ -62,6 +62,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchAttackState)new PlayerSwitchAttackStateBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetCenter(center)
+                .SetCharacterEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
@@ -99,6 +100,10 @@ namespace Unit.Character.Player
             var moveState = CreateSwitchMoveState(characterAnimation, center);
             var attackState = CreateSwitchAttackState(characterAnimation, center);
             
+            diContainer.Inject(idleState);
+            diContainer.Inject(moveState);
+            diContainer.Inject(attackState);
+            
             StateMachine.AddStates(idleState, attackState, moveState);
         }
 
@@ -112,8 +117,11 @@ namespace Unit.Character.Player
         {
             //TEST
             var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
+            diContainer.Inject(swordDamageable);
             var sword = (Sword)new SwordBuilder()
+                .SetDecreaseEndurance(so_Sword.DecreaseEndurance)
                 .SetWeaponParent(weaponParent)
+                .SetGameObject(gameObject)
                 .SetRange(so_Sword.Range)
                 .SetWeaponPrefab(so_Sword.WeaponPrefab)
                 .SetDamageable(swordDamageable)

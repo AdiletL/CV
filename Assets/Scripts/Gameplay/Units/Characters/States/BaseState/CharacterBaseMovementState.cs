@@ -34,7 +34,7 @@ namespace Unit.Character
             
         }
 
-        public abstract void Move();
+        public abstract void ExecuteMovement();
         
         public virtual void IncreaseMovementSpeed(float value)
         {

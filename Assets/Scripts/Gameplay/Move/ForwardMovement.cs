@@ -18,7 +18,7 @@ namespace Movement
             
         }
         
-        public void Move()
+        public void ExecuteMovement()
         {
             gameObject.transform.Translate(Vector3.forward * (MovementSpeed * Time.deltaTime), Space.World);
         }

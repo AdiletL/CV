@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Gameplay.Damage;
 using Gameplay.Weapon;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
@@ -31,7 +32,6 @@ namespace Unit.Character
         public float Range { get; set; }
         public float AmountAttackInSecond { get; set; }
         
-
         protected AnimationClip getRandomAnimationClip()
         {
             return AttackClips[Random.Range(0, AttackClips.Length)];

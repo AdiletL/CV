@@ -44,6 +44,7 @@ namespace Unit.Character.Player
                 if (tryGetHitPosition(out GameObject hitObject) && hitObject.TryGetComponent(out CellController cellController))
                 {
                     playerController.GetState<PlayerIdleState>().SetTarget(hitObject);
+                    playerController.StateMachine.ExitOtherStates(typeof(PlayerIdleState));
                     
                     previousHit?.GetComponent<UnitRenderer>()?.ResetColor();
                     previousHit = hitObject;
