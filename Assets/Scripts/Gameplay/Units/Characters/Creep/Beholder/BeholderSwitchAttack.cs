@@ -62,7 +62,7 @@ namespace Unit.Character.Creep
             
             beholderDefaultAttackState.SetTarget(currentTarget);
             if (!this.StateMachine.IsActivateType(beholderDefaultAttackState.GetType()))
-                this.StateMachine.SetStates(beholderDefaultAttackState.GetType());
+                this.StateMachine.SetStates(desiredStates: beholderDefaultAttackState.GetType());
         }
 
         public override void ExitCategory(StateCategory category)

@@ -49,9 +49,12 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            
             isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
-            
+        }
+
+        public override void Subscribe()
+        {
+            base.Subscribe();
             this.StateMachine.OnExitCategory += OnExitCategory;
         }
 
@@ -67,11 +70,16 @@ namespace Unit.Character.Player
             CheckJump();
         }
 
+        public override void Unsubscribe()
+        {
+            base.Unsubscribe();
+            this.StateMachine.OnExitCategory -= OnExitCategory;
+        }
+
         public override void Exit()
         {
             base.Exit();
             TargetForMove = null;
-            this.StateMachine.OnExitCategory -= OnExitCategory;
         }
         
         private void OnExitCategory(Machine.IState state)
@@ -123,7 +131,7 @@ namespace Unit.Character.Player
                 playerJumpState.Initialize();
                 this.StateMachine.AddStates(playerJumpState);
             }
-            this.StateMachine.SetStates(typeof(PlayerJumpState));
+            this.StateMachine.SetStates(desiredStates: typeof(PlayerJumpState));
             isCheckJump = false;
             isCheckAttack = false;
         }

@@ -33,7 +33,7 @@ namespace Unit.Character.Creep
         {
             base.TakeDamage(damageable);
             
-            CreepController.StateMachine.ExitOtherStates(typeof(CreepTakeDamageState));
+            CreepController.StateMachine.ExitOtherStates(typeof(CreepTakeDamageState), true);
         }
     }
 }

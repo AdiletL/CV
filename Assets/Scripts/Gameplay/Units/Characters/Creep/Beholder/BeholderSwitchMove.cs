@@ -77,7 +77,7 @@ namespace Unit.Character.Creep
                 
                 beholderRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(beholderRunState.GetType()))
-                    this.StateMachine.SetStates(beholderRunState.GetType());
+                    this.StateMachine.SetStates(desiredStates: beholderRunState.GetType());
             }
             else 
             {
@@ -89,7 +89,7 @@ namespace Unit.Character.Creep
                 }
                 
                 if(!this.StateMachine.IsActivateType(beholderPatrolState.GetType()))
-                    this.StateMachine.SetStates(beholderPatrolState.GetType());
+                    this.StateMachine.SetStates(desiredStates: beholderPatrolState.GetType());
             }
             currentTarget = null;
         }

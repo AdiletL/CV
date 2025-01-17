@@ -86,6 +86,11 @@ namespace Unit.Character.Player
         UpdatePathToTarget();
         UpdateValuesCheckEnemy();
         isCheckPath = isCheckJump;
+    }
+
+    public override void Subscribe()
+    {
+        base.Subscribe();
         StateMachine.OnExitCategory += HandleExitCategory;
     }
 
@@ -114,6 +119,12 @@ namespace Unit.Character.Player
         CheckEnemy();
     }
 
+    public override void Unsubscribe()
+    {
+        base.Unsubscribe();
+        StateMachine.OnExitCategory -= HandleExitCategory;
+    }
+
     public override void Exit()
     {
         base.Exit();
@@ -121,7 +132,6 @@ namespace Unit.Character.Player
         currentTarget = null;
         enemy = null;
         finalTarget = null;
-        StateMachine.OnExitCategory -= HandleExitCategory;
     }
 
     private void HandleExitCategory(Machine.IState state)
@@ -304,7 +314,7 @@ namespace Unit.Character.Player
             jumpState.Initialize();
             StateMachine.AddStates(jumpState);
         }
-        StateMachine.SetStates(typeof(PlayerJumpState));
+        StateMachine.SetStates(desiredStates: typeof(PlayerJumpState));
         isCheckPath = false;
         isCheckJump = false;
         isCheckAttack = false;

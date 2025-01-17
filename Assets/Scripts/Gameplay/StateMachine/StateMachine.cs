@@ -77,7 +77,7 @@ public class StateMachine
         }
     }
 
-    public void SetStates(params Type[] desiredStates)
+    public void SetStates(bool isForceSetState = false, params Type[] desiredStates)
     {
         foreach (var baseType in desiredStates)
         {
@@ -88,13 +88,13 @@ public class StateMachine
 
             if (activeStates.TryGetValue(category, out var activeState))
             {
-                if (activeState.GetType() == state.GetType())
+                if (activeState.GetType() == state.GetType() && !isForceSetState)
                     continue;
 
                 activeState.Exit();
             }
 
-            if (!activeStates.ContainsKey(category) || activeStates[category] != state)
+            if (isForceSetState || !activeStates.ContainsKey(category) || activeStates[category] != state)
             {
                 activeStates[category] = state;
                 state.Enter();
@@ -119,7 +119,7 @@ public class StateMachine
         return mostDerivedState;
     }
 
-    public void ExitOtherStates(Type installationState)
+    public void ExitOtherStates(Type installationState, bool isForceSetState = false)
     {
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
@@ -133,13 +133,13 @@ public class StateMachine
             activeStates.Remove(category);
         }
 
-        SetStates(installationState);
+        SetStates(isForceSetState, installationState);
 
         if (activeStates.Count == 0)
             SetDefaultState();
     }
 
-    public void ExitCategory(StateCategory excludedCategory, Type installationState)
+    public void ExitCategory(StateCategory excludedCategory, Type installationState, bool isForceSetState = false)
     {
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
@@ -150,7 +150,7 @@ public class StateMachine
 
         if (installationState != null)
         {
-            SetStates(installationState);
+            SetStates(isForceSetState, installationState);
         }
 
         if (activeStates.Count == 0)
@@ -161,7 +161,7 @@ public class StateMachine
     {
         if (defaultIdleState != null)
         {
-            SetStates(defaultIdleState.GetType());
+            SetStates(desiredStates: defaultIdleState.GetType());
         }
     }
 

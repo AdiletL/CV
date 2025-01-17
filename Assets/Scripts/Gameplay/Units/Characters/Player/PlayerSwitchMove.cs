@@ -53,7 +53,7 @@ namespace Unit.Character.Player
 
                 playerRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(playerRunState.GetType()))
-                    this.StateMachine.SetStates(playerRunState.GetType());
+                    this.StateMachine.SetStates(desiredStates: playerRunState.GetType());
             }
             currentTarget = null;
         }

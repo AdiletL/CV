@@ -54,18 +54,12 @@ namespace Unit.Character
         public override void Enter()
         {
             base.Enter();
-
-            //if (CurrentWeapon != null && !currentTarget)
-              //  FindUnit();
-
+            
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-            
-            if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
-                unitRenderer.SetColor(Color.green);
             
             CurrentWeapon.Show();
             CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
@@ -107,7 +101,6 @@ namespace Unit.Character
         public override void Exit()
         {
             base.Exit();
-            ClearColorAtTarget();
             currentTarget = null;
             CurrentWeapon?.Hide();
         }
@@ -121,24 +114,9 @@ namespace Unit.Character
             countCooldown = 0;
         }
 
-        protected virtual void ClearColorAtTarget()
-        {
-            if (currentTarget)
-            {
-                if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
-                    unitRenderer.ResetColor();
-            }
-        }
-
         public override void SetTarget(GameObject target)
         {
-            ClearColorAtTarget();
-            
             base.SetTarget(target);
-
-            if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
-                unitRenderer.SetColor(Color.green);
-            
             CurrentWeapon?.SetTarget(currentTarget);
             rotation.SetTarget(currentTarget.transform);
         }

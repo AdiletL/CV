@@ -16,8 +16,10 @@
         public bool isActive { get; }
         public void Initialize();
         public void Enter();
+        public void Subscribe();
         public void Update();
         public void LateUpdate();
+        public void Unsubscribe();
         public void Exit();
     }
 }

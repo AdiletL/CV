@@ -42,7 +42,7 @@ namespace Unit.Trap.Tower
         
         public override void Appear()
         {
-            stateMachine.SetStates(typeof(DragonIdleState));
+            stateMachine.SetStates(desiredStates: typeof(DragonIdleState));
         }
         
         public override void Activate()

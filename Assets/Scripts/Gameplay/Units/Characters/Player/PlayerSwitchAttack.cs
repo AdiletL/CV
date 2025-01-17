@@ -86,7 +86,7 @@ namespace Unit.Character.Player
                     RangeAttack = currentWeapon.Range;
                     RangeAttackSqr = RangeAttack * RangeAttack;
                     Debug.Log(RangeAttackSqr);
-                    this.StateMachine.SetStates(playerWeaponAttackState.GetType());
+                    this.StateMachine.SetStates(desiredStates: playerWeaponAttackState.GetType());
                 }
             }
             else
@@ -104,7 +104,7 @@ namespace Unit.Character.Player
                 {
                     RangeAttack = so_PlayerAttack.Range;
                     RangeAttackSqr = RangeAttack * RangeAttack;
-                    this.StateMachine.SetStates(playerDefaultAttackState.GetType());
+                    this.StateMachine.SetStates(desiredStates: playerDefaultAttackState.GetType());
                 }
             }
         }

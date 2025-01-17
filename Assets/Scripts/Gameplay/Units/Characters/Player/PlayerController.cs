@@ -91,7 +91,7 @@ namespace Unit.Character.Player
             TestWeapon();
                         
             StateMachine.OnChangedState += OnChangedState;
-            StateMachine.SetStates(typeof(PlayerIdleState));
+            StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
         }
 
         protected override void CreateStates()

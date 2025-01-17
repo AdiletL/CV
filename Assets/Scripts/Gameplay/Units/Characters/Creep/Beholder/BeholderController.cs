@@ -61,7 +61,7 @@ namespace Unit.Character.Creep
             
             this.StateMachine.Initialize();
             
-            this.StateMachine.SetStates(typeof(CreepIdleState));
+            this.StateMachine.SetStates(desiredStates:typeof(CreepIdleState));
         }
 
         protected override void CreateStates()
@@ -88,7 +88,7 @@ namespace Unit.Character.Creep
 
         public override void Appear()
         {
-            this.StateMachine.SetStates(typeof(BeholderIdleState));
+            this.StateMachine.SetStates(desiredStates:typeof(BeholderIdleState));
         }
     }
 }

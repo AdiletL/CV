@@ -47,8 +47,6 @@ namespace Unit.Character
         public override void Enter()
         {
             base.Enter();
-
-            FindUnit();
             
             if (!currentTarget)
             {
