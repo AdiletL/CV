@@ -7,6 +7,7 @@ namespace Unit
     {
         public abstract void Initialize();
 
+        public abstract void HandleHotkey();
         public abstract void HandleInput();
     }
 }

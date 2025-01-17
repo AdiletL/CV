@@ -88,27 +88,30 @@ public class StateMachine
     }
 
     public void SetStates(params Type[] desiredStates)
-{
-    foreach (var baseType in desiredStates)
     {
-        if (!states.TryGetValue(baseType, out var state))
-            continue;
-
-        var category = state.Category;
-
-        if (activeStates.TryGetValue(category, out var activeState))
+        foreach (var baseType in desiredStates)
         {
-            if (activeState.GetType() == state.GetType())
+            if (!states.TryGetValue(baseType, out var state))
                 continue;
 
-            activeState.Exit();
-        }
+            var category = state.Category;
 
-        activeStates[category] = state;
-        state.Enter();
-        OnChangedState?.Invoke(state);
+            if (activeStates.TryGetValue(category, out var activeState))
+            {
+                if (activeState.GetType() == state.GetType())
+                    continue;
+
+                activeState.Exit();
+            }
+
+            if (!activeStates.ContainsKey(category) || activeStates[category] != state)
+            {
+                activeStates[category] = state;
+                state.Enter();
+                OnChangedState?.Invoke(state);
+            }
+        }
     }
-}
     /* public void SetStates(params Type[] desiredStates)
     {
         foreach (var baseType in desiredStates)

@@ -10,9 +10,6 @@ namespace Unit.Trap.Tower
             
         }
 
-        public override void Enter()
-        {
-        }
 
         public override void Update()
         {
@@ -21,9 +18,6 @@ namespace Unit.Trap.Tower
         public override void LateUpdate()
         {
         }
-
-        public override void Exit()
-        {
-        }
+        
     }
 }

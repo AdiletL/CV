@@ -16,10 +16,6 @@ namespace Unit.Character
             
         }
         
-        public override void Enter()
-        {
-        }
-
         public override void Update()
         {
         }
@@ -28,12 +24,7 @@ namespace Unit.Character
         {
             
         }
-
-        public override void Exit()
-        {
-            
-        }
-
+        
         public abstract void ExecuteMovement();
         
         public virtual void IncreaseMovementSpeed(float value)

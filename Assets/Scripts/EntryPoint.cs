@@ -38,7 +38,7 @@ public class EntryPoint
     {
         if(scene.name != Scenes.BOOTSTRAP_NAME) return;
         
-        var bootstrap = GameObject.FindObjectOfType<Bootstrap>();
+        var bootstrap = GameObject.FindFirstObjectByType<Bootstrap>();
         if (bootstrap == null)
         {
             Debug.LogError($"Bootstrap not found in scene {scene.name}");

@@ -6,13 +6,12 @@ namespace Unit.Character.Player
     public class PlayerGravity : Gravity
     {
         private CharacterController characterController;
-        private Vector3 velocity;
         
         private void Start()
         {
             characterController = GetComponent<CharacterController>();
             characterController.enabled = true;
-            gravityForce = -8.5f;
+            CurrentGravity = Physics.gravity.y + 2;
         }
 
         protected override void UseGravity()
@@ -23,7 +22,7 @@ namespace Unit.Character.Player
                 return;
             }
             
-            velocity.y += gravityForce * Time.deltaTime;
+            velocity.y += CurrentGravity * Time.deltaTime;
             characterController.Move(velocity * Time.deltaTime);
         }
     }

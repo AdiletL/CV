@@ -14,10 +14,6 @@ namespace Unit
         {
         }
 
-        public override void Enter()
-        {
-            
-        }
 
         public override void Update()
         {
@@ -26,10 +22,7 @@ namespace Unit
         {
             
         }
-        public override void Exit()
-        {
-            
-        }
+
     }
 
     public class UnitIdleStateBuilder : StateBuilder<UnitIdleState>

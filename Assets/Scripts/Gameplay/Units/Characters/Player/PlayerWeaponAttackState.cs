@@ -6,7 +6,7 @@ namespace Unit.Character.Player
 {
     public class PlayerWeaponAttackState : CharacterWeaponAttackState
     {
-        
+
     }
 
     public class PlayerWeaponAttackStateStateBuilder : CharacterWeaponAttackStateBuilder

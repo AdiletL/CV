@@ -4,14 +4,21 @@
     {
         public abstract StateCategory Category { get; }
         public StateMachine StateMachine;
-
+        public bool isActive { get; protected set; }
         public abstract void Initialize();
-        public abstract void Enter();
+
+        public virtual void Enter()
+        {
+            isActive = true;
+        }
 
         public abstract void Update();
         public abstract void LateUpdate();
 
-        public abstract void Exit();
+        public virtual void Exit()
+        {
+            isActive = false;
+        }
     }
 
     public abstract class StateBuilder<T> where T : State

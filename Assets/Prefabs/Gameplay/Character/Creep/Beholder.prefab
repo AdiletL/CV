@@ -1827,12 +1827,12 @@ MonoBehaviour:
     - {fileID: 4969913234543498068}
     - {fileID: 2432419330478243577}
   <VisualParent>k__BackingField: {fileID: 6997497462074257795}
-  soCreepMove: {fileID: 11400000, guid: 7471ba6bdb318d04a89074f6fdbe8e1b, type: 2}
   center: {fileID: 3203932032958634825}
   currentStateCategory: 0
   currentStateName: 
   finalPath: {fileID: 0}
   so_BeholderAttack: {fileID: 11400000, guid: 2c6f1fb3a6c774e4694f7495e07d0755, type: 2}
+  so_BeholderMove: {fileID: 11400000, guid: 7471ba6bdb318d04a89074f6fdbe8e1b, type: 2}
 --- !u!114 &567170668158652236
 MonoBehaviour:
   m_ObjectHideFlags: 0

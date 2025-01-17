@@ -5,20 +5,22 @@ namespace Unit.Character.Creep
 {
     public class BeholderIdleState : CreepIdleState
     { 
-        private BeholderSwitchMoveState beholderSwitchMoveState;
-        private BeholderSwitchAttackState beholderSwitchAttackState;
+        private BeholderSwitchAttack beholderSwitchAttack;
+        public BeholderSwitchMove beholderSwitchMove;
         
         private float checkEnemyCooldown = .03f;
         private float countCheckEnemyCooldown;
         
         private bool isCheckAttack = true;
-        
 
+
+        
+        
         public override void Initialize()
         {
             base.Initialize();
-            beholderSwitchMoveState = this.StateMachine.GetState<BeholderSwitchMoveState>();
-            beholderSwitchAttackState = this.StateMachine.GetState<BeholderSwitchAttackState>();
+            beholderSwitchAttack = (BeholderSwitchAttack)CharacterSwitchAttack;
+            beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
         }
         
         public override void Update()
@@ -36,10 +38,9 @@ namespace Unit.Character.Creep
 
         private void CheckPatrol()
         {
-            if(beholderSwitchMoveState == null 
-               && !beholderSwitchMoveState.IsCanMovement()) return;
+            if(!beholderSwitchMove.IsCanMovement()) return;
             
-            this.StateMachine.ExitCategory(Category, typeof(BeholderSwitchMoveState));
+            beholderSwitchMove.ExitCategory(Category);
         }
 
         private void CheckAttack()
@@ -49,9 +50,9 @@ namespace Unit.Character.Creep
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
-                if (beholderSwitchAttackState.IsFindUnitInRange())
+                if (beholderSwitchAttack.IsFindUnitInRange())
                 {
-                    this.StateMachine.ExitCategory(Category, typeof(BeholderSwitchAttackState));
+                    beholderSwitchAttack.ExitCategory(Category);
                 }
 
                 countCheckEnemyCooldown = 0;
@@ -64,5 +65,6 @@ namespace Unit.Character.Creep
         public BeholderIdleStateBuilder() : base(new BeholderIdleState())
         {
         }
+        
     }
 }

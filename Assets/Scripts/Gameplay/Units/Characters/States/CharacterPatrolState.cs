@@ -4,6 +4,7 @@ namespace Unit.Character
 {
     public class CharacterPatrolState : CharacterBaseMovementState, IPatrol
     {
+        public CharacterSwitchAttack CharacterSwitchAttack { get; set; }
         public Transform Start { get; set; }
         public Transform End { get; set; }
         public float RotationSpeed { get; set; }
@@ -20,6 +21,7 @@ namespace Unit.Character
 
         public override void Enter()
         {
+            base.Enter();
             StartPosition = Start?.position;
             EndPosition = End?.position;
         }
@@ -28,11 +30,7 @@ namespace Unit.Character
         {
 
         }
-
-        public override void Exit()
-        {
-        }
-
+        
         public override void ExecuteMovement()
         {
             
@@ -69,6 +67,16 @@ namespace Unit.Character
             if (state is CharacterPatrolState patrolState)
             {
                 patrolState.RotationSpeed = rotationSpeed;
+            }
+
+            return this;
+        }
+        
+        public CharacterPatrolStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttack characterSwitchAttack)
+        {
+            if (state is CharacterPatrolState patrolState)
+            {
+                patrolState.CharacterSwitchAttack = characterSwitchAttack;
             }
 
             return this;

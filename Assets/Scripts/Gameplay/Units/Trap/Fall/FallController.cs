@@ -20,7 +20,7 @@ namespace Unit.Trap.Fall
         private Coroutine startTimerCoroutine;
         private Coroutine fallUpdateCoroutine;
         
-        private List<UnitController> targetUnits = new();
+        private List<UnitController> cellControllers = new();
         
         private float radius;
         private bool isReady = true;
@@ -63,23 +63,13 @@ namespace Unit.Trap.Fall
 
         private void CheckUnitInRadius()
         {
-            var colliders = Physics.OverlapSphere(transform.position, radius, ~Layers.PLAYER_LAYER);
+            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
-                UnitController unit = null;
-                if(colliders[i].TryGetComponent(out FallController fallController)
-                   && fallController == this)
-                    continue;
-                
-                if (colliders[i].TryGetComponent(out UnitController unitController))
+                if (colliders[i].TryGetComponent(out CellController cell))
                 {
-                    unit = unitController;
-                    if (!unit && unit.TryGetComponent(out UnitCollision unitCollision))
-                        unit = unitCollision.UnitController;
+                    cellControllers.Add(cell);
                 }
-                
-                if(unit && unitController.GetType().IsAssignableFrom(typeof(CellController))) 
-                    targetUnits.Add(unit);
             }
         }
         
@@ -91,12 +81,12 @@ namespace Unit.Trap.Fall
 
         public void ApplyDamage()
         {
-            for (int i = targetUnits.Count - 1; i >= 0; i--)
+            var colliders = Physics.OverlapSphere(transform.position, radius, ~Layers.CELL_LAYER);
+            for (int i = colliders.Length - 1; i >= 0; i--)
             {
-                if (targetUnits[i].gameObject.activeSelf)
+                if (colliders[i].TryGetComponent(out IHealth health)
+                    && health.IsLive)
                 {
-                    if(targetUnits[i].TryGetComponent(out IHealth health)
-                       && health.IsLive)
                     health.TakeDamage(Damageable);
                 }
             }
@@ -118,18 +108,19 @@ namespace Unit.Trap.Fall
         {
             float timer = 30;
             float countTimer = 0;
+            float deltaTime = Speed * Time.deltaTime;
             while (timer > countTimer)
             {
                 yield return null;
-                for (int i = targetUnits.Count - 1; i >= 0; i--)
+                for (int i = cellControllers.Count - 1; i >= 0; i--)
                 {
-                    if (!targetUnits[i].gameObject.activeSelf)
+                    if (!cellControllers[i].gameObject.activeSelf)
                     {
-                        targetUnits.RemoveAt(i);
+                        cellControllers.RemoveAt(i);
                         continue;
                     }
 
-                    targetUnits[i].MoveDirection(Vector3.down, Speed * Time.deltaTime);
+                    cellControllers[i].MoveDirection(Vector3.down, deltaTime);
                     countTimer += Time.deltaTime;
                 }
             }
@@ -144,7 +135,7 @@ namespace Unit.Trap.Fall
             {
                 StopCoroutine(fallUpdateCoroutine);
                 ApplyDamage();
-                gameObject.SetActive(false);
+                Deactivate();
             }
             
             if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;

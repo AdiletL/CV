@@ -10,11 +10,10 @@ namespace Unit.Character.Player
     {
         public event Action OnFinishedToTarget;
         
-        private PlayerSwitchAttackState playerSwitchAttackState;
+        private PlayerSwitchMove playerSwitchMove;
 
         private Vector3 targetPosition;
 
-        private float cooldownCheckAttack = 1, countCooldownCheckAttack;
         private float cooldownCheckEnemy = .01f;
         private float countCooldownCheckEnemy;
 
@@ -25,16 +24,16 @@ namespace Unit.Character.Player
         public SO_PlayerMove SO_PlayerMove { get; set; }
         public PlayerEndurance PlayerEndurance { get; set; }
 
+        
         private PlayerJumpState CreatePlayerJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
                 .SetDecreaseEndurance(SO_PlayerMove.JumpDecreaseEndurance)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-                .SetAnimationCurve(SO_PlayerMove.JumpInfo.Curve)
-                .SetJumpDuration(SO_PlayerMove.JumpInfo.Duration)
-                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
                 .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
+                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
+                .SetCharacterController(CharacterController)
                 .SetGameObject(GameObject)
                 .SetCharacterAnimation(CharacterAnimation)
                 .SetStateMachine(this.StateMachine)
@@ -44,7 +43,7 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            playerSwitchAttackState = this.StateMachine.GetState<PlayerSwitchAttackState>();
+            playerSwitchMove = (PlayerSwitchMove)CharacterSwitchMove;
         }
 
         public override void Enter()
@@ -52,8 +51,6 @@ namespace Unit.Character.Player
             base.Enter();
             
             isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
-            isCheckAttack = isCheckJump;
-            countCooldownCheckAttack = 0;
             
             this.StateMachine.OnExitCategory += OnExitCategory;
         }
@@ -61,8 +58,12 @@ namespace Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            CheckEnemy();
             CheckMove();
+        }
+
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
             CheckJump();
         }
 
@@ -86,8 +87,7 @@ namespace Unit.Character.Player
         public void SetTarget(GameObject target)
         {
             this.TargetForMove = target;
-            this.StateMachine.GetState<PlayerSwitchMoveState>().SetTarget(target);
-            countCooldownCheckAttack = cooldownCheckAttack;
+            playerSwitchMove.SetTarget(target);
         }
         
         private void CheckMove()
@@ -103,37 +103,10 @@ namespace Unit.Character.Player
             }
             else
             {
-                this.StateMachine.ExitCategory(Category, typeof(PlayerSwitchMoveState));
+                //this.StateMachine.ExitCategory(Category, null);
+                playerSwitchMove.ExitCategory(Category);
             }
         }
-        
-        private void CheckEnemy()
-        {
-            if(!isCheckAttack) return;
-
-            if (countCooldownCheckAttack <= 0)
-            {
-                countCooldownCheckAttack = 0;
-            }
-            else
-            {
-                countCooldownCheckAttack -= Time.deltaTime;
-                return;
-            }
-                
-            
-            countCooldownCheckEnemy += Time.deltaTime;
-            if (countCooldownCheckEnemy > cooldownCheckEnemy)
-            {
-                if (playerSwitchAttackState.IsFindUnitInRange())
-                {
-                    this.StateMachine.ExitOtherStates(typeof(PlayerSwitchAttackState));
-                }
-
-                countCooldownCheckEnemy = 0;
-            }
-        }
-        
 
         private void CheckJump()
         {

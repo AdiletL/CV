@@ -6,54 +6,84 @@ namespace Unit.Character.Creep
 {
     public class BeholderController : CreepController
     {
-        private DiContainer diContainer;
-        
         [SerializeField] private Transform finalPath;
         [SerializeField] private SO_BeholderAttack so_BeholderAttack;
+        [SerializeField] private SO_BeholderMove so_BeholderMove;
+
+        private BeholderSwitchMove beholderSwitchMove;
+        private BeholderSwitchAttack beholderSwitchAttack;
 
 
-        [Inject]
-        private void Construct(DiContainer diContainer)
+        private BeholderSwitchMove CreateBeholderSwitchMove()
         {
-            this.diContainer = diContainer;
-        }
-        
-        protected override void CreateStates()
-        {
-            var animation = components.GetComponentFromArray<BeholderAnimation>();
-            
-            var idleState = (BeholderIdleState)new BeholderIdleStateBuilder()
-                .SetCharacterAnimation(animation)
-                .SetIdleClips(soCreepMove.IdleClip)
-                .SetCenter(center)
-                .SetGameObject(gameObject)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-            diContainer.Inject(idleState);
-            
-            var moveState = (BeholderSwitchMoveState)new BeholderSwitchMoveStateBuilder()
+            return (BeholderSwitchMove)new BeholderSwitchSwitchMoveBuilder()
                 .SetCharacterController(GetComponent<CharacterController>())
                 .SetStart(Calculate.FindCell.GetCell(transform.position, Vector3.down).transform)
                 .SetEnd(finalPath)
                 .SetCenter(center)
-                .SetCharacterAnimation(animation)
-                .SetConfig(soCreepMove)
+                .SetCharacterAnimation(GetComponentInUnit<BeholderAnimation>())
+                .SetConfig(so_BeholderMove)
+                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetGameObject(gameObject)
                 .SetStateMachine(this.StateMachine)
                 .Build();
-            diContainer.Inject(moveState);
+        }
 
-            var attackState = (BeholderSwitchAttackState)new BeholderSwitchAttackStateBuilder()
+        private BeholderIdleState CreateBeholderIdleState()
+        {
+            return (BeholderIdleState)new BeholderIdleStateBuilder()
+                .SetCharacterAnimation(GetComponentInUnit<BeholderAnimation>())
+                .SetIdleClips(so_BeholderMove.IdleClip)
+                .SetCharacterSwitchMove(beholderSwitchMove)
+                .SetCharacterSwitchAttack(beholderSwitchAttack)
+                .SetCharacterController(GetComponent<CharacterController>())
                 .SetCenter(center)
-                .SetCharacterAnimation(animation)
+                .SetGameObject(gameObject)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
+
+        private BeholderSwitchAttack CreateBeholderSwitchAttackState()
+        {
+            return (BeholderSwitchAttack)new BeholderSwitchAttackBuilder()
+                .SetCenter(center)
+                .SetCharacterAnimation(GetComponentInUnit<BeholderAnimation>())
                 .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetGameObject(gameObject)
-                .SetConfig(so_BeholderAttack)
                 .SetStateMachine(this.StateMachine)
+                .SetConfig(so_BeholderAttack)
                 .Build();
-            diContainer.Inject(attackState);
+        }
 
-            this.StateMachine.AddStates(idleState, moveState, attackState);
+        public override void Initialize()
+        {
+            base.Initialize();
+            
+            this.StateMachine.Initialize();
+            
+            this.StateMachine.SetStates(typeof(CreepIdleState));
+        }
+
+        protected override void CreateStates()
+        {
+            var idleState = CreateBeholderIdleState();
+            diContainer.Inject(idleState);
+            this.StateMachine.AddStates(idleState);
+        }
+
+        protected override void CreateSwitchState()
+        {
+            beholderSwitchMove = CreateBeholderSwitchMove();
+            diContainer.Inject(beholderSwitchMove);
+
+            beholderSwitchAttack = CreateBeholderSwitchAttackState();
+            diContainer.Inject(beholderSwitchAttack);
+            
+            beholderSwitchMove.SetSwitchAttack(beholderSwitchAttack);
+            beholderSwitchAttack.SetSwitchMove(beholderSwitchMove);
+            
+            beholderSwitchMove.Initialize();
+            beholderSwitchAttack.Initialize();
         }
 
         public override void Appear()

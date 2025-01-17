@@ -6,6 +6,7 @@ namespace Unit.Character
     {
         protected float durationAnimation;
         
+        public CharacterSwitchAttack CharacterSwitchAttack { get; set; }
         public CharacterAnimation CharacterAnimation  { get; set; }
         public AnimationClip[] RunClips  { get; set; }
 
@@ -16,6 +17,7 @@ namespace Unit.Character
 
         public override void Enter()
         {
+            base.Enter();
             PlayAnimation();
         }
 
@@ -66,6 +68,12 @@ namespace Unit.Character
         {
             if(state is CharacterRunState characterRunState)
                 characterRunState.RunClips = animationClips;
+            return this;
+        }
+        public CharacterRunStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttack characterSwitchAttack)
+        {
+            if(state is CharacterRunState characterRunState)
+                characterRunState.CharacterSwitchAttack = characterSwitchAttack;
             return this;
         }
     }

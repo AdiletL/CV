@@ -21,7 +21,7 @@ namespace Unit.Cell
         public bool IsBlocked()
         {
             var colliderCount =
-                Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
+                Physics.OverlapSphereNonAlloc(transform.position + Vector3.up, .3f, this.colliders, ~Layers.CELL_LAYER);
             if (colliderCount == 0) return false;
 
             for (int i = colliders.Length - 1; i >= 0; i--)
@@ -42,8 +42,9 @@ namespace Unit.Cell
             return colliderCount == 0;
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
+            base.Initialize();
             unitRenderer = GetComponent<UnitRenderer>();
         }
 

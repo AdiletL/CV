@@ -13,10 +13,11 @@ namespace Unit.Character.Player
 {
     public class PlayerController : CharacterMainController
     {
-        [Inject] private DiContainer diContainer;
-        
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
+        [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
+        
+        [Space]
         [SerializeField] private SO_Sword so_Sword;
         [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
@@ -25,7 +26,8 @@ namespace Unit.Character.Player
         [ReadOnly] public string currentStateName;
 
         private UnitControlDesktop unitControlDesktop;
-        
+        private PlayerSwitchMove playerSwitchMove;
+        private PlayerSwitchAttack playerSwitchAttack;
         private GameObject finish;
         
         private CharacterController characterController;
@@ -37,6 +39,8 @@ namespace Unit.Character.Player
                 .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetFinishTargetToMove(finish)
                 .SetIdleClips(so_PlayerMove.IdleClip)
+                .SetCharacterSwitchMove(playerSwitchMove)
+                .SetCharacterController(GetComponentInUnit<CharacterController>())
                 .SetCharacterAnimation(characterAnimation)
                 .SetCenter(center)
                 .SetGameObject(gameObject)
@@ -44,42 +48,43 @@ namespace Unit.Character.Player
                 .Build();
         }
 
-        private PlayerSwitchMoveState CreateSwitchMoveState(CharacterAnimation characterAnimation, Transform center)
+        private PlayerSwitchMove CreateSwitchMoveState(CharacterAnimation characterAnimation, Transform center)
         {
-            return (PlayerSwitchMoveState)new PlayerMoveStateBuilder()
+            return (PlayerSwitchMove)new PlayerSwitchMoveBuilder()
                 .SetCharacterController(characterController)
                 .SetCenter(center)
                 .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
+                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetStateMachine(StateMachine)
                 .Build();
         }
 
-        private PlayerSwitchAttackState CreateSwitchAttackState(CharacterAnimation characterAnimation, Transform center)
+        private PlayerSwitchAttack CreateSwitchAttackState(CharacterAnimation characterAnimation, Transform center)
         {
-            return (PlayerSwitchAttackState)new PlayerSwitchAttackStateBuilder()
+            return (PlayerSwitchAttack)new PlayerSwitchAttackBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetCenter(center)
                 .SetCharacterEndurance(GetComponentInUnit<PlayerEndurance>())
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
-                .SetConfig(so_PlayerAttack)
                 .SetStateMachine(StateMachine)
+                .SetConfig(so_PlayerAttack)
                 .Build();
         }
 
 
         public override void Initialize()
         {
-            base.Initialize();
-
-            unitControlDesktop = new PlayerControlDesktop(this);
             characterController = GetComponent<CharacterController>();
+
+            base.Initialize();
             
-            CreateStates();
+            unitControlDesktop = new PlayerControlDesktop(this, playerSwitchAttack, playerSwitchMove, so_PlayerControlDesktop, so_PlayerAttack.EnemyLayer);
+            unitControlDesktop.Initialize();
             
             StateMachine.Initialize();
             
@@ -89,22 +94,33 @@ namespace Unit.Character.Player
             StateMachine.SetStates(typeof(PlayerIdleState));
         }
 
-        private void CreateStates()
+        protected override void CreateStates()
         {
-            StateMachine = new StateMachine();
-
             var characterAnimation = GetComponentInUnit<CharacterAnimation>();
             var center = GetComponentInUnit<UnitCenter>().Center;
 
             var idleState = CreateIdleState(characterAnimation, center);
-            var moveState = CreateSwitchMoveState(characterAnimation, center);
-            var attackState = CreateSwitchAttackState(characterAnimation, center);
-            
             diContainer.Inject(idleState);
-            diContainer.Inject(moveState);
-            diContainer.Inject(attackState);
             
-            StateMachine.AddStates(idleState, attackState, moveState);
+            StateMachine.AddStates(idleState);
+        }
+
+        protected override void CreateSwitchState()
+        {
+            var characterAnimation = GetComponentInUnit<CharacterAnimation>();
+            var center = GetComponentInUnit<UnitCenter>().Center;
+
+            playerSwitchMove = CreateSwitchMoveState(characterAnimation, center);
+            diContainer.Inject(playerSwitchMove);
+            
+            playerSwitchAttack = CreateSwitchAttackState(characterAnimation, center);
+            diContainer.Inject(playerSwitchAttack);
+            
+            playerSwitchMove.SetSwitchAttack(playerSwitchAttack);
+            playerSwitchAttack.SetSwitchMove(playerSwitchMove);
+            
+            playerSwitchAttack.Initialize();
+            playerSwitchMove.Initialize();
         }
 
         
@@ -144,18 +160,19 @@ namespace Unit.Character.Player
 
         private void Update()
         {
-            unitControlDesktop?.HandleInput();
+            unitControlDesktop?.HandleHotkey();
             StateMachine?.Update();
         }
 
         private void LateUpdate()
         {
+            unitControlDesktop?.HandleInput();
             StateMachine?.LateUpdate();
         }
         
         public void SetWeapon(Weapon weapon)
         {
-            this.StateMachine.GetState<PlayerSwitchAttackState>().SetWeapon(weapon);
+            playerSwitchAttack.SetWeapon(weapon);
         }
 
         public void IncreaseWeaponStates()

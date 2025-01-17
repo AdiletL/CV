@@ -10,7 +10,6 @@ public interface IFall
 
 public interface IFallGravity
 {
-    public Rigidbody Rigidbody { get; }
     public float Mass { get; }
     
     public void Initialize();

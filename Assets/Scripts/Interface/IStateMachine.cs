@@ -13,6 +13,7 @@
     public interface IState
     {
         public StateCategory Category { get; }
+        public bool isActive { get; }
         public void Initialize();
         public void Enter();
         public void Update();

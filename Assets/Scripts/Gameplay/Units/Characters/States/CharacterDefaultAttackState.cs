@@ -1,15 +1,11 @@
 ﻿using System.Collections.Generic;
-using Gameplay.Damage;
-using Gameplay.Weapon;
 using Movement;
-using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character
 {
     public class CharacterDefaultAttackState : CharacterBaseAttackState
     {
-        protected CharacterSwitchMoveState characterSwitchMoveState;
         protected Rotation rotation;
         
         protected Collider[] findUnitColliders = new Collider[10];
@@ -23,6 +19,8 @@ namespace Unit.Character
         protected bool isApplyDamage;
         protected bool isAttack;
         
+        
+        public CharacterSwitchMove CharacterSwitchMove { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
@@ -30,7 +28,6 @@ namespace Unit.Character
         public AnimationClip[] AttackClips { get; set; }
         public LayerMask EnemyLayer { get; set; }
         public float Range { get; set; }
-        public float AmountAttackInSecond { get; set; }
         
         protected AnimationClip getRandomAnimationClip()
         {
@@ -40,8 +37,7 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
-            rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
+            rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
             durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
             cooldown = durationAttack * .5f;
             applyDamage = durationAttack * .55f;
@@ -61,7 +57,7 @@ namespace Unit.Character
             }
             
             CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
-            Restart();
+            ResetValues();
         }
 
         public override void Update()
@@ -75,8 +71,6 @@ namespace Unit.Character
                 return;
             }
             
-            //if (!isAttack && !Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
-
             if (!isAttack)
             {
                 if (Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
@@ -98,7 +92,7 @@ namespace Unit.Character
             currentTarget = null;
         }
 
-        protected virtual void Restart()
+        protected virtual void ResetValues()
         {
             isAttack = false;
             isApplyDamage = false;
@@ -120,22 +114,13 @@ namespace Unit.Character
             
             if (countCooldown > cooldown)
             {
-                if (currentTarget)
+                if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                 {
-                    if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
-                    {
-                        currentTarget = null;
-                        return;
-                    }
-                    
-                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
-                    isApplyDamage = true;
+                    currentTarget = null;
+                    return;
                 }
-                else
-                {
-                    isAttack = false;
-                }
-
+                this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
+                isApplyDamage = true;
                 countCooldown = 0;
             }
         }
@@ -251,16 +236,14 @@ namespace Unit.Character
 
             return this;
         }
-        
-        public CharacterDefaultAttackStateBuilder SetAmountAttackInSecond(float value)
+        public CharacterDefaultAttackStateBuilder SetCharacterSwitchMove(CharacterSwitchMove characterSwitchMove)
         {
             if (state is CharacterDefaultAttackState characterDefaultAttackState)
             {
-                characterDefaultAttackState.AmountAttackInSecond = value;
+                characterDefaultAttackState.CharacterSwitchMove = characterSwitchMove;
             }
 
             return this;
         }
-        
     }
 }

@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Gameplay.Weapon;
+﻿using Gameplay.Weapon;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character
 {
     public class CharacterWeaponAttackState : CharacterBaseAttackState
     {
-        protected CharacterSwitchMoveState characterSwitchMoveState;
         protected Rotation rotation;
         protected AnimationClip cooldownClip;
         protected AnimationClip[] attackClips;
@@ -27,6 +24,8 @@ namespace Unit.Character
         protected bool isApplyDamage;
         protected bool isAttack;
         
+        
+        public CharacterSwitchMove CharacterSwitchMove { get; set; }
         public CharacterEndurance CharacterEndurance { get; set; }
         public SO_PlayerAttack SO_PlayerAttack { get; set; }
         public Weapon CurrentWeapon { get; set; }
@@ -46,9 +45,8 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            characterSwitchMoveState = this.StateMachine.GetState<CharacterSwitchMoveState>();
-            rotation = new Rotation(GameObject.transform, characterSwitchMoveState.RotationSpeed);
-            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttack);
+            rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
             timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack * .5f;
         }
@@ -57,26 +55,22 @@ namespace Unit.Character
         {
             base.Enter();
 
-            if (CurrentWeapon != null)
-            {
+            if (CurrentWeapon != null && !currentTarget)
                 FindUnit();
-            }
-            
+
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
-            
             CurrentWeapon.Show();
             CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
-            Restart();
+            ClearValues();
         }
 
         public override void Update()
         {
             base.Update();
-            
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
@@ -85,7 +79,8 @@ namespace Unit.Character
 
             if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, rangeSqr))
             {
-                this.StateMachine.ExitCategory(Category, null);
+                CharacterSwitchMove.SetTarget(currentTarget);
+                CharacterSwitchMove.ExitCategory(Category);
                 return;
             }
 
@@ -112,7 +107,7 @@ namespace Unit.Character
             CurrentWeapon?.Hide();
         }
 
-        protected virtual void Restart()
+        protected virtual void ClearValues()
         {
             isAttack = false;
             isApplyDamage = false;
@@ -120,6 +115,14 @@ namespace Unit.Character
             countTimerApplyDamage = 0;
             countCooldown = 0;
         }
+
+        public override void SetTarget(GameObject target)
+        {
+            base.SetTarget(target);
+            CurrentWeapon?.SetTarget(currentTarget);
+            rotation.SetTarget(currentTarget.transform);
+        }
+
         public virtual void SetWeapon(Weapon weapon)
         {
             CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
@@ -141,7 +144,7 @@ namespace Unit.Character
                     break;
             }
             
-            Restart();
+            ClearValues();
         }
 
         protected virtual void SetAnimationClip(AnimationClip[] attackClips, AnimationClip cooldownClip)
@@ -153,10 +156,11 @@ namespace Unit.Character
         private void FindUnit()
         {
             currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
+            if(!currentTarget) return;
+            
             CurrentWeapon.SetTarget(currentTarget);
-            rotation.SetTarget(currentTarget?.transform);
+            rotation.SetTarget(currentTarget.transform);
         }
-        
 
         public override void Attack()
         {
@@ -186,11 +190,6 @@ namespace Unit.Character
             isAttack = false;
             FindUnit();
         }
-        public override void ApplyDamage()
-        {
-            
-        }
-
         protected virtual void Cooldown()
         {
             if(isApplyDamage) return;
@@ -290,6 +289,15 @@ namespace Unit.Character
             if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.CharacterEndurance = endurance;
+            }
+
+            return this;
+        }
+        public CharacterWeaponAttackStateBuilder SetCharacterSwitchMove(CharacterSwitchMove characterSwitchMove)
+        {
+            if (state is CharacterWeaponAttackState characterWeapon)
+            {
+                characterWeapon.CharacterSwitchMove = characterSwitchMove;
             }
 
             return this;

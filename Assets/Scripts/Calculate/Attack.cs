@@ -5,8 +5,6 @@ namespace Calculate
 {
     public static class Attack
     {
-        private static RaycastHit[] enemyHits = new RaycastHit[1];
-        private static int hitCount;
         
         public static float TotalDurationInSecond(float countAttack)
         {
@@ -15,7 +13,8 @@ namespace Calculate
         
         public static GameObject CheckForwardEnemy(GameObject gameObject, Vector3 center, LayerMask layerMask, float distance = .6f)
         {
-            hitCount = Physics.RaycastNonAlloc(center,
+            RaycastHit[] enemyHits = new RaycastHit[1];
+            int hitCount = Physics.RaycastNonAlloc(center,
                 gameObject.transform.forward, enemyHits,
                 distance, layerMask);
 
@@ -38,7 +37,7 @@ namespace Calculate
         {
             GameObject closestUnit = null;
 
-            hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
+            int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
             if (hitCount == overlapHits.Length)
             {
                 overlapHits = new Collider[overlapHits.Length * 2];
@@ -79,7 +78,7 @@ namespace Calculate
             var isUnit = false;
             float sqrRadius = radius * radius;
             
-            hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
+            int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
             
             for (int i = 0; i < hitCount; i++)
             {

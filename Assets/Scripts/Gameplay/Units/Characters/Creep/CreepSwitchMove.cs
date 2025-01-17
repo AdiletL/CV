@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Character.Creep
 {
-    public class CreepSwitchMoveState : CharacterSwitchMoveState
+    public class CreepSwitchMove : CharacterSwitchMove
     {
         private SO_CreepMove so_CreepMove;
         
@@ -20,23 +20,17 @@ namespace Unit.Character.Creep
             base.Initialize();
             so_CreepMove = (SO_CreepMove)this.SO_CharacterMove;
         }
-        
-        
-        protected override void DestermineState()
-        {
-            
-        }
     }
 
-    public class CreepSwitchMoveStateBuilder : CharacterMoveStateBuilder
+    public class CreepSwitchSwitchMoveBuilder : CharacterSwitchMoveBuilder<CreepSwitchMove>
     {
-        public CreepSwitchMoveStateBuilder(CharacterSwitchMoveState instance) : base(instance)
+        public CreepSwitchSwitchMoveBuilder(CharacterSwitchMove instance) : base(instance)
         {
         }
 
-        public CreepSwitchMoveStateBuilder SetCenter(Transform center)
+        public CreepSwitchSwitchMoveBuilder SetCenter(Transform center)
         {
-            if(state is CreepSwitchMoveState creepSwitchMoveState)
+            if(state is CreepSwitchMove creepSwitchMoveState)
                 creepSwitchMoveState.Center = center;
             return this;
         }

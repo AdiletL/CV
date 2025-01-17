@@ -3,10 +3,11 @@ using UnityEngine;
 
 public abstract class Gravity : MonoBehaviour
 {
-    protected float gravityForce = .04f;
-    
+    protected Vector3 velocity;
     protected bool isGravity = true;
 
+    public float CurrentGravity { get; protected set; } = 1;
+    
     public void ActivateGravity()
     {
         this.isGravity = true;
@@ -16,6 +17,10 @@ public abstract class Gravity : MonoBehaviour
         this.isGravity = false;
     }
 
+    public void SetVelocityY(float velocityY)
+    {
+        velocity.y = velocityY;
+    }
     private void LateUpdate()
     {
         UseGravity();

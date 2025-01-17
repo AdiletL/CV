@@ -11,13 +11,7 @@ namespace Unit.Character
         {
             
         }
-
-
-        public override void Enter()
-        {
-            
-        }
-
+        
         public override void Update()
         {
             
@@ -28,9 +22,6 @@ namespace Unit.Character
             
         }
 
-        public override void Exit()
-        {
-        }
         public override void Attack()
         {
             
@@ -42,6 +33,11 @@ namespace Unit.Character
 
         public override void ApplyDamage()
         {
+        }
+
+        public virtual void SetTarget(GameObject target)
+        {
+            currentTarget = target;
         }
     }
 

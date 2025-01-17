@@ -8,7 +8,6 @@ namespace Unit.Character.Creep
 {
     public abstract class CreepController : CharacterMainController
     {
-        [FormerlySerializedAs("so_EnemyMove")] [SerializeField] protected SO_CreepMove soCreepMove;
         [SerializeField] protected Transform center;
         
         [ReadOnly] public StateCategory currentStateCategory;
@@ -17,17 +16,10 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-
-            CreateStates();
-            
-            this.StateMachine.Initialize();
-            
-            this.StateMachine.SetStates(typeof(CreepIdleState));
             
             this.StateMachine.OnChangedState += OnChangedState;
         }
-
-        protected abstract void CreateStates();
+        
 
         public void Update()
         {
@@ -39,14 +31,15 @@ namespace Unit.Character.Creep
             this.StateMachine?.LateUpdate();
         }
         
-        private void OnChangedState(Machine.IState state)
+        protected void OnChangedState(Machine.IState state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
         
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             this.StateMachine.OnChangedState -= OnChangedState;
         }
     }

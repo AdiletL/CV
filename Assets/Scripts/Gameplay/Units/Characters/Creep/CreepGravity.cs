@@ -11,7 +11,7 @@ namespace Unit.Character.Creep
         {
             characterController = GetComponent<CharacterController>();
             characterController.enabled = true;
-            gravityForce = -8.5f;
+            CurrentGravity = -8.5f;
         }
 
         protected override void UseGravity()
@@ -22,7 +22,7 @@ namespace Unit.Character.Creep
                 return;
             }
             
-            velocity.y += gravityForce * Time.deltaTime;
+            velocity.y += CurrentGravity * Time.deltaTime;
             characterController.Move(velocity * Time.deltaTime);
         }
     }

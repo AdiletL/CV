@@ -9,6 +9,16 @@ namespace Unit.Character
             
         }
 
+
+        protected virtual void ClearHotkey()
+        {
+            
+        }
+        public override void HandleHotkey()
+        {
+            
+        }
+
         public override void HandleInput()
         {
         }

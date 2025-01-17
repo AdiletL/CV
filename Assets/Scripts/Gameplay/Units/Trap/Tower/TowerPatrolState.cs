@@ -59,6 +59,7 @@ namespace Unit.Trap.Tower
 
         public override void Enter()
         {
+            base.Enter();
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
@@ -84,6 +85,7 @@ namespace Unit.Trap.Tower
 
         public override void Exit()
         {
+            base.Exit();
             currentTarget = null;
         }
 

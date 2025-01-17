@@ -4,6 +4,14 @@ namespace Unit.Character.Creep
 {
     public class BeholderDefaultAttackState : CreepDefaultAttackState
     {
+        private BeholderSwitchMove beholderSwitchMove;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
+        }
+
         public override void LateUpdate()
         {
             base.LateUpdate();
@@ -13,8 +21,8 @@ namespace Unit.Character.Creep
             if (!isAttack && !Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {
-                this.StateMachine.GetState<BeholderSwitchMoveState>().SetTarget(currentTarget);
-                this.StateMachine.ExitCategory(Category, typeof(BeholderSwitchMoveState));
+                beholderSwitchMove.SetTarget(currentTarget);
+                beholderSwitchMove.ExitCategory(Category);
             }
         }
     }

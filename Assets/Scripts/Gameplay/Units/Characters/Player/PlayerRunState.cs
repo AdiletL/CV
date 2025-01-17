@@ -10,30 +10,31 @@ namespace Unit.Character.Player
 {
   public class PlayerRunState : CharacterRunState
 {
-    private PlayerSwitchAttackState switchAttackState;
+    private PlayerSwitchAttack playerSwitchAttack;
     private PathFinding pathFinder;
     private Rotation rotationController;
+    private CellController finalCell;
 
     private GameObject finalTarget;
     private GameObject currentTarget;
+    private GameObject enemy;
 
     private Vector3 finalTargetPosition;
     private Vector3 currentTargetPosition;
     private Vector3 movementDirection;
 
-    private Vector2Int finalTargetCoordinates;
     private Vector2Int currentTargetCoordinates;
     private Vector2Int previousTargetCoordinates;
 
     private readonly float checkEnemyCooldown = 0.1f;
     private readonly float checkTargetCooldown = 0.2f;
-    private float enemyCheckTimer;
-    private float targetCheckTimer;
-
+    private float countCooldownheckEnemy;
+    private float countCooldownCheckTarget;
+    
     private bool isCanRotate;
-    private bool shouldCheckEnemy;
-    private bool isShouldCheckJump;
-    private bool isShouldCheckPath;
+    private bool isCheckJump;
+    private bool isCheckPath;
+    private bool isCheckAttack;
 
     private Queue<CellController> pathQueue = new();
 
@@ -49,9 +50,8 @@ namespace Unit.Character.Player
         return (PlayerJumpState)new PlayerJumpStateBuilder()
             .SetPlayerEndurance(PlayerEndurance)
             .SetDecreaseEndurance(SO_PlayerMove.JumpDecreaseEndurance)
+            .SetCharacterController(CharacterController)
             .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-            .SetAnimationCurve(SO_PlayerMove.JumpInfo.Curve)
-            .SetJumpDuration(SO_PlayerMove.JumpInfo.Duration)
             .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
             .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
             .SetGameObject(GameObject)
@@ -68,7 +68,7 @@ namespace Unit.Character.Player
     public override void Initialize()
     {
         base.Initialize();
-        switchAttackState = StateMachine.GetState<PlayerSwitchAttackState>();
+        playerSwitchAttack = (PlayerSwitchAttack)CharacterSwitchAttack;
         rotationController = new Rotation(GameObject.transform, RotationSpeed);
         pathFinder = new PathFindingBuilder()
             .SetStartPosition(GameObject.transform.position)
@@ -79,12 +79,13 @@ namespace Unit.Character.Player
     public override void Enter()
     {
         base.Enter();
-        enemyCheckTimer = checkEnemyCooldown;
+        
+        countCooldownheckEnemy = checkEnemyCooldown;
 
-        isShouldCheckJump = !StateMachine.IsActivateType(typeof(PlayerJumpState));
-        shouldCheckEnemy = isShouldCheckJump;
-        isShouldCheckPath = isShouldCheckJump;
-
+        isCheckJump = !StateMachine.IsActivateType(typeof(PlayerJumpState));
+        UpdatePathToTarget();
+        UpdateValuesCheckEnemy();
+        isCheckPath = isCheckJump;
         StateMachine.OnExitCategory += HandleExitCategory;
     }
 
@@ -108,13 +109,18 @@ namespace Unit.Character.Player
 
     public override void LateUpdate()
     {
+        base.LateUpdate();
         CheckForJumpInput();
+        CheckEnemy();
     }
 
     public override void Exit()
     {
         base.Exit();
+        ClearColorsToPath();
         currentTarget = null;
+        enemy = null;
+        finalTarget = null;
         StateMachine.OnExitCategory -= HandleExitCategory;
     }
 
@@ -123,48 +129,69 @@ namespace Unit.Character.Player
         if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
         {
             PlayAnimation();
-            shouldCheckEnemy = true;
-            isShouldCheckJump = true;
-            isShouldCheckPath = true;
+            if(enemy) isCheckAttack = true;
+            isCheckJump = true;
+            isCheckPath = true;
         }
     }
 
     public void SetTarget(GameObject target)
     {
         currentTarget = null;
+        ClearColorsToPath();
+
         finalTarget = target;
-        finalTargetCoordinates = target.GetComponent<CellController>().CurrentCoordinates;
-        UpdatePathToTarget();
+        finalCell = Calculate.FindCell.GetCell(finalTarget.transform.position, Vector3.down);
+        
+        if(isActive)
+        {
+            UpdatePathToTarget();
+            UpdateValuesCheckEnemy();
+        }
     }
 
-    private void ResetPathColors()
+    private void UpdateValuesCheckEnemy()
     {
-        var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
-        if (currentCell && currentCell.TryGetComponent(out UnitRenderer renderer))
+        if (!finalTarget.TryGetComponent(out CellController cellController))
         {
-            if (currentCell.CurrentCoordinates != finalTargetCoordinates)
-                renderer.ResetColor();
+            enemy = finalTarget;
+            isCheckAttack = isCheckJump;
         }
+        else
+        {
+            isCheckAttack = false;
+        }
+    }
 
+    private void ClearColorsToPath()
+    {
+        if (finalCell && finalCell.TryGetComponent(out UnitRenderer renderer))
+        {
+            renderer.ResetColor();
+        }
+        
         while (pathQueue.Count > 0)
         {
             var cell = pathQueue.Dequeue();
             if (cell && cell.TryGetComponent(out UnitRenderer unitRenderer))
             {
-                if (cell.CurrentCoordinates != finalTargetCoordinates)
-                    unitRenderer.ResetColor();
+                unitRenderer.ResetColor();
             }
         }
     }
 
     private void UpdatePathToTarget(bool compareDistance = false)
     {
-        ResetPathColors();
         pathQueue.Clear();
         finalTargetPosition = finalTarget.transform.position;
         pathFinder.SetStartPosition(GameObject.transform.position);
         pathFinder.SetTargetPosition(finalTargetPosition);
         AssignNewCurrentTarget(compareDistance);
+        
+        if(finalCell.TryGetComponent(out UnitRenderer unitRenderer))
+        {
+            unitRenderer.SetColor(Color.red);
+        }
     }
 
     private void AssignNewCurrentTarget(bool compareDistance = false)
@@ -182,14 +209,15 @@ namespace Unit.Character.Player
 
     private void UpdatePath()
     {
-        if (!isShouldCheckPath) return;
+        if (!isCheckPath) return;
 
-        targetCheckTimer += Time.deltaTime;
-        if (targetCheckTimer < checkTargetCooldown) return;
-        targetCheckTimer = 0;
+        countCooldownCheckTarget += Time.deltaTime;
+        if (countCooldownCheckTarget < checkTargetCooldown) return;
+        countCooldownCheckTarget = 0;
 
         if (!IsFinalPositionValid())
         {
+            ClearColorsToPath();
             UpdatePathToTarget(true);
             return;
         }
@@ -201,6 +229,7 @@ namespace Unit.Character.Player
         if (currentTargetCoordinates == currentCell.CurrentCoordinates || previousTargetCoordinates == currentCell.CurrentCoordinates)
             return;
 
+        ClearColorsToPath();
         UpdatePathToTarget();
     }
 
@@ -241,10 +270,27 @@ namespace Unit.Character.Player
             ReduceEndurance();
         }
     }
+    
+    private void CheckEnemy()
+    {
+        if(!isCheckAttack) return;
+                
+        countCooldownheckEnemy += Time.deltaTime;
+        if (countCooldownheckEnemy > checkEnemyCooldown)
+        {
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, enemy.transform.position, playerSwitchAttack.RangeAttackSqr))
+            {
+                playerSwitchAttack.SetTarget(finalTarget);
+                playerSwitchAttack.ExitOtherStates();
+            }
+
+            countCooldownheckEnemy = 0;
+        }
+    }
 
     private void CheckForJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isShouldCheckJump)
+        if (Input.GetKeyDown(KeyCode.Space) && isCheckJump)
         {
             TriggerJump();
         }
@@ -259,9 +305,9 @@ namespace Unit.Character.Player
             StateMachine.AddStates(jumpState);
         }
         StateMachine.SetStates(typeof(PlayerJumpState));
-        isShouldCheckPath = false;
-        shouldCheckEnemy = false;
-        isShouldCheckJump = false;
+        isCheckPath = false;
+        isCheckJump = false;
+        isCheckAttack = false;
     }
 
     private void ReduceEndurance()

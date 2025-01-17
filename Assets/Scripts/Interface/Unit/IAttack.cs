@@ -3,7 +3,7 @@ using Unit;
 
 public interface IAttack : IApplyDamage
 {
-    public float AmountAttack { get; }
+    public float AmountAttackInSecond { get; }
     public void Initialize();
 
     public void Attack();

@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character
 {
     public abstract class CharacterMainController : UnitController, ICharacterController
     {
-        public StateMachine StateMachine { get; protected set; }
+        protected DiContainer diContainer;
         
+        public StateMachine StateMachine { get; protected set; }
 
-        public T GetState<T>() where T : Machine.IState
+        [Inject]
+        private void Construct(DiContainer diContainer)
         {
-            return StateMachine.GetState<T>();
+            this.diContainer = diContainer;
         }
         
         public List<T> GetStates<T>() where T : Machine.IState
@@ -24,13 +27,26 @@ namespace Unit.Character
         {
             base.Initialize();
             StateMachine = new StateMachine();
-
-            InitializeMediator();
             
-            GetComponentInUnit<CharacterUI>()?.Initialize();
-            GetComponentInUnit<CharacterExperience>()?.Initialize();
-            GetComponentInUnit<CharacterHealth>()?.Initialize();
-            GetComponentInUnit<CharacterEndurance>()?.Initialize();
+            InitializeMediator();
+
+            CreateSwitchState();
+            CreateStates();
+
+            var ui = GetComponentInUnit<CharacterUI>();
+            var experience = GetComponentInUnit<CharacterExperience>();
+            var health = GetComponentInUnit<CharacterHealth>();
+            var endurance = GetComponentInUnit<CharacterEndurance>();
+            
+            diContainer.Inject(ui);
+            diContainer.Inject(experience);
+            diContainer.Inject(health);
+            diContainer.Inject(endurance);
+            
+            ui?.Initialize();
+            experience?.Initialize();
+            health?.Initialize();
+            endurance?.Initialize();
         }
 
         private void InitializeMediator()
@@ -46,6 +62,9 @@ namespace Unit.Character
             GetComponentInUnit<CharacterHealth>().OnDeath -= GetComponentInUnit<CharacterExperience>().OnDeath;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
+
+        protected abstract void CreateStates();
+        protected abstract void CreateSwitchState();
 
         protected virtual void OnEnable()
         {

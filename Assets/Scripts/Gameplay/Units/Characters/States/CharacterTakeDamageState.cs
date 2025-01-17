@@ -12,9 +12,7 @@ namespace Unit.Character
             
         }
 
-        public override void Enter()
-        {
-        }
+
         public override void LateUpdate()
         {
             
@@ -23,9 +21,7 @@ namespace Unit.Character
         {
         }
 
-        public override void Exit()
-        {
-        }
+
     }
 
     public class CharacterTakeDamageStateBuilder : StateBuilder<CharacterTakeDamageState>
