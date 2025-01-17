@@ -26,7 +26,7 @@ namespace Unit.Character.Player
     private Vector2Int currentTargetCoordinates;
     private Vector2Int previousTargetCoordinates;
 
-    private readonly float checkEnemyCooldown = 0.1f;
+    private readonly float checkEnemyCooldown = 0.2f;
     private readonly float checkTargetCooldown = 0.2f;
     private float countCooldownheckEnemy;
     private float countCooldownCheckTarget;

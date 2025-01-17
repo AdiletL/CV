@@ -13,12 +13,22 @@ namespace Unit.Character.Player
             DecreaseEndurance();
         }
 
+        protected override void CheckJump()
+        {
+            base.CheckJump();
+            if (Input.GetKeyDown(KeyCode.Space) && currentJumpCount < MaxJumpCount)
+            {
+                StartJump();
+            }
+        }
+
         protected override void StartJump()
         {
             base.StartJump();
             DecreaseEndurance();
         }
 
+        
         private void DecreaseEndurance()
         {
             PlayerEndurance.RemoveEndurance(JumpDecreaseEndurance);

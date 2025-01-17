@@ -11,7 +11,7 @@ namespace Unit.Character
         protected Gravity gravity;
         protected float currentGravity;
         
-        private Vector3 velocity;
+        protected Vector3 velocity;
 
         public GameObject GameObject { get; set; }
         public AnimationClip JumpClip { get; set; }
@@ -20,7 +20,7 @@ namespace Unit.Character
         public float JumpHeight { get; set; } = 1f;
         public int MaxJumpCount { get; set; }
 
-        private int currentJumpCount;
+        protected int currentJumpCount;
         
         public override void Initialize()
         {
@@ -58,24 +58,22 @@ namespace Unit.Character
             velocity.y = 0f;
             CharacterAnimation.SetBlock(false);
         }
+        
+        protected virtual void CheckJump()
+        {
+            
+        }
 
         private void ClearValues()
         {
             currentJumpCount = 0;
         }
-        private void CheckJump()
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && currentJumpCount < MaxJumpCount)
-            {
-                StartJump();
-            }
-        }
         
         protected virtual void StartJump()
         {
-            velocity.y = Mathf.Sqrt(JumpHeight * -2f * currentGravity);
             currentJumpCount++;
             CharacterAnimation.ChangeAnimationWithDuration(JumpClip, isForce: true);
+            velocity.y = Mathf.Sqrt(JumpHeight * -2f * currentGravity);
             gravity.SetVelocityY(velocity.y);
         }
 

@@ -7,38 +7,31 @@ public class StateMachine
 {
     public event Action<IState> OnChangedState;
     public event Action<IState> OnExitCategory;
-    
+    public event Action OnUpdate;
+    public event Action OnLateUpdate;
+
     private readonly Dictionary<StateCategory, IState> activeStates = new();
     private readonly Dictionary<Type, IState> states = new();
-    private readonly List<IState> updateStates = new();
-    private readonly List<StateCategory> cachedCategories = new(); // Static to avoid repeated allocations
-    
-    // Cache the default idle state
+    private readonly List<StateCategory> cachedCategories = new();
+
     private IState defaultIdleState;
-    private IState mostDerivedState;
-    private IState targetState;
-    
+
     public Dictionary<StateCategory, IState> ActiveStates => activeStates;
 
-    public bool IsStateNotNull(Type state)
-    {
-        return FindMostDerivedState(state) != null;
-    }
+    public bool IsStateNotNull(Type state) => FindMostDerivedState(state) != null;
 
     public bool IsActivateType(Type state)
     {
         foreach (var item in activeStates.Values)
         {
-            // Проверяем, что состояние является наследником baseType
             if (state.IsAssignableFrom(item.GetType()))
             {
                 return true;
             }
         }
-        
         return false;
     }
-    
+
     public T GetState<T>() where T : IState
     {
         foreach (var state in states.Values)
@@ -48,9 +41,9 @@ public class StateMachine
                 return desiredState;
             }
         }
-
         throw new InvalidOperationException($"State of type {typeof(T)} not found.");
     }
+
     public List<T> GetStates<T>() where T : IState
     {
         var result = new List<T>();
@@ -61,7 +54,6 @@ public class StateMachine
                 result.Add(desiredState);
             }
         }
-
         return result;
     }
 
@@ -72,12 +64,10 @@ public class StateMachine
             state.Initialize();
             if (state.Category == StateCategory.idle && defaultIdleState == null)
             {
-                defaultIdleState = FindMostDerivedState(state.GetType());// Cache idle state on initialization
+                defaultIdleState = FindMostDerivedState(state.GetType());
             }
         }
     }
-
-    
 
     public void AddStates(params IState[] states)
     {
@@ -112,47 +102,13 @@ public class StateMachine
             }
         }
     }
-    /* public void SetStates(params Type[] desiredStates)
-    {
-        foreach (var baseType in desiredStates)
-        {
-            // Сначала проверяем, есть ли базовый тип в словаре состояний
-            if (!states.ContainsKey(baseType))
-                continue;
 
-            // Находим самое глубокое состояние, которое наследуется от указанного базового типа
-            var state = FindMostDerivedState(baseType);
-
-            if (state != null)
-            {
-                var category = state.Category;
-
-                // Если состояние этой категории уже активно, заменяем его новым
-                if (activeStates.TryGetValue(category, out var activeState) && activeState.GetType() != state.GetType())
-                {
-                    activeState.Exit();
-                }
-
-                // Активируем новое состояние, если оно еще не активно
-                if (!activeStates.ContainsKey(category) || activeStates[category] != state)
-                {
-                    activeStates[category] = state;
-                    state.Enter();
-                    OnChangedState?.Invoke(state);
-                }
-            }
-        }
-    }*/
-    
-
-// Метод поиска самого глубокого состояния в иерархии для данного базового типа
     private IState FindMostDerivedState(Type baseType)
     {
-        mostDerivedState = null;
+        IState mostDerivedState = null;
 
         foreach (var state in states.Values)
         {
-            // Проверяем, что состояние является наследником baseType
             if (baseType.IsAssignableFrom(state.GetType()) &&
                 (mostDerivedState == null || state.GetType().IsSubclassOf(mostDerivedState.GetType())))
             {
@@ -163,23 +119,22 @@ public class StateMachine
         return mostDerivedState;
     }
 
-
     public void ExitOtherStates(Type installationState)
     {
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
-        targetState = FindMostDerivedState(installationState);
+        var targetState = FindMostDerivedState(installationState);
 
         foreach (var category in cachedCategories)
         {
-            if(category == targetState.Category) continue;
-            
+            if (category == targetState.Category) continue;
+
             activeStates[category].Exit();
             activeStates.Remove(category);
         }
-        
+
         SetStates(installationState);
-        
+
         if (activeStates.Count == 0)
             SetDefaultState();
     }
@@ -195,9 +150,6 @@ public class StateMachine
 
         if (installationState != null)
         {
-            cachedCategories.Clear();
-            cachedCategories.AddRange(activeStates.Keys);
-
             SetStates(installationState);
         }
 
@@ -213,25 +165,7 @@ public class StateMachine
         }
     }
 
-    public void Update()
-    {
-        updateStates.Clear();
-        updateStates.AddRange(activeStates.Values);
-        
-        for (int i = updateStates.Count - 1; i >= 0; i--)
-        {
-            updateStates[i]?.Update();
-        }
-    }
-    
-    public void LateUpdate()
-    {
-        updateStates.Clear();
-        updateStates.AddRange(activeStates.Values);
+    public void Update() => OnUpdate?.Invoke();
 
-        for (int i = updateStates.Count - 1; i >= 0; i--)
-        {
-            updateStates[i]?.LateUpdate();
-        }
-    }
+    public void LateUpdate() => OnLateUpdate?.Invoke();
 }

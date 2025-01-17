@@ -55,14 +55,18 @@ namespace Unit.Character
         {
             base.Enter();
 
-            if (CurrentWeapon != null && !currentTarget)
-                FindUnit();
+            //if (CurrentWeapon != null && !currentTarget)
+              //  FindUnit();
 
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;
             }
+            
+            if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
+                unitRenderer.SetColor(Color.green);
+            
             CurrentWeapon.Show();
             CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             ClearValues();
@@ -87,7 +91,7 @@ namespace Unit.Character
             if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
                 rotation.Rotate();
                
-            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
+            if(!isAttack && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
 
             if (!isAttack)
@@ -103,6 +107,7 @@ namespace Unit.Character
         public override void Exit()
         {
             base.Exit();
+            ClearColorAtTarget();
             currentTarget = null;
             CurrentWeapon?.Hide();
         }
@@ -116,9 +121,24 @@ namespace Unit.Character
             countCooldown = 0;
         }
 
+        protected virtual void ClearColorAtTarget()
+        {
+            if (currentTarget)
+            {
+                if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
+                    unitRenderer.ResetColor();
+            }
+        }
+
         public override void SetTarget(GameObject target)
         {
+            ClearColorAtTarget();
+            
             base.SetTarget(target);
+
+            if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
+                unitRenderer.SetColor(Color.green);
+            
             CurrentWeapon?.SetTarget(currentTarget);
             rotation.SetTarget(currentTarget.transform);
         }
@@ -188,7 +208,7 @@ namespace Unit.Character
             }
             this.CharacterAnimation?.ChangeAnimationWithDuration(cooldownClip);
             isAttack = false;
-            FindUnit();
+            //FindUnit();
         }
         protected virtual void Cooldown()
         {

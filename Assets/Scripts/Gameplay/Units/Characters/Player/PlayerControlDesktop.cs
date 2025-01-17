@@ -78,6 +78,7 @@ namespace Unit.Character.Player
                     playerSwitchAttack.SetTarget(hitObject);
                     playerSwitchAttack.ExitOtherStates();
                 }
+                ClearHotkey();
             }
             else if (Input.GetMouseButtonDown(1))
             {
