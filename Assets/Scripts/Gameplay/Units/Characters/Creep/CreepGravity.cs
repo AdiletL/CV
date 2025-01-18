@@ -5,7 +5,6 @@ namespace Unit.Character.Creep
     public class CreepGravity : Gravity
     {
         private CharacterController characterController;
-        private Vector3 velocity;
         
         private void Start()
         {

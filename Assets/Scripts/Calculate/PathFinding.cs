@@ -29,7 +29,7 @@ namespace Calculate
         private Vector3 correctCellPosition;
         private Vector3 currentCellScale;
         private int weightCell;
-        private int maxCheck = 100;
+        private int maxCheck = 50;
         private float rayLenght;
 
         private List<CellController> nearCells = new();

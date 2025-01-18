@@ -9,8 +9,8 @@ namespace Gameplay.Weapon.Projectile
     public class SphereController : ProjectileController
     {
         private SO_Sphere so_Sphere;
-        private ForwardMovement forwardMovement;
-        private Gameplay.Effect.Effect slowMovementEffect;
+        private IMovement forwardMovement;
+        private IEffect slowMovementEffect;
 
         public override void Initialize()
         {

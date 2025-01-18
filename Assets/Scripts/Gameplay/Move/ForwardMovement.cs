@@ -2,7 +2,7 @@
 
 namespace Movement
 {
-    public class ForwardMovement : IMove
+    public class ForwardMovement : IMovement
     {
         private GameObject gameObject;
         public float MovementSpeed { get; }

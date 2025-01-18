@@ -14,10 +14,6 @@ namespace Unit.Character.Player
 
         private Vector3 targetPosition;
 
-        private float cooldownCheckEnemy = .01f;
-        private float countCooldownCheckEnemy;
-
-        private bool isCheckAttack;
         private bool isCheckJump;
         
         public GameObject TargetForMove { get; set; }
@@ -88,7 +84,6 @@ namespace Unit.Character.Player
             {
                 PlayAnimation();
                 isCheckJump = true;
-                isCheckAttack = true;
             }
         }
         
@@ -133,7 +128,6 @@ namespace Unit.Character.Player
             }
             this.StateMachine.SetStates(desiredStates: typeof(PlayerJumpState));
             isCheckJump = false;
-            isCheckAttack = false;
         }
     }
     

@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 
-public interface IProjectile : IMove, IApplyDamage
+public interface IProjectile : IMovement, IApplyDamage
 {
     public AnimationCurve moveCurve { get; }
 
-    public void Initialize();
 }

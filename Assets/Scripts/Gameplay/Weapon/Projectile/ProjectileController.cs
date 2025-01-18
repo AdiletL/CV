@@ -9,7 +9,7 @@ namespace Gameplay.Weapon.Projectile
     {
         [SerializeField] protected SO_Projectile so_Projectile;
 
-        protected IPoolable poolable;
+        protected IPoolableObject IPoolableObject;
         protected GameObject target;
         protected LayerMask enemyLayer;
         
@@ -20,9 +20,9 @@ namespace Gameplay.Weapon.Projectile
         protected float height;
         
         [Inject]
-        private void Construct(IPoolable poolable)
+        private void Construct(IPoolableObject iPoolableObject)
         {
-            this.poolable = poolable;
+            this.IPoolableObject = iPoolableObject;
         }
 
 
@@ -63,7 +63,7 @@ namespace Gameplay.Weapon.Projectile
 
         protected void ReturnToPool()
         {
-            poolable.ReturnToPool(gameObject);
+            IPoolableObject.ReturnToPool(gameObject);
         }
         
         private void OnTriggerEnter(Collider other)

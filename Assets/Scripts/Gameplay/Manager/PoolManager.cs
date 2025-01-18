@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Gameplay.Manager
 {
-    public class PoolManager : MonoBehaviour, IManager, IPoolable
+    public class PoolManager : MonoBehaviour, IManager, IPoolableObject
     {
         [Inject] private DiContainer diContainer;
         
@@ -30,7 +30,7 @@ namespace Gameplay.Manager
         public async UniTask<GameObject> GetObjectAsync<T>()
         {
             // Попытка найти объект в пуле
-            var poolObject = GetPoolObject<T>();
+            var poolObject = GetPoolObjectFromList<T>();
             if (poolObject != null)
                 return poolObject;
 
@@ -38,7 +38,7 @@ namespace Gameplay.Manager
             return await GetObjectFromPrefabsAsync<T>();
         }
 
-        private GameObject GetPoolObject<T>()
+        private GameObject GetPoolObjectFromList<T>()
         {
             for (int i = PoolObjects.Count - 1; i >= 0; i--)
             {
@@ -48,7 +48,7 @@ namespace Gameplay.Manager
                 {
                     poolObject.transform.SetParent(null);
                     poolObject.SetActive(true);
-                    PoolObjects.RemoveAt(i); // Удаляем из пула
+                    PoolObjects.RemoveAt(i);
                     return poolObject;
                 }
             }

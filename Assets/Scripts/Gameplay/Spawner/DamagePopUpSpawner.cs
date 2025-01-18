@@ -7,10 +7,10 @@ namespace Gameplay.Spawner
 {
     public class DamagePopUpSpawner : MonoBehaviour, ISpawner
     {
-        private IPoolable poolManager;
+        private IPoolableObject poolManager;
 
         [Inject]
-        private void Construct(IPoolable poolManager)
+        private void Construct(IPoolableObject poolManager)
         {
             this.poolManager = poolManager;
         }

@@ -13,6 +13,7 @@ namespace Gameplay.Weapon
         public GameObject GameObject { get; set; }
         public GameObject CurrentTarget { get; private set; }
         public IDamageable Damageable { get; set; }
+        public float AngleToTarget { get; set; }
         public float Range { get; set; }
         public float DecreaseEndurance { get; set; }
         
@@ -91,6 +92,11 @@ namespace Gameplay.Weapon
         public WeaponBuilder SetDecreaseEndurance(float value)
         {
             weapon.DecreaseEndurance = value;
+            return this;
+        }
+        public WeaponBuilder SetAngleToTarget(float value)
+        {
+            weapon.AngleToTarget = value;
             return this;
         }
         public Weapon Build()

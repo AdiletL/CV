@@ -7,11 +7,11 @@ namespace Gameplay.Weapon
 {
     public class Bow : Weapon
     {
-        private IPoolable pool;
+        private IPoolableObject pool;
         private Transform pointSpawnProjectile;
 
         [Inject]
-        public void Construct(IPoolable pool)
+        public void Construct(IPoolableObject pool)
         {
             this.pool = pool;
         }

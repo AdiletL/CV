@@ -12,14 +12,15 @@ namespace Gameplay.Effect
         private struct MovementInfo
         {
             public CharacterBaseMovementState MovementState { get; }
-            public int Speed { get; }
+            public float Speed { get; }
 
-            public MovementInfo(CharacterBaseMovementState movementState, int speed)
+            public MovementInfo(CharacterBaseMovementState movementState, float speed)
             {
                 MovementState = movementState;
                 Speed = speed;
             }
         }
+
         
         private List<MovementInfo> movementStates = new ();
         private float value;
@@ -33,13 +34,13 @@ namespace Gameplay.Effect
             this.valueType = slowMovementInfo.ValueType;
         }
 
-        public override void ResetEffect()
+        public override void ClearValues()
         {
             countDuration = 0;
             movementStates.Clear();
         }
 
-        public override void UpdateEffect()
+        public override void Update()
         {
             countDuration += Time.deltaTime;
 
@@ -48,6 +49,11 @@ namespace Gameplay.Effect
                 DestroyEffect();
                 countDuration = 0;
             }
+        }
+
+        public override void LateUpdate()
+        {
+            
         }
 
         public override void ApplyEffect()
@@ -70,11 +76,12 @@ namespace Gameplay.Effect
 
         public override void DestroyEffect()
         {
+            base.DestroyEffect();
             foreach (var VARIABLE in movementStates)
             {
                 VARIABLE.MovementState.IncreaseMovementSpeed(VARIABLE.Speed);
             }
-            ResetEffect();
+            ClearValues();
         }
     }
 

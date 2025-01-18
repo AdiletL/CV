@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Trap
 {
-    public abstract class TrapMovementState : State, IMove
+    public abstract class TrapMovementState : State, IMovement
     {
         public override StateCategory Category { get; } = StateCategory.move;
 

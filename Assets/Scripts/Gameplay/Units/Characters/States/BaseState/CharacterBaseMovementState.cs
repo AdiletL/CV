@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public abstract class CharacterBaseMovementState : State, IMove
+    public abstract class CharacterBaseMovementState : State, IMovement
     {
         public override StateCategory Category { get; } = StateCategory.move;
         

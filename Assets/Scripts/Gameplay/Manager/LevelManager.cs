@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using ScriptableObjects.Gameplay;
-using Unit;
 using Unit.Character.Player;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -13,8 +13,9 @@ namespace Gameplay.Manager
         private DiContainer diContainer;
         private GameUnits gameUnits;
         
-        [SerializeField] protected SO_LevelContainer so_LevelContainer;
+        [SerializeField] protected AssetReference so_LevelContainer;
 
+        private SO_LevelContainer levelContainer;
         private LevelController levelController;
         private PlayerController playerController;
 
@@ -30,10 +31,10 @@ namespace Gameplay.Manager
         
         protected virtual SO_Level GetLevel(int levelNumber)
         {
-            if (so_LevelContainer.Levels.Length < levelNumber)
+            if (levelContainer.Levels.Length < levelNumber)
                 throw new IndexOutOfRangeException();
             
-            return so_LevelContainer.Levels[levelNumber];
+            return levelContainer.Levels[levelNumber];
         }
 
         private GameFieldController GetGameField(int levelIndex, int gameFieldIndex)
@@ -53,8 +54,13 @@ namespace Gameplay.Manager
             var newGameObject = new GameObject("LevelController");
             return newGameObject.AddComponent<LevelController>();
         }
+
+        private async UniTask<SO_LevelContainer> LoadLevelContainer()
+        {
+            return await Addressables.LoadAssetAsync<SO_LevelContainer>(so_LevelContainer);
+        }
         
-        public void Initialize()
+        public async void Initialize()
         {
             if (!levelController)
             {
@@ -64,8 +70,10 @@ namespace Gameplay.Manager
         }
 
 
-        public void StartLevel(UnitController playerPrefab)
+        public async void StartLevel(AssetReference playerPrefab)
         {
+            if (!levelContainer) levelContainer = await LoadLevelContainer();
+            
             var gameField = GetGameField(currentLevelIndex, currentGameFieldIndex);
             var newGameField = diContainer.InstantiatePrefab(gameField);
             newGameField.transform.SetParent(levelController.transform);
@@ -89,12 +97,12 @@ namespace Gameplay.Manager
             
         }
 
-        private void InstantiatePlayer(UnitController playerPrefab)
+        private async void InstantiatePlayer(AssetReference playerPrefab)
         {
-            var newPlayer = diContainer.InstantiatePrefab(playerPrefab);
-            var playerController = newPlayer.GetComponent<PlayerController>();
-            playerController.GetComponent<CharacterController>().enabled = false;
+            var player = await Addressables.LoadAssetAsync<GameObject>(playerPrefab);
+            playerController = diContainer.InstantiatePrefabForComponent<PlayerController>(player);
             diContainer.Inject(playerController);
+            playerController.GetComponent<CharacterController>().enabled = false;
             playerController.transform.position = levelController.CurrentGameField.PlayerSpawnPoint.position;
             playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;
             playerController.Initialize();

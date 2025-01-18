@@ -148,9 +148,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9695e105c9dc3b43890a348daf8b57b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameInstaller: {fileID: 7675124488934118779, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
-  gameManager: {fileID: 9219043855927957937, guid: 323f2059c6360b348ae88126a5ab27da, type: 3}
-  laboratoryManager: {fileID: 1413289591137737379, guid: dbc6e935c7c1aee48a1e5707702822ed, type: 3}
+  gameInstallerPrefab:
+    m_AssetGUID: 7ea490d6ae5997e438b8043074baacc8
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  gameManagerPrefab:
+    m_AssetGUID: 323f2059c6360b348ae88126a5ab27da
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  laboratoryManagerPrefab:
+    m_AssetGUID: dbc6e935c7c1aee48a1e5707702822ed
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
 --- !u!4 &2010510990
 Transform:
   m_ObjectHideFlags: 0

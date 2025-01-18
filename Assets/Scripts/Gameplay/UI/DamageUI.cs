@@ -19,7 +19,7 @@ namespace Gameplay.UI
         [SerializeField] private float animationDuration = 1.0f;
         [SerializeField] private float fallDistance = 1f;
 
-        private IPoolable poolManager;
+        private IPoolableObject poolManager;
         private Coroutine startAnimateCoroutine;
         private float elapsedTime;
         
@@ -29,7 +29,7 @@ namespace Gameplay.UI
         };
 
         [Inject]
-        private void Construct(IPoolable poolManager)
+        private void Construct(IPoolableObject poolManager)
         {
             this.poolManager = poolManager;
         }

@@ -44,4 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245b1b297ad4496fa356e44c4426cf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  so_LevelContainer: {fileID: 11400000, guid: 926376a6b98787b48a645626c87099af, type: 2}
+  so_LevelContainer:
+    m_AssetGUID: 926376a6b98787b48a645626c87099af
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

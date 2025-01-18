@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
 using Gameplay.Spawner;
+using ScriptableObjects.Gameplay.Skill;
 using Unit.Character.Player;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -11,70 +12,85 @@ namespace Gameplay.Manager
     public class GameManager : MonoBehaviour, IManager
     {
         [Inject] private DiContainer diContainer;
-        
-        [SerializeField] private PoolManager poolManagerPrefab;
-        [SerializeField] private LevelManager levelManagerPrefab;
-        [SerializeField] private DamagePopUpSpawner damagePopUpSpawnerPrefab;
-        [SerializeField] private PlayerController playerPrefab;
-        
+
+        [SerializeField] private AssetReference poolManagerPrefab;
+        [SerializeField] private AssetReference levelManagerPrefab;
+        [SerializeField] private AssetReference damagePopUpSpawnerPrefab;
+        [SerializeField] private AssetReference playerPrefab;
+        [SerializeField] private AssetReference so_SkillContainer;
+
         private LevelManager levelManager;
-        private PoolManager poolManager;
+        private IPoolableObject poolManager; // Используем интерфейс
         private DamagePopUpSpawner damagePopUpSpawner;
-        
+
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
             // Подписываемся на событие загрузки сцены
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
-        
+
         private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Bootstrap") return;
-            
+
             Initialize();
-            Invoke(nameof(StartGame), .01f);
             // Отписываемся от события, чтобы избежать многократных вызовов
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
-        
-        public void Initialize()
+
+        public async void Initialize()
         {
-            Debug.Log("Initializing Game Manager");
-            InstantiateLevelManager();
-            InstantiatePoolManager(); 
-            InstantiateDamagePopUpSpawner();
+            Debug.Log("Initializing: " + name);
+
+            await UniTask.WhenAll(
+                InstantiateLevelManager(),
+                InstantiatePoolManager(),
+                InstantiateDamagePopUpSpawner()
+            );
+
+            await LoadAndBindAsset<SO_SkillContainer>(so_SkillContainer);
+            StartGame();
         }
 
-        private void InstantiateLevelManager()
+        private async UniTask<TInterface> InstantiateAndBind<TInterface, TConcrete>(AssetReference prefab)
+            where TInterface : class
+            where TConcrete : MonoBehaviour, TInterface
         {
-            levelManager = diContainer.InstantiatePrefabForComponent<LevelManager>(levelManagerPrefab);
-            diContainer.Inject(levelManager);
-            diContainer.Bind<LevelManager>().FromInstance(levelManager).AsSingle();
-            levelManager.transform.SetParent(transform);
+            var result = await Addressables.LoadAssetAsync<GameObject>(prefab);
+            var instance = diContainer.InstantiatePrefabForComponent<TConcrete>(result);
+            diContainer.Inject(instance);
+            diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
+            instance.transform.SetParent(transform);
+            return instance;
+        }
+
+        private async UniTask<T> LoadAndBindAsset<T>(AssetReference asset) where T : ScriptableObject
+        {
+            var result = await Addressables.LoadAssetAsync<T>(asset);
+            diContainer.Bind<T>().FromInstance(result).AsSingle();
+            return result;
+        }
+
+        private async UniTask InstantiateLevelManager()
+        {
+            levelManager = await InstantiateAndBind<LevelManager, LevelManager>(levelManagerPrefab);
             levelManager.Initialize();
         }
 
-        private void InstantiatePoolManager()
+        private async UniTask InstantiatePoolManager()
         {
-            poolManager = diContainer.InstantiatePrefabForComponent<PoolManager>(poolManagerPrefab);
-            diContainer.Inject(poolManager);
-            diContainer.Bind<IPoolable>().FromInstance(poolManager).AsSingle();
-            poolManager.transform.SetParent(transform);
+            poolManager = await InstantiateAndBind<IPoolableObject, PoolManager>(poolManagerPrefab);
             poolManager.Initialize();
         }
-        
-        private void InstantiateDamagePopUpSpawner()
+
+        private async UniTask InstantiateDamagePopUpSpawner()
         {
-            damagePopUpSpawner = diContainer.InstantiatePrefabForComponent<DamagePopUpSpawner>(damagePopUpSpawnerPrefab);
-            diContainer.Inject(damagePopUpSpawner);
-            diContainer.Bind<DamagePopUpSpawner>().FromInstance(damagePopUpSpawner).AsSingle();
-            damagePopUpSpawner.transform.SetParent(transform);
+            damagePopUpSpawner = await InstantiateAndBind<DamagePopUpSpawner, DamagePopUpSpawner>(damagePopUpSpawnerPrefab);
             damagePopUpSpawner.Initialize();
         }
-        
-        
-        private void StartGame()
+
+        private async void StartGame()
         {
             levelManager.StartLevel(playerPrefab);
         }

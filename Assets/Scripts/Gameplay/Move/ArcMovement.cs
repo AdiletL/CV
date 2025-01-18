@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace  Movement
 {
-    public class ArcMovement : IMove
+    public class ArcMovement : IMovement
     {
         public event Action OnFinished; 
         

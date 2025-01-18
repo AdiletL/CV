@@ -2,11 +2,11 @@
 
 namespace Movement
 {
-    public class MovementToPoint : IMove
+    public class MovementToPoint : IMovement
     {
         private GameObject gameObject;
         private Vector3 point;
-        
+
         public float MovementSpeed { get; }
 
         public MovementToPoint(GameObject gameObject, float movementSpeed)
@@ -18,6 +18,11 @@ namespace Movement
         public bool IsInPlace()
         {
             return Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, point);
+        }
+        
+        public void Initialize()
+        {
+            
         }
         
         public void SetPoint(Vector3 point)

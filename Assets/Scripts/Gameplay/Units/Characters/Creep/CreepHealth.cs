@@ -10,6 +10,8 @@ namespace Unit.Character.Creep
         protected CharacterAnimation characterAnimation;
         protected SO_CreepHealth so_CreepHealth;
         protected AnimationClip takeDamageClip;
+
+        protected bool isCanTakeDamageEffect;
         
         public override void Initialize()
         {
@@ -19,7 +21,8 @@ namespace Unit.Character.Creep
             characterAnimation = CreepController.GetComponentInUnit<CharacterAnimation>();
             so_CreepHealth = (SO_CreepHealth)so_UnitHealth;
             takeDamageClip = so_CreepHealth.takeDamageClip;
-
+            isCanTakeDamageEffect = so_CreepHealth.IsCanTakeDamageEffect;
+            
             var takeDamageState = (CreepTakeDamageState)new CreepTakeDamageStateBuilder(new CreepTakeDamageState())
                 .SetCharacterAnimation(characterAnimation)
                 .SetClip(takeDamageClip)
@@ -33,6 +36,7 @@ namespace Unit.Character.Creep
         {
             base.TakeDamage(damageable);
             
+            if(!isCanTakeDamageEffect) return;
             CreepController.StateMachine.ExitOtherStates(typeof(CreepTakeDamageState), true);
         }
     }

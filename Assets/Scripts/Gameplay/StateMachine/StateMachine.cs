@@ -15,6 +15,7 @@ public class StateMachine
     private readonly List<StateCategory> cachedCategories = new();
 
     private IState defaultIdleState;
+    private bool isBlockChangeState;
 
     public Dictionary<StateCategory, IState> ActiveStates => activeStates;
 
@@ -77,8 +78,13 @@ public class StateMachine
         }
     }
 
+    public void ActiveBlockChangeState() => isBlockChangeState = true;
+    public void InActiveBlockChangeState() => isBlockChangeState = false;
+    
     public void SetStates(bool isForceSetState = false, params Type[] desiredStates)
     {
+        if(isBlockChangeState) return;
+        
         foreach (var baseType in desiredStates)
         {
             if (!states.TryGetValue(baseType, out var state))
@@ -121,6 +127,8 @@ public class StateMachine
 
     public void ExitOtherStates(Type installationState, bool isForceSetState = false)
     {
+        if(this.isBlockChangeState) return;
+        
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
         var targetState = FindMostDerivedState(installationState);
@@ -141,6 +149,8 @@ public class StateMachine
 
     public void ExitCategory(StateCategory excludedCategory, Type installationState, bool isForceSetState = false)
     {
+        if (this.isBlockChangeState) return;
+        
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
             state.Exit();

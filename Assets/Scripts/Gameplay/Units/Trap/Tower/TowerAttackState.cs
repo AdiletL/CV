@@ -8,7 +8,7 @@ namespace Unit.Trap.Tower
     public class TowerAttackState : UnitBaseAttackState
     {
         private DiContainer diContainer;
-        private IPoolable pool;
+        private IPoolableObject pool;
         
         protected float durationAttack, countDurationAttack;
         protected float timerFire, countTimerFire;
@@ -24,7 +24,7 @@ namespace Unit.Trap.Tower
         
 
         [Inject]
-        public void Construct(IPoolable pool, DiContainer diContainer)
+        public void Construct(IPoolableObject pool, DiContainer diContainer)
         {
             this.diContainer = diContainer;
             this.pool = pool;

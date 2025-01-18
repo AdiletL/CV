@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.Effect
 {
     public class HandleEffect : MonoBehaviour
     {
+        public event Action OnUpdate;
+        public event Action OnLateUpdate;
+        
+        
         private List<IEffect> currentEffects = new();
 
         public bool IsEffectActive(IEffect effect)
@@ -17,24 +22,31 @@ namespace Gameplay.Effect
             
         }
         
-        private void Update()
-        {
-            for (int i = currentEffects.Count - 1; i >= 0; i--)
-            {
-                currentEffects[i].UpdateEffect();
-            }
-        }
+        private void Update() => OnUpdate?.Invoke();
+
+        private void LateUpdate() => OnLateUpdate?.Invoke();
+        
 
         public void AddEffect(IEffect effect)
         {
-            if(!currentEffects.Contains(effect))
+            if (!currentEffects.Contains(effect))
+            {
+                OnUpdate += effect.Update;
+                OnLateUpdate += effect.LateUpdate;
+                effect.OnDestroyEffect += RemoveEffect;
                 currentEffects.Add(effect);
+            }
         }
 
         public void RemoveEffect(IEffect effect)
         {
-            if(currentEffects.Contains(effect))
+            if (currentEffects.Contains(effect))
+            {
+                OnUpdate -= effect.Update;
+                OnLateUpdate -= effect.LateUpdate;
+                effect.OnDestroyEffect -= RemoveEffect;
                 currentEffects.Remove(effect);
+            }
         }
     }
 }

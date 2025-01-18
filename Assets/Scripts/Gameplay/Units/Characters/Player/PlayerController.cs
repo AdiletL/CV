@@ -1,16 +1,23 @@
-using System;
-using System.Collections.Generic;
 using Gameplay.Damage;
+using Gameplay.Effect;
+using Gameplay.Skill;
 using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
-using Zenject;
 
 namespace Unit.Character.Player
 {
+    [RequireComponent(typeof(PlayerHealth))]
+    [RequireComponent(typeof(PlayerEndurance))]
+    [RequireComponent(typeof(PlayerAnimation))]
+    [RequireComponent(typeof(PlayerExperience))]
+    [RequireComponent(typeof(PlayerGravity))]
+    [RequireComponent(typeof(HandleEffect))]
+    [RequireComponent(typeof(HandleSkill))]
+    
     public class PlayerController : CharacterMainController
     {
         [SerializeField] private SO_PlayerMove so_PlayerMove;
@@ -81,9 +88,12 @@ namespace Unit.Character.Player
         {
             characterController = GetComponent<CharacterController>();
 
+            var handleSKill = GetComponentInUnit<HandleSkill>();
             base.Initialize();
             
-            unitControlDesktop = new PlayerControlDesktop(this, playerSwitchAttack, playerSwitchMove, so_PlayerControlDesktop, so_PlayerAttack.EnemyLayer);
+            unitControlDesktop = new PlayerControlDesktop(handleSKill, this.StateMachine, gameObject, playerSwitchAttack, playerSwitchMove, 
+                so_PlayerControlDesktop, so_PlayerMove, characterController, so_PlayerAttack.EnemyLayer);
+            diContainer.Inject(unitControlDesktop);
             unitControlDesktop.Initialize();
             
             StateMachine.Initialize();
@@ -136,6 +146,7 @@ namespace Unit.Character.Player
             diContainer.Inject(swordDamageable);
             var sword = (Sword)new SwordBuilder()
                 .SetDecreaseEndurance(so_Sword.DecreaseEndurance)
+                .SetAngleToTarget(so_Sword.DecreaseEndurance)
                 .SetWeaponParent(weaponParent)
                 .SetGameObject(gameObject)
                 .SetRange(so_Sword.Range)

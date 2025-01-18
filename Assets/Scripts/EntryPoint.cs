@@ -37,45 +37,22 @@ public class EntryPoint
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if(scene.name != Scenes.BOOTSTRAP_NAME) return;
-        
-        var bootstrap = GameObject.FindFirstObjectByType<Bootstrap>();
-        if (bootstrap == null)
-        {
-            Debug.LogError($"Bootstrap not found in scene {scene.name}");
-            return;
-        }
-        
-        bootstrap.Initialize();
-        bootstrap.TransitionToScene(nextSceneName);
+
+        BoostrapLoad();
         
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-    /*private async void Initialize()
+
+    private async void BoostrapLoad()
     {
-        await RunGame();
+        var bootstrap = GameObject.FindFirstObjectByType<Bootstrap>();
+        if (bootstrap == null)
+        {
+            Debug.LogError($"Bootstrap not found in scene {SceneManager.GetActiveScene().name}");
+            return;
+        }
+        
+        await bootstrap.Initialize();
+        await bootstrap.TransitionToScene(nextSceneName);
     }
-
-    private async UniTask RunGame()
-    {
-#if UNITY_EDITOR
-        var sceneName = SceneManager.GetActiveScene().name;
-
-        if (sceneName == BOOTSTRAP)
-        {
-            await LoadAndStartGamePlayAsync();
-            return;
-        }
-        else if (sceneName == LABORATORY)
-        {
-            await LoadAndStartMenuAsync();
-            return;
-        }
-        else if (sceneName == GAMEPLAY)
-        {
-            await LoadAndStartLevelBuildEditorAsync();
-            return;
-        }
-#endif
-        await LoadAndStartMenuAsync();
-    }*/
 }

@@ -12,5 +12,6 @@ namespace ScriptableObjects.Unit.Character.Player
         [field: SerializeField] public float RunDecreaseEndurance { get; private set; }
 
         [field: SerializeField, Space] public float JumpDecreaseEndurance { get; private set; }
+
     }
 }
