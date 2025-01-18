@@ -5,6 +5,7 @@ using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
+using Unit.Character.Player.Unit.Character.Player;
 using Unity.Collections;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace Unit.Character.Player
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
-        private UnitControlDesktop unitControlDesktop;
+        private PlayerControlDesktop playerControlDesktop;
         private PlayerSwitchMove playerSwitchMove;
         private PlayerSwitchAttack playerSwitchAttack;
         private GameObject finish;
@@ -83,18 +84,30 @@ namespace Unit.Character.Player
                 .Build();
         }
 
+        private PlayerControlDesktop CreatePlayerControlDesktop()
+        {
+            return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
+                .SetCharacterController(GetComponentInUnit<CharacterController>())
+                .SetGameObject(gameObject)
+                .SetPlayerSwitchAttack(playerSwitchAttack)
+                .SetPlayerSwitchMove(playerSwitchMove)
+                .SetHandleSkill(GetComponentInUnit<HandleSkill>())
+                .SetPlayerMoveConfig(so_PlayerMove)
+                .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
+                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
+                .SetStateMachine(this.StateMachine)
+                .Build();
+        }
 
         public override void Initialize()
         {
             characterController = GetComponent<CharacterController>();
 
-            var handleSKill = GetComponentInUnit<HandleSkill>();
             base.Initialize();
-            
-            unitControlDesktop = new PlayerControlDesktop(handleSKill, this.StateMachine, gameObject, playerSwitchAttack, playerSwitchMove, 
-                so_PlayerControlDesktop, so_PlayerMove, characterController, so_PlayerAttack.EnemyLayer);
-            diContainer.Inject(unitControlDesktop);
-            unitControlDesktop.Initialize();
+
+            playerControlDesktop = CreatePlayerControlDesktop();
+            diContainer.Inject(playerControlDesktop);
+            playerControlDesktop.Initialize();
             
             StateMachine.Initialize();
             
@@ -171,13 +184,13 @@ namespace Unit.Character.Player
 
         private void Update()
         {
-            unitControlDesktop?.HandleHotkey();
+            playerControlDesktop?.HandleHotkey();
             StateMachine?.Update();
         }
 
         private void LateUpdate()
         {
-            unitControlDesktop?.HandleInput();
+            playerControlDesktop?.HandleInput();
             StateMachine?.LateUpdate();
         }
         

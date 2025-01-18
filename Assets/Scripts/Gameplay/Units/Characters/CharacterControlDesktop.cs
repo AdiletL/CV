@@ -23,4 +23,11 @@ namespace Unit.Character
         {
         }
     }
+
+    public class CharacterControlDesktopBuilder : UnitControlDesktopBuilder<CharacterControlDesktop>
+    {
+        public CharacterControlDesktopBuilder(UnitControlDesktop instance) : base(instance)
+        {
+        }
+    }
 }

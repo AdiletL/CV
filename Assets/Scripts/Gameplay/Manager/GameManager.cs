@@ -90,7 +90,7 @@ namespace Gameplay.Manager
             damagePopUpSpawner.Initialize();
         }
 
-        private async void StartGame()
+        private void StartGame()
         {
             levelManager.StartLevel(playerPrefab);
         }

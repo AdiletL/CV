@@ -9,49 +9,24 @@ namespace Unit.Character.Player
 {
     public class PlayerControlDesktop : CharacterControlDesktop
     {
-        private DiContainer diContainer;
-        private SO_SkillContainer so_SkillContainer;
+        [Inject] private DiContainer diContainer;
+        [Inject] private SO_SkillContainer so_SkillContainer;
         
-        private HandleSkill handleSkill;
-        private StateMachine stateMachine;
-        private GameObject gameObject;
-        private PlayerSwitchAttack playerSwitchAttack;
-        private PlayerIdleState playerIdleState;
-        private PlayerSwitchMove playerSwitchMove;
-        private SO_PlayerControlDesktop so_PlayerControlDesktop;
-        private SO_PlayerMove so_PlayerMove;
-        private CharacterController characterController;
         private Gravity gravity;
-        
         private RaycastHit[] hits = new RaycastHit[1];
-
-        private GameObject previousHit;
         private Texture2D selectAttackTexture;
-        private LayerMask enemyLayer;
-
         private bool isSelectedAttack;
         
-        public PlayerControlDesktop(HandleSkill handleSkill, StateMachine stateMachine, GameObject gameObject, PlayerSwitchAttack playerSwitchAttack, 
-            PlayerSwitchMove playerSwitchMove, SO_PlayerControlDesktop so_PlayerControlDesktop, SO_PlayerMove so_PlayerMove, 
-            CharacterController characterController, LayerMask enemyLayer)
-        {
-            this.handleSkill = handleSkill;
-            this.stateMachine = stateMachine;
-            this.gameObject = gameObject;
-            this.so_PlayerControlDesktop = so_PlayerControlDesktop;
-            this.so_PlayerMove = so_PlayerMove;
-            this.playerSwitchMove = playerSwitchMove;
-            this.playerSwitchAttack = playerSwitchAttack;
-            this.characterController = characterController;
-            this.enemyLayer = enemyLayer;
-        }
-
-        [Inject]
-        private void Construct(DiContainer diContainer, SO_SkillContainer so_SkillContainer)
-        {
-            this.diContainer = diContainer;
-            this.so_SkillContainer = so_SkillContainer;
-        }
+        public HandleSkill HandleSkill { get; set; }
+        public StateMachine StateMachine { get; set; }
+        public GameObject GameObject { get; set; }
+        public PlayerSwitchAttack PlayerSwitchAttack { get; set; }
+        public PlayerSwitchMove PlayerSwitchMove { get; set; }
+        public SO_PlayerControlDesktop SO_PlayerControlDesktop { get; set; }
+        public SO_PlayerMove SO_PlayerMove { get; set; }
+        public CharacterController CharacterController { get; set; }
+        public LayerMask EnemyLayer { get; set; }
+        
 
         private async UniTask<Dash> CreateDash()
         {
@@ -59,10 +34,10 @@ namespace Unit.Character.Player
             if(!so_Dash) return null;
 
             return (Dash)new DashBuilder()
-                .SetCharacterController(characterController)
+                .SetCharacterController(CharacterController)
                 .SetDuration(so_Dash.DashDuration)
                 .SetSpeed(so_Dash.DashSpeed)
-                .SetGameObject(gameObject)
+                .SetGameObject(GameObject)
                 .Build();
         }
 
@@ -86,8 +61,8 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            gravity = gameObject.GetComponent<PlayerGravity>();
-            selectAttackTexture = so_PlayerControlDesktop.SelectAttackIcon.texture;
+            gravity = GameObject.GetComponent<PlayerGravity>();
+            selectAttackTexture = SO_PlayerControlDesktop.SelectAttackIcon.texture;
         }
 
         protected override void ClearHotkey()
@@ -107,17 +82,17 @@ namespace Unit.Character.Player
             }
             else if (Input.GetKeyDown(KeyCode.LeftShift))
             {
-                if (!handleSkill.IsSkillNotNull(typeof(Dash)))
+                if (!HandleSkill.IsSkillNotNull(typeof(Dash)))
                 {
                     var dash = await CreateDash();
                     diContainer.Inject(dash);
-                    handleSkill.AddSkill(dash);
+                    HandleSkill.AddSkill(dash);
                 }
                 
                 gravity.InActivateGravity();
-                stateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
-                stateMachine.ActiveBlockChangeState();
-                handleSkill.Execute(typeof(Dash), AfterDash);
+                StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
+                StateMachine.ActiveBlockChangeState();
+                HandleSkill.Execute(typeof(Dash), AfterDash);
             }
         }
 
@@ -125,10 +100,10 @@ namespace Unit.Character.Player
         {
             if (isSelectedAttack && Input.GetMouseButtonDown(0))
             {
-                if (tryGetHitPosition(out GameObject hitObject, enemyLayer))
+                if (tryGetHitPosition(out GameObject hitObject, EnemyLayer))
                 {
-                    playerSwitchAttack.SetTarget(hitObject);
-                    playerSwitchAttack.ExitOtherStates();
+                    PlayerSwitchAttack.SetTarget(hitObject);
+                    PlayerSwitchAttack.ExitOtherStates();
                 }
                 ClearHotkey();
             }
@@ -136,8 +111,8 @@ namespace Unit.Character.Player
             {
                 if (tryGetHitPosition(out GameObject hitObject, Layers.CELL_LAYER))
                 {
-                    playerSwitchMove.SetTarget(hitObject);
-                    playerSwitchMove.ExitOtherStates();
+                    PlayerSwitchMove.SetTarget(hitObject);
+                    PlayerSwitchMove.ExitOtherStates();
                 }
 
                 ClearHotkey();
@@ -147,7 +122,80 @@ namespace Unit.Character.Player
         private void AfterDash()
         {
             gravity.ActivateGravity();
-            stateMachine.InActiveBlockChangeState();
+            StateMachine.InActiveBlockChangeState();
         }
     }
+
+    namespace Unit.Character.Player
+{
+    public class PlayerControlDesktopBuilder : CharacterControlDesktopBuilder
+    {
+        public PlayerControlDesktopBuilder() : base(new PlayerControlDesktop())
+        {
+        }
+
+        public PlayerControlDesktopBuilder SetHandleSkill(HandleSkill handleSkill)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.HandleSkill = handleSkill;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetStateMachine(StateMachine stateMachine)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.StateMachine = stateMachine;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetGameObject(GameObject gameObject)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.GameObject = gameObject;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(PlayerSwitchAttack playerSwitchAttack)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.PlayerSwitchAttack = playerSwitchAttack;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetPlayerSwitchMove(PlayerSwitchMove playerSwitchMove)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.PlayerSwitchMove = playerSwitchMove;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetPlayerControlDesktopConfig(SO_PlayerControlDesktop soPlayerControlDesktop)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.SO_PlayerControlDesktop = soPlayerControlDesktop;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetPlayerMoveConfig(SO_PlayerMove soPlayerMove)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.SO_PlayerMove = soPlayerMove;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetCharacterController(CharacterController characterController)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.CharacterController = characterController;
+            return this;
+        }
+
+        public PlayerControlDesktopBuilder SetEnemyLayer(LayerMask enemyLayer)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.EnemyLayer = enemyLayer;
+            return this;
+        }
+    }
+}
 }

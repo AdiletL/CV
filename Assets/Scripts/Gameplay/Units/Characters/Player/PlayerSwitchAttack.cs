@@ -10,7 +10,8 @@ namespace Unit.Character.Player
 {
     public class PlayerSwitchAttack : CharacterSwitchAttack
     {
-        private DiContainer diContainer;
+        [Inject] private DiContainer diContainer;
+        
         private PlayerAnimation playerAnimation;
         private PlayerWeaponAttackState playerWeaponAttackState;
         private PlayerDefaultAttackState playerDefaultAttackState;
@@ -51,12 +52,6 @@ namespace Unit.Character.Player
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
-
-        [Inject]
-        private void Construct(DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-        }
         
         public override void Initialize()
         {
@@ -67,43 +62,56 @@ namespace Unit.Character.Player
             diContainer.Inject(damageable);
         }
 
+        private void InitializeWeaponAttackState()
+        {
+            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
+            {
+                playerWeaponAttackState = CreateWeaponState();
+                diContainer.Inject(playerWeaponAttackState);
+                playerWeaponAttackState.Initialize();
+                this.StateMachine.AddStates(playerWeaponAttackState);
+            }
+        }
+
+        private void InitializeDefaultAttackState()
+        {
+            if(!this.StateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
+            {
+                playerDefaultAttackState = CreateDefaultAttackState();
+                diContainer.Inject(playerDefaultAttackState);
+                playerDefaultAttackState.Initialize();
+                this.StateMachine.AddStates(playerDefaultAttackState);
+            }
+        }
+
+        private void SetRangeAttack(float range)
+        {
+            RangeAttack = range;
+            RangeAttackSqr = RangeAttack * RangeAttack;
+        }
+
         public override void SetState()
         {
             base.SetState();
             if (currentWeapon != null)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
-                {
-                    playerWeaponAttackState = CreateWeaponState();
-                    diContainer.Inject(playerWeaponAttackState);
-                    playerWeaponAttackState.Initialize();
-                    this.StateMachine.AddStates(playerWeaponAttackState);
-                }
+                InitializeWeaponAttackState();
 
                 playerWeaponAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerWeaponAttackState.GetType()))
                 {
-                    RangeAttack = currentWeapon.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
-                    Debug.Log(RangeAttackSqr);
+                    SetRangeAttack(currentWeapon.Range);
                     this.StateMachine.SetStates(desiredStates: playerWeaponAttackState.GetType());
                 }
             }
             else
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
-                {
-                    playerDefaultAttackState = CreateDefaultAttackState();
-                    diContainer.Inject(playerDefaultAttackState);
-                    playerDefaultAttackState.Initialize();
-                    this.StateMachine.AddStates(playerDefaultAttackState);
-                }
+                InitializeDefaultAttackState();
 
                 playerDefaultAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerDefaultAttackState.GetType()))
                 {
-                    RangeAttack = so_PlayerAttack.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
+                    SetRangeAttack(so_PlayerAttack.Range);
                     this.StateMachine.SetStates(desiredStates: playerDefaultAttackState.GetType());
                 }
             }
@@ -114,36 +122,23 @@ namespace Unit.Character.Player
             base.ExitCategory(category);
             if (currentWeapon != null)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
-                {
-                    playerWeaponAttackState = CreateWeaponState();
-                    playerWeaponAttackState.Initialize();
-                    this.StateMachine.AddStates(playerWeaponAttackState);
-                }
+                InitializeWeaponAttackState();
 
                 playerWeaponAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerWeaponAttackState.GetType()))
                 {
-                    RangeAttack = currentWeapon.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
-                    Debug.Log(RangeAttackSqr);
+                    SetRangeAttack(currentWeapon.Range);
                     this.StateMachine.ExitCategory(category, playerWeaponAttackState.GetType());
                 }
             }
             else
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
-                {
-                    playerDefaultAttackState = CreateDefaultAttackState();
-                    playerDefaultAttackState.Initialize();
-                    this.StateMachine.AddStates(playerDefaultAttackState);
-                }
+                InitializeDefaultAttackState();
 
                 playerDefaultAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerDefaultAttackState.GetType()))
                 {
-                    RangeAttack = so_PlayerAttack.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
+                    SetRangeAttack(so_PlayerAttack.Range);
                     this.StateMachine.ExitCategory(category, playerDefaultAttackState.GetType());
                 }
             }
@@ -154,35 +149,23 @@ namespace Unit.Character.Player
             base.ExitOtherStates();
             if (currentWeapon != null)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
-                {
-                    playerWeaponAttackState = CreateWeaponState();
-                    playerWeaponAttackState.Initialize();
-                    this.StateMachine.AddStates(playerWeaponAttackState);
-                }
+                InitializeWeaponAttackState();
 
                 playerWeaponAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerWeaponAttackState.GetType()))
                 {
-                    RangeAttack = currentWeapon.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
+                    SetRangeAttack(currentWeapon.Range);
                     this.StateMachine.ExitOtherStates(playerWeaponAttackState.GetType());
                 }
             }
             else
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
-                {
-                    playerDefaultAttackState = CreateDefaultAttackState();
-                    playerDefaultAttackState.Initialize();
-                    this.StateMachine.AddStates(playerDefaultAttackState);
-                }
+                InitializeDefaultAttackState();
 
                 playerDefaultAttackState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerDefaultAttackState.GetType()))
                 {
-                    RangeAttack = so_PlayerAttack.Range;
-                    RangeAttackSqr = RangeAttack * RangeAttack;
+                    SetRangeAttack(so_PlayerAttack.Range);
                     this.StateMachine.ExitOtherStates(playerDefaultAttackState.GetType());
                 }
             }

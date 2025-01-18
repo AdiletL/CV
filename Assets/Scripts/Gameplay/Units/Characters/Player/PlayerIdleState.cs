@@ -25,7 +25,7 @@ namespace Unit.Character.Player
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
-                .SetDecreaseEndurance(SO_PlayerMove.JumpDecreaseEndurance)
+                .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
                 .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
                 .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)

@@ -39,17 +39,21 @@ namespace Unit.Character.Player
             so_PlayerMove = (SO_PlayerMove)SO_CharacterMove;
         }
 
+        private void InitializeRunState()
+        {
+            if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
+            {
+                playerRunState = CreateRunState();
+                playerRunState.Initialize();
+                this.StateMachine.AddStates(playerRunState);
+            }
+        }
         public override void SetState()
         {
             base.SetState();
             if (currentTarget)
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
-                {
-                    playerRunState = CreateRunState();
-                    playerRunState.Initialize();
-                    this.StateMachine.AddStates(playerRunState);
-                }
+                InitializeRunState();
 
                 playerRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(playerRunState.GetType()))
@@ -63,13 +67,8 @@ namespace Unit.Character.Player
             base.ExitCategory(category);
             if (currentTarget)
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
-                {
-                    playerRunState = CreateRunState();
-                    playerRunState.Initialize();
-                    this.StateMachine.AddStates(playerRunState);
-                }
-
+                InitializeRunState();
+                
                 playerRunState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerRunState.GetType()))
                     this.StateMachine.ExitCategory(category, playerRunState.GetType());
@@ -82,12 +81,7 @@ namespace Unit.Character.Player
             base.ExitOtherStates();
             if (currentTarget)
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(PlayerRunState)))
-                {
-                    playerRunState = CreateRunState();
-                    playerRunState.Initialize();
-                    this.StateMachine.AddStates(playerRunState);
-                }
+                InitializeRunState();
 
                 playerRunState.SetTarget(currentTarget);
                 if (!this.StateMachine.IsActivateType(playerRunState.GetType()))
