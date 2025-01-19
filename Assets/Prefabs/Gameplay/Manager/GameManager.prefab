@@ -62,14 +62,14 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  playerPrefab:
-    m_AssetGUID: 55c878377383c1149a6449ecfdcace72
+  so_SkillContainer:
+    m_AssetGUID: ce8cfbb13b026434882e233fe3fe80f5
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  so_SkillContainer:
-    m_AssetGUID: ce8cfbb13b026434882e233fe3fe80f5
+  so_GameHotkey:
+    m_AssetGUID: 0c7f87ea8f55e4f4397c85fe5ca0a192
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

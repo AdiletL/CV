@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Unit.Character.Player
 {
-    public class PlayerHealth : CharacterHealth
+    public class PlayerHealth : CharacterHealth, ICreepAttackable, ITrapAttackable
     {
-        protected PlayerController playerController;
-        protected CharacterAnimation characterAnimation;
-        protected SO_PlayerHealth so_PlayerHealth;
-        protected AnimationClip takeDamageClip;
+        private PlayerController playerController;
+        private CharacterAnimation characterAnimation;
+        private SO_PlayerHealth so_PlayerHealth;
+        private AnimationClip takeDamageClip;
         
         public override void Initialize()
         {
@@ -32,7 +32,6 @@ namespace Unit.Character.Player
             base.TakeDamage(damageable);
             
             playerController.StateMachine.ExitCategory(StateCategory.action, typeof(PlayerTakeDamageState));
-            //CreepController.StateMachine.ExitOtherCategories(StateCategory.action);
         }
     }
 }

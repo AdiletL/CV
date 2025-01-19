@@ -135,9 +135,11 @@ public class StateMachine
 
         foreach (var category in cachedCategories)
         {
-            if (category == targetState.Category) continue;
+            if (category == targetState.Category ||
+                !activeStates[category].isCanExit) continue;
 
             activeStates[category].Exit();
+            OnExitCategory?.Invoke(activeStates[category]);
             activeStates.Remove(category);
         }
 
@@ -153,9 +155,12 @@ public class StateMachine
         
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
-            state.Exit();
-            activeStates.Remove(excludedCategory);
-            OnExitCategory?.Invoke(state);
+            if (state.isCanExit)
+            {
+                state.Exit();
+                activeStates.Remove(excludedCategory);
+                OnExitCategory?.Invoke(state);
+            }
         }
 
         if (installationState != null)

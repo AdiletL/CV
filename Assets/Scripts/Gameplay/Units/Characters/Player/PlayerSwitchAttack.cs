@@ -52,7 +52,12 @@ namespace Unit.Character.Player
                 .SetStateMachine(this.StateMachine)
                 .Build();
         }
-        
+
+        public override bool IsFindUnitInRange()
+        {
+            return Calculate.Attack.IsFindUnitInRange<IPlayerAttackable>(Center.position, RangeAttack, EnemyLayer, ref findUnitColliders);
+        }
+
         public override void Initialize()
         {
             base.Initialize();

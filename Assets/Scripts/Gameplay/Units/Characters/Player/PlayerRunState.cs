@@ -32,33 +32,17 @@ namespace Unit.Character.Player
     private float countCooldownCheckTarget;
     
     private bool isCanRotate;
-    private bool isCheckJump;
     private bool isCheckPath;
     private bool isCheckAttack;
 
     private Queue<CellController> pathQueue = new();
 
-    public SO_PlayerMove SO_PlayerMove { get; set; }
     public PlayerEndurance PlayerEndurance { get; set; }
     public Transform Center { get; set; }
     public CharacterController CharacterController { get; set; }
     public float RotationSpeed { get; set; }
     public float RunDecreaseEndurance { get; set; }
-
-    private PlayerJumpState CreateJumpState()
-    {
-        return (PlayerJumpState)new PlayerJumpStateBuilder()
-            .SetPlayerEndurance(PlayerEndurance)
-            .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
-            .SetCharacterController(CharacterController)
-            .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-            .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
-            .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
-            .SetGameObject(GameObject)
-            .SetCharacterAnimation(CharacterAnimation)
-            .SetStateMachine(StateMachine)
-            .Build();
-    }
+    
 
     private bool IsFinalPositionValid()
     {
@@ -82,16 +66,16 @@ namespace Unit.Character.Player
         
         countCooldownheckEnemy = checkEnemyCooldown;
 
-        isCheckJump = !StateMachine.IsActivateType(typeof(PlayerJumpState));
+        isCheckAttack = !StateMachine.IsActivateType(typeof(PlayerJumpState));
+        isCheckPath = !StateMachine.IsActivateType(typeof(PlayerJumpState));
         UpdatePathToTarget();
         UpdateValuesCheckEnemy();
-        isCheckPath = isCheckJump;
     }
 
     public override void Subscribe()
     {
         base.Subscribe();
-        StateMachine.OnExitCategory += HandleExitCategory;
+        StateMachine.OnExitCategory += OnExitCategory;
     }
 
     public override void Update()
@@ -115,14 +99,13 @@ namespace Unit.Character.Player
     public override void LateUpdate()
     {
         base.LateUpdate();
-        CheckForJumpInput();
         CheckEnemy();
     }
 
     public override void Unsubscribe()
     {
         base.Unsubscribe();
-        StateMachine.OnExitCategory -= HandleExitCategory;
+        StateMachine.OnExitCategory -= OnExitCategory;
     }
 
     public override void Exit()
@@ -134,13 +117,14 @@ namespace Unit.Character.Player
         finalTarget = null;
     }
 
-    private void HandleExitCategory(Machine.IState state)
+    private void OnExitCategory(Machine.IState state)
     {
+        if(!isActive) return;
+        
         if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
         {
             PlayAnimation();
             if(enemy) isCheckAttack = true;
-            isCheckJump = true;
             isCheckPath = true;
         }
     }
@@ -165,7 +149,7 @@ namespace Unit.Character.Player
         if (!finalTarget.TryGetComponent(out CellController cellController))
         {
             enemy = finalTarget;
-            isCheckAttack = isCheckJump;
+            isCheckAttack = !StateMachine.IsActivateType(typeof(PlayerJumpState));
         }
         else
         {
@@ -298,28 +282,6 @@ namespace Unit.Character.Player
         }
     }
 
-    private void CheckForJumpInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && isCheckJump)
-        {
-            TriggerJump();
-        }
-    }
-
-    private void TriggerJump()
-    {
-        if (!StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
-        {
-            var jumpState = CreateJumpState();
-            jumpState.Initialize();
-            StateMachine.AddStates(jumpState);
-        }
-        StateMachine.SetStates(desiredStates: typeof(PlayerJumpState));
-        isCheckPath = false;
-        isCheckJump = false;
-        isCheckAttack = false;
-    }
-
     private void ReduceEndurance()
     {
         PlayerEndurance.RemoveEndurance(RunDecreaseEndurance);
@@ -341,14 +303,7 @@ namespace Unit.Character.Player
             
             return this;
         }
-
-        public PlayerRunStateBuilder SetMoveConfig(SO_PlayerMove config)
-        {
-            if (state is PlayerRunState playerRunState)
-                playerRunState.SO_PlayerMove = config;
-            
-            return this;  
-        }
+        
         public PlayerRunStateBuilder SetCharacterController(CharacterController characterController)
         {
             if (state is PlayerRunState playerRunState)

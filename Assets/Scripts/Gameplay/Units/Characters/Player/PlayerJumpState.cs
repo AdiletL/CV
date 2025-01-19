@@ -5,20 +5,20 @@ namespace Unit.Character.Player
     public class PlayerJumpState : CharacterJumpState
     {
         public PlayerEndurance PlayerEndurance { get; set; }
+        public KeyCode JumpKey { get; set; }
         public float JumpDecreaseEndurance { get; set; }
+        
 
-        public override void Enter()
+        public override void Update()
         {
-            base.Enter();
-            DecreaseEndurance();
-        }
+            base.Update();
 
-        protected override void CheckJump()
-        {
-            base.CheckJump();
-            if (Input.GetKeyDown(KeyCode.Space) && currentJumpCount < MaxJumpCount)
+            if (countCooldownCheckGround > cooldownCheckGround)
             {
-                StartJump();
+                if (Input.GetKeyDown(JumpKey) && currentJumpCount < MaxJumpCount)
+                {
+                    StartJump();
+                }
             }
         }
 
@@ -45,6 +45,13 @@ namespace Unit.Character.Player
         {
             if(state is PlayerJumpState playerJumpState)
                 playerJumpState.PlayerEndurance = playerEndurance;
+            
+            return this;
+        }
+        public PlayerJumpStateBuilder SetJumpKey(KeyCode jumpKey)
+        {
+            if(state is PlayerJumpState playerJumpState)
+                playerJumpState.JumpKey = jumpKey;
             
             return this;
         }

@@ -117,10 +117,11 @@ namespace Unit.Trap.Hammer
 
         public void ApplyDamage()
         {
-            if (CurrentTarget.TryGetComponent(out IHealth health)
-                && health.IsLive)
+            if (CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
+                CurrentTarget.TryGetComponent(out IHealth health) && 
+                health.IsLive)
             {
-                health.TakeDamage(Damageable);
+                trapAttackable.TakeDamage(Damageable);
             }
         }
     }

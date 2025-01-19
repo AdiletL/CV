@@ -21,10 +21,10 @@ namespace Gameplay.Manager
         public List<GameObject> PoolObjects { get; private set; } = new();
         
         
-        
-        public void Initialize()
+        public async UniTask Initialize()
         {
             poolParent = new GameObject("PoolParent").transform;
+            await UniTask.CompletedTask;
         }
         
         public async UniTask<GameObject> GetObjectAsync<T>()

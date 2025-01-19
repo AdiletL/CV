@@ -118,9 +118,10 @@ namespace Unit.Trap.Activator
 
         private void OnTriggerEnter(Collider other)
         {
-            if(!isReady 
-               || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)
-               || CurrentTarget) return;
+            if(!isReady || 
+               !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer) ||
+               !other.TryGetComponent(out ITrapInteractable trapInteractable) ||
+               CurrentTarget) return;
             
             CurrentTarget = other.gameObject;
             if(startTimerCoroutine != null)

@@ -63,30 +63,40 @@ namespace Unit.Character.Creep
             beholderSwitchAttack = (BeholderSwitchAttack)CharacterSwitchAttack;
         }
 
+        private void InitializeRunState()
+        {
+            if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
+            {
+                beholderRunState = CreateRunState();
+                beholderRunState.Initialize();
+                this.StateMachine.AddStates(beholderRunState);
+            }
+        }
+
+        private void InitializePatrolState()
+        {
+            if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
+            {
+                beholderPatrolState = CreatePatrolState();
+                beholderPatrolState.Initialize();
+                this.StateMachine.AddStates(beholderPatrolState);
+            }
+        }
+
         public override void SetState()
         {
             base.SetState();
             if (currentTarget)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
-                {
-                    beholderRunState = CreateRunState();
-                    beholderRunState.Initialize();
-                    this.StateMachine.AddStates(beholderRunState);
-                }
+                InitializeRunState();
                 
                 beholderRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(beholderRunState.GetType()))
                     this.StateMachine.SetStates(desiredStates: beholderRunState.GetType());
             }
-            else 
+            else
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
-                {
-                    beholderPatrolState = CreatePatrolState();
-                    beholderPatrolState.Initialize();
-                    this.StateMachine.AddStates(beholderPatrolState);
-                }
+                InitializePatrolState();
                 
                 if(!this.StateMachine.IsActivateType(beholderPatrolState.GetType()))
                     this.StateMachine.SetStates(desiredStates: beholderPatrolState.GetType());
@@ -99,12 +109,7 @@ namespace Unit.Character.Creep
             base.ExitCategory(category);
             if (currentTarget)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
-                {
-                    beholderRunState = CreateRunState();
-                    beholderRunState.Initialize();
-                    this.StateMachine.AddStates(beholderRunState);
-                }
+                InitializeRunState();
                 
                 beholderRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(beholderRunState.GetType()))
@@ -112,12 +117,7 @@ namespace Unit.Character.Creep
             }
             else 
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
-                {
-                    beholderPatrolState = CreatePatrolState();
-                    beholderPatrolState.Initialize();
-                    this.StateMachine.AddStates(beholderPatrolState);
-                }
+                InitializePatrolState();
                 
                 if(!this.StateMachine.IsActivateType(beholderPatrolState.GetType()))
                     this.StateMachine.ExitCategory(category, beholderPatrolState.GetType());
@@ -130,12 +130,7 @@ namespace Unit.Character.Creep
             base.ExitOtherStates();
             if (currentTarget)
             {
-                if(!this.StateMachine.IsStateNotNull(typeof(BeholderRunState)))
-                {
-                    beholderRunState = CreateRunState();
-                    beholderRunState.Initialize();
-                    this.StateMachine.AddStates(beholderRunState);
-                }
+                InitializeRunState();
                 
                 beholderRunState.SetTarget(currentTarget);
                 if(!this.StateMachine.IsActivateType(beholderRunState.GetType()))
@@ -143,12 +138,7 @@ namespace Unit.Character.Creep
             }
             else 
             {
-                if (!this.StateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
-                {
-                    beholderPatrolState = CreatePatrolState();
-                    beholderPatrolState.Initialize();
-                    this.StateMachine.AddStates(beholderPatrolState);
-                }
+                InitializePatrolState();
                 
                 if(!this.StateMachine.IsActivateType(beholderPatrolState.GetType()))
                     this.StateMachine.ExitOtherStates(beholderPatrolState.GetType());

@@ -1,4 +1,5 @@
-﻿using Unit;
+﻿using System;
+using Unit;
 using UnityEngine;
 
 namespace Calculate
@@ -73,7 +74,7 @@ namespace Calculate
         }
 
 
-        public static bool IsFindUnitInRange(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
+        public static bool IsFindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
             var isUnit = false;
             float sqrRadius = radius * radius;
@@ -84,7 +85,8 @@ namespace Calculate
             {
                 Collider hit = overlapHits[i];
                 
-                if(!hit.TryGetComponent(out IHealth health) || !health.IsLive) continue;
+                if(!hit.TryGetComponent(out T component) || 
+                   !hit.TryGetComponent(out IHealth health) || !health.IsLive) continue;
                 
                 if (hit.TryGetComponent(out UnitCenter unitCenter))
                 {

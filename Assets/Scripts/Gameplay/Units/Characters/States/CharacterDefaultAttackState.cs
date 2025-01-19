@@ -140,14 +140,15 @@ namespace Unit.Character
         
         public override void ApplyDamage()
         {
-            if (currentTarget
-                && currentTarget.TryGetComponent(out IHealth health)
-                && Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr)
-                && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position,
+            if (currentTarget &&
+                currentTarget.TryGetComponent(out IAttackable attackable) &&
+                currentTarget.TryGetComponent(out IHealth health) &&
+                Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr) &&
+                Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position,
                     this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
             {
                 if (health.IsLive)
-                    health.TakeDamage(Damageable);
+                    attackable.TakeDamage(Damageable);
                 else
                     currentTarget = null;
             }

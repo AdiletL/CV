@@ -1,5 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Skill;
+using Machine;
+using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
@@ -11,22 +13,34 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_SkillContainer so_SkillContainer;
+        [Inject] private SO_GameHotkey so_GameHotkey;
         
         private Gravity gravity;
         private RaycastHit[] hits = new RaycastHit[1];
         private Texture2D selectAttackTexture;
+        
+        private KeyCode dashKey, jumpKey, attackKey;
+        private int attackMouseButton, selectCellMouseButton;
+        
         private bool isSelectedAttack;
+        private bool isJumping;
         
         public HandleSkill HandleSkill { get; set; }
         public StateMachine StateMachine { get; set; }
         public GameObject GameObject { get; set; }
+        public PlayerAnimation PlayerAnimation { get; set; }
         public PlayerSwitchAttack PlayerSwitchAttack { get; set; }
         public PlayerSwitchMove PlayerSwitchMove { get; set; }
+        public PlayerEndurance PlayerEndurance { get; set; }
         public SO_PlayerControlDesktop SO_PlayerControlDesktop { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
         public CharacterController CharacterController { get; set; }
         public LayerMask EnemyLayer { get; set; }
         
+        ~PlayerControlDesktop()
+        {
+            DeInitializeMediator();
+        }
 
         private async UniTask<Dash> CreateDash()
         {
@@ -38,6 +52,22 @@ namespace Unit.Character.Player
                 .SetDuration(so_Dash.DashDuration)
                 .SetSpeed(so_Dash.DashSpeed)
                 .SetGameObject(GameObject)
+                .Build();
+        }
+        
+        private PlayerJumpState CreateJumpState()
+        {
+            return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetPlayerEndurance(PlayerEndurance)
+                .SetJumpKey(so_GameHotkey.JumpKey)
+                .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
+                .SetCharacterController(CharacterController)
+                .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
+                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
+                .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
+                .SetGameObject(GameObject)
+                .SetCharacterAnimation(PlayerAnimation)
+                .SetStateMachine(StateMachine)
                 .Build();
         }
 
@@ -61,8 +91,60 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
+
+            InitializeMediator();
+            
             gravity = GameObject.GetComponent<PlayerGravity>();
             selectAttackTexture = SO_PlayerControlDesktop.SelectAttackIcon.texture;
+
+            InitializeHotkeys();
+        }
+
+        private void InitializeHotkeys()
+        {
+            selectCellMouseButton = so_GameHotkey.SelectCellMouseButton;
+            attackKey = so_GameHotkey.AttackKey;
+            attackMouseButton = so_GameHotkey.AttackMouseButton;
+            jumpKey = so_GameHotkey.JumpKey;
+            dashKey = so_GameHotkey.DashKey;
+        }
+        
+        private async UniTask InitializeDash()
+        {
+            if (!HandleSkill.IsSkillNotNull(typeof(Dash)))
+            {
+                var dash = await CreateDash();
+                diContainer.Inject(dash);
+                HandleSkill.AddSkill(dash);
+            }
+        }
+
+        private void InitializeJumpState()
+        {
+            if (!StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
+            {
+                var jumpState = CreateJumpState();
+                jumpState.Initialize();
+                StateMachine.AddStates(jumpState);
+            }
+        }
+
+        private void InitializeMediator()
+        {
+            StateMachine.OnExitCategory += OnExitCategory;
+        }
+
+        private void DeInitializeMediator()
+        {
+            StateMachine.OnExitCategory -= OnExitCategory;
+        }
+
+        private void OnExitCategory(Machine.IState state)
+        {
+            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            {
+                isJumping = false;
+            }
         }
 
         protected override void ClearHotkey()
@@ -75,19 +157,15 @@ namespace Unit.Character.Player
         public override async void HandleHotkey()
         {
             base.HandleHotkey();
-            if (Input.GetKeyDown(KeyCode.A))
+            
+            if (Input.GetKeyDown(attackKey) && !isJumping)
             {
                 isSelectedAttack = true;
                 Cursor.SetCursor(selectAttackTexture, Vector2.zero, CursorMode.Auto);
             }
-            else if (Input.GetKeyDown(KeyCode.LeftShift))
+            else if (Input.GetKeyDown(dashKey))
             {
-                if (!HandleSkill.IsSkillNotNull(typeof(Dash)))
-                {
-                    var dash = await CreateDash();
-                    diContainer.Inject(dash);
-                    HandleSkill.AddSkill(dash);
-                }
+                await InitializeDash();
                 
                 gravity.InActivateGravity();
                 StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
@@ -98,16 +176,9 @@ namespace Unit.Character.Player
 
         public override void HandleInput()
         {
-            if (isSelectedAttack && Input.GetMouseButtonDown(0))
-            {
-                if (tryGetHitPosition(out GameObject hitObject, EnemyLayer))
-                {
-                    PlayerSwitchAttack.SetTarget(hitObject);
-                    PlayerSwitchAttack.ExitOtherStates();
-                }
-                ClearHotkey();
-            }
-            else if (Input.GetMouseButtonDown(1))
+            base.HandleInput();
+            
+            if (Input.GetMouseButtonDown(selectCellMouseButton))
             {
                 if (tryGetHitPosition(out GameObject hitObject, Layers.CELL_LAYER))
                 {
@@ -117,6 +188,28 @@ namespace Unit.Character.Player
 
                 ClearHotkey();
             }
+            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !isJumping)
+            {
+                if (tryGetHitPosition(out GameObject hitObject, EnemyLayer))
+                {
+                    PlayerSwitchAttack.SetTarget(hitObject);
+                    PlayerSwitchAttack.ExitOtherStates();
+                }
+                ClearHotkey();
+            }
+            else if (Input.GetKeyDown(jumpKey) && !isJumping)
+            {
+                TriggerJump();
+            }
+        }
+        
+        private void TriggerJump()
+        {
+            isJumping = true;
+            InitializeJumpState();
+            StateMachine.ExitCategory(StateCategory.attack, null);
+            StateMachine.ExitCategory(StateCategory.action, null);
+            StateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
         }
 
         private void AfterDash()
@@ -125,9 +218,7 @@ namespace Unit.Character.Player
             StateMachine.InActiveBlockChangeState();
         }
     }
-
-    namespace Unit.Character.Player
-{
+    
     public class PlayerControlDesktopBuilder : CharacterControlDesktopBuilder
     {
         public PlayerControlDesktopBuilder() : base(new PlayerControlDesktop())
@@ -189,6 +280,20 @@ namespace Unit.Character.Player
                 playerControlDesktop.CharacterController = characterController;
             return this;
         }
+        
+        public PlayerControlDesktopBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.PlayerEndurance = playerEndurance;
+            return this;
+        }
+        
+        public PlayerControlDesktopBuilder SetPlayerAnimation(PlayerAnimation playerAnimation)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.PlayerAnimation = playerAnimation;
+            return this;
+        }
 
         public PlayerControlDesktopBuilder SetEnemyLayer(LayerMask enemyLayer)
         {
@@ -197,5 +302,4 @@ namespace Unit.Character.Player
             return this;
         }
     }
-}
 }

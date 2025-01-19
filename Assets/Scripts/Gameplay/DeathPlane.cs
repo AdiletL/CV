@@ -15,10 +15,11 @@ namespace Gameplay
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out IHealth health)
-                && health.IsLive)
+            if (other.TryGetComponent(out IAttackable attackable) &&
+                other.TryGetComponent(out IHealth health) &&
+                health.IsLive)
             {
-                health.TakeDamage(damageable);
+                attackable.TakeDamage(damageable);
             }
         }
     }

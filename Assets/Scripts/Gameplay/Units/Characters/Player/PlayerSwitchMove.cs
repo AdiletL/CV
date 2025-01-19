@@ -19,7 +19,6 @@ namespace Unit.Character.Player
         {
             return (PlayerRunState)new PlayerRunStateBuilder()
                 .SetCharacterController(CharacterController)
-                .SetMoveConfig(so_PlayerMove)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetRunDecreaseEndurance(so_PlayerMove.RunDecreaseEndurance)
                 .SetPlayerEndurance(PlayerEndurance)

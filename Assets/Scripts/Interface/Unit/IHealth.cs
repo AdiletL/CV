@@ -6,7 +6,6 @@ public interface IHealth
     public int CurrentHealth { get; }
     public bool IsLive { get; }
     public void Initialize();
-    public void TakeDamage(IDamageable damageable);
 }
 
 public interface IDamageable

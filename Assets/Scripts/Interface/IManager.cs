@@ -1,4 +1,6 @@
-﻿public interface IManager
+﻿using Cysharp.Threading.Tasks;
+
+public interface IManager
 {
-    public void Initialize();
+    public UniTask Initialize();
 }

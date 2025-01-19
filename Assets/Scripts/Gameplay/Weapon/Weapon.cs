@@ -39,10 +39,11 @@ namespace Gameplay.Weapon
 
         public virtual void ApplyDamage()
         {
-            if (CurrentTarget.TryGetComponent(out IHealth health)
-                && health.IsLive)
+            if (CurrentTarget.TryGetComponent(out IAttackable attackable) &&
+                CurrentTarget.TryGetComponent(out IHealth health) &&
+                health.IsLive)
             {
-                health.TakeDamage(Damageable);
+                attackable.TakeDamage(Damageable);
             }
         }
         

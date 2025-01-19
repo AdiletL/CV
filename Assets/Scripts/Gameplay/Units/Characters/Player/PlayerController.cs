@@ -5,7 +5,6 @@ using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
-using Unit.Character.Player.Unit.Character.Player;
 using Unity.Collections;
 using UnityEngine;
 
@@ -19,7 +18,7 @@ namespace Unit.Character.Player
     [RequireComponent(typeof(HandleEffect))]
     [RequireComponent(typeof(HandleSkill))]
     
-    public class PlayerController : CharacterMainController
+    public class PlayerController : CharacterMainController, IItemClickable, ITrapInteractable
     {
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
@@ -36,19 +35,16 @@ namespace Unit.Character.Player
         private PlayerControlDesktop playerControlDesktop;
         private PlayerSwitchMove playerSwitchMove;
         private PlayerSwitchAttack playerSwitchAttack;
-        private GameObject finish;
+        private PlayerEndurance playerEndurance;
         
         private CharacterController characterController;
         
         private PlayerIdleState CreateIdleState(CharacterAnimation characterAnimation, Transform center)
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()
-                .SetMoveConfig(so_PlayerMove)
-                .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
-                .SetFinishTargetToMove(finish)
                 .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterSwitchMove(playerSwitchMove)
-                .SetCharacterController(GetComponentInUnit<CharacterController>())
+                .SetCharacterController(characterController)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCenter(center)
                 .SetGameObject(gameObject)
@@ -61,7 +57,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchMove)new PlayerSwitchMoveBuilder()
                 .SetCharacterController(characterController)
                 .SetCenter(center)
-                .SetPlayerEndurance(GetComponentInUnit<PlayerEndurance>())
+                .SetPlayerEndurance(playerEndurance)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
@@ -75,7 +71,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchAttack)new PlayerSwitchAttackBuilder()
                 .SetWeaponParent(weaponParent)
                 .SetCenter(center)
-                .SetCharacterEndurance(GetComponentInUnit<PlayerEndurance>())
+                .SetCharacterEndurance(playerEndurance)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
@@ -87,10 +83,12 @@ namespace Unit.Character.Player
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
-                .SetCharacterController(GetComponentInUnit<CharacterController>())
+                .SetCharacterController(characterController)
                 .SetGameObject(gameObject)
                 .SetPlayerSwitchAttack(playerSwitchAttack)
                 .SetPlayerSwitchMove(playerSwitchMove)
+                .SetPlayerEndurance(playerEndurance)
+                .SetPlayerAnimation(GetComponent<PlayerAnimation>())
                 .SetHandleSkill(GetComponentInUnit<HandleSkill>())
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
@@ -102,7 +100,8 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             characterController = GetComponent<CharacterController>();
-
+            playerEndurance = GetComponentInUnit<PlayerEndurance>();
+            
             base.Initialize();
 
             playerControlDesktop = CreatePlayerControlDesktop();
@@ -111,6 +110,7 @@ namespace Unit.Character.Player
             
             StateMachine.Initialize();
             
+            //Test
             TestWeapon();
                         
             StateMachine.OnChangedState += OnChangedState;
@@ -185,12 +185,12 @@ namespace Unit.Character.Player
         private void Update()
         {
             playerControlDesktop?.HandleHotkey();
+            playerControlDesktop?.HandleInput();
             StateMachine?.Update();
         }
 
         private void LateUpdate()
         {
-            playerControlDesktop?.HandleInput();
             StateMachine?.LateUpdate();
         }
         
@@ -202,11 +202,6 @@ namespace Unit.Character.Player
         public void IncreaseWeaponStates()
         {
             
-        }
-        public void SetFinishTarget(GameObject target)
-        { 
-            finish = target;
-            this.StateMachine?.GetState<PlayerIdleState>()?.SetTarget(finish);
         }
 
         private void OnChangedState(Machine.IState state)

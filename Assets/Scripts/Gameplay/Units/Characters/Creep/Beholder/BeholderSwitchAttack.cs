@@ -8,18 +8,11 @@ namespace Unit.Character.Creep
 {
     public class BeholderSwitchAttack : CreepSwitchAttack
     {
-        private DiContainer diContainer;
+        [Inject] private DiContainer diContainer;
         
         private SO_BeholderAttack so_BeholderAttack;
         private BeholderSwitchMove beholderSwitchMove;
         private BeholderDefaultAttackState beholderDefaultAttackState;
-
-        [Inject]
-        private void Construct(DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-        }
-        
         
         private BeholderDefaultAttackState CreateDefaultAttack()
         {

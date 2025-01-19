@@ -14,6 +14,7 @@ namespace Gameplay.Manager
         private GameUnits gameUnits;
         
         [SerializeField] protected AssetReference so_LevelContainer;
+        [SerializeField] private AssetReferenceGameObject playerPrefab;
 
         private SO_LevelContainer levelContainer;
         private LevelController levelController;
@@ -60,20 +61,20 @@ namespace Gameplay.Manager
             return await Addressables.LoadAssetAsync<SO_LevelContainer>(so_LevelContainer);
         }
         
-        public async void Initialize()
+        public async UniTask Initialize()
         {
             if (!levelController)
             {
                 levelController = CreateLevelController();
                 levelController.Initialize();
             }
+            
+            if (!levelContainer) levelContainer = await LoadLevelContainer();
         }
 
 
-        public async void StartLevel(AssetReference playerPrefab)
+        public async UniTask StartLevel()
         {
-            if (!levelContainer) levelContainer = await LoadLevelContainer();
-            
             var gameField = GetGameField(currentLevelIndex, currentGameFieldIndex);
             var newGameField = diContainer.InstantiatePrefab(gameField);
             newGameField.transform.SetParent(levelController.transform);
@@ -83,7 +84,7 @@ namespace Gameplay.Manager
             
             levelController.SetGameField(gameFieldController);
 
-            InstantiatePlayer(playerPrefab);
+            InstantiatePlayer();
         }
 
 
@@ -97,11 +98,13 @@ namespace Gameplay.Manager
             
         }
 
-        private async void InstantiatePlayer(AssetReference playerPrefab)
+        private async void InstantiatePlayer()
         {
             var player = await Addressables.LoadAssetAsync<GameObject>(playerPrefab);
             playerController = diContainer.InstantiatePrefabForComponent<PlayerController>(player);
             diContainer.Inject(playerController);
+            diContainer.Bind<PlayerController>().FromInstance(playerController);
+            
             playerController.GetComponent<CharacterController>().enabled = false;
             playerController.transform.position = levelController.CurrentGameField.PlayerSpawnPoint.position;
             playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;

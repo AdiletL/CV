@@ -1,6 +1,6 @@
 ﻿namespace Unit.Character.Creep
 {
-    public class BeholderHealth : CreepHealth
+    public class BeholderHealth : CreepHealth, IPlayerAttackable, ITrapAttackable
     {
         
     }

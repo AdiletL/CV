@@ -9,15 +9,18 @@ namespace Unit.Character
         public override StateCategory Category { get; } = StateCategory.jump;
 
         protected Gravity gravity;
-        protected float currentGravity;
-        
         protected Vector3 velocity;
+        
+        protected float currentGravity;
 
+        protected readonly float cooldownCheckGround = .01f;
+        protected float countCooldownCheckGround;
+        
         public GameObject GameObject { get; set; }
         public AnimationClip JumpClip { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public CharacterController CharacterController { get; set; }
-        public float JumpHeight { get; set; } = 1f;
+        public float JumpHeight { get; set; }
         public int MaxJumpCount { get; set; }
 
         protected int currentJumpCount;
@@ -31,6 +34,7 @@ namespace Unit.Character
         public override void Enter()
         {
             base.Enter();
+            isCanExit = false;
             CharacterAnimation.SetBlock(true);
             ClearValues();
             StartJump();
@@ -38,35 +42,33 @@ namespace Unit.Character
         
         public override void Update()
         {
-            CheckJump();
         }
         
         public override void LateUpdate()
         {
-            if (CharacterController.isGrounded)
+            countCooldownCheckGround += Time.deltaTime;
+            if (countCooldownCheckGround > cooldownCheckGround)
             {
-                velocity.y = 0f;
-                CharacterAnimation.SetBlock(false);
-                this.StateMachine.ExitCategory(Category, null);
+                if (CharacterController.isGrounded)
+                {
+                    isCanExit = true;
+                    CharacterAnimation.SetBlock(false);
+                    this.StateMachine.ExitCategory(Category, null);
+                }
             }
         }
 
         public override void Exit()
         {
             base.Exit();
-            if(CharacterController.isGrounded) return;
-            velocity.y = 0f;
             CharacterAnimation.SetBlock(false);
-        }
-        
-        protected virtual void CheckJump()
-        {
-            
         }
 
         private void ClearValues()
         {
             currentJumpCount = 0;
+            countCooldownCheckGround = 0;
+            velocity.y = 0f;
         }
         
         protected virtual void StartJump()

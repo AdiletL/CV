@@ -5,6 +5,7 @@
         public abstract StateCategory Category { get; }
         public StateMachine StateMachine { get; set; }
         public bool isActive { get; private set; }
+        public bool isCanExit { get; protected set; } = true;
         
         public abstract void Initialize();
         public virtual void Enter()

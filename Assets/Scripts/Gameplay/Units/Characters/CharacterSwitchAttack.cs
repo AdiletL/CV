@@ -28,7 +28,7 @@ namespace Unit.Character
 
         public virtual bool IsFindUnitInRange()
         {
-            return Calculate.Attack.IsFindUnitInRange(Center.position, RangeAttack, EnemyLayer, ref findUnitColliders);
+            return Calculate.Attack.IsFindUnitInRange<IAttackable>(Center.position, RangeAttack, EnemyLayer, ref findUnitColliders);
         }
         
 

@@ -67,10 +67,11 @@ namespace Unit.Trap.Fall
             var colliders = Physics.OverlapSphere(transform.position, radius, ~Layers.CELL_LAYER);
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
-                if (colliders[i].TryGetComponent(out IHealth health)
-                    && health.IsLive)
+                if (colliders[i].TryGetComponent(out IAttackable attackable) &&
+                    colliders[i].TryGetComponent(out IHealth health) &&
+                    health.IsLive)
                 {
-                    health.TakeDamage(Damageable);
+                    attackable.TakeDamage(Damageable);
                 }
             }
         }
@@ -118,7 +119,9 @@ namespace Unit.Trap.Fall
                 Deactivate();
             }
             
-            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;
+            if(!isReady || 
+               !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer) || 
+               !other.TryGetComponent(out ITrapInteractable trapInteractable)) return;
 
             if(startTimerCoroutine != null) StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(gameConfig.BaseWaitTimeTrap, Activate));

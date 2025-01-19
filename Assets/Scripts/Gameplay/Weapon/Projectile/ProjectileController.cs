@@ -7,9 +7,10 @@ namespace Gameplay.Weapon.Projectile
 {
     public abstract class ProjectileController : MonoBehaviour, IProjectile
     {
-        [SerializeField] protected SO_Projectile so_Projectile;
+        [Inject] protected IPoolableObject IPoolableObject;
 
-        protected IPoolableObject IPoolableObject;
+        [SerializeField] protected SO_Projectile so_Projectile;
+        
         protected GameObject target;
         protected LayerMask enemyLayer;
         
@@ -19,12 +20,6 @@ namespace Gameplay.Weapon.Projectile
 
         protected float height;
         
-        [Inject]
-        private void Construct(IPoolableObject iPoolableObject)
-        {
-            this.IPoolableObject = iPoolableObject;
-        }
-
 
         public virtual void Initialize()
         {
@@ -42,10 +37,12 @@ namespace Gameplay.Weapon.Projectile
 
         public virtual void ApplyDamage()
         {
-            if (target && target.TryGetComponent(out IHealth health))
+            if (target &&
+                target.TryGetComponent(out IAttackable attackable) &&
+                target.TryGetComponent(out IHealth health))
             {
                 if(health.IsLive)
-                    health.TakeDamage(Damageable);
+                    attackable.TakeDamage(Damageable);
             }
 
             ReturnToPool();

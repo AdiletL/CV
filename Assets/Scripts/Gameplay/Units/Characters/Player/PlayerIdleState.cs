@@ -8,45 +8,18 @@ namespace Unit.Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
-        public event Action OnFinishedToTarget;
-        
         private PlayerSwitchMove playerSwitchMove;
 
         private Vector3 targetPosition;
 
-        private bool isCheckJump;
-        
         public GameObject TargetForMove { get; set; }
-        public SO_PlayerMove SO_PlayerMove { get; set; }
-        public PlayerEndurance PlayerEndurance { get; set; }
-
-        
-        private PlayerJumpState CreatePlayerJumpState()
-        {
-            return (PlayerJumpState)new PlayerJumpStateBuilder()
-                .SetPlayerEndurance(PlayerEndurance)
-                .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
-                .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-                .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
-                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
-                .SetCharacterController(CharacterController)
-                .SetGameObject(GameObject)
-                .SetCharacterAnimation(CharacterAnimation)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-        }
         
         public override void Initialize()
         {
             base.Initialize();
             playerSwitchMove = (PlayerSwitchMove)CharacterSwitchMove;
         }
-
-        public override void Enter()
-        {
-            base.Enter();
-            isCheckJump = !this.StateMachine.IsActivateType(typeof(PlayerJumpState));
-        }
+        
 
         public override void Subscribe()
         {
@@ -58,12 +31,6 @@ namespace Unit.Character.Player
         {
             base.Update();
             CheckMove();
-        }
-
-        public override void LateUpdate()
-        {
-            base.LateUpdate();
-            CheckJump();
         }
 
         public override void Unsubscribe()
@@ -80,10 +47,11 @@ namespace Unit.Character.Player
         
         private void OnExitCategory(Machine.IState state)
         {
+            if(!isActive) return;
+            
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 PlayAnimation();
-                isCheckJump = true;
             }
         }
         
@@ -102,32 +70,11 @@ namespace Unit.Character.Player
             if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, targetPosition))
             {
                 TargetForMove = null;
-                OnFinishedToTarget?.Invoke();
             }
             else
             {
-                //this.StateMachine.ExitCategory(Category, null);
                 playerSwitchMove.ExitCategory(Category);
             }
-        }
-
-        private void CheckJump()
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && isCheckJump)
-            {
-                StartJump();
-            }
-        }
-        private void StartJump()
-        {
-            if (!this.StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
-            {
-                var playerJumpState = CreatePlayerJumpState();
-                playerJumpState.Initialize();
-                this.StateMachine.AddStates(playerJumpState);
-            }
-            this.StateMachine.SetStates(desiredStates: typeof(PlayerJumpState));
-            isCheckJump = false;
         }
     }
     
@@ -137,30 +84,6 @@ namespace Unit.Character.Player
         public PlayerIdleStateBuilder() : base(new PlayerIdleState())
         {
             
-        }
-
-        public PlayerIdleStateBuilder SetFinishTargetToMove(GameObject finish)
-        {
-            if (state is PlayerIdleState playerIdleState)
-                playerIdleState.TargetForMove = finish;
-
-            return this;
-        }
-        
-        public PlayerIdleStateBuilder SetMoveConfig(SO_PlayerMove config)
-        {
-            if (state is PlayerIdleState playerIdleState)
-                playerIdleState.SO_PlayerMove = config;
-
-            return this;
-        }
-        
-        public PlayerIdleStateBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
-        {
-            if (state is PlayerIdleState playerIdleState)
-                playerIdleState.PlayerEndurance = playerEndurance;
-
-            return this;
         }
     }
 }

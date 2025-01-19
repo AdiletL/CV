@@ -23,4 +23,15 @@ public class GameInstaller : MonoInstaller
         Container.Inject(newObject);
         return newObject;
     }
+    
+    private void OnApplicationQuit()
+    {
+#if UNITY_EDITOR
+        if (Application.isPlaying)
+        {
+            if(gameObject != null)
+                Destroy(this.gameObject);
+        }
+#endif
+    }
 }

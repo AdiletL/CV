@@ -142,8 +142,10 @@ namespace Unit.Trap
 
         public void ApplyDamage()
         {
-            if(CurrentTarget.TryGetComponent(out IHealth health) && health.IsLive)
-                health.TakeDamage(Damageable);
+            if(CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
+               CurrentTarget.TryGetComponent(out IHealth health) && 
+               health.IsLive)
+                trapAttackable.TakeDamage(Damageable);
         }
         
         

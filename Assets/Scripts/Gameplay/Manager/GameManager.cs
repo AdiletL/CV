@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Spawner;
+using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
-using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -13,11 +13,11 @@ namespace Gameplay.Manager
     {
         [Inject] private DiContainer diContainer;
 
-        [SerializeField] private AssetReference poolManagerPrefab;
-        [SerializeField] private AssetReference levelManagerPrefab;
-        [SerializeField] private AssetReference damagePopUpSpawnerPrefab;
-        [SerializeField] private AssetReference playerPrefab;
+        [SerializeField] private AssetReferenceGameObject poolManagerPrefab;
+        [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
+        [SerializeField] private AssetReferenceGameObject damagePopUpSpawnerPrefab;
         [SerializeField] private AssetReference so_SkillContainer;
+        [SerializeField] private AssetReference so_GameHotkey;
 
         private LevelManager levelManager;
         private IPoolableObject poolManager; // Используем интерфейс
@@ -30,16 +30,16 @@ namespace Gameplay.Manager
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+        private async void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Bootstrap") return;
 
-            Initialize();
+            await Initialize();
             // Отписываемся от события, чтобы избежать многократных вызовов
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-        public async void Initialize()
+        public async UniTask Initialize()
         {
             Debug.Log("Initializing: " + name);
 
@@ -50,7 +50,8 @@ namespace Gameplay.Manager
             );
 
             await LoadAndBindAsset<SO_SkillContainer>(so_SkillContainer);
-            StartGame();
+            await LoadAndBindAsset<SO_GameHotkey>(so_GameHotkey);
+            await StartGame();
         }
 
         private async UniTask<TInterface> InstantiateAndBind<TInterface, TConcrete>(AssetReference prefab)
@@ -75,24 +76,24 @@ namespace Gameplay.Manager
         private async UniTask InstantiateLevelManager()
         {
             levelManager = await InstantiateAndBind<LevelManager, LevelManager>(levelManagerPrefab);
-            levelManager.Initialize();
+            await levelManager.Initialize();
         }
 
         private async UniTask InstantiatePoolManager()
         {
             poolManager = await InstantiateAndBind<IPoolableObject, PoolManager>(poolManagerPrefab);
-            poolManager.Initialize();
+            await poolManager.Initialize();
         }
 
         private async UniTask InstantiateDamagePopUpSpawner()
         {
             damagePopUpSpawner = await InstantiateAndBind<DamagePopUpSpawner, DamagePopUpSpawner>(damagePopUpSpawnerPrefab);
-            damagePopUpSpawner.Initialize();
+            await damagePopUpSpawner.Initialize();
         }
 
-        private void StartGame()
+        private async UniTask StartGame()
         {
-            levelManager.StartLevel(playerPrefab);
+            await levelManager.StartLevel();
         }
     }
 }

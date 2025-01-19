@@ -12,6 +12,14 @@ namespace Unit.Character.Creep
             beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
         }
 
+        public override void Enter()
+        {
+            if(!currentTarget)
+                FindUnit();
+            
+            base.Enter();
+        }
+
         public override void LateUpdate()
         {
             base.LateUpdate();
