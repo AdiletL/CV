@@ -2,7 +2,7 @@
 
 namespace Gameplay
 {
-    public class BlockGameObject : MonoBehaviour
+    public class ObstacleGameObject : MonoBehaviour
     {
         public bool IsBlocked = true;
     }

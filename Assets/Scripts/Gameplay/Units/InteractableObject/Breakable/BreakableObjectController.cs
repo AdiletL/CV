@@ -1,7 +1,10 @@
 ﻿namespace Unit.InteractableObject.Breakable
 {
-    public abstract class BreakableObjectController : InteractableObjectController
+    public class BreakableObjectController : InteractableObjectController
     {
-        
+        public override void Appear()
+        {
+            
+        }
     }
 }

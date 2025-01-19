@@ -68,8 +68,8 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  so_GameHotkey:
-    m_AssetGUID: 0c7f87ea8f55e4f4397c85fe5ca0a192
+  so_GameConfig:
+    m_AssetGUID: 663f3157d209a694c88f78d9c0c8eb27
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

@@ -14,9 +14,9 @@ namespace Unit.Trap.Fall
 {
     public class FallController : TrapController, IFall, IApplyDamage
     {
-        private SO_Fall so_Fall;
-        private SO_GameConfig gameConfig;
+        [Inject] private SO_GameConfig gameConfig;
         
+        private SO_Fall so_Fall;
         private Coroutine startTimerCoroutine;
         private Coroutine fallUpdateCoroutine;
         
@@ -28,14 +28,7 @@ namespace Unit.Trap.Fall
         
         public IDamageable Damageable { get; private set; }
         public float Speed { get; private set; }
-
-
-        [Inject]
-        private void Construct(SO_GameConfig gameConfig)
-        {
-            this.gameConfig = gameConfig;
-        }
-
+        
         public override void Initialize()
         {
             base.Initialize();

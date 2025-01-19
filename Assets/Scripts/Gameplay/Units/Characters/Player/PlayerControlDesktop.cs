@@ -13,7 +13,7 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_SkillContainer so_SkillContainer;
-        [Inject] private SO_GameHotkey so_GameHotkey;
+        [Inject] private SO_GameHotkeys _soGameHotkeyses;
         
         private Gravity gravity;
         private RaycastHit[] hits = new RaycastHit[1];
@@ -59,7 +59,7 @@ namespace Unit.Character.Player
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
-                .SetJumpKey(so_GameHotkey.JumpKey)
+                .SetJumpKey(_soGameHotkeyses.JumpKey)
                 .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
                 .SetCharacterController(CharacterController)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
@@ -102,11 +102,11 @@ namespace Unit.Character.Player
 
         private void InitializeHotkeys()
         {
-            selectCellMouseButton = so_GameHotkey.SelectCellMouseButton;
-            attackKey = so_GameHotkey.AttackKey;
-            attackMouseButton = so_GameHotkey.AttackMouseButton;
-            jumpKey = so_GameHotkey.JumpKey;
-            dashKey = so_GameHotkey.DashKey;
+            selectCellMouseButton = _soGameHotkeyses.SelectCellMouseButton;
+            attackKey = _soGameHotkeyses.AttackKey;
+            attackMouseButton = _soGameHotkeyses.AttackMouseButton;
+            jumpKey = _soGameHotkeyses.JumpKey;
+            dashKey = _soGameHotkeyses.DashKey;
         }
         
         private async UniTask InitializeDash()
@@ -147,9 +147,9 @@ namespace Unit.Character.Player
             }
         }
 
-        protected override void ClearHotkey()
+        protected override void ClearHotkeys()
         {
-            base.ClearHotkey();
+            base.ClearHotkeys();
             isSelectedAttack = false;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
@@ -186,7 +186,7 @@ namespace Unit.Character.Player
                     PlayerSwitchMove.ExitOtherStates();
                 }
 
-                ClearHotkey();
+                ClearHotkeys();
             }
             else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !isJumping)
             {
@@ -195,7 +195,7 @@ namespace Unit.Character.Player
                     PlayerSwitchAttack.SetTarget(hitObject);
                     PlayerSwitchAttack.ExitOtherStates();
                 }
-                ClearHotkey();
+                ClearHotkeys();
             }
             else if (Input.GetKeyDown(jumpKey) && !isJumping)
             {

@@ -17,7 +17,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
         [SerializeField] private AssetReferenceGameObject damagePopUpSpawnerPrefab;
         [SerializeField] private AssetReference so_SkillContainer;
-        [SerializeField] private AssetReference so_GameHotkey;
+        [SerializeField] private AssetReference so_GameConfig;
 
         private LevelManager levelManager;
         private IPoolableObject poolManager; // Используем интерфейс
@@ -41,8 +41,6 @@ namespace Gameplay.Manager
 
         public async UniTask Initialize()
         {
-            Debug.Log("Initializing: " + name);
-
             await UniTask.WhenAll(
                 InstantiateLevelManager(),
                 InstantiatePoolManager(),
@@ -50,7 +48,12 @@ namespace Gameplay.Manager
             );
 
             await LoadAndBindAsset<SO_SkillContainer>(so_SkillContainer);
-            await LoadAndBindAsset<SO_GameHotkey>(so_GameHotkey);
+            
+            var gameConfig = await LoadAndBindAsset<SO_GameConfig>(so_GameConfig);
+            await LoadAndBindAsset<SO_GameUIColor>(gameConfig.SO_GameUIColor);
+            await LoadAndBindAsset<SO_GameHotkeys>(gameConfig.SO_GameHotkeys);
+            
+            Debug.Log("Initializing: " + name);
             await StartGame();
         }
 

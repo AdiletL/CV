@@ -10,8 +10,8 @@ namespace Gameplay.Manager
 {
     public class LevelManager : MonoBehaviour, IManager
     {
-        private DiContainer diContainer;
-        private GameUnits gameUnits;
+        [Inject] private DiContainer diContainer;
+        [Inject] private GameUnits gameUnits;
         
         [SerializeField] protected AssetReference so_LevelContainer;
         [SerializeField] private AssetReferenceGameObject playerPrefab;
@@ -23,13 +23,6 @@ namespace Gameplay.Manager
         private int currentLevelIndex;
         private int currentGameFieldIndex;
 
-        [Inject]
-        private void Construct(DiContainer diContainer, GameUnits gameUnits)
-        {
-            this.diContainer = diContainer;
-            this.gameUnits = gameUnits;
-        }
-        
         protected virtual SO_Level GetLevel(int levelNumber)
         {
             if (levelContainer.Levels.Length < levelNumber)

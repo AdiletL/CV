@@ -13,9 +13,9 @@ namespace Unit.Trap.Fall
 {
     public class FallGravityController : TrapController, IFallGravity
     {
-        private SO_FallGravity so_FallGravity;
-        private SO_GameConfig gameConfig;
+        [Inject] private SO_GameConfig gameConfig;
         
+        private SO_FallGravity so_FallGravity;
         private Coroutine startTimerCoroutine;
         
         private List<CellController> cellControllers = new();
@@ -25,14 +25,8 @@ namespace Unit.Trap.Fall
         
         public float Mass { get; private set; }
         public IDamageable Damageable { get; private set; }
-
-
-        [Inject]
-        private void Construct(SO_GameConfig gameConfig)
-        {
-            this.gameConfig = gameConfig;
-        }
-
+        
+        
         public override void Initialize()
         {
             base.Initialize();

@@ -4,17 +4,12 @@ using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
-    [SerializeField] private SO_GameConfig so_GameConfig;
-    [SerializeField] private SO_GameUIColor so_GameUIColor;
-
     public override void InstallBindings()
     {
         DontDestroyOnLoad(gameObject);
         
         Container.Bind<GameUnits>().AsSingle();
         Container.BindInterfacesAndSelfTo<ExperienceSystem>().AsSingle();
-        Container.BindInstance(so_GameConfig).AsSingle();
-        Container.BindInstance(so_GameUIColor).AsSingle();
     }
 
     public GameObject InstantiatePrefab(GameObject prefab)
@@ -22,16 +17,5 @@ public class GameInstaller : MonoInstaller
         var newObject = Container.InstantiatePrefab(prefab);
         Container.Inject(newObject);
         return newObject;
-    }
-    
-    private void OnApplicationQuit()
-    {
-#if UNITY_EDITOR
-        if (Application.isPlaying)
-        {
-            if(gameObject != null)
-                Destroy(this.gameObject);
-        }
-#endif
     }
 }

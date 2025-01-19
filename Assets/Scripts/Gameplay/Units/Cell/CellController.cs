@@ -26,7 +26,7 @@ namespace Unit.Cell
 
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
-                if (colliders[i].TryGetComponent(out BlockGameObject blockGameObject))
+                if (colliders[i].TryGetComponent(out ObstacleGameObject blockGameObject))
                 {
                     return blockGameObject.IsBlocked;
                 }

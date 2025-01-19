@@ -1,14 +1,16 @@
 ﻿using Unit.Cell;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Tool
 {
     [ExecuteInEditMode]
     public class CreateBlockTool : ToolEditor
     {
+        [FormerlySerializedAs("blockPrefab")]
         [Space, Header("Prefab to create")]
-        [SerializeField] private BlockGameObject blockPrefab;
+        [SerializeField] private ObstacleGameObject obstaclePrefab;
         
         [Space, Header("Place to destroy")]
         [SerializeField] private Transform parent;
@@ -71,7 +73,7 @@ namespace Gameplay.Tool
             {
                 createGameFieldTool = GetComponent<CreateGameFieldTool>();
             }
-            if (blockPrefab.GetComponent<BlockGameObject>() == null)
+            if (obstaclePrefab.GetComponent<ObstacleGameObject>() == null)
             {
                 Debug.LogError("Prefab does not have a CellController");
                 return;
@@ -84,7 +86,7 @@ namespace Gameplay.Tool
             var hitObject = GetRayHitGameObject(e);
             if (hitObject)
             {
-                var newGameObject = (GameObject)PrefabUtility.InstantiatePrefab(blockPrefab.gameObject);
+                var newGameObject = (GameObject)PrefabUtility.InstantiatePrefab(obstaclePrefab.gameObject);
                 newGameObject.transform.SetParent(hitObject.GetComponent<CellController>().VisualParent.transform);
                 newGameObject.transform.localPosition = Vector3.zero;
             }
@@ -101,7 +103,7 @@ namespace Gameplay.Tool
                 return;
             }
             
-            var blocks = parent.GetComponentsInChildren<BlockGameObject>();
+            var blocks = parent.GetComponentsInChildren<ObstacleGameObject>();
 
             for (int i = blocks.Length - 1; i >= 0; i--)
             {

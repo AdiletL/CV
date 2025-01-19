@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unit.Character;
 using Unit.Cell;
+using Unit.InteractableObject;
 using Unit.Trap;
 using UnityEngine;
 using Zenject;
@@ -16,6 +17,7 @@ namespace Gameplay
         [SerializeField] private CellController[] platforms;
         [SerializeField] private CharacterMainController[] characters;
         [SerializeField] private TrapController[] traps;
+        [SerializeField] private InteractableObjectController[] interactableObjects;
         
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
         [field: SerializeField] public Transform EndPoint { get; private set; } 
@@ -25,6 +27,7 @@ namespace Gameplay
         private Stack<CellController> platformStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
+        private Stack<InteractableObjectController> interactableObjectStack = new();
         
         [Inject]
         private void Construct(DiContainer diContainer, GameUnits gameUnits)
@@ -50,6 +53,7 @@ namespace Gameplay
             platforms = GetComponentsInChildren<CellController>(true);
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
+            interactableObjects = GetComponentsInChildren<InteractableObjectController>(true);
 
             yield return null;
             MarkDirty();
@@ -69,6 +73,7 @@ namespace Gameplay
         {
             InitializeCharacters();
             InitializeTraps();
+            InitializeInteractableObjects();
             InitializeCells();
         }
 
@@ -108,22 +113,36 @@ namespace Gameplay
                 VARIABLE.Hide();
             }
         }
+        private void InitializeInteractableObjects()
+        {
+            foreach (var VARIABLE in interactableObjects)
+            {
+                gameUnits.AddUnits(VARIABLE);
+                diContainer.Inject(VARIABLE);
+                if (!VARIABLE.gameObject.activeInHierarchy) continue;
+                VARIABLE.Initialize();
+                interactableObjectStack.Push(VARIABLE);
+                VARIABLE.Hide();
+            }
+        }
         #endregion
 
         #region StartGame
         public void StartGame()
         {
-            ShowPlatforms();
+            ShowCells();
             ShowTraps();
             ShowCharacters();
+            ShowInteractableObjects();
             
-            AppearPlatforms();
+            AppearCells();
             AppearTraps();
             AppearCharacters();
+            AppearInteractableObjects();
         }
 
         #region Show
-        private void ShowPlatforms()
+        private void ShowCells()
         {
             foreach (var VARIABLE in platformStack)
                 VARIABLE.Show();
@@ -138,10 +157,15 @@ namespace Gameplay
             foreach (var VARIABLE in trapsStack)
                 VARIABLE.Show();
         }
+        private void ShowInteractableObjects()
+        {
+            foreach (var VARIABLE in interactableObjectStack)
+                VARIABLE.Show();
+        }
         #endregion
 
         #region Appear
-        private void AppearPlatforms()
+        private void AppearCells()
         {
             foreach (var VARIABLE in platformStack)
                 VARIABLE.Appear();
@@ -154,6 +178,11 @@ namespace Gameplay
         private void AppearTraps()
         {
             foreach (var VARIABLE in trapsStack)
+                VARIABLE.Appear();
+        }
+        private void AppearInteractableObjects()
+        {
+            foreach (var VARIABLE in interactableObjectStack)
                 VARIABLE.Appear();
         }
         #endregion
