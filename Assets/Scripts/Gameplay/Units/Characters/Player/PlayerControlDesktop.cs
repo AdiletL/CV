@@ -27,6 +27,7 @@ namespace Unit.Character.Player
         
         private bool isSelectedAttack;
         private bool isJumping;
+        private bool isDashing;
         
         public HandleSkill HandleSkill { get; set; }
         public StateMachine StateMachine { get; set; }
@@ -181,6 +182,8 @@ namespace Unit.Character.Player
 
         public override async void HandleHotkey()
         {
+            if(isDashing) return;
+            
             base.HandleHotkey();
             
             if (Input.GetKeyDown(attackKey) && !isJumping)
@@ -201,6 +204,8 @@ namespace Unit.Character.Player
 
         public override void HandleInput()
         {
+            if(isDashing) return;
+            
             base.HandleInput();
 
             if (Input.GetMouseButtonDown(selectCellMouseButton))
@@ -227,6 +232,7 @@ namespace Unit.Character.Player
             HandleSkill.Execute(typeof(Dash), AfterDash);
             ClearHotkeys();
             ClearSelectObject();
+            isDashing = true;
         }
         
         private void TriggerSelectCell()
@@ -272,17 +278,18 @@ namespace Unit.Character.Player
         
         private void TriggerJump()
         {
-            isJumping = true;
             ClearHotkeys();
             ClearSelectObject();
             InitializeJumpState();
             StateMachine.ExitCategory(StateCategory.attack, null);
             StateMachine.ExitCategory(StateCategory.action, null);
             StateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
+            isJumping = true;
         }
 
         private void AfterDash()
         {
+            isDashing = false;
             gravity.ActivateGravity();
             StateMachine.InActiveBlockChangeState();
         }
