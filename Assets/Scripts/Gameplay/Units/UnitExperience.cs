@@ -23,13 +23,6 @@ namespace Unit
         public int CurrentLevel { get; protected set; }
         public int CurrentExperience { get; protected set; }
 
-        private int giveExperience;
-        public int GiveExperience
-        {
-            get => giveExperience + CurrentExperience;
-            set => giveExperience = value;
-        }
-        
         public bool IsTakeLevel { get; protected set; }
         public bool IsTakeExperience { get; protected set; }
         public bool IsGiveExperience { get; protected set; }
@@ -39,14 +32,14 @@ namespace Unit
         {
             CurrentLevel = so_UnitExperience.StartLevel;
             CurrentExperience = 0;
-            GiveExperience = so_UnitExperience.GiveExperience;
+            CurrentExperience = so_UnitExperience.Experience;
             rangeTakeExperience = so_UnitExperience.RangeTakeExperience;
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
             IsTakeExperience = so_UnitExperience.IsTakeExperience;
             IsGiveExperience = so_UnitExperience.IsGiveExperience;
             
             aoeExperienceInfo = new AoeExperienceInfo(
-                GiveExperience, rangeTakeExperience, gameObject);
+                CurrentExperience, rangeTakeExperience, gameObject);
             ExperienceCalculate = new ExponentialExperience();
             diContainer.Inject(ExperienceCalculate);
         }

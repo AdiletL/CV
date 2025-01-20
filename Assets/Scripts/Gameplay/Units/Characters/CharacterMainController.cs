@@ -1,32 +1,37 @@
 using System;
 using System.Collections.Generic;
+using ScriptableObjects.Unit.Character;
 using UnityEngine;
-using Zenject;
 
 namespace Unit.Character
 {
-    public abstract class CharacterMainController : UnitController, ICharacterController
+    public abstract class CharacterMainController : UnitController, ICharacterController, IClickableObject
     {
-        protected DiContainer diContainer;
+        [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
         
         public StateMachine StateMachine { get; protected set; }
-
-        [Inject]
-        private void Construct(DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-        }
+        public UnitInformation UnitInformation { get; protected set; }
         
         public List<T> GetStates<T>() where T : Machine.IState
         {
             return StateMachine.GetStates<T>();
         }
-        
+
+        public abstract int TotalDamage();
+        public abstract int TotalAttackSpeed();
+        public abstract float TotalAttackRange();
+
+        protected virtual UnitInformation CreateUnitInformation()
+        {
+            return new CharacterInformation(this);
+        }
         
         public override void Initialize()
         {
             base.Initialize();
             StateMachine = new StateMachine();
+            UnitInformation = CreateUnitInformation();
+            diContainer.Inject(UnitInformation);
             
             InitializeMediator();
 
@@ -75,5 +80,9 @@ namespace Unit.Character
         {
             DeInitializeMediator();
         }
+
+        public void ShowInformation() => UnitInformation.Show();
+        public void UpdateInformation() => UnitInformation.UpdateData();
+        public void HideInformation() => UnitInformation.Hide();
     }
 }

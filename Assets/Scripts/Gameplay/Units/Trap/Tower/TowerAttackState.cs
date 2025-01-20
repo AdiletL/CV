@@ -7,8 +7,8 @@ namespace Unit.Trap.Tower
 {
     public class TowerAttackState : UnitBaseAttackState
     {
-        private DiContainer diContainer;
-        private IPoolableObject pool;
+        [Inject] private DiContainer diContainer;
+        [Inject] private IPoolableObject pool;
         
         protected float durationAttack, countDurationAttack;
         protected float timerFire, countTimerFire;
@@ -23,16 +23,9 @@ namespace Unit.Trap.Tower
         public Transform PointSpawnProjectile { get; set; }
         
 
-        [Inject]
-        public void Construct(IPoolableObject pool, DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-            this.pool = pool;
-        }
-
         public override void Initialize()
         {
-            var duration = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
+            var duration = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             timerFire = duration * .55f;
             cooldown = duration;
         }
@@ -68,6 +61,16 @@ namespace Unit.Trap.Tower
             
         }
 
+        public override void IncreaseAttackSpeed(int amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void DecreaseAttackSpeed(int amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected virtual async UniTask Fire()
         {
             var newGameObject = await this.pool.GetObjectAsync<SphereController>();
@@ -85,21 +88,15 @@ namespace Unit.Trap.Tower
 
         protected virtual void Cooldown()
         {
-            if(isAttack) return;
+            if (isAttack) return;
             countCooldown += Time.deltaTime;
-            
+
             if (countCooldown > cooldown)
             {
                 isAttack = true;
                 countCooldown = 0;
             }
         }
-
-        public override void IncreaseStates(IState state)
-        {
-            
-        }
-        
     }
 
     public class TowerAttackStateBuilder : UnitBaseAttackStateBuilder

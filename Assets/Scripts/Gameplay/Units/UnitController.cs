@@ -1,5 +1,7 @@
 ﻿using System;
+using ScriptableObjects.Unit;
 using UnityEngine;
+using Zenject;
 
 namespace Unit
 {
@@ -7,10 +9,11 @@ namespace Unit
     [RequireComponent(typeof(UnitCenter))]
     public abstract class UnitController : MonoBehaviour, IUnit
     {
+        [Inject] protected DiContainer diContainer;
+        
         [SerializeField] protected ComponentsInGameObjects components;
         
         [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set;}
-
 
         public T GetComponentInUnit<T>()
         {
@@ -22,10 +25,11 @@ namespace Unit
             components.Initialize();
         }
 
+        public abstract void Appear();
+        
         public void Show() => VisualParent?.SetActive(true);
         public void Hide() => VisualParent?.SetActive(false);
 
-        public abstract void Appear();
 
         public virtual void MoveDirection(Vector3 direction, float speed)
         {

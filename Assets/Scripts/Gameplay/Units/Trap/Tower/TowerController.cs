@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Unit.Trap.Tower
 {
-    public abstract class TowerController : TrapController, ITower
+    public abstract class TowerController : TrapController, ITower, IClickableObject
     {
         [Space] [SerializeField] protected Transform pointSpawnProjectile;
         
@@ -55,6 +55,22 @@ namespace Unit.Trap.Tower
         private void OnDestroy()
         {
             stateMachine.OnChangedState -= OnChangedState;
+        }
+
+        public UnitInformation UnitInformation { get; }
+        public void ShowInformation()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateInformation()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void HideInformation()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

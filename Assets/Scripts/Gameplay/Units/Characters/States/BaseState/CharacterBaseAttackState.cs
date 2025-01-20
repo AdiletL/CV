@@ -26,11 +26,7 @@ namespace Unit.Character
         {
             
         }
-
-        public override void IncreaseStates(IState state)
-        {
-        }
-
+        
         public override void ApplyDamage()
         {
         }
@@ -38,6 +34,16 @@ namespace Unit.Character
         public virtual void SetTarget(GameObject target)
         {
             currentTarget = target;
+        }
+        
+        public override void IncreaseAttackSpeed(int amount)
+        {
+            AttackSpeed += amount;
+        }
+
+        public override void DecreaseAttackSpeed(int amount)
+        {
+            AttackSpeed -= amount;
         }
     }
 

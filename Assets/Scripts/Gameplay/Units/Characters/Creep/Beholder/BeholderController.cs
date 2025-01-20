@@ -55,6 +55,26 @@ namespace Unit.Character.Creep
                 .Build();
         }
 
+        protected override UnitInformation CreateUnitInformation()
+        {
+            return new BeholderInformation(this);
+        }
+
+        public override int TotalDamage()
+        {
+            return beholderSwitchAttack.TotalDamage();
+        }
+
+        public override int TotalAttackSpeed()
+        {
+            return beholderSwitchAttack.TotalAttackSpeed();
+        }
+
+        public override float TotalAttackRange()
+        {
+            return beholderSwitchAttack.TotalAttackRange();
+        }
+
         public override void Initialize()
         {
             base.Initialize();

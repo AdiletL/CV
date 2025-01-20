@@ -15,7 +15,6 @@ public interface IUnitExperience
     public IExperience ExperienceCalculate { get; }
     
     public int CurrentExperience { get; }
-    public int GiveExperience { get; }
     
     public bool IsTakeExperience { get; }
     public bool IsGiveExperience { get; }

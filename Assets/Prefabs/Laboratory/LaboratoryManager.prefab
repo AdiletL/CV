@@ -56,8 +56,8 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  damagePopUpSpawnerPrefab:
-    m_AssetGUID: 1789adeb0187bb9478f27f4284e23369
+  uiManagerPrefab:
+    m_AssetGUID: 9cda8352480f4674a9dbc0ff6a4a4ec0
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

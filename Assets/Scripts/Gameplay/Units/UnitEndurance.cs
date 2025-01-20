@@ -13,7 +13,7 @@ namespace Unit
         
         private EnduranceInfo enduranceInfo;
         
-        public float MaxEndurance { get; protected set; }
+        public int MaxEndurance { get; protected set; }
         
         private float currentEndurance;
         public float CurrentEndurance
@@ -44,7 +44,6 @@ namespace Unit
             OnChangedEndurance?.Invoke(enduranceInfo);
         }
         
-        
         public virtual void Initialize()
         {
             enduranceInfo = new EnduranceInfo();
@@ -62,7 +61,7 @@ namespace Unit
             CurrentEndurance -= value;
         }
 
-        public virtual void IncreaseMaxEndurance(float value)
+        public virtual void IncreaseMaxEndurance(int value)
         {
             MaxEndurance += value;
         }

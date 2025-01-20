@@ -5,6 +5,8 @@ namespace ScriptableObjects.Gameplay
     [CreateAssetMenu(fileName = "SO_GameHotkeys", menuName = "SO/Gameplay/Hotkeys", order = 51)]
     public class SO_GameHotkeys : ScriptableObject
     {
+        [field: SerializeField] public int SelectObjectMouseButton { get; private set; } = 0;
+        
         [field: SerializeField, Header("Attack Enemy")] 
         public KeyCode AttackKey { get; private set; } = KeyCode.A;
 

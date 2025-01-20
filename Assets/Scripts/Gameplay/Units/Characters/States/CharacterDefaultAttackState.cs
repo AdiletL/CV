@@ -38,7 +38,7 @@ namespace Unit.Character
         {
             base.Initialize();
             rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
-            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             cooldown = durationAttack * .5f;
             applyDamage = durationAttack * .55f;
             rangeSqr = Range * Range;

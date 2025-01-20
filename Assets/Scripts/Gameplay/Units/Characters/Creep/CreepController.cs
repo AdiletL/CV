@@ -1,8 +1,6 @@
 ﻿using Machine;
-using ScriptableObjects.Unit.Character.Creep;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Unit.Character.Creep
 {

@@ -17,7 +17,6 @@ namespace Unit.Character
         protected float timerApplyDamage, countTimerApplyDamage;
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
-        protected float range;
         protected float rangeSqr;
         protected float attackDecreaseEndurance;
 
@@ -34,6 +33,7 @@ namespace Unit.Character
         public Transform Center { get; set; }
         public Transform WeaponParent { get; set; }
         public int EnemyLayer { get; set; }
+        public float Range { get; protected set; }
         
 
         protected AnimationClip getRandomAnimationClip()
@@ -46,7 +46,7 @@ namespace Unit.Character
         {
             base.Initialize();
             rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
-            durationAttack = Calculate.Attack.TotalDurationInSecond(AmountAttackInSecond);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             timerApplyDamage = durationAttack * .55f;
             cooldown = durationAttack * .5f;
         }
@@ -123,12 +123,17 @@ namespace Unit.Character
 
         public virtual void SetWeapon(Weapon weapon)
         {
-            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
+            if (CurrentWeapon != null)
+            {
+                CurrentWeapon.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
+                IncreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
+            }
             
             CurrentWeapon = weapon;
-            range = CurrentWeapon.Range;
-            rangeSqr = range * range;
+            Range = CurrentWeapon.Range;
+            rangeSqr = Range * Range;
             attackDecreaseEndurance = weapon.DecreaseEndurance;
+            DecreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
 
             CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.CurrentDamage);
 
@@ -145,6 +150,14 @@ namespace Unit.Character
             ClearValues();
         }
 
+        public virtual void RemoveWeapon()
+        {
+            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
+            IncreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
+            CurrentWeapon = null;
+            SetAnimationClip(null, null);
+        }
+
         protected virtual void SetAnimationClip(AnimationClip[] attackClips, AnimationClip cooldownClip)
         {
             this.attackClips = attackClips;
@@ -153,7 +166,7 @@ namespace Unit.Character
 
         private void FindUnit()
         {
-            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, range, EnemyLayer, ref findUnitColliders);
+            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, Range, EnemyLayer, ref findUnitColliders);
             if(!currentTarget) return;
             
             CurrentWeapon.SetTarget(currentTarget);

@@ -7,17 +7,12 @@ namespace Unit.Character
 {
     public abstract class CharacterEndurance : UnitEndurance
     {
-        private SO_GameConfig gameConfig;
+        [Inject] private SO_GameConfig gameConfig;
 
         private float amountDecreaseEndurance;
         private float cooldownDecreaseEndurance;
         private float countCooldownDecreaseEndurance;
-
-        [Inject]
-        private void Construct(SO_GameConfig gameConfig)
-        {
-            this.gameConfig = gameConfig;
-        }
+        
 
         public override void Initialize()
         {

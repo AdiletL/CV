@@ -16,6 +16,7 @@ namespace Gameplay.Weapon
         public float AngleToTarget { get; set; }
         public float Range { get; set; }
         public float DecreaseEndurance { get; set; }
+        public int DecreaseAttackSpeed { get; set; }
         
         
         public virtual void Initialize()
@@ -98,6 +99,11 @@ namespace Gameplay.Weapon
         public WeaponBuilder SetAngleToTarget(float value)
         {
             weapon.AngleToTarget = value;
+            return this;
+        }
+        public WeaponBuilder SetDecreaseAttackSpeed(int amount)
+        {
+            weapon.DecreaseAttackSpeed = amount;
             return this;
         }
         public Weapon Build()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Calculate;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
@@ -181,17 +182,20 @@ namespace Unit.Character.Player
         pathFinder.SetStartPosition(GameObject.transform.position);
         pathFinder.SetTargetPosition(finalTargetPosition);
         AssignNewCurrentTarget(compareDistance);
-        
-        if(finalCell.TryGetComponent(out UnitRenderer unitRenderer))
-        {
-            unitRenderer.SetColor(Color.red);
-        }
     }
 
     private void AssignNewCurrentTarget(bool compareDistance = false)
     {
         if (pathQueue.Count == 0)
-            pathQueue = pathFinder.GetPath(true, compareDistance);
+        {
+            pathQueue = pathFinder.GetPath(compareDistance);
+            
+            foreach (var cell in pathQueue)
+                cell.SetColor(Color.yellow);
+
+            if(finalCell.TryGetComponent(out UnitRenderer unitRenderer))
+                unitRenderer.SetColor(Color.red);
+        }
 
         if (pathQueue.Count > 0)
         {
@@ -220,7 +224,8 @@ namespace Unit.Character.Player
 
         if (!currentCell || previousTargetCoordinates == Vector2Int.zero) return;
 
-        if (currentTargetCoordinates == currentCell.CurrentCoordinates || previousTargetCoordinates == currentCell.CurrentCoordinates)
+        if (currentTargetCoordinates == currentCell.CurrentCoordinates || 
+            previousTargetCoordinates == currentCell.CurrentCoordinates)
             return;
 
         ClearColorsToPath();

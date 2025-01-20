@@ -7,7 +7,7 @@ namespace Gameplay.Damage
 {
     public class NormalDamage : IDamageable
     {
-        private DamagePopUpSpawner damagePopUpSpawner;
+        [Inject] private DamagePopUpSpawner damagePopUpSpawner;
         
         public GameObject Owner { get; set; }
         public int CurrentDamage { get; }
@@ -19,12 +19,6 @@ namespace Gameplay.Damage
             this.Owner = gameObject;
 
             if (CurrentDamage < 0) CurrentDamage = 999999;
-        }
-
-        [Inject]
-        private void Construct(DamagePopUpSpawner damagePopUpSpawner)
-        {
-            this.damagePopUpSpawner = damagePopUpSpawner;
         }
         
         public void AddAdditionalDamage(int value)

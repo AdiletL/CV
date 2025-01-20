@@ -26,7 +26,7 @@ namespace Unit.Trap
         private bool isReady;
         
         public IDamageable Damageable { get; private set; }
-        
+
 
         public override void Initialize()
         {

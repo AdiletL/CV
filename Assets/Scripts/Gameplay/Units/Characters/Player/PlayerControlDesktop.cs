@@ -4,6 +4,7 @@ using Machine;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
 using ScriptableObjects.Unit.Character.Player;
+using Unit.Cell;
 using UnityEngine;
 using Zenject;
 
@@ -13,14 +14,16 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_SkillContainer so_SkillContainer;
-        [Inject] private SO_GameHotkeys _soGameHotkeyses;
+        [Inject] private SO_GameHotkeys so_GameHotkeyses;
+
+        private IClickableObject selectObject;
         
         private Gravity gravity;
-        private RaycastHit[] hits = new RaycastHit[1];
+        private RaycastHit[] hits = new RaycastHit[5];
         private Texture2D selectAttackTexture;
         
         private KeyCode dashKey, jumpKey, attackKey;
-        private int attackMouseButton, selectCellMouseButton;
+        private int selectObjectMousButton, attackMouseButton, selectCellMouseButton;
         
         private bool isSelectedAttack;
         private bool isJumping;
@@ -59,7 +62,7 @@ namespace Unit.Character.Player
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
-                .SetJumpKey(_soGameHotkeyses.JumpKey)
+                .SetJumpKey(so_GameHotkeyses.JumpKey)
                 .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
                 .SetCharacterController(CharacterController)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
@@ -71,19 +74,34 @@ namespace Unit.Character.Player
                 .Build();
         }
 
-        private bool tryGetHitPosition(out GameObject hitObject, LayerMask layerMask)
+        private bool tryGetHitPosition<T>(out GameObject hitObject, LayerMask layerMask)
         {
             Vector3 mousePosition = Input.mousePosition;
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
 
+            float closestDistance = Mathf.Infinity; // Ищем ближайший объект
+            GameObject closestHit = null;
+
             var hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, layerMask);
+
             for (int i = 0; i < hitsCount; i++)
             {
-                hitObject = hits[i].transform.gameObject;
+                float targetDistance = Vector3.Distance(ray.origin, hits[i].point);
+                
+                if (targetDistance < closestDistance && hits[i].transform.TryGetComponent(out T component))
+                {
+                    closestDistance = targetDistance;
+                    closestHit = hits[i].transform.gameObject;
+                }
+            }
+
+            if (closestHit != null)
+            {
+                hitObject = closestHit;
                 return true;
             }
 
-            hitObject = null;
+            hitObject = default;
             return false;
         }
         
@@ -102,11 +120,12 @@ namespace Unit.Character.Player
 
         private void InitializeHotkeys()
         {
-            selectCellMouseButton = _soGameHotkeyses.SelectCellMouseButton;
-            attackKey = _soGameHotkeyses.AttackKey;
-            attackMouseButton = _soGameHotkeyses.AttackMouseButton;
-            jumpKey = _soGameHotkeyses.JumpKey;
-            dashKey = _soGameHotkeyses.DashKey;
+            selectCellMouseButton = so_GameHotkeyses.SelectCellMouseButton;
+            attackKey = so_GameHotkeyses.AttackKey;
+            attackMouseButton = so_GameHotkeyses.AttackMouseButton;
+            selectObjectMousButton = so_GameHotkeyses.SelectObjectMouseButton;
+            jumpKey = so_GameHotkeyses.JumpKey;
+            dashKey = so_GameHotkeyses.DashKey;
         }
         
         private async UniTask InitializeDash()
@@ -154,6 +173,12 @@ namespace Unit.Character.Player
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
+        private void ClearSelectObject()
+        {
+            selectObject?.HideInformation();
+            selectObject = null;
+        }
+
         public override async void HandleHotkey()
         {
             base.HandleHotkey();
@@ -162,50 +187,94 @@ namespace Unit.Character.Player
             {
                 isSelectedAttack = true;
                 Cursor.SetCursor(selectAttackTexture, Vector2.zero, CursorMode.Auto);
+                ClearSelectObject();
             }
             else if (Input.GetKeyDown(dashKey))
             {
-                await InitializeDash();
-                
-                gravity.InActivateGravity();
-                StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
-                StateMachine.ActiveBlockChangeState();
-                HandleSkill.Execute(typeof(Dash), AfterDash);
-            }
-        }
-
-        public override void HandleInput()
-        {
-            base.HandleInput();
-            
-            if (Input.GetMouseButtonDown(selectCellMouseButton))
-            {
-                if (tryGetHitPosition(out GameObject hitObject, Layers.CELL_LAYER))
-                {
-                    PlayerSwitchMove.SetTarget(hitObject);
-                    PlayerSwitchMove.ExitOtherStates();
-                }
-
-                ClearHotkeys();
-            }
-            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !isJumping)
-            {
-                if (tryGetHitPosition(out GameObject hitObject, EnemyLayer))
-                {
-                    PlayerSwitchAttack.SetTarget(hitObject);
-                    PlayerSwitchAttack.ExitOtherStates();
-                }
-                ClearHotkeys();
+                await TriggerDash();
             }
             else if (Input.GetKeyDown(jumpKey) && !isJumping)
             {
                 TriggerJump();
             }
         }
+
+        public override void HandleInput()
+        {
+            base.HandleInput();
+
+            if (Input.GetMouseButtonDown(selectCellMouseButton))
+            {
+                TriggerSelectCell();
+            }
+            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !isJumping)
+            {
+                TriggerAttack();
+            }
+            else if (Input.GetMouseButtonDown(selectObjectMousButton))
+            {
+                TriggerSelectObject();
+            }
+        }
+
+        private async UniTask TriggerDash()
+        {
+            await InitializeDash();
+                
+            gravity.InActivateGravity();
+            StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
+            StateMachine.ActiveBlockChangeState();
+            HandleSkill.Execute(typeof(Dash), AfterDash);
+            ClearHotkeys();
+            ClearSelectObject();
+        }
+        
+        private void TriggerSelectCell()
+        {
+            if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))
+            {
+                PlayerSwitchMove.SetTarget(hitObject);
+                PlayerSwitchMove.ExitOtherStates();
+            }
+            ClearHotkeys();
+            ClearSelectObject();
+        }
+        
+        private void TriggerAttack()
+        {
+            if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, EnemyLayer))
+            {
+                PlayerSwitchAttack.SetTarget(gameObject);
+                PlayerSwitchAttack.ExitOtherStates();
+            }
+            ClearHotkeys();
+            ClearSelectObject();
+        }
+        
+        private void TriggerSelectObject()
+        {
+            if (tryGetHitPosition<IClickableObject>(out GameObject hitObject, Layers.EVERYTHING_LAYER))
+            {
+                var unit = hitObject.GetComponent<IClickableObject>();
+                unit.UpdateInformation();
+                if (selectObject == null || selectObject != unit)
+                {
+                    selectObject = unit;
+                    selectObject.ShowInformation();
+                }
+            }
+            else
+            {
+                ClearSelectObject();
+            }
+            ClearHotkeys();
+        }
         
         private void TriggerJump()
         {
             isJumping = true;
+            ClearHotkeys();
+            ClearSelectObject();
             InitializeJumpState();
             StateMachine.ExitCategory(StateCategory.attack, null);
             StateMachine.ExitCategory(StateCategory.action, null);

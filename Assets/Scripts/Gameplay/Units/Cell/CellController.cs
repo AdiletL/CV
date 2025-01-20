@@ -41,7 +41,7 @@ namespace Unit.Cell
                 Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
             return colliderCount == 0;
         }
-
+        
         public override void Initialize()
         {
             base.Initialize();

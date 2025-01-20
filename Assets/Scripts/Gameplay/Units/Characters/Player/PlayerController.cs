@@ -18,7 +18,7 @@ namespace Unit.Character.Player
     [RequireComponent(typeof(HandleEffect))]
     [RequireComponent(typeof(HandleSkill))]
     
-    public class PlayerController : CharacterMainController, IItemClickable, ITrapInteractable
+    public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable
     {
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
@@ -38,7 +38,16 @@ namespace Unit.Character.Player
         private PlayerEndurance playerEndurance;
         
         private CharacterController characterController;
-        
+
+        protected override UnitInformation CreateUnitInformation()
+        {
+            return new PlayerInformation(this);
+        }
+
+        public override int TotalDamage() => playerSwitchAttack.TotalDamage();
+        public override int TotalAttackSpeed() => playerSwitchAttack.TotalAttackSpeed();
+        public override float TotalAttackRange() => playerSwitchAttack.TotalAttackRange();
+
         private PlayerIdleState CreateIdleState(CharacterAnimation characterAnimation, Transform center)
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()

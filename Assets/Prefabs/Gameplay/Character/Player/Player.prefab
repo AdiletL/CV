@@ -3321,6 +3321,7 @@ MonoBehaviour:
     - {fileID: 5211477448136618235}
     - {fileID: 2702775495190288114}
   <VisualParent>k__BackingField: {fileID: 3028568621814086812}
+  <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 649551c077e567b46a3b9ce25aba6e1b, type: 2}
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
   so_PlayerControlDesktop: {fileID: 11400000, guid: 0bed9273856cd0a47b9da97da2cae779, type: 2}
@@ -3403,7 +3404,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 0.8
-  m_Radius: 0.28
+  m_Radius: 0.24
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08

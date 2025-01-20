@@ -25,10 +25,26 @@ namespace Unit.Character.Creep
                 .SetCooldownClip(so_BeholderAttack.CooldownClip)
                 .SetRange(so_BeholderAttack.Range)
                 .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
-                .SetAmountAttackInSecond(so_BeholderAttack.AmountAttackInSecond)
+                .SetAttackSpeed(so_BeholderAttack.AttackSpeed)
                 .SetDamageable(damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();
+        }
+
+        public override int TotalDamage()
+        {
+            return beholderDefaultAttackState.Damageable.CurrentDamage +
+                   beholderDefaultAttackState.Damageable.AdditionalDamage;
+        }
+
+        public override int TotalAttackSpeed()
+        {
+            return beholderDefaultAttackState.AttackSpeed;
+        }
+
+        public override float TotalAttackRange()
+        {
+            return beholderDefaultAttackState.Range;
         }
 
         public override void Initialize()
@@ -40,11 +56,12 @@ namespace Unit.Character.Creep
             RangeAttack = so_BeholderAttack.Range;
             damageable = new NormalDamage(so_BeholderAttack.Damage, GameObject);
             diContainer.Inject(damageable);
+
+            InitializeDefaultAttackState();
         }
 
-        public override void SetState()
+        private void InitializeDefaultAttackState()
         {
-            base.SetState();
             if (!this.StateMachine.IsStateNotNull(typeof(BeholderDefaultAttackState)))
             {
                 beholderDefaultAttackState = CreateDefaultAttack();
@@ -52,6 +69,13 @@ namespace Unit.Character.Creep
                 beholderDefaultAttackState.Initialize();
                 this.StateMachine.AddStates(beholderDefaultAttackState);
             }
+        }
+
+        public override void SetState()
+        {
+            base.SetState();
+            
+            InitializeDefaultAttackState();
             
             beholderDefaultAttackState.SetTarget(currentTarget);
             if (!this.StateMachine.IsActivateType(beholderDefaultAttackState.GetType()))
@@ -61,13 +85,8 @@ namespace Unit.Character.Creep
         public override void ExitCategory(StateCategory category)
         {
             base.ExitCategory(category);
-            if (!this.StateMachine.IsStateNotNull(typeof(BeholderDefaultAttackState)))
-            {
-                beholderDefaultAttackState = CreateDefaultAttack();
-                diContainer.Inject(beholderDefaultAttackState);
-                beholderDefaultAttackState.Initialize();
-                this.StateMachine.AddStates(beholderDefaultAttackState);
-            }
+            
+            InitializeDefaultAttackState();
             
             beholderDefaultAttackState.SetTarget(currentTarget);
             if (!this.StateMachine.IsActivateType(beholderDefaultAttackState.GetType()))
@@ -77,13 +96,8 @@ namespace Unit.Character.Creep
         public override void ExitOtherStates()
         {
             base.ExitOtherStates();
-            if (!this.StateMachine.IsStateNotNull(typeof(BeholderDefaultAttackState)))
-            {
-                beholderDefaultAttackState = CreateDefaultAttack();
-                diContainer.Inject(beholderDefaultAttackState);
-                beholderDefaultAttackState.Initialize();
-                this.StateMachine.AddStates(beholderDefaultAttackState);
-            }
+
+            InitializeDefaultAttackState();
             
             beholderDefaultAttackState.SetTarget(currentTarget);
             if (!this.StateMachine.IsActivateType(beholderDefaultAttackState.GetType()))

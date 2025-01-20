@@ -19,7 +19,49 @@ namespace Unit.Character.Player
         private Weapon currentWeapon;
         
         public Transform WeaponParent { get; set; }
-        
+
+
+        public override int TotalDamage()
+        {
+            if (currentWeapon == null && playerDefaultAttackState != null)
+            {
+                return playerDefaultAttackState.Damageable.CurrentDamage + 
+                       playerDefaultAttackState.Damageable.AdditionalDamage;
+            }
+            else if (currentWeapon != null && playerWeaponAttackState != null)
+            {
+                return playerWeaponAttackState.CurrentWeapon.Damageable.CurrentDamage +
+                       playerWeaponAttackState.CurrentWeapon.Damageable.AdditionalDamage;
+            }
+            return 0;
+        }
+
+        public override int TotalAttackSpeed()
+        {
+            if (currentWeapon == null && playerDefaultAttackState != null)
+            {
+                return playerDefaultAttackState.AttackSpeed;
+            }
+            else if (currentWeapon != null && playerWeaponAttackState != null)
+            {
+                return playerWeaponAttackState.AttackSpeed;
+            }
+            return 0;
+        }
+
+        public override float TotalAttackRange()
+        {
+            if (currentWeapon == null && playerDefaultAttackState != null)
+            {
+                return playerDefaultAttackState.Range;
+            }
+            else if (currentWeapon != null && playerWeaponAttackState != null)
+            {
+                return playerWeaponAttackState.Range;
+            }
+            return 0;
+        }
+
 
         private PlayerDefaultAttackState CreateDefaultAttackState()
         {
@@ -30,7 +72,7 @@ namespace Unit.Character.Player
                 .SetCenter(Center)
                 .SetCharacterAnimation(CharacterAnimation)
                 .SetEnemyLayer(EnemyLayer)
-                .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
+                .SetAttackSpeed(so_PlayerAttack.AttackSpeed)
                 .SetDamageable(base.damageable)
                 .SetStateMachine(StateMachine)
                 .Build();
@@ -47,7 +89,7 @@ namespace Unit.Character.Player
                 .SetCharacterSwitchMove(CharacterSwitchMove)
                 .SetGameObject(this.GameObject)
                 .SetCharacterAnimation(playerAnimation)
-                .SetAmountAttackInSecond(so_PlayerAttack.AmountAttackInSecond)
+                .SetAttackSpeed(so_PlayerAttack.AttackSpeed)
                 .SetDamageable(base.damageable)
                 .SetStateMachine(this.StateMachine)
                 .Build();

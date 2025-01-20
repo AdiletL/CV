@@ -11,11 +11,6 @@ namespace Unit.Trap.Tower
         
         protected SO_Dragon so_Dragon;
 
-        [Inject]
-        private void Construct(DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-        }
 
         protected override void CreateState()
         {
@@ -39,7 +34,7 @@ namespace Unit.Trap.Tower
             base.InitializeConfig();
             so_Dragon = (SO_Dragon)so_Tower;
         }
-        
+
         public override void Appear()
         {
             stateMachine.SetStates(desiredStates: typeof(DragonIdleState));

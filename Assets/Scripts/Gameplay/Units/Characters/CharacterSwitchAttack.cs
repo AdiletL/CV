@@ -30,7 +30,21 @@ namespace Unit.Character
         {
             return Calculate.Attack.IsFindUnitInRange<IAttackable>(Center.position, RangeAttack, EnemyLayer, ref findUnitColliders);
         }
-        
+
+        public virtual int TotalDamage()
+        {
+            return so_CharacterAttack.Damage;
+        }
+
+        public virtual int TotalAttackSpeed()
+        {
+            return (int)so_CharacterAttack.AttackSpeed;
+        }
+
+        public virtual float TotalAttackRange()
+        {
+            return so_CharacterAttack.Range;
+        }
 
         public virtual void Initialize()
         {

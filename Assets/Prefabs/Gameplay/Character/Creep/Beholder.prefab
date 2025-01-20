@@ -1827,6 +1827,7 @@ MonoBehaviour:
     - {fileID: 4969913234543498068}
     - {fileID: 2432419330478243577}
   <VisualParent>k__BackingField: {fileID: 6997497462074257795}
+  <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 481d9a66ba7896046a4d7b437deed80a, type: 2}
   center: {fileID: 3203932032958634825}
   currentStateCategory: 0
   currentStateName: 

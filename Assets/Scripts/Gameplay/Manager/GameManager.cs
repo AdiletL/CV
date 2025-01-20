@@ -15,13 +15,13 @@ namespace Gameplay.Manager
 
         [SerializeField] private AssetReferenceGameObject poolManagerPrefab;
         [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
-        [SerializeField] private AssetReferenceGameObject damagePopUpSpawnerPrefab;
+        [SerializeField] private AssetReferenceGameObject uiManagerPrefab;
         [SerializeField] private AssetReference so_SkillContainer;
         [SerializeField] private AssetReference so_GameConfig;
 
         private LevelManager levelManager;
-        private IPoolableObject poolManager; // Используем интерфейс
-        private DamagePopUpSpawner damagePopUpSpawner;
+        private IPoolableObject poolManager;
+        private UIManager uiManager;
 
         private void Awake()
         {
@@ -41,19 +41,21 @@ namespace Gameplay.Manager
 
         public async UniTask Initialize()
         {
-            await UniTask.WhenAll(
-                InstantiateLevelManager(),
-                InstantiatePoolManager(),
-                InstantiateDamagePopUpSpawner()
-            );
-
             await LoadAndBindAsset<SO_SkillContainer>(so_SkillContainer);
             
             var gameConfig = await LoadAndBindAsset<SO_GameConfig>(so_GameConfig);
             await LoadAndBindAsset<SO_GameUIColor>(gameConfig.SO_GameUIColor);
             await LoadAndBindAsset<SO_GameHotkeys>(gameConfig.SO_GameHotkeys);
             
+            await UniTask.WhenAll(
+                InstantiateUIManager(),
+                InstantiatePoolManager(),
+                InstantiateLevelManager()
+            );
+
             Debug.Log("Initializing: " + name);
+            await UniTask.WaitForEndOfFrame();
+            
             await StartGame();
         }
 
@@ -87,11 +89,11 @@ namespace Gameplay.Manager
             poolManager = await InstantiateAndBind<IPoolableObject, PoolManager>(poolManagerPrefab);
             await poolManager.Initialize();
         }
-
-        private async UniTask InstantiateDamagePopUpSpawner()
+        
+        private async UniTask InstantiateUIManager()
         {
-            damagePopUpSpawner = await InstantiateAndBind<DamagePopUpSpawner, DamagePopUpSpawner>(damagePopUpSpawnerPrefab);
-            await damagePopUpSpawner.Initialize();
+            uiManager = await InstantiateAndBind<UIManager, UIManager>(uiManagerPrefab);
+            await uiManager.Initialize();
         }
 
         private async UniTask StartGame()

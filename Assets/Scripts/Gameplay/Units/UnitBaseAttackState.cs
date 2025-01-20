@@ -7,11 +7,12 @@ namespace Unit
         public override StateCategory Category { get; } = StateCategory.attack;
         
         public IDamageable Damageable { get; set; }
-        public float AmountAttackInSecond { get; set; }
+        public int AttackSpeed { get; set; }
 
         public abstract void Attack();
         public abstract void ApplyDamage();
-        public abstract void IncreaseStates(IState state);
+        public abstract void IncreaseAttackSpeed(int amount);
+        public abstract void DecreaseAttackSpeed(int amount);
     }
     
     public abstract class UnitBaseAttackStateBuilder : StateBuilder<UnitBaseAttackState>
@@ -26,9 +27,9 @@ namespace Unit
             return this;
         }
 
-        public UnitBaseAttackStateBuilder SetAmountAttackInSecond(float amount)
+        public UnitBaseAttackStateBuilder SetAttackSpeed(int amount)
         {
-            state.AmountAttackInSecond = amount;
+            state.AttackSpeed = amount;
             return this;
         }
     }

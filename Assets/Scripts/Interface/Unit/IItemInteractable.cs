@@ -2,8 +2,3 @@
 {
     
 }
-
-public interface IItemClickable : IItemInteractable
-{
-    
-}

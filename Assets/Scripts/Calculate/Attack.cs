@@ -7,9 +7,9 @@ namespace Calculate
     public static class Attack
     {
         
-        public static float TotalDurationInSecond(float countAttack)
+        public static float TotalDurationInSecond(float attackSpeed)
         {
-            return 1 / countAttack;
+            return 100 / attackSpeed;
         }
         
         public static GameObject CheckForwardEnemy(GameObject gameObject, Vector3 center, LayerMask layerMask, float distance = .6f)

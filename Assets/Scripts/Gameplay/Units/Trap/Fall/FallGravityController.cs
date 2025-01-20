@@ -25,8 +25,8 @@ namespace Unit.Trap.Fall
         
         public float Mass { get; private set; }
         public IDamageable Damageable { get; private set; }
-        
-        
+
+
         public override void Initialize()
         {
             base.Initialize();

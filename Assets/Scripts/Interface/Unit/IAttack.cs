@@ -3,12 +3,13 @@ using Unit;
 
 public interface IAttack : IApplyDamage
 {
-    public float AmountAttackInSecond { get; }
+    public int AttackSpeed { get; }
     public void Initialize();
 
     public void Attack();
     
-    public void IncreaseStates(IState state);
+    public void IncreaseAttackSpeed(int amount);
+    public void DecreaseAttackSpeed(int amount);
 }
 
 public interface IApplyDamage

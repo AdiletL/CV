@@ -38,7 +38,6 @@ namespace Calculate
         private Stack<CellController> unverifiedCells = new();
         private Dictionary<CellController, CellData> cellData = new(); // Временные данные платформ
 
-        private bool isUseColor;
         private bool isCompareDistance;
 
         public void SetStartPosition(Vector3 position)
@@ -67,7 +66,7 @@ namespace Calculate
             cellData.Clear(); // Очищаем временные данные после завершения
         }
 
-        public Queue<CellController> GetPath(bool isUseColor = false, bool isCompareDistance = false)
+        public Queue<CellController> GetPath(bool isCompareDistance = false)
         {
             weightCell = 0;
             SetCurrentAndEndCells();
@@ -75,7 +74,6 @@ namespace Calculate
             
             if (!currentCell || !endCell) return pathToPoint;
 
-            this.isUseColor = isUseColor;
             this.isCompareDistance = isCompareDistance;
             for (int i = 0; i < maxCheck; i++)
             {
@@ -140,8 +138,6 @@ namespace Calculate
                 
                 var correctPlatform = GetCorrectPlatform();
                 if (!correctPlatform) break;
-                if (this.isUseColor)
-                    correctPlatform.SetColor(Color.yellow);
 
                 lastCorrectCell = correctPlatform;
                 platformStack.Push(correctPlatform);
