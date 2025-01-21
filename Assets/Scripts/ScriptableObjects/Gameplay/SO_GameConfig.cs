@@ -12,5 +12,7 @@ namespace ScriptableObjects.Gameplay
         [field: SerializeField] public float CooldownDecreaseEndurance { get; private set; } = .2f;
         [field: SerializeField] public float AmountDecreaseEndurance { get; private set; } = .01f;
         [field: SerializeField] public float BaseWaitTimeTrap { get; private set; }
+
+        [field: SerializeField, Header("Scale cell / 3")] public float RadiusCell { get; private set; } = .3f;
     }
 }

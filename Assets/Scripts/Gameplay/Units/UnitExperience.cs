@@ -2,6 +2,8 @@
 using UnityEngine;
 using Gameplay.Experience;
 using ScriptableObjects.Unit;
+using Unit.Character.Player;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Unit
@@ -16,10 +18,10 @@ namespace Unit
         [SerializeField] protected SO_UnitExperience so_UnitExperience;
         
         private AoeExperienceInfo aoeExperienceInfo;
-        private float rangeTakeExperience;
         
         public IExperience ExperienceCalculate { get; protected set; }
         
+        public float RangeTakeExperience { get; protected set; }
         public int CurrentLevel { get; protected set; }
         public int CurrentExperience { get; protected set; }
 
@@ -33,13 +35,13 @@ namespace Unit
             CurrentLevel = so_UnitExperience.StartLevel;
             CurrentExperience = 0;
             CurrentExperience = so_UnitExperience.Experience;
-            rangeTakeExperience = so_UnitExperience.RangeTakeExperience;
+            RangeTakeExperience = so_UnitExperience.RangeTakeExperience;
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
             IsTakeExperience = so_UnitExperience.IsTakeExperience;
             IsGiveExperience = so_UnitExperience.IsGiveExperience;
             
             aoeExperienceInfo = new AoeExperienceInfo(
-                CurrentExperience, rangeTakeExperience, gameObject);
+                CurrentExperience, RangeTakeExperience, gameObject);
             ExperienceCalculate = new ExponentialExperience();
             diContainer.Inject(ExperienceCalculate);
         }
@@ -79,7 +81,7 @@ namespace Unit
         public virtual void OnDeath()
         {
             if(!IsGiveExperience) return;
-            
+            Debug.Log(diContainer.TryResolve<ExperienceSystem>());
             OnGiveAoeExperience?.Invoke(aoeExperienceInfo);
         }
     }

@@ -29,11 +29,11 @@ namespace Gameplay.Manager
             where TInterface : class
             where TConcrete : MonoBehaviour, TInterface
         {
-            var result = await Addressables.LoadAssetAsync<GameObject>(prefab);
-            var instance = diContainer.InstantiatePrefabForComponent<TConcrete>(result);
+            var result = await Addressables.InstantiateAsync(prefab);
+            var instance = result.GetComponent<TConcrete>();
             diContainer.Inject(instance);
             diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
-            instance.transform.SetParent(transform);
+            result.transform.SetParent(transform);
             return instance;
         }
         

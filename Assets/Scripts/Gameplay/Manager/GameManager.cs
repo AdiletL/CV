@@ -22,6 +22,8 @@ namespace Gameplay.Manager
         private LevelManager levelManager;
         private IPoolableObject poolManager;
         private UIManager uiManager;
+        private GameUnits gameUnits;
+        private ExperienceSystem experienceSystem;
 
         private void Awake()
         {
@@ -47,6 +49,14 @@ namespace Gameplay.Manager
             await LoadAndBindAsset<SO_GameUIColor>(gameConfig.SO_GameUIColor);
             await LoadAndBindAsset<SO_GameHotkeys>(gameConfig.SO_GameHotkeys);
             
+            gameUnits = new GameUnits();
+            diContainer.Inject(gameUnits);
+            diContainer.Bind<GameUnits>().FromInstance(gameUnits).AsSingle();
+            
+            experienceSystem = new ExperienceSystem();
+            diContainer.Inject(experienceSystem);
+            diContainer.Bind<ExperienceSystem>().FromInstance(experienceSystem).AsSingle();
+            
             await UniTask.WhenAll(
                 InstantiateUIManager(),
                 InstantiatePoolManager(),
@@ -63,11 +73,11 @@ namespace Gameplay.Manager
             where TInterface : class
             where TConcrete : MonoBehaviour, TInterface
         {
-            var result = await Addressables.LoadAssetAsync<GameObject>(prefab);
-            var instance = diContainer.InstantiatePrefabForComponent<TConcrete>(result);
+            var result = await Addressables.InstantiateAsync(prefab);
+            var instance = result.GetComponent<TConcrete>();
             diContainer.Inject(instance);
             diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
-            instance.transform.SetParent(transform);
+            result.transform.SetParent(transform);
             return instance;
         }
 

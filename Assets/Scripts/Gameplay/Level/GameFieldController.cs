@@ -81,9 +81,9 @@ namespace Gameplay
         {
             foreach (var VARIABLE in platforms)
             {
-                gameUnits.AddUnits(VARIABLE);
+                gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeInHierarchy) continue;
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
                 platformStack.Push(VARIABLE);
                 VARIABLE.Hide();
@@ -93,9 +93,9 @@ namespace Gameplay
         {
             foreach (var VARIABLE in characters)
             {
-                gameUnits.AddUnits(VARIABLE);
+                gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeInHierarchy) continue;
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
                 charactersStack.Push(VARIABLE);
                 VARIABLE.Hide();
@@ -105,9 +105,9 @@ namespace Gameplay
         {
             foreach (var VARIABLE in traps)
             {
-                gameUnits.AddUnits(VARIABLE);
+                gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeInHierarchy) continue;
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
                 trapsStack.Push(VARIABLE);
                 VARIABLE.Hide();
@@ -117,9 +117,9 @@ namespace Gameplay
         {
             foreach (var VARIABLE in interactableObjects)
             {
-                gameUnits.AddUnits(VARIABLE);
+                gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeInHierarchy) continue;
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
                 interactableObjectStack.Push(VARIABLE);
                 VARIABLE.Hide();

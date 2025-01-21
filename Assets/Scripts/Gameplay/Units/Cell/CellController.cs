@@ -9,8 +9,6 @@ namespace Unit.Cell
     [SelectionBase]
     public class CellController : UnitController
     {
-        public static float Radius = .3f;
-
         [SerializeField] private TextMeshPro platformText;
 
         private UnitRenderer unitRenderer;

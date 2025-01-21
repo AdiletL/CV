@@ -30,7 +30,7 @@ namespace Unit.Trap.Hammer
             hammerAnimation = components.GetComponentFromArray<HammerAnimation>();
             so_Hammer = (SO_Hammer)so_Trap;
             Damageable = new NormalDamage(so_Hammer.Damage, gameObject);
-            durationAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.AmountAttackInSecond);
+            durationAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.AttackSpeed);
             cooldownAttack = so_Hammer.CooldownAttack;
             
             GetComponentInUnit<HammerCollision>()?.Initialize();

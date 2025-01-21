@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 
 public class GameUnits
 {
-    private List<IUnit> units = new ();
+    private List<GameObject> units = new ();
     
-    public void AddUnits(params IUnit[] newUnits)
+    public void AddUnits(params GameObject[] newUnits)
     {
         foreach (var unit in newUnits)
         {
-            if (!units.Contains(unit))
+            if (!units.Contains(unit) && 
+                unit.TryGetComponent(out IUnit unitComponent))
             {
                 units.Add(unit);
             }
         }
     }
     
-    public void RemoveUnits(params IUnit[] removeUnits)
+    public void RemoveUnits(params GameObject[] removeUnits)
     {
         foreach (var unit in removeUnits)
         {
@@ -25,8 +27,18 @@ public class GameUnits
         }
     }
     
-    public List<T> GetUnits<T>() where T : class
+    public List<T> GetUnits<T>()
     {
-        return units.OfType<T>().ToList();
+        List<T> result = new ();
+
+        foreach (var unit in units)
+        {
+            if(unit.TryGetComponent(out T unitComponent)) 
+            {
+                result.Add(unitComponent);
+            }
+        }
+
+        return result;
     }
 }

@@ -93,8 +93,8 @@ namespace Gameplay.Manager
 
         private async void InstantiatePlayer()
         {
-            var player = await Addressables.LoadAssetAsync<GameObject>(playerPrefab);
-            playerController = diContainer.InstantiatePrefabForComponent<PlayerController>(player);
+            var player = await Addressables.InstantiateAsync(playerPrefab);
+            playerController = player.GetComponent<PlayerController>();
             diContainer.Inject(playerController);
             diContainer.Bind<PlayerController>().FromInstance(playerController);
             
@@ -103,7 +103,8 @@ namespace Gameplay.Manager
             playerController.transform.rotation = levelController.CurrentGameField.PlayerSpawnPoint.rotation;
             playerController.Initialize();
             playerController.GetComponent<CharacterController>().enabled = true;
-            gameUnits.AddUnits(playerController);
+            gameUnits.AddUnits(player);
+            playerController.Appear();
         }
     }
 }

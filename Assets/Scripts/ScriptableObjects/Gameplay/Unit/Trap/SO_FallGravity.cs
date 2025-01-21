@@ -7,5 +7,6 @@ namespace ScriptableObjects.Gameplay.Trap
     {
         [field: SerializeField] public float Radius { get; private set; }
         [field: SerializeField] public float Mass { get; private set; }
+        [field: SerializeField] public float IntervalFallObjets { get; private set; }
     }
 }

@@ -1,23 +1,19 @@
 ﻿using System;
 using Unit;
+using Unit.Character.Player;
+using UnityEngine;
 using Zenject;
 
-public class ExperienceSystem : IInitializable, IDisposable
+public class ExperienceSystem
 {
-    private GameUnits gameUnits;
-    
-    [Inject]
-    public void Construct(GameUnits gameUnits)
-    {
-        this.gameUnits = gameUnits;
-    }
-    
-    public void Initialize()
+    [Inject] private GameUnits gameUnits;
+
+    public ExperienceSystem()
     {
         Unit.UnitExperience.OnGiveAoeExperience += OnGiveAoeExperience;
     }
 
-    public void Dispose()
+    ~ExperienceSystem()
     {
         Unit.UnitExperience.OnGiveAoeExperience -= OnGiveAoeExperience;
     }
@@ -25,16 +21,23 @@ public class ExperienceSystem : IInitializable, IDisposable
     private void OnGiveAoeExperience(Unit.AoeExperienceInfo info)
     {
         var experienceUnits = gameUnits.GetUnits<UnitExperience>();
-        var distanceSqr = info.RangeTakeExperience * info.RangeTakeExperience;
+        float distanceSqr = 0;
         
         for (int i = experienceUnits.Count - 1; i >= 0; i--)
         {
             if (!experienceUnits[i] 
-                || !experienceUnits[i].gameObject.activeInHierarchy
+                || !experienceUnits[i].gameObject.activeSelf
                 || !experienceUnits[i].IsTakeExperience
                 || !experienceUnits[i].TryGetComponent(out IHealth health)
-                || !health.IsLive
-                || !Calculate.Distance.IsNearUsingSqr(info.GameObject.transform.position, experienceUnits[i].transform.position, distanceSqr))
+                || !health.IsLive)
+            {
+                experienceUnits.RemoveAt(i);
+                continue;
+            }
+            
+            distanceSqr = experienceUnits[i].RangeTakeExperience * experienceUnits[i].RangeTakeExperience;
+            if (!Calculate.Distance.IsNearUsingSqr(info.GameObject.transform.position,
+                    experienceUnits[i].transform.position, distanceSqr))
             {
                 experienceUnits.RemoveAt(i);
             }

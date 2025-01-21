@@ -97,20 +97,9 @@ namespace Gameplay.Manager
                 }
 
                 // Создаем объект из найденного префаба
-                var handle = suitablePrefab.InstantiateAsync();
-                await handle.Task;
-
-                if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-                {
-                    GameObject newGameObject = handle.Result;
-                    diContainer.Inject(newGameObject.GetComponent<T>());
-                    return newGameObject;
-                }
-                else
-                {
-                    Debug.LogError("Failed to instantiate object from suitable prefab.");
-                    throw new NullReferenceException("Failed to instantiate object.");
-                }
+                var handle = await Addressables.InstantiateAsync(suitablePrefab);
+                diContainer.Inject(handle.GetComponent<T>());
+                return handle;
             }
             finally
             {

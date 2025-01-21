@@ -7,6 +7,7 @@ using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Player
 {
@@ -155,10 +156,9 @@ namespace Unit.Character.Player
             playerSwitchMove.Initialize();
         }
 
-        
         public override void Appear()
         {
-            
+
         }
 
         private void TestWeapon()

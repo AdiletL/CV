@@ -17,14 +17,16 @@ namespace Unit.Trap.Fall
         
         private SO_FallGravity so_FallGravity;
         private Coroutine startTimerCoroutine;
-        
-        private List<CellController> cellControllers = new();
-        
+        private Coroutine checkAndAddRigidBodyCoroutine;
+
+        private float intervalFallObjects;
         private float radius;
         private bool isReady = true;
         
-        public float Mass { get; private set; }
+        private List<CellController> cellControllers = new();
+        
         public IDamageable Damageable { get; private set; }
+        public float Mass { get; private set; }
 
 
         public override void Initialize()
@@ -32,14 +34,14 @@ namespace Unit.Trap.Fall
             base.Initialize();
 
             so_FallGravity = (SO_FallGravity)so_Trap;
-            radius = so_FallGravity.Radius;
-            Mass = so_FallGravity.Mass;
+            Mass = so_FallGravity.Mass + Physics.gravity.y;
+            radius = so_FallGravity.Radius + gameConfig.RadiusCell;
+            intervalFallObjects = so_FallGravity.IntervalFallObjets;
             Damageable = new NormalDamage(so_FallGravity.Damage, gameObject);
         }
         
         public override void Appear()
         {
-            
         }
         
         public override void Activate()
@@ -80,19 +82,23 @@ namespace Unit.Trap.Fall
         
         public void FallGravity()
         {
-            CheckCellInRadiusAndAddRigidbody();
+            if(checkAndAddRigidBodyCoroutine != null) StopCoroutine(checkAndAddRigidBodyCoroutine);
+            checkAndAddRigidBodyCoroutine = StartCoroutine(CheckCellInRadiusAndAddRigidbodyCoroutine());
         }
         
-        private void CheckCellInRadiusAndAddRigidbody()
+        private IEnumerator CheckCellInRadiusAndAddRigidbodyCoroutine()
         {
             var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
                 if (colliders[i].TryGetComponent(out CellController cell))
                 {
+                    if(cell.IsBlocked()) continue;
+                    
                     cell.gameObject.AddComponent<Rigidbody>();
                     cell.GetComponent<Rigidbody>().mass = Mass;
                     cellControllers.Add(cell);
+                    yield return new WaitForSeconds(intervalFallObjects);
                 }
             }
         }

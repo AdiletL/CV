@@ -20,3 +20,4 @@ MonoBehaviour:
     m_Bits: 8
   <Radius>k__BackingField: 0.2
   <Mass>k__BackingField: 10
+  <IntervalFallObjets>k__BackingField: 0.2
