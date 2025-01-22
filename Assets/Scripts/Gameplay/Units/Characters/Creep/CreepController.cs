@@ -11,20 +11,25 @@ namespace Unit.Character.Creep
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
         
-        public override void Initialize()
+
+        protected override void InitializeMediator()
         {
-            base.Initialize();
-            
+            base.InitializeMediator();
             this.StateMachine.OnChangedState += OnChangedState;
         }
-        
 
-        public void Update()
+        protected override void UnInitializeMediator()
+        {
+            base.UnInitializeMediator();
+            this.StateMachine.OnChangedState -= OnChangedState;
+        }
+
+        protected void Update()
         {
             this.StateMachine?.Update();
         }
 
-        public void LateUpdate()
+        protected void LateUpdate()
         {
             this.StateMachine?.LateUpdate();
         }
@@ -33,12 +38,6 @@ namespace Unit.Character.Creep
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
-        }
-        
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            this.StateMachine.OnChangedState -= OnChangedState;
         }
     }
 }

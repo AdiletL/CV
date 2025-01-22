@@ -1,4 +1,3 @@
-using System;
 using Gameplay.UI;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.InteractableObject.Container;

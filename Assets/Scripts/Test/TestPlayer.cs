@@ -29,6 +29,21 @@ public class TestPlayer : MonoBehaviour, IUnit
         throw new System.NotImplementedException();
     }
 
+    public bool TryGetComponentInUnit<T>(out T component) where T : class
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public T GetComponentInUnit<T>() where T : class
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public T TryGetComponentInUnit<T>() where T : class
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void Show()
     {
         throw new System.NotImplementedException();

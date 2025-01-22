@@ -53,7 +53,7 @@ public class ComponentsInGameObjects
         return list;
     }
 
-    public bool TryGetComponentFromArray<T>(out T component) where T : Component
+    public bool TryGetComponentFromArray<T>(out T component) where T : class
     {
         foreach (var item in componentTypes)
         {
@@ -73,7 +73,7 @@ public class ComponentsInGameObjects
         return false;
     }
     
-    private bool TryGetComponentInGameObjects<T>(out T component) where T : Component
+    private bool TryGetComponentInGameObjects<T>(out T component) where T : class
     {
         foreach (var item in gameObjects)
         {

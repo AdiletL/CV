@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public abstract class CharacterAnimation : UnitAnimation, ICharacter
+    public abstract class CharacterAnimation : UnitAnimation
     {
         
     }

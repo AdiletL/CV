@@ -1,6 +1,6 @@
-﻿using System;
-using ScriptableObjects.Unit;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Unit
@@ -11,15 +11,22 @@ namespace Unit
     {
         [Inject] protected DiContainer diContainer;
         
+        [FormerlySerializedAs("componentsInGameObjects")] 
         [SerializeField] protected ComponentsInGameObjects components;
         
-        [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set;}
-
-        public T GetComponentInUnit<T>()
+        [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set; }
+        
+        
+        public T GetComponentInUnit<T>() where T: class
         {
             return components.GetComponentFromArray<T>();
         }
 
+        public bool TryGetComponentInUnit<T>(out T component) where T: class
+        {
+            return components.TryGetComponentFromArray(out component);
+        }
+        
         public virtual void Initialize()
         {
             components.Initialize();

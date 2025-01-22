@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public abstract class CharacterHealth : UnitHealth, ICharacter
+    public abstract class CharacterHealth : UnitHealth
     {
     }
 }

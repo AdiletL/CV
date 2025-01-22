@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public abstract class CharacterMainController : UnitController, ICharacterController, IClickableObject
+    public abstract class CharacterMainController : UnitController, ICharacter, IClickableObject
     {
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
         
@@ -54,14 +54,14 @@ namespace Unit.Character
             endurance?.Initialize();
         }
 
-        private void InitializeMediator()
+        protected virtual void InitializeMediator()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnDeath += GetComponentInUnit<CharacterExperience>().OnDeath;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
-        protected virtual void DeInitializeMediator()
+        protected virtual void UnInitializeMediator()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnDeath -= GetComponentInUnit<CharacterExperience>().OnDeath;
@@ -78,7 +78,7 @@ namespace Unit.Character
 
         protected virtual void OnDestroy()
         {
-            DeInitializeMediator();
+            UnInitializeMediator();
         }
 
         public void ShowInformation() => UnitInformation.Show();

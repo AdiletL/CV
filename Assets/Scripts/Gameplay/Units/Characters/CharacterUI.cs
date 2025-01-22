@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Unit.Character
 {
-    public abstract class CharacterUI : UnitUI, ICharacter
+    public abstract class CharacterUI : UnitUI
     {
         [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected Image healthBar;

@@ -81,7 +81,7 @@ namespace Unit
         public virtual void OnDeath()
         {
             if(!IsGiveExperience) return;
-            Debug.Log(diContainer.TryResolve<ExperienceSystem>());
+
             OnGiveAoeExperience?.Invoke(aoeExperienceInfo);
         }
     }
