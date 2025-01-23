@@ -35,7 +35,7 @@ namespace Gameplay.Weapon.Projectile
         public override void ApplyDamage()
         {
             base.ApplyDamage();
-            var handleEffect = target.GetComponent<HandleEffect>();
+            var handleEffect = target.GetComponent<EffectHandler>();
             if(handleEffect == null || handleEffect.IsEffectActive(slowMovementEffect)) return;
             
             slowMovementEffect.SetTarget(target);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Skill
 {
-    public class HandleSkill : MonoBehaviour
+    public class SkillHandler : MonoBehaviour, IHandler
     {
         public event Action OnUpdate;
         public event Action OnLateUpdate;

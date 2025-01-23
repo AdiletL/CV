@@ -1,5 +1,7 @@
+using Calculate;
 using Gameplay.Damage;
 using Gameplay.Effect;
+using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Weapon;
 using Machine;
@@ -16,8 +18,8 @@ namespace Unit.Character.Player
     [RequireComponent(typeof(PlayerAnimation))]
     [RequireComponent(typeof(PlayerExperience))]
     [RequireComponent(typeof(PlayerGravity))]
-    [RequireComponent(typeof(HandleEffect))]
-    [RequireComponent(typeof(HandleSkill))]
+    [RequireComponent(typeof(EffectHandler))]
+    [RequireComponent(typeof(SkillHandler))]
     
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable
     {
@@ -99,7 +101,7 @@ namespace Unit.Character.Player
                 .SetPlayerSwitchMove(playerSwitchMove)
                 .SetPlayerEndurance(playerEndurance)
                 .SetPlayerAnimation(GetComponent<PlayerAnimation>())
-                .SetHandleSkill(GetComponentInUnit<HandleSkill>())
+                .SetHandleSkill(GetComponentInUnit<SkillHandler>())
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
@@ -121,7 +123,9 @@ namespace Unit.Character.Player
             StateMachine.Initialize();
             
             //Test
-            TestWeapon();
+            InitializeNormalResistance();
+            //Test
+            InitializeSword();
                         
             StateMachine.OnChangedState += OnChangedState;
             StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
@@ -161,38 +165,73 @@ namespace Unit.Character.Player
 
         }
 
-        private void TestWeapon()
+        private void InitializeSword()
         {
             //TEST
             var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
             diContainer.Inject(swordDamageable);
             var sword = (Sword)new SwordBuilder()
-                .SetDecreaseEndurance(so_Sword.DecreaseEndurance)
-                .SetAngleToTarget(so_Sword.DecreaseEndurance)
+                .SetIncreaseAttackSpeed(so_Sword.IncreaseAttackSpeed.ValueType, so_Sword.IncreaseAttackSpeed.Value)
+                .SetReductionEndurance(so_Sword.ReductionEndurance.ValueType, so_Sword.ReductionEndurance.Value)
+                .SetAngleToTarget(so_Sword.AngleToTarget)
                 .SetWeaponParent(weaponParent)
                 .SetGameObject(gameObject)
                 .SetRange(so_Sword.Range)
                 .SetWeaponPrefab(so_Sword.WeaponPrefab)
                 .SetDamageable(swordDamageable)
                 .Build();
+            diContainer.Inject(sword);
             sword.Initialize();
             SetWeapon(sword);
+            isSword = true;
+            Debug.Log("Sword");
+        }
 
-            /*var projectile = new NormalDamage(so_Bow.Damage, gameObject);
+        private void InitializeBow()
+        {
+            var projectile = new NormalDamage(so_Bow.Damage, gameObject);
+            diContainer.Inject(projectile);
             var bow = (Bow)new BowBuilder()
                 .SetDamageable(projectile)
                 .SetRange(so_Bow.Range)
-                .SetAmountAttack(so_Bow.AmountAttack)
+                .SetGameObject(gameObject)
                 .SetWeaponParent(weaponParent)
                 .SetWeaponPrefab(so_Bow.WeaponPrefab)
+                .SetAngleToTarget(so_Bow.AngleToTarget)
+                .SetReductionEndurance(so_Bow.ReductionEndurance.ValueType, so_Bow.ReductionEndurance.Value)
+                .SetIncreaseAttackSpeed(so_Bow.IncreaseAttackSpeed.ValueType, so_Bow.IncreaseAttackSpeed.Value)
                 .Build();
             diContainer.Inject(bow);
             bow.Initialize();
-            SetWeapon(bow);*/
+            SetWeapon(bow);
+            isSword = false;
+            Debug.Log("Bow");
         }
 
+        //Test
+        private void InitializeNormalResistance()
+        {
+            var normalDamageResistance = new NormalDamageResistance(80, ValueType.Percent);
+            GetComponentInUnit<ResistanceHandler>().AddResistance(normalDamageResistance);
+        }
+        
+        //Test
+        private bool isSword;
         private void Update()
         {
+            //Test
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                if (isSword)
+                {
+                    InitializeBow();
+                }
+                else
+                {
+                    InitializeSword();
+                }
+            }
+
             playerControlDesktop?.HandleHotkey();
             playerControlDesktop?.HandleInput();
             StateMachine?.Update();

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Calculate;
 using Movement;
-using ScriptableObjects.Unit.Character.Player;
 using Unit.Cell;
 using UnityEngine;
 
@@ -42,7 +39,7 @@ namespace Unit.Character.Player
     public Transform Center { get; set; }
     public CharacterController CharacterController { get; set; }
     public float RotationSpeed { get; set; }
-    public float RunDecreaseEndurance { get; set; }
+    public float RunReductionEndurance { get; set; }
     
 
     private bool IsFinalPositionValid()
@@ -289,7 +286,7 @@ namespace Unit.Character.Player
 
     private void ReduceEndurance()
     {
-        PlayerEndurance.RemoveEndurance(RunDecreaseEndurance);
+        PlayerEndurance.RemoveEndurance(RunReductionEndurance);
     }
 }
 
@@ -323,10 +320,10 @@ namespace Unit.Character.Player
             
             return this;  
         }
-        public PlayerRunStateBuilder SetRunDecreaseEndurance(float value)
+        public PlayerRunStateBuilder SetRunReductionEndurance(float value)
         {
             if (state is PlayerRunState playerRunState)
-                playerRunState.RunDecreaseEndurance = value;
+                playerRunState.RunReductionEndurance = value;
             
             return this;  
         }

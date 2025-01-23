@@ -6,7 +6,7 @@ namespace Unit.Character.Player
     {
         public PlayerEndurance PlayerEndurance { get; set; }
         public KeyCode JumpKey { get; set; }
-        public float JumpDecreaseEndurance { get; set; }
+        public float JumpReductionEndurance { get; set; }
         
 
         public override void Update()
@@ -25,13 +25,13 @@ namespace Unit.Character.Player
         protected override void StartJump()
         {
             base.StartJump();
-            DecreaseEndurance();
+            ReductionEndurance();
         }
 
         
-        private void DecreaseEndurance()
+        private void ReductionEndurance()
         {
-            PlayerEndurance.RemoveEndurance(JumpDecreaseEndurance);
+            PlayerEndurance.RemoveEndurance(JumpReductionEndurance);
         }
     }
     
@@ -55,10 +55,10 @@ namespace Unit.Character.Player
             
             return this;
         }
-        public PlayerJumpStateBuilder SetDecreaseEndurance(float jumpDecreaseEndurance)
+        public PlayerJumpStateBuilder SetReductionEndurance(float jumpReductionEndurance)
         {
             if(state is PlayerJumpState playerJumpState)
-                playerJumpState.JumpDecreaseEndurance = jumpDecreaseEndurance;
+                playerJumpState.JumpReductionEndurance = jumpReductionEndurance;
             
             return this;
         }

@@ -1,5 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Calculate;
+using Cysharp.Threading.Tasks;
 using Unit;
+using Unit.Character;
 using UnityEngine;
 
 namespace Gameplay.Weapon
@@ -8,6 +10,9 @@ namespace Gameplay.Weapon
     {
         protected GameObject weapon;
         
+        protected int characterAttackSpeed;
+        protected int characterReductionEndurance;
+        
         public GameObject WeaponPrefab { get; set; }
         public Transform WeaponParent { get; set; }
         public GameObject GameObject { get; set; }
@@ -15,9 +20,11 @@ namespace Gameplay.Weapon
         public IDamageable Damageable { get; set; }
         public float AngleToTarget { get; set; }
         public float Range { get; set; }
-        public float DecreaseEndurance { get; set; }
-        public int DecreaseAttackSpeed { get; set; }
-        
+        public ValueType ReductionEnduranceType { get; set; }
+        public int ReductionEndurance { get; set; }
+        public ValueType IncreaseAttackSpeedType { get; set; }
+        public int IncreaseAttackSpeed { get; set; }
+
         
         public virtual void Initialize()
         {
@@ -53,6 +60,24 @@ namespace Gameplay.Weapon
             
         }
 
+        public virtual void ResetCharacterStates(CharacterWeaponAttackState characterWeaponAttackState)
+        {
+            Damageable.RemoveAdditionalDamage(characterWeaponAttackState.Damageable.CurrentDamage);
+            characterWeaponAttackState.RemoveAttackSpeed(characterAttackSpeed);
+            characterWeaponAttackState.RemoveReductionEndurance(characterReductionEndurance);
+        }
+
+        public virtual void UpdateCharacterStates(CharacterWeaponAttackState characterWeaponAttackState)
+        {
+            Damageable.AddAdditionalDamage(characterWeaponAttackState.Damageable.CurrentDamage);
+            var attackSpeedValue = new GameValue(IncreaseAttackSpeed, IncreaseAttackSpeedType);
+            characterAttackSpeed = attackSpeedValue.Calculate(characterWeaponAttackState.AttackSpeed);
+            characterWeaponAttackState.AddAttackSpeed(characterAttackSpeed);
+            var reductionEnduranceValue = new GameValue(ReductionEndurance, ReductionEnduranceType);
+            characterReductionEndurance =
+                reductionEnduranceValue.Calculate(characterWeaponAttackState.CurrentReductionEndurance);
+            characterWeaponAttackState.AddReductionEndurance(characterReductionEndurance);
+        }
     }
 
     public abstract class WeaponBuilder
@@ -91,9 +116,10 @@ namespace Gameplay.Weapon
             weapon.GameObject = gameObject;
             return this;
         }
-        public WeaponBuilder SetDecreaseEndurance(float value)
+        public WeaponBuilder SetReductionEndurance(ValueType valueType, int value)
         {
-            weapon.DecreaseEndurance = value;
+            weapon.ReductionEnduranceType = valueType;
+            weapon.ReductionEndurance = value;
             return this;
         }
         public WeaponBuilder SetAngleToTarget(float value)
@@ -101,9 +127,10 @@ namespace Gameplay.Weapon
             weapon.AngleToTarget = value;
             return this;
         }
-        public WeaponBuilder SetDecreaseAttackSpeed(int amount)
+        public WeaponBuilder SetIncreaseAttackSpeed(ValueType valueType, int amount)
         {
-            weapon.DecreaseAttackSpeed = amount;
+            weapon.IncreaseAttackSpeedType = valueType;
+            weapon.IncreaseAttackSpeed = amount;
             return this;
         }
         public Weapon Build()

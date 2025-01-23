@@ -45,16 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolPrefabReferences:
-  - m_AssetGUID: f47b15b67a8e7cd45af6e9200106d374
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  - m_AssetGUID: 11eddd7375914d04dab143aac2f0f02a
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 1
   - m_AssetGUID: 8d7390fc2ffd5ea4ab42dfe9617aeabb
     m_SubObjectName: 
     m_SubObjectGUID: 

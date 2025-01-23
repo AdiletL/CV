@@ -15,4 +15,10 @@ MonoBehaviour:
   <WeaponPrefab>k__BackingField: {fileID: 726123980392875945, guid: a611871aa4f987941bf934736c0ee6d7, type: 3}
   <Damage>k__BackingField: 1
   <Range>k__BackingField: 4
-  <DecreaseEndurance>k__BackingField: 0.05
+  <AngleToTarget>k__BackingField: 50
+  <DecreaseEndurance>k__BackingField:
+    Value: 10
+    ValueType: 1
+  <IncreaseAttackSpeed>k__BackingField:
+    Value: 200
+    ValueType: 1

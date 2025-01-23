@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: SO_PlayerAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 10
-  <AttackSpeed>k__BackingField: 500
+  <AttackSpeed>k__BackingField: 100
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 128
   <Range>k__BackingField: 2
+  <BaseDecreaseEndurance>k__BackingField: 0.1
   <DefaultAttackClips>k__BackingField:
   - {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}
   <DefaultCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 61f2c64d4f97d9f459a1d367eb16fb13, type: 3}

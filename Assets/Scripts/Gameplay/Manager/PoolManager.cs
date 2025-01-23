@@ -13,6 +13,7 @@ namespace Gameplay.Manager
         [Inject] private DiContainer diContainer;
         
         [SerializeField] private AssetReferenceGameObject[] poolPrefabReferences;
+        [SerializeField] private int initialPoolSize = 5;
 
         private AssetReference suitablePrefab;
         private SemaphoreSlim semaphore = new(System.Environment.ProcessorCount / 2);
@@ -23,8 +24,44 @@ namespace Gameplay.Manager
         
         public async UniTask Initialize()
         {
+            // Создаем родительский объект для пула
             poolParent = new GameObject("PoolParent").transform;
-            await UniTask.CompletedTask;
+
+            // Создаем начальный запас объектов для каждого префаба
+            foreach (var prefabReference in poolPrefabReferences)
+            {
+                // Загружаем префаб асинхронно
+                var prefabHandle = Addressables.LoadAssetAsync<GameObject>(prefabReference);
+                await prefabHandle.Task;
+
+                if (prefabHandle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                {
+                    // Создаем несколько экземпляров объекта и добавляем их в пул
+                    for (int i = 0; i < initialPoolSize; i++)
+                    {
+                        // Создаем объект из префаба
+                        var handle = await Addressables.InstantiateAsync(prefabReference);
+
+                        // Находим все компоненты в объекте и его дочерних объектах
+                        var components = handle.GetComponentsInChildren<MonoBehaviour>(true);
+                        foreach (var component in components)
+                        {
+                            // Выполняем инъекцию зависимостей через DiContainer
+                            diContainer.Inject(component);
+                        }
+
+                        ReturnToPool(handle);
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load prefab: {prefabReference.RuntimeKey}");
+                }
+
+                // Освобождаем ресурсы после завершения загрузки
+                Addressables.Release(prefabHandle);
+            }
+
         }
         
         public async UniTask<GameObject> GetObjectAsync<T>()

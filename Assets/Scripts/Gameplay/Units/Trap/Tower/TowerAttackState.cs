@@ -61,12 +61,12 @@ namespace Unit.Trap.Tower
             
         }
 
-        public override void IncreaseAttackSpeed(int amount)
+        public override void AddAttackSpeed(int amount)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void DecreaseAttackSpeed(int amount)
+        public override void RemoveAttackSpeed(int amount)
         {
             throw new System.NotImplementedException();
         }

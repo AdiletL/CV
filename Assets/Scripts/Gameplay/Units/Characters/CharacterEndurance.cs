@@ -9,31 +9,31 @@ namespace Unit.Character
     {
         [Inject] private SO_GameConfig gameConfig;
 
-        private float amountDecreaseEndurance;
-        private float cooldownDecreaseEndurance;
-        private float countCooldownDecreaseEndurance;
+        private float amountReductionEndurance;
+        private float cooldownReductionEndurance;
+        private float countCooldownReductionEndurance;
         
 
         public override void Initialize()
         {
             base.Initialize();
-            cooldownDecreaseEndurance = gameConfig.CooldownDecreaseEndurance;
-            amountDecreaseEndurance = gameConfig.AmountDecreaseEndurance;
+            cooldownReductionEndurance = gameConfig.CooldownReductionEndurance;
+            amountReductionEndurance = gameConfig.AmountReductionEndurance;
         }
 
         private void Update()
         {
-            DecreaseEndurance();
+            ReductionEndurance();
         }
 
-        protected virtual void DecreaseEndurance()
+        protected virtual void ReductionEndurance()
         {
-            countCooldownDecreaseEndurance += Time.deltaTime;
+            countCooldownReductionEndurance += Time.deltaTime;
 
-            if (countCooldownDecreaseEndurance >= cooldownDecreaseEndurance)
+            if (countCooldownReductionEndurance >= cooldownReductionEndurance)
             {
-                RemoveEndurance(amountDecreaseEndurance);
-                countCooldownDecreaseEndurance = 0;
+                RemoveEndurance(amountReductionEndurance);
+                countCooldownReductionEndurance = 0;
             }
         }
     }

@@ -23,11 +23,11 @@ namespace Unit.Character
 
         protected void PlayAnimation()
         {
-            SetDurationAnimation();
+            UpdateDurationAnimation();
             CharacterAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation);
         }
 
-        protected void SetDurationAnimation()
+        protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeed;
             CharacterAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
@@ -38,16 +38,16 @@ namespace Unit.Character
             
         }
 
-        public override void IncreaseMovementSpeed(float value)
+        public override void AddMovementSpeed(float value)
         {
-            base.IncreaseMovementSpeed(value);
-            SetDurationAnimation();
+            base.AddMovementSpeed(value);
+            UpdateDurationAnimation();
         }
 
-        public override void DecreaseMovementSpeed(float value)
+        public override void RemoveMovementSpeed(float value)
         {
-            base.DecreaseMovementSpeed(value);
-            SetDurationAnimation();
+            base.RemoveMovementSpeed(value);
+            UpdateDurationAnimation();
         }
     }
 

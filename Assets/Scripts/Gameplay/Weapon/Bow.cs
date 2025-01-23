@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Weapon.Projectile;
+using Unit;
 using UnityEngine;
 using Zenject;
 
@@ -30,7 +31,7 @@ namespace Gameplay.Weapon
             var arrow = newGameObject.GetComponent<ArrowController>();
             arrow.Initialize();
             arrow.SetDamageable(Damageable);
-            arrow.UpdateData(CurrentTarget.transform.position);
+            arrow.UpdateData(CurrentTarget.GetComponent<UnitCenter>().Center.position);
         }
     }
     

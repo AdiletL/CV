@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Effect
 {
-    public class HandleEffect : MonoBehaviour
+    public class EffectHandler : MonoBehaviour, IHandler
     {
         public event Action OnUpdate;
         public event Action OnLateUpdate;

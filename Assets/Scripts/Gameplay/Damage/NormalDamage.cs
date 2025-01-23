@@ -1,4 +1,6 @@
-﻿using Gameplay.Spawner;
+﻿using Calculate;
+using Gameplay.Resistance;
+using Gameplay.Spawner;
 using Unit;
 using UnityEngine;
 using Zenject;
@@ -32,8 +34,15 @@ namespace Gameplay.Damage
         
         public int GetTotalDamage(GameObject gameObject)
         {
-            var result = 0;
-            result = CurrentDamage + AdditionalDamage;
+            var result = CurrentDamage + AdditionalDamage;
+            
+            var resistanceHandler = gameObject.GetComponent<ResistanceHandler>();
+            if (resistanceHandler.TryGetResistance<NormalDamageResistance>(out var normalResistance))
+            {
+                var resistanceValue = new GameValue(normalResistance.Value, normalResistance.ValueType);
+                result -= resistanceValue.Calculate(result);
+                if (result < 0) result = 0;
+            }
 
             if (damagePopUpSpawner)
             {

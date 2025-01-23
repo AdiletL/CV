@@ -19,10 +19,13 @@ namespace Gameplay.Weapon.Projectile
         public float MovementSpeed { get; protected set; }
 
         protected float height;
+        protected bool isInitialized;
         
 
         public virtual void Initialize()
         {
+            if(isInitialized) return;
+            
             moveCurve = so_Projectile.Curve;
             MovementSpeed = so_Projectile.Speed;
             height = so_Projectile.Height;

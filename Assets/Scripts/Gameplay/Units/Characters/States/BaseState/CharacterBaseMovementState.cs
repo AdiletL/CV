@@ -27,12 +27,12 @@ namespace Unit.Character
         
         public abstract void ExecuteMovement();
         
-        public virtual void IncreaseMovementSpeed(float value)
+        public virtual void AddMovementSpeed(float value)
         {
             MovementSpeed += value;
         }
 
-        public virtual void DecreaseMovementSpeed(float value)
+        public virtual void RemoveMovementSpeed(float value)
         {
             MovementSpeed -= value;
         }

@@ -68,7 +68,7 @@ namespace Gameplay.Effect
             foreach (var VARIABLE in movementStates)
             {
                 result = gameValue.Calculate(VARIABLE.MovementSpeed);
-                VARIABLE.DecreaseMovementSpeed(result);
+                VARIABLE.RemoveMovementSpeed(result);
                 var movementInfo = new MovementInfo(VARIABLE, result);
                 this.movementStates.Add(movementInfo);
             }
@@ -79,7 +79,7 @@ namespace Gameplay.Effect
             base.DestroyEffect();
             foreach (var VARIABLE in movementStates)
             {
-                VARIABLE.MovementState.IncreaseMovementSpeed(VARIABLE.Speed);
+                VARIABLE.MovementState.AddMovementSpeed(VARIABLE.Speed);
             }
             ClearValues();
         }

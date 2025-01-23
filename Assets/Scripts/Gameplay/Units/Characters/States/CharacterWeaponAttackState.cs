@@ -1,4 +1,5 @@
-﻿using Gameplay.Weapon;
+﻿using Calculate;
+using Gameplay.Weapon;
 using Movement;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
@@ -18,7 +19,6 @@ namespace Unit.Character
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
         protected float rangeSqr;
-        protected float attackDecreaseEndurance;
 
         protected bool isApplyDamage;
         protected bool isAttack;
@@ -26,14 +26,15 @@ namespace Unit.Character
         
         public CharacterSwitchMove CharacterSwitchMove { get; set; }
         public CharacterEndurance CharacterEndurance { get; set; }
-        public SO_PlayerAttack SO_PlayerAttack { get; set; }
-        public Weapon CurrentWeapon { get; set; }
+        public Weapon CurrentWeapon { get; protected set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public GameObject GameObject { get; set; }
         public Transform Center { get; set; }
         public Transform WeaponParent { get; set; }
+        public float BaseReductionEndurance { get; set; }
         public int EnemyLayer { get; set; }
         public float Range { get; protected set; }
+        public float CurrentReductionEndurance { get; private set; }
         
 
         protected AnimationClip getRandomAnimationClip()
@@ -46,9 +47,8 @@ namespace Unit.Character
         {
             base.Initialize();
             rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
-            durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
-            timerApplyDamage = durationAttack * .55f;
-            cooldown = durationAttack * .5f;
+            UpdateDurationAttack();
+            CurrentReductionEndurance = BaseReductionEndurance;
         }
 
         public override void Enter()
@@ -114,6 +114,13 @@ namespace Unit.Character
             countCooldown = 0;
         }
 
+        protected void UpdateDurationAttack()
+        {
+            durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
+            timerApplyDamage = durationAttack * .55f;
+            cooldown = durationAttack * .3f;
+        }
+        
         public override void SetTarget(GameObject target)
         {
             base.SetTarget(target);
@@ -124,36 +131,20 @@ namespace Unit.Character
         public virtual void SetWeapon(Weapon weapon)
         {
             if (CurrentWeapon != null)
-            {
-                CurrentWeapon.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
-                IncreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
-            }
+                CurrentWeapon.ResetCharacterStates(this);
             
             CurrentWeapon = weapon;
             Range = CurrentWeapon.Range;
             rangeSqr = Range * Range;
-            attackDecreaseEndurance = weapon.DecreaseEndurance;
-            DecreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
 
-            CurrentWeapon.Damageable.AddAdditionalDamage(Damageable.CurrentDamage);
-
-            switch (weapon)
-            {
-                case Sword sword:
-                    SetAnimationClip(SO_PlayerAttack.SwordAttackClip, SO_PlayerAttack.SwordCooldownClip);
-                    break;
-                case Bow bow:
-                    SetAnimationClip(SO_PlayerAttack.BowAttackClip, SO_PlayerAttack.BowCooldownClip);
-                    break;
-            }
+            CurrentWeapon.UpdateCharacterStates(this);
             
             ClearValues();
         }
 
         public virtual void RemoveWeapon()
         {
-            CurrentWeapon?.Damageable.RemoveAdditionalDamage(Damageable.CurrentDamage);
-            IncreaseAttackSpeed(CurrentWeapon.DecreaseAttackSpeed);
+            CurrentWeapon.ResetCharacterStates(this);
             CurrentWeapon = null;
             SetAnimationClip(null, null);
         }
@@ -185,7 +176,7 @@ namespace Unit.Character
                 isApplyDamage = false;
                 countTimerApplyDamage = 0;
             }
-            CharacterEndurance.RemoveEndurance(attackDecreaseEndurance);
+            CharacterEndurance.RemoveEndurance(CurrentReductionEndurance);
         }
 
         protected virtual void Fire()
@@ -226,6 +217,28 @@ namespace Unit.Character
 
                 countCooldown = 0;
             }
+        }
+
+        public override void AddAttackSpeed(int amount)
+        {
+            base.AddAttackSpeed(amount);
+            UpdateDurationAttack();
+        }
+
+        public override void RemoveAttackSpeed(int amount)
+        {
+            base.RemoveAttackSpeed(amount);
+            UpdateDurationAttack();
+        }
+
+        public virtual void AddReductionEndurance(int amount)
+        {
+            CurrentReductionEndurance += amount;
+        }
+
+        public virtual void RemoveReductionEndurance(int amount)
+        {
+            CurrentReductionEndurance -= amount;
         }
     }
 
@@ -286,15 +299,7 @@ namespace Unit.Character
             return this;
         }
 
-        public CharacterWeaponAttackStateBuilder SetConfig(SO_PlayerAttack config)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.SO_PlayerAttack = config;
-            }
 
-            return this;
-        }
         public CharacterWeaponAttackStateBuilder SetCharacterEndurance(CharacterEndurance endurance)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
@@ -309,6 +314,15 @@ namespace Unit.Character
             if (state is CharacterWeaponAttackState characterWeapon)
             {
                 characterWeapon.CharacterSwitchMove = characterSwitchMove;
+            }
+
+            return this;
+        }
+        public CharacterWeaponAttackStateBuilder SetBaseReductionEndurance(float value)
+        {
+            if (state is CharacterWeaponAttackState characterWeapon)
+            {
+                characterWeapon.BaseReductionEndurance = value;
             }
 
             return this;

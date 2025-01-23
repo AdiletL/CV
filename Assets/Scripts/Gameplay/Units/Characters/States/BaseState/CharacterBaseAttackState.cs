@@ -36,12 +36,12 @@ namespace Unit.Character
             currentTarget = target;
         }
         
-        public override void IncreaseAttackSpeed(int amount)
+        public override void AddAttackSpeed(int amount)
         {
             AttackSpeed += amount;
         }
 
-        public override void DecreaseAttackSpeed(int amount)
+        public override void RemoveAttackSpeed(int amount)
         {
             AttackSpeed -= amount;
         }

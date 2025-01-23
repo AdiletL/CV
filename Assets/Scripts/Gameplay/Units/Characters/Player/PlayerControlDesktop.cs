@@ -29,7 +29,7 @@ namespace Unit.Character.Player
         private bool isJumping;
         private bool isDashing;
         
-        public HandleSkill HandleSkill { get; set; }
+        public SkillHandler SkillHandler { get; set; }
         public StateMachine StateMachine { get; set; }
         public GameObject GameObject { get; set; }
         public PlayerAnimation PlayerAnimation { get; set; }
@@ -64,7 +64,7 @@ namespace Unit.Character.Player
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
                 .SetJumpKey(so_GameHotkeyses.JumpKey)
-                .SetDecreaseEndurance(SO_PlayerMove.JumpInfo.DecreaseEndurance)
+                .SetReductionEndurance(SO_PlayerMove.JumpInfo.ReductionEndurance)
                 .SetCharacterController(CharacterController)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
                 .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
@@ -131,11 +131,11 @@ namespace Unit.Character.Player
         
         private async UniTask InitializeDash()
         {
-            if (!HandleSkill.IsSkillNotNull(typeof(Dash)))
+            if (!SkillHandler.IsSkillNotNull(typeof(Dash)))
             {
                 var dash = await CreateDash();
                 diContainer.Inject(dash);
-                HandleSkill.AddSkill(dash);
+                SkillHandler.AddSkill(dash);
             }
         }
 
@@ -229,7 +229,7 @@ namespace Unit.Character.Player
             gravity.InActivateGravity();
             StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
             StateMachine.ActiveBlockChangeState();
-            HandleSkill.Execute(typeof(Dash), AfterDash);
+            SkillHandler.Execute(typeof(Dash), AfterDash);
             ClearHotkeys();
             ClearSelectObject();
             isDashing = true;
@@ -301,10 +301,10 @@ namespace Unit.Character.Player
         {
         }
 
-        public PlayerControlDesktopBuilder SetHandleSkill(HandleSkill handleSkill)
+        public PlayerControlDesktopBuilder SetHandleSkill(SkillHandler skillHandler)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.HandleSkill = handleSkill;
+                playerControlDesktop.SkillHandler = skillHandler;
             return this;
         }
 

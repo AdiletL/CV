@@ -11,8 +11,8 @@ namespace Unit
 
         public abstract void Attack();
         public abstract void ApplyDamage();
-        public abstract void IncreaseAttackSpeed(int amount);
-        public abstract void DecreaseAttackSpeed(int amount);
+        public abstract void AddAttackSpeed(int amount);
+        public abstract void RemoveAttackSpeed(int amount);
     }
     
     public abstract class UnitBaseAttackStateBuilder : StateBuilder<UnitBaseAttackState>

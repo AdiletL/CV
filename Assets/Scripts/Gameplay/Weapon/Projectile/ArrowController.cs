@@ -7,28 +7,23 @@ namespace Gameplay.Weapon.Projectile
     public class ArrowController : ProjectileController
     {
         private ArcMovement arcMovement;
+
         
         public override void Initialize()
         {
             base.Initialize();
+            if(isInitialized) return;
             
-            if(arcMovement == null)
-                arcMovement = new ArcMovement(gameObject, MovementSpeed, height, moveCurve);
-            
+            arcMovement = new ArcMovement(gameObject, MovementSpeed, height, moveCurve);
             arcMovement.Initialize();
-
+            
+            isInitialized = true;
             arcMovement.OnFinished += OnFinished;
         }
         private void OnFinished()
         {
             ReturnToPool();
         }
-
-        private void OnDisable()
-        {
-            arcMovement.OnFinished -= OnFinished;
-        }
-
 
         public override void ExecuteMovement()
         {
@@ -38,6 +33,12 @@ namespace Gameplay.Weapon.Projectile
         public void UpdateData(Vector3 targetPosition)
         {
             arcMovement.UpdateData(targetPosition);
+        }
+        
+        private void OnDestroy()
+        {
+            if(arcMovement != null)
+                arcMovement.OnFinished -= OnFinished;
         }
     }
 }

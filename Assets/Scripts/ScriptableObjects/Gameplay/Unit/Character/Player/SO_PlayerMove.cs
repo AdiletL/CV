@@ -9,6 +9,6 @@ namespace ScriptableObjects.Unit.Character.Player
         public AnimationClip[] RunClip { get; private set; }
 
         [field: SerializeField] public float RunSpeed { get; private set; }
-        [field: SerializeField] public float RunDecreaseEndurance { get; private set; }
+        [field: SerializeField] public float RunReductionEndurance { get; private set; }
     }
 }

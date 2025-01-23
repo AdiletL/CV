@@ -8,8 +8,8 @@ public interface IAttack : IApplyDamage
 
     public void Attack();
     
-    public void IncreaseAttackSpeed(int amount);
-    public void DecreaseAttackSpeed(int amount);
+    public void AddAttackSpeed(int amount);
+    public void RemoveAttackSpeed(int amount);
 }
 
 public interface IApplyDamage
