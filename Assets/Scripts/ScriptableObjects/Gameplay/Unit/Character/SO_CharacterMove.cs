@@ -1,4 +1,3 @@
-using Movement;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character
@@ -9,7 +8,5 @@ namespace ScriptableObjects.Unit.Character
         public AnimationClip[] IdleClip { get; private set; }
 
         [field: SerializeField, Space(10), Header("Rotate")] public float RotateSpeed { get; private set; } = 800;
-        
-        [field: SerializeField, Space(10), Header("Jump")] public JumpInfo JumpInfo { get; private set; }
     }
 }

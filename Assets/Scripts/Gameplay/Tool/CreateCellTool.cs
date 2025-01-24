@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Tool
 {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     [RequireComponent(typeof(CreateDefaultCellTool))]
     public class CreateCellTool : ToolEditor
@@ -126,4 +127,5 @@ namespace Gameplay.Tool
             createGameFieldTool.CurrentGameField.SortingArray();
         }
     }
+        #endif
 }

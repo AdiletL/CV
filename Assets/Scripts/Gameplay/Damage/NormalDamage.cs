@@ -37,7 +37,7 @@ namespace Gameplay.Damage
             var result = CurrentDamage + AdditionalDamage;
             
             var resistanceHandler = gameObject.GetComponent<ResistanceHandler>();
-            if (resistanceHandler.TryGetResistance<NormalDamageResistance>(out var normalResistance))
+            if (resistanceHandler && resistanceHandler.TryGetResistance<NormalDamageResistance>(out var normalResistance))
             {
                 var resistanceValue = new GameValue(normalResistance.Value, normalResistance.ValueType);
                 result -= resistanceValue.Calculate(result);

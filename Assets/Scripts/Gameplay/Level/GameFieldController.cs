@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using Unit.Character;
 using Unit.Cell;
-using Unit.InteractableObject;
+using Unit.Item;
 using Unit.Trap;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
@@ -17,7 +18,7 @@ namespace Gameplay
         [SerializeField] private CellController[] platforms;
         [SerializeField] private CharacterMainController[] characters;
         [SerializeField] private TrapController[] traps;
-        [SerializeField] private InteractableObjectController[] interactableObjects;
+        [FormerlySerializedAs("interactableObjects")] [SerializeField] private ItemController[] itemObjects;
         
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
         [field: SerializeField] public Transform EndPoint { get; private set; } 
@@ -27,7 +28,7 @@ namespace Gameplay
         private Stack<CellController> platformStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
-        private Stack<InteractableObjectController> interactableObjectStack = new();
+        private Stack<ItemController> interactableObjectStack = new();
         
         [Inject]
         private void Construct(DiContainer diContainer, GameUnits gameUnits)
@@ -53,7 +54,7 @@ namespace Gameplay
             platforms = GetComponentsInChildren<CellController>(true);
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
-            interactableObjects = GetComponentsInChildren<InteractableObjectController>(true);
+            itemObjects = GetComponentsInChildren<ItemController>(true);
 
             yield return null;
             MarkDirty();
@@ -115,7 +116,7 @@ namespace Gameplay
         }
         private void InitializeInteractableObjects()
         {
-            foreach (var VARIABLE in interactableObjects)
+            foreach (var VARIABLE in itemObjects)
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);

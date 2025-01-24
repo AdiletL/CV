@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Tool
 {
+#if UNITY_EDITOR
     public class CreateDefaultCellTool : ToolEditor
     {
         [Header("Don't touch!!!")] 
@@ -85,4 +86,5 @@ namespace Gameplay.Tool
             Debug.Log("Setting Completed");
         }
     }
+        #endif
 }

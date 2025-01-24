@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Tool
 {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     [RequireComponent(typeof(CreateCellTool))]
     [RequireComponent(typeof(CreateBlockTool))]
@@ -125,4 +126,5 @@ namespace Gameplay.Tool
             MarkDirty();
         }
     }
+        #endif
 }

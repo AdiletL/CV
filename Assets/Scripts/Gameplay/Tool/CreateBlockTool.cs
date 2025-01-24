@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 
 namespace Gameplay.Tool
 {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class CreateBlockTool : ToolEditor
     {
@@ -114,4 +115,5 @@ namespace Gameplay.Tool
             createGameFieldTool.CurrentGameField.SortingArray();
         }
     }
+        #endif
 }

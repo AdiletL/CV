@@ -16,13 +16,13 @@ MonoBehaviour:
   - {fileID: 1827226128182048838, guid: 0308cf4e83cf517488b60af58b290fe0, type: 3}
   - {fileID: 1827226128182048838, guid: 423aabfede0896f4db862ab8e54dde30, type: 3}
   <RotateSpeed>k__BackingField: 800
-  <JumpInfo>k__BackingField:
-    Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
-    Height: 1.4
-    MaxCount: 2
-    DecreaseEndurance: 1
   <RunClip>k__BackingField:
   - {fileID: 1827226128182048838, guid: 7d4f9e9da55a3bd4f958a63308a522a1, type: 3}
   - {fileID: 1827226128182048838, guid: 0791e523b7f1b2740a3b1cde42b6aeac, type: 3}
   <RunSpeed>k__BackingField: 3
-  <RunDecreaseEndurance>k__BackingField: 0.01
+  <BaseRunReductionEndurance>k__BackingField: 0.01
+  <JumpInfo>k__BackingField:
+    Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
+    Height: 1.4
+    MaxCount: 2
+    BaseReductionEndurance: 0.1

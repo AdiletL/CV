@@ -563,9 +563,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2092175183012456784, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1687726600181870349}
-    - targetCorrespondingSourceObject: {fileID: 2092175183012456784, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1577501391971926617}
   m_SourcePrefab: {fileID: 100100000, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
 --- !u!1 &3886834790590605844 stripped
@@ -578,29 +575,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2092175183012456784, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
   m_PrefabInstance: {fileID: 4753163255476582490}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1687726600181870349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6700871302200594698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 1
-  m_MatchWidthOrHeight: 0
-  m_PhysicalUnit: 3
-  m_FallbackScreenDPI: 96
-  m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
 --- !u!114 &1577501391971926617
 MonoBehaviour:
   m_ObjectHideFlags: 0

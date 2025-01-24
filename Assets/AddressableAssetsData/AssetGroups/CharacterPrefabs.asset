@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: CharacterPrefabs
   m_GUID: 971f6c55eafbc384abf45d7243264b16
   m_SerializeEntries:
-  - m_GUID: 2a4bb12fa92a9aa4088eca2c5262316c
-    m_Address: Beholder
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55c878377383c1149a6449ecfdcace72
     m_Address: Player
     m_ReadOnly: 0

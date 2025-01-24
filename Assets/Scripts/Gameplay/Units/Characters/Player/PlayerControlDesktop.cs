@@ -64,7 +64,7 @@ namespace Unit.Character.Player
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetPlayerEndurance(PlayerEndurance)
                 .SetJumpKey(so_GameHotkeyses.JumpKey)
-                .SetReductionEndurance(SO_PlayerMove.JumpInfo.ReductionEndurance)
+                .SetReductionEndurance(SO_PlayerMove.JumpInfo.BaseReductionEndurance)
                 .SetCharacterController(CharacterController)
                 .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
                 .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)

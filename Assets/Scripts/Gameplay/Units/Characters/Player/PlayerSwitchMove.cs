@@ -20,7 +20,7 @@ namespace Unit.Character.Player
             return (PlayerRunState)new PlayerRunStateBuilder()
                 .SetCharacterController(CharacterController)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
-                .SetRunReductionEndurance(so_PlayerMove.RunReductionEndurance)
+                .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPlayerEndurance(PlayerEndurance)
                 .SetCenter(Center)
                 .SetCharacterAnimation(this.CharacterAnimation)

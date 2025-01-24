@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Gameplay.Tool
 {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class CreateTrapTool : ToolEditor
     {
@@ -115,4 +116,5 @@ namespace Gameplay.Tool
             createGameFieldTool.CurrentGameField.SortingArray();
         }
     }
+        #endif
 }

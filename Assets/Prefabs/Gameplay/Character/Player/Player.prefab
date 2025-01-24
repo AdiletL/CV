@@ -2345,9 +2345,9 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 29.77
+  m_Intensity: 20
   m_Range: 15
-  m_SpotAngle: 107.61235
+  m_SpotAngle: 90.041824
   m_InnerSpotAngle: 0
   m_CookieSize: 10
   m_Shadows:
@@ -2382,7 +2382,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 4294967295
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0

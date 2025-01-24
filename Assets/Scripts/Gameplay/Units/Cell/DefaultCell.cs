@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
+    #if UNITY_EDITOR
     public class DefaultCell : MonoBehaviour
     {
         [field: SerializeField] public Vector2Int Coordinates { get; private set; }
@@ -31,4 +32,5 @@ namespace Gameplay
             EditorUtility.SetDirty(this);
         }
     }
+    #endif
 }

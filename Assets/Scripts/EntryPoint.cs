@@ -20,17 +20,24 @@ public class EntryPoint
 
     private void RunGame()
     {
-#if UNITY_EDITOR
         SceneManager.sceneLoaded += OnSceneLoaded;
+#if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
-
-        nextSceneName = sceneName;
         if (sceneName == Scenes.LABORATORY_NAME || sceneName == Scenes.GAMEPLAY_NAME)
         {
+            nextSceneName = sceneName;
             Debug.Log("Current scene: " + sceneName);
             SceneManager.LoadSceneAsync(Scenes.BOOTSTRAP_NAME, LoadSceneMode.Single);
         }
+        else if (sceneName == Scenes.BOOTSTRAP_NAME)
+        {
+            nextSceneName = Scenes.GAMEPLAY_NAME;
+            SceneManager.LoadSceneAsync(Scenes.GAMEPLAY_NAME, LoadSceneMode.Single);
+        }
+        return;
 #endif
+        nextSceneName = Scenes.GAMEPLAY_NAME;
+        SceneManager.LoadSceneAsync(Scenes.GAMEPLAY_NAME, LoadSceneMode.Single);
     }
     
 

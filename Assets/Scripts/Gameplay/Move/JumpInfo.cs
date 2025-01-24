@@ -9,6 +9,6 @@ namespace Movement
         public AnimationClip Clip;
         public float Height = 1.5f;
         public int MaxCount = 1;
-        [FormerlySerializedAs("DecreaseEndurance")] public float ReductionEndurance = .1f;
+        public float BaseReductionEndurance = .1f;
     }
 }

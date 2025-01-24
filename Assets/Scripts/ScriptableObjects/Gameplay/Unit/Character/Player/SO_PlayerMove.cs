@@ -1,3 +1,4 @@
+using Movement;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
@@ -9,6 +10,9 @@ namespace ScriptableObjects.Unit.Character.Player
         public AnimationClip[] RunClip { get; private set; }
 
         [field: SerializeField] public float RunSpeed { get; private set; }
-        [field: SerializeField] public float RunReductionEndurance { get; private set; }
+        [field: SerializeField] public float BaseRunReductionEndurance { get; private set; }
+        
+        [field: SerializeField, Space(10), Header("Jump")] public JumpInfo JumpInfo { get; private set; }
+
     }
 }
