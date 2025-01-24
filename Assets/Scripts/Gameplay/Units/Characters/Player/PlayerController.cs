@@ -1,4 +1,5 @@
-using Calculate;
+using System;
+using System.Collections.Generic;
 using Gameplay.Damage;
 using Gameplay.Effect;
 using Gameplay.Resistance;
@@ -7,9 +8,11 @@ using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
+using Unit.Item.Container;
 using Unity.Collections;
 using UnityEngine;
 using Zenject;
+using ValueType = Calculate.ValueType;
 
 namespace Unit.Character.Player
 {
@@ -23,6 +26,9 @@ namespace Unit.Character.Player
     
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable
     {
+        public event Action<GameObject> onCollisionEnter;
+        public event Action<GameObject> onCollisionExit;
+        
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
@@ -41,7 +47,7 @@ namespace Unit.Character.Player
         private PlayerEndurance playerEndurance;
         
         private CharacterController characterController;
-
+        
         protected override UnitInformation CreateUnitInformation()
         {
             return new PlayerInformation(this);
@@ -109,16 +115,13 @@ namespace Unit.Character.Player
                 .Build();
         }
 
+        
         public override void Initialize()
         {
             characterController = GetComponent<CharacterController>();
             playerEndurance = GetComponentInUnit<PlayerEndurance>();
             
             base.Initialize();
-
-            playerControlDesktop = CreatePlayerControlDesktop();
-            diContainer.Inject(playerControlDesktop);
-            playerControlDesktop.Initialize();
             
             StateMachine.Initialize();
             
@@ -127,7 +130,6 @@ namespace Unit.Character.Player
             //Test
             InitializeSword();
                         
-            StateMachine.OnChangedState += OnChangedState;
             StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
         }
 
@@ -160,6 +162,30 @@ namespace Unit.Character.Player
             playerSwitchMove.Initialize();
         }
 
+        protected override void BeforeInitializeMediator()
+        {
+            base.BeforeInitializeMediator();
+            playerControlDesktop = CreatePlayerControlDesktop();
+            diContainer.Inject(playerControlDesktop);
+            playerControlDesktop.Initialize();
+        }
+
+        protected override void InitializeMediator()
+        {
+            base.InitializeMediator();
+            StateMachine.OnChangedState += OnChangedState;
+            onCollisionEnter += playerControlDesktop.CheckItemEnter;
+            onCollisionExit += playerControlDesktop.CheckItemExit;
+        }
+
+        protected override void UnInitializeMediator()
+        {
+            base.UnInitializeMediator();
+            StateMachine.OnChangedState -= OnChangedState;
+            onCollisionEnter -= playerControlDesktop.CheckItemEnter;
+            onCollisionExit -= playerControlDesktop.CheckItemExit;
+        }
+
         public override void Appear()
         {
 
@@ -168,42 +194,56 @@ namespace Unit.Character.Player
         private void InitializeSword()
         {
             //TEST
-            var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
-            diContainer.Inject(swordDamageable);
-            var sword = (Sword)new SwordBuilder()
-                .SetIncreaseAttackSpeed(so_Sword.IncreaseAttackSpeed.ValueType, so_Sword.IncreaseAttackSpeed.Value)
-                .SetReductionEndurance(so_Sword.ReductionEndurance.ValueType, so_Sword.ReductionEndurance.Value)
-                .SetAngleToTarget(so_Sword.AngleToTarget)
-                .SetWeaponParent(weaponParent)
-                .SetGameObject(gameObject)
-                .SetRange(so_Sword.Range)
-                .SetWeaponPrefab(so_Sword.WeaponPrefab)
-                .SetDamageable(swordDamageable)
-                .Build();
-            diContainer.Inject(sword);
-            sword.Initialize();
-            SetWeapon(sword);
+            if (playerSwitchAttack.TryGetWeapon(typeof(Sword), out Sword component))
+            {
+                SetWeapon(component);
+            }
+            else
+            {
+                var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
+                diContainer.Inject(swordDamageable);
+                var sword = (Sword)new SwordBuilder()
+                    .SetIncreaseAttackSpeed(so_Sword.IncreaseAttackSpeed.ValueType, so_Sword.IncreaseAttackSpeed.Value)
+                    .SetReductionEndurance(so_Sword.ReductionEndurance.ValueType, so_Sword.ReductionEndurance.Value)
+                    .SetAngleToTarget(so_Sword.AngleToTarget)
+                    .SetWeaponParent(weaponParent)
+                    .SetGameObject(gameObject)
+                    .SetRange(so_Sword.Range)
+                    .SetWeaponPrefab(so_Sword.WeaponPrefab)
+                    .SetDamageable(swordDamageable)
+                    .Build();
+                diContainer.Inject(sword);
+                sword.Initialize();
+                SetWeapon(sword);
+            }
             isSword = true;
             Debug.Log("Sword");
         }
 
         private void InitializeBow()
         {
-            var projectile = new NormalDamage(so_Bow.Damage, gameObject);
-            diContainer.Inject(projectile);
-            var bow = (Bow)new BowBuilder()
-                .SetDamageable(projectile)
-                .SetRange(so_Bow.Range)
-                .SetGameObject(gameObject)
-                .SetWeaponParent(weaponParent)
-                .SetWeaponPrefab(so_Bow.WeaponPrefab)
-                .SetAngleToTarget(so_Bow.AngleToTarget)
-                .SetReductionEndurance(so_Bow.ReductionEndurance.ValueType, so_Bow.ReductionEndurance.Value)
-                .SetIncreaseAttackSpeed(so_Bow.IncreaseAttackSpeed.ValueType, so_Bow.IncreaseAttackSpeed.Value)
-                .Build();
-            diContainer.Inject(bow);
-            bow.Initialize();
-            SetWeapon(bow);
+            if (playerSwitchAttack.TryGetWeapon(typeof(Bow), out Bow component))
+            {
+                SetWeapon(component);
+            }
+            else
+            {
+                var projectile = new NormalDamage(so_Bow.Damage, gameObject);
+                diContainer.Inject(projectile);
+                var bow = (Bow)new BowBuilder()
+                    .SetDamageable(projectile)
+                    .SetRange(so_Bow.Range)
+                    .SetGameObject(gameObject)
+                    .SetWeaponParent(weaponParent)
+                    .SetWeaponPrefab(so_Bow.WeaponPrefab)
+                    .SetAngleToTarget(so_Bow.AngleToTarget)
+                    .SetReductionEndurance(so_Bow.ReductionEndurance.ValueType, so_Bow.ReductionEndurance.Value)
+                    .SetIncreaseAttackSpeed(so_Bow.IncreaseAttackSpeed.ValueType, so_Bow.IncreaseAttackSpeed.Value)
+                    .Build();
+                diContainer.Inject(bow);
+                bow.Initialize();
+                SetWeapon(bow);
+            }
             isSword = false;
             Debug.Log("Bow");
         }
@@ -247,20 +287,21 @@ namespace Unit.Character.Player
             playerSwitchAttack.SetWeapon(weapon);
         }
 
-        public void IncreaseWeaponStates()
-        {
-            
-        }
-
         private void OnChangedState(Machine.IState state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
 
-        protected override void OnDestroy()
+
+        private void OnTriggerEnter(Collider other)
         {
-            StateMachine.OnChangedState -= OnChangedState;
+            onCollisionEnter?.Invoke(other.gameObject);
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            onCollisionExit?.Invoke(other.gameObject);
         }
     }
 }

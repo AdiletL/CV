@@ -5,6 +5,8 @@ using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
 using ScriptableObjects.Unit.Character.Player;
 using Unit.Cell;
+using Unit.Item.Container;
+using Unit.Item.Loot;
 using UnityEngine;
 using Zenject;
 
@@ -17,13 +19,18 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeyses;
 
         private IClickableObject selectObject;
+        private ContainerController currentContainer;
+        private LootController currentLoot;
         
         private Gravity gravity;
         private RaycastHit[] hits = new RaycastHit[5];
         private Texture2D selectAttackTexture;
         
-        private KeyCode dashKey, jumpKey, attackKey;
-        private int selectObjectMousButton, attackMouseButton, selectCellMouseButton;
+        private KeyCode dashKey, jumpKey;
+        private KeyCode attackKey, openContainerKey;
+        private KeyCode takeLootKey;
+        private int selectObjectMousButton, attackMouseButton;
+        private int selectCellMouseButton;
         
         private bool isSelectedAttack;
         private bool isJumping;
@@ -127,6 +134,8 @@ namespace Unit.Character.Player
             selectObjectMousButton = so_GameHotkeyses.SelectObjectMouseButton;
             jumpKey = so_GameHotkeyses.JumpKey;
             dashKey = so_GameHotkeyses.DashKey;
+            openContainerKey = so_GameHotkeyses.OpenContainerKey;
+            takeLootKey = so_GameHotkeyses.TakeLootKey;
         }
         
         private async UniTask InitializeDash()
@@ -199,6 +208,14 @@ namespace Unit.Character.Player
             else if (Input.GetKeyDown(jumpKey) && !isJumping)
             {
                 TriggerJump();
+            }
+            else if (Input.GetKeyDown(openContainerKey) && !isJumping)
+            {
+                OpenContainer();
+            }
+            else if (Input.GetKeyDown(takeLootKey) && !isJumping)
+            {
+                TakeLoot();
             }
         }
 
@@ -287,11 +304,83 @@ namespace Unit.Character.Player
             isJumping = true;
         }
 
+        private void OpenContainer()
+        {
+            if (!currentContainer) return;
+            
+            currentContainer.Open();
+            var colliders = Physics.OverlapSphere(GameObject.transform.position, 0.5f);
+            foreach (var collider in colliders)
+            {
+                if (collider.TryGetComponent(out ContainerController container))
+                {
+                    currentContainer = container;
+                    currentContainer.Enable(openContainerKey);
+                    return;
+                }
+            }
+
+            currentContainer = null;
+        }
+
+        private void TakeLoot()
+        {
+            if(!currentLoot) return;
+            
+            currentLoot.TakeLoot(GameObject);
+            var colliders = Physics.OverlapSphere(GameObject.transform.position, 0.5f, Layers.LOOT_LAYER);
+            foreach (var collider in colliders)
+            {
+                if (collider.TryGetComponent(out LootController lootController))
+                {
+                    currentLoot = lootController;
+                    currentLoot.Enable(openContainerKey);
+                    return;
+                }
+            }
+
+            currentLoot = null;
+        }
+        
         private void AfterDash()
         {
             isDashing = false;
             gravity.ActivateGravity();
             StateMachine.InActiveBlockChangeState();
+        }
+        
+        public void CheckItemEnter(GameObject other)
+        {
+            if (other.TryGetComponent(out IItem item))
+            {
+                if (item is ContainerController containerController)
+                {
+                    containerController.Enable(openContainerKey);
+                    currentContainer = containerController;
+                }
+                else if (item is LootController lootController)
+                {
+                    currentLoot = lootController;
+                    currentLoot.Enable(takeLootKey);
+                }
+            }
+        }
+
+        public void CheckItemExit(GameObject other)
+        {
+            if (other.TryGetComponent(out IItem item))
+            {
+                if (item is ContainerController containerController)
+                {
+                    containerController.Disable();
+                    currentContainer = null;
+                }
+                else if (item is LootController lootController)
+                {
+                    lootController.Disable();
+                    currentLoot = null;
+                }
+            }
         }
     }
     

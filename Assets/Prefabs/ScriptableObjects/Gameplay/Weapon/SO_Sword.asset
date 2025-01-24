@@ -18,7 +18,7 @@ MonoBehaviour:
   <AngleToTarget>k__BackingField: 10
   <ReductionEndurance>k__BackingField:
     Value: 50
-    ValueType: 0
+    ValueType: 1
   <IncreaseAttackSpeed>k__BackingField:
     Value: 200
     ValueType: 1

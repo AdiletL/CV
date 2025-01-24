@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gameplay.Damage;
 using Gameplay.Weapon;
 using Machine;
@@ -18,7 +19,37 @@ namespace Unit.Character.Player
         private SO_PlayerAttack so_PlayerAttack;
         private Weapon currentWeapon;
         
+        private List<Weapon> currentWeapons = new();
+
         public Transform WeaponParent { get; set; }
+
+        public bool TryGetWeapon(Type weaponType)
+        {
+            foreach (var w in currentWeapons)
+            {
+                if (w.GetType() == weaponType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        public bool TryGetWeapon<T>(Type weaponType, out T weapon) where T : Weapon
+        {
+            foreach (var w in currentWeapons)
+            {
+                if (w.GetType() == weaponType)
+                {
+                    weapon = (T)w;
+                    return true;
+                }
+            }
+
+            weapon = null;
+            return false;
+        }
 
 
         public override int TotalDamage()
@@ -225,16 +256,13 @@ namespace Unit.Character.Player
 
         public void SetWeapon(Weapon weapon)
         {
+            if (!TryGetWeapon(weapon.GetType()))
+                currentWeapons.Add(weapon);
+                
             currentWeapon = weapon;
-            RangeAttack = currentWeapon.Range;
-            RangeAttackSqr = RangeAttack * RangeAttack;
-            
-            if(!this.StateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
-            {
-                playerWeaponAttackState = CreateWeaponState();
-                playerWeaponAttackState.Initialize();
-                this.StateMachine.AddStates(playerWeaponAttackState);
-            }
+            SetRangeAttack(currentWeapon.Range);
+
+            InitializeWeaponAttackState();
 
             playerWeaponAttackState.SetWeapon(currentWeapon);
         }

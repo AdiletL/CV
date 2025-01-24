@@ -33,10 +33,11 @@ namespace Unit.Character
             UnitInformation = CreateUnitInformation();
             diContainer.Inject(UnitInformation);
             
-            InitializeMediator();
-
             CreateSwitchState();
             CreateStates();
+
+            BeforeInitializeMediator();
+            InitializeMediator();
 
             var ui = GetComponentInUnit<CharacterUI>();
             var experience = GetComponentInUnit<CharacterExperience>();
@@ -70,6 +71,11 @@ namespace Unit.Character
 
         protected abstract void CreateStates();
         protected abstract void CreateSwitchState();
+
+        protected virtual void BeforeInitializeMediator()
+        {
+            
+        }
 
         protected virtual void OnEnable()
         {

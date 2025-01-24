@@ -12,16 +12,19 @@ namespace ScriptableObjects.Gameplay
 
         [field: SerializeField] public int AttackMouseButton { get; private set; } = 0;
         
-        [field: SerializeField, Header("Select Cell"), Space(10)] 
+        [field: SerializeField, Header("Select Cell")] 
         public int SelectCellMouseButton { get; private set; } = 1;
         
-        [field: SerializeField, Header("Jump"), Space(10)] 
+        [field: SerializeField, Header("Jump")] 
         public KeyCode JumpKey { get; private set; } = KeyCode.Space;
         
-        [field: SerializeField, Header("Open Chest"), Space(10)] 
-        public KeyCode OpenChestKey { get; private set; } = KeyCode.E;
+        [field: SerializeField, Header("Open Chest")] 
+        public KeyCode OpenContainerKey { get; private set; } = KeyCode.E;
+        
+        [field: SerializeField, Header("Take Loot")] 
+        public KeyCode TakeLootKey { get; private set; } = KeyCode.F;
 
-        [field: SerializeField, Header("Skills"), Space(10)]
+        [field: SerializeField, Header("Skills")]
         public KeyCode DashKey { get; private set; } = KeyCode.LeftShift;
     }
 }

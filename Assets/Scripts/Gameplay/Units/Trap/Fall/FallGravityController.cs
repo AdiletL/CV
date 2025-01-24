@@ -94,8 +94,9 @@ namespace Unit.Trap.Fall
                 if (colliders[i].TryGetComponent(out CellController cell))
                 {
                     if(cell.IsBlocked()) continue;
+                    if(!cell.gameObject.TryGetComponent(out Rigidbody rigidBody))
+                        cell.gameObject.AddComponent<Rigidbody>();
                     
-                    cell.gameObject.AddComponent<Rigidbody>();
                     cell.GetComponent<Rigidbody>().mass = Mass;
                     cellControllers.Add(cell);
                     yield return new WaitForSeconds(intervalFallObjects);
