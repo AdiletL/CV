@@ -696,7 +696,7 @@ MonoBehaviour:
     - {fileID: 2254375068998348713}
     - {fileID: 5694861856431887376}
   <VisualParent>k__BackingField: {fileID: 6757641333924670711}
-  soItem: {fileID: 11400000, guid: 9528c49e87838bd4d8801b0972179464, type: 2}
+  so_Item: {fileID: 11400000, guid: 9528c49e87838bd4d8801b0972179464, type: 2}
   lootPrefabs:
   - m_AssetGUID: a76b44db1efe60f4f8940b970aba2e75
     m_SubObjectName: 

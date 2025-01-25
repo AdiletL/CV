@@ -10,7 +10,7 @@ namespace Unit.Character
         }
 
 
-        protected virtual void ClearHotkeys()
+        public virtual void ClearHotkeys()
         {
             
         }

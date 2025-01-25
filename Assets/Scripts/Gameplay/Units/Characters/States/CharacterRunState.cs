@@ -6,7 +6,7 @@ namespace Unit.Character
     {
         protected float durationAnimation;
         
-        public CharacterSwitchAttack CharacterSwitchAttack { get; set; }
+        public ISwitchState CharacterSwitchAttack { get; set; }
         public CharacterAnimation CharacterAnimation  { get; set; }
         public AnimationClip[] RunClips  { get; set; }
 
@@ -70,7 +70,7 @@ namespace Unit.Character
                 characterRunState.RunClips = animationClips;
             return this;
         }
-        public CharacterRunStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttack characterSwitchAttack)
+        public CharacterRunStateBuilder SetCharacterSwitchAttack(ISwitchState characterSwitchAttack)
         {
             if(state is CharacterRunState characterRunState)
                 characterRunState.CharacterSwitchAttack = characterSwitchAttack;

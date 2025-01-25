@@ -62,8 +62,7 @@ namespace Unit.Character
         {
             base.Update();
             
-            if (!currentTarget
-                || (!isAttack && !Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr)))
+            if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
                 return;

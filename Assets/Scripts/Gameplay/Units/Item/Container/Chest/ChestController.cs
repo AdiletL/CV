@@ -70,8 +70,8 @@ namespace Unit.Item.Container
                 diContainer.Inject(lootController);
                 lootController.Initialize();
                 loot.transform.position = transform.position;
-                randomX = Random.Range(-1, 1);
-                randomZ = Random.Range(1, 2);
+                randomX = Random.Range(-.3f, .3f);
+                randomZ = Random.Range(0, 1f);
                 point = transform.forward + new Vector3(transform.position.x + randomX, transform.position.y, randomZ);
                 lootController.JumpToPoint(point);
             }

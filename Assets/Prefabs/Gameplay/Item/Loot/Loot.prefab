@@ -180,7 +180,7 @@ MonoBehaviour:
     - {fileID: 4077305803569677547}
     - {fileID: 7456939265718419376}
   <VisualParent>k__BackingField: {fileID: 4077305803569677547}
-  soItem: {fileID: 0}
+  so_Item: {fileID: 11400000, guid: 8201692e40749e34bbc4960661ccae79, type: 2}
 --- !u!65 &5139625772414045573
 BoxCollider:
   m_ObjectHideFlags: 0

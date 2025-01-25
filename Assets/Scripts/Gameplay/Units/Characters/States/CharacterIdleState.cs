@@ -10,8 +10,8 @@ namespace Unit.Character
     {
         public override StateCategory Category { get; } = StateCategory.idle;
         
-        public CharacterSwitchMove CharacterSwitchMove { get; set; }
-        public CharacterSwitchAttack CharacterSwitchAttack { get; set; }
+        public ISwitchState CharacterSwitchMove { get; set; }
+        public ISwitchState CharacterSwitchAttack { get; set; }
         public CharacterController CharacterController { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
         public AnimationClip[] IdleClips { get; set; }
@@ -60,7 +60,7 @@ namespace Unit.Character
             return this;
         }
         
-        public CharacterIdleStateBuilder SetCharacterSwitchMove(CharacterSwitchMove characterSwitchMove)
+        public CharacterIdleStateBuilder SetCharacterSwitchMove(ISwitchState characterSwitchMove)
         {
             if (state is CharacterIdleState characterIdleIdleState)
             {
@@ -69,7 +69,7 @@ namespace Unit.Character
 
             return this;
         }
-        public CharacterIdleStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttack characterSwitchAttack)
+        public CharacterIdleStateBuilder SetCharacterSwitchAttack(ISwitchState characterSwitchAttack)
         {
             if (state is CharacterIdleState characterIdleIdleState)
             {

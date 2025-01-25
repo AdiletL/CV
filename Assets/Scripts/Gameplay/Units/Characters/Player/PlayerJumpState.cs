@@ -4,7 +4,7 @@ namespace Unit.Character.Player
 {
     public class PlayerJumpState : CharacterJumpState
     {
-        public PlayerEndurance PlayerEndurance { get; set; }
+        public IEndurance Endurance { get; set; }
         public KeyCode JumpKey { get; set; }
         public float JumpReductionEndurance { get; set; }
         
@@ -31,7 +31,7 @@ namespace Unit.Character.Player
         
         private void ReductionEndurance()
         {
-            PlayerEndurance.RemoveEndurance(JumpReductionEndurance);
+            Endurance.RemoveEndurance(JumpReductionEndurance);
         }
     }
     
@@ -41,10 +41,10 @@ namespace Unit.Character.Player
         {
         }
 
-        public PlayerJumpStateBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
+        public PlayerJumpStateBuilder SetEndurance(IEndurance playerEndurance)
         {
             if(state is PlayerJumpState playerJumpState)
-                playerJumpState.PlayerEndurance = playerEndurance;
+                playerJumpState.Endurance = playerEndurance;
             
             return this;
         }

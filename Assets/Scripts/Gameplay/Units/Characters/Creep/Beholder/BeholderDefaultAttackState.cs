@@ -14,8 +14,7 @@ namespace Unit.Character.Creep
 
         public override void Enter()
         {
-            if(!currentTarget)
-                FindUnit();
+            FindUnit();
             
             base.Enter();
         }

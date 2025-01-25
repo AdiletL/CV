@@ -64,7 +64,6 @@ namespace Unit.Character.Creep
             pathToPoint.Clear();
             FindNewPath();
             
-            //Debug.Log(currentTarget);
             if (!currentTarget)
             {
                 this.StateMachine.ExitCategory(Category, null);
@@ -98,6 +97,14 @@ namespace Unit.Character.Creep
             if (pathToPoint.Count == 0)
             {
                 pathFinding.SetStartPosition(GameObject.transform.position);
+                
+                var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
+                var startCell = Calculate.FindCell.GetCell(StartPosition.Value, Vector3.down);
+                var endCell = Calculate.FindCell.GetCell(EndPosition.Value, Vector3.down);
+                
+                if (currentCell == startCell) pathFinding.SetTargetPosition(EndPosition.Value);
+                else if (currentCell == endCell) pathFinding.SetTargetPosition(StartPosition.Value);
+                
                 pathToPoint = pathFinding.GetPath();
             }
             

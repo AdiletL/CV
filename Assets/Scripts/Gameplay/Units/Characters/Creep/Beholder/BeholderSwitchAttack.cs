@@ -11,7 +11,7 @@ namespace Unit.Character.Creep
         [Inject] private DiContainer diContainer;
         
         private SO_BeholderAttack so_BeholderAttack;
-        private BeholderSwitchMove beholderSwitchMove;
+        private BeholderSwitchMove _beholderSwitchMove;
         private BeholderDefaultAttackState beholderDefaultAttackState;
         
         private BeholderDefaultAttackState CreateDefaultAttack()
@@ -19,7 +19,7 @@ namespace Unit.Character.Creep
             return (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
                 .SetCenter(Center)
                 .SetCharacterAnimation(CharacterAnimation)
-                .SetCharacterSwitchMove(beholderSwitchMove)
+                .SetCharacterSwitchMove(_beholderSwitchMove)
                 .SetGameObject(GameObject)
                 .SetAttackClips(so_BeholderAttack.AttackClips)
                 .SetCooldownClip(so_BeholderAttack.CooldownClip)
@@ -52,7 +52,7 @@ namespace Unit.Character.Creep
             base.Initialize();
 
             so_BeholderAttack = (SO_BeholderAttack)so_CharacterAttack;
-            beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
+            _beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
             RangeAttack = so_BeholderAttack.Range;
             damageable = new NormalDamage(so_BeholderAttack.Damage, GameObject);
             diContainer.Inject(damageable);

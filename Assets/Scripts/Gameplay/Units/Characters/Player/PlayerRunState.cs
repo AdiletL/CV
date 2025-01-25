@@ -8,7 +8,7 @@ namespace Unit.Character.Player
 {
   public class PlayerRunState : CharacterRunState
 {
-    private PlayerSwitchAttack playerSwitchAttack;
+    private PlayerSwitchAttack _playerSwitchAttack;
     private PathFinding pathFinder;
     private Rotation rotationController;
     private CellController finalCell;
@@ -50,7 +50,7 @@ namespace Unit.Character.Player
     public override void Initialize()
     {
         base.Initialize();
-        playerSwitchAttack = (PlayerSwitchAttack)CharacterSwitchAttack;
+        _playerSwitchAttack = (PlayerSwitchAttack)CharacterSwitchAttack;
         rotationController = new Rotation(GameObject.transform, RotationSpeed);
         pathFinder = new PathFindingBuilder()
             .SetStartPosition(GameObject.transform.position)
@@ -274,10 +274,10 @@ namespace Unit.Character.Player
         countCooldownheckEnemy += Time.deltaTime;
         if (countCooldownheckEnemy > checkEnemyCooldown)
         {
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, enemy.transform.position, playerSwitchAttack.RangeAttackSqr))
+            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, enemy.transform.position, _playerSwitchAttack.RangeAttackSqr))
             {
-                playerSwitchAttack.SetTarget(finalTarget);
-                playerSwitchAttack.ExitOtherStates();
+                _playerSwitchAttack.SetTarget(finalTarget);
+                _playerSwitchAttack.ExitOtherStates();
             }
 
             countCooldownheckEnemy = 0;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterSwitchAttack : UnitSwitchAttack, ISwitch
+    public class CharacterSwitchAttack : UnitSwitchAttack, ISwitchState
     {
         protected SO_CharacterAttack so_CharacterAttack;
         protected GameObject currentTarget;
@@ -71,9 +71,9 @@ namespace Unit.Character
             currentTarget = target;
         }
         
-        public void SetSwitchMove(ISwitch moveSwitch)
+        public void SetSwitchMove(ISwitchState moveISwitchState)
         {
-            CharacterSwitchMove = (CharacterSwitchMove)moveSwitch;
+            CharacterSwitchMove = (CharacterSwitchMove)moveISwitchState;
         }
     }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unit.Item.Container
 {
-    public abstract class ContainerController : ItemController
+    public abstract class ContainerController : ItemController, IContainer
     {
         protected SO_Container so_Container;
 
@@ -17,6 +17,7 @@ namespace Unit.Item.Container
             so_Container = (SO_Container)so_Item;
             openClip = so_Container.OpenClip;
             closeClip = so_Container.CloseClip;
+            
         }
 
         public abstract void Open();

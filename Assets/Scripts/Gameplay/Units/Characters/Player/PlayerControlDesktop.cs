@@ -1,12 +1,12 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using Gameplay.Skill;
+using Gameplay.Units.Item.Loot;
 using Machine;
 using ScriptableObjects.Gameplay;
-using ScriptableObjects.Gameplay.Skill;
 using ScriptableObjects.Unit.Character.Player;
 using Unit.Cell;
 using Unit.Item.Container;
-using Unit.Item.Loot;
 using UnityEngine;
 using Zenject;
 
@@ -15,61 +15,50 @@ namespace Unit.Character.Player
     public class PlayerControlDesktop : CharacterControlDesktop
     {
         [Inject] private DiContainer diContainer;
-        [Inject] private SO_SkillContainer so_SkillContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeyses;
 
+        private event Action OnHandleInput;
+
         private IClickableObject selectObject;
-        private ContainerController currentContainer;
-        private LootController currentLoot;
-        
-        private Gravity gravity;
+        private IInputHandler playerSkillInputHandler;
+
         private RaycastHit[] hits = new RaycastHit[5];
         private Texture2D selectAttackTexture;
         
-        private KeyCode dashKey, jumpKey;
-        private KeyCode attackKey, openContainerKey;
-        private KeyCode takeLootKey;
+        private KeyCode jumpKey;
+        private KeyCode attackKey;
         private int selectObjectMousButton, attackMouseButton;
         private int selectCellMouseButton;
         
         private bool isSelectedAttack;
-        private bool isJumping;
-        private bool isDashing;
         
-        public SkillHandler SkillHandler { get; set; }
+        private readonly List<IInteractionHandler> interactionHandlers = new();
+
+        public PlayerController PlayerController { get; set; }
         public StateMachine StateMachine { get; set; }
         public GameObject GameObject { get; set; }
         public PlayerAnimation PlayerAnimation { get; set; }
-        public PlayerSwitchAttack PlayerSwitchAttack { get; set; }
-        public PlayerSwitchMove PlayerSwitchMove { get; set; }
-        public PlayerEndurance PlayerEndurance { get; set; }
+        public ISwitchState PlayerSwitchAttack { get; set; }
+        public ISwitchState PlayerSwitchMove { get; set; }
+        public IEndurance Endurance { get; set; }
         public SO_PlayerControlDesktop SO_PlayerControlDesktop { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
         public CharacterController CharacterController { get; set; }
         public LayerMask EnemyLayer { get; set; }
+        public bool IsJumping { get; private set; }
+        public bool IsUseSkill { get; private set; }
         
         ~PlayerControlDesktop()
         {
-            DeInitializeMediator();
+            UnInitializeMediator();
+            UnRegisterInteraction();
         }
 
-        private async UniTask<Dash> CreateDash()
-        {
-            var so_Dash = await so_SkillContainer.GetSkillConfig<SO_SkillDash>();
-            if(!so_Dash) return null;
-
-            return (Dash)new DashBuilder()
-                .SetCharacterController(CharacterController)
-                .SetDuration(so_Dash.DashDuration)
-                .SetSpeed(so_Dash.DashSpeed)
-                .SetGameObject(GameObject)
-                .Build();
-        }
         
         private PlayerJumpState CreateJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
-                .SetPlayerEndurance(PlayerEndurance)
+                .SetEndurance(Endurance)
                 .SetJumpKey(so_GameHotkeyses.JumpKey)
                 .SetReductionEndurance(SO_PlayerMove.JumpInfo.BaseReductionEndurance)
                 .SetCharacterController(CharacterController)
@@ -118,12 +107,16 @@ namespace Unit.Character.Player
         {
             base.Initialize();
 
+            InitializeHotkeys();
+            InitializeInteractionHandler();
+            
+            playerSkillInputHandler = new PlayerSkillInputHandler(GameObject, StateMachine, this, CharacterController);
+            diContainer.Inject(playerSkillInputHandler);
+            playerSkillInputHandler.Initialize();
+            
             InitializeMediator();
             
-            gravity = GameObject.GetComponent<PlayerGravity>();
             selectAttackTexture = SO_PlayerControlDesktop.SelectAttackIcon.texture;
-
-            InitializeHotkeys();
         }
 
         private void InitializeHotkeys()
@@ -133,18 +126,32 @@ namespace Unit.Character.Player
             attackMouseButton = so_GameHotkeyses.AttackMouseButton;
             selectObjectMousButton = so_GameHotkeyses.SelectObjectMouseButton;
             jumpKey = so_GameHotkeyses.JumpKey;
-            dashKey = so_GameHotkeyses.DashKey;
-            openContainerKey = so_GameHotkeyses.OpenContainerKey;
-            takeLootKey = so_GameHotkeyses.TakeLootKey;
+        }
+
+        private void InitializeInteractionHandler()
+        {
+            var containerInteractionHandler = new ContainerInteractionHandler(GameObject, this);
+            var lootInteractionHandler = new LootInteractionHandler(GameObject, this);
+            RegisterInteraction(containerInteractionHandler);
+            RegisterInteraction(lootInteractionHandler);
+        }
+        public void RegisterInteraction(IInteractionHandler handler)
+        {
+            diContainer.Inject(handler);
+            handler.Initialize();
+            interactionHandlers.Add(handler);
+            OnHandleInput += handler.HandleInput;
+            PlayerController.TriggerEnter += handler.CheckTriggerEnter;
+            PlayerController.TriggerExit += handler.CheckTriggerExit;
         }
         
-        private async UniTask InitializeDash()
+        public void UnRegisterInteraction()
         {
-            if (!SkillHandler.IsSkillNotNull(typeof(Dash)))
+            foreach (var VARIABLE in interactionHandlers)
             {
-                var dash = await CreateDash();
-                diContainer.Inject(dash);
-                SkillHandler.AddSkill(dash);
+                OnHandleInput -= VARIABLE.HandleInput;
+                PlayerController.TriggerEnter -= VARIABLE.CheckTriggerEnter;
+                PlayerController.TriggerExit -= VARIABLE.CheckTriggerExit;
             }
         }
 
@@ -161,26 +168,29 @@ namespace Unit.Character.Player
         private void InitializeMediator()
         {
             StateMachine.OnExitCategory += OnExitCategory;
+            OnHandleInput += playerSkillInputHandler.HandleInput;
         }
 
-        private void DeInitializeMediator()
+        private void UnInitializeMediator()
         {
             StateMachine.OnExitCategory -= OnExitCategory;
+            OnHandleInput -= playerSkillInputHandler.HandleInput;
         }
 
         private void OnExitCategory(Machine.IState state)
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
-                isJumping = false;
+                IsJumping = false;
             }
         }
 
-        protected override void ClearHotkeys()
+        public override void ClearHotkeys()
         {
             base.ClearHotkeys();
             isSelectedAttack = false;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            ClearSelectObject();
         }
 
         private void ClearSelectObject()
@@ -189,39 +199,27 @@ namespace Unit.Character.Player
             selectObject = null;
         }
 
-        public override async void HandleHotkey()
+        public override void HandleHotkey()
         {
-            if(isDashing) return;
+            if(!playerSkillInputHandler.IsCanInput()) return;
             
             base.HandleHotkey();
             
-            if (Input.GetKeyDown(attackKey) && !isJumping)
+            if (Input.GetKeyDown(attackKey) && !IsJumping)
             {
                 isSelectedAttack = true;
                 Cursor.SetCursor(selectAttackTexture, Vector2.zero, CursorMode.Auto);
                 ClearSelectObject();
             }
-            else if (Input.GetKeyDown(dashKey))
-            {
-                await TriggerDash();
-            }
-            else if (Input.GetKeyDown(jumpKey) && !isJumping)
+            else if (Input.GetKeyDown(jumpKey) && !IsJumping)
             {
                 TriggerJump();
-            }
-            else if (Input.GetKeyDown(openContainerKey) && !isJumping)
-            {
-                OpenContainer();
-            }
-            else if (Input.GetKeyDown(takeLootKey) && !isJumping)
-            {
-                TakeLoot();
             }
         }
 
         public override void HandleInput()
         {
-            if(isDashing) return;
+            if(!playerSkillInputHandler.IsCanInput()) return;
             
             base.HandleInput();
 
@@ -229,27 +227,16 @@ namespace Unit.Character.Player
             {
                 TriggerSelectCell();
             }
-            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !isJumping)
+            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !IsJumping)
             {
                 TriggerAttack();
             }
-            else if (Input.GetMouseButtonDown(selectObjectMousButton))
+            else if (Input.GetMouseButtonDown(selectObjectMousButton) && !IsJumping)
             {
                 TriggerSelectObject();
             }
-        }
-
-        private async UniTask TriggerDash()
-        {
-            await InitializeDash();
-                
-            gravity.InActivateGravity();
-            StateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
-            StateMachine.ActiveBlockChangeState();
-            SkillHandler.Execute(typeof(Dash), AfterDash);
-            ClearHotkeys();
-            ClearSelectObject();
-            isDashing = true;
+            
+            OnHandleInput?.Invoke();
         }
         
         private void TriggerSelectCell()
@@ -260,18 +247,16 @@ namespace Unit.Character.Player
                 PlayerSwitchMove.ExitOtherStates();
             }
             ClearHotkeys();
-            ClearSelectObject();
         }
         
         private void TriggerAttack()
         {
             if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, EnemyLayer))
-            {
+            { 
                 PlayerSwitchAttack.SetTarget(gameObject);
                 PlayerSwitchAttack.ExitOtherStates();
             }
             ClearHotkeys();
-            ClearSelectObject();
         }
         
         private void TriggerSelectObject()
@@ -285,12 +270,11 @@ namespace Unit.Character.Player
                     selectObject = unit;
                     selectObject.ShowInformation();
                 }
+                else
+                {
+                    ClearHotkeys();
+                }
             }
-            else
-            {
-                ClearSelectObject();
-            }
-            ClearHotkeys();
         }
         
         private void TriggerJump()
@@ -301,87 +285,9 @@ namespace Unit.Character.Player
             StateMachine.ExitCategory(StateCategory.attack, null);
             StateMachine.ExitCategory(StateCategory.action, null);
             StateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
-            isJumping = true;
+            IsJumping = true;
         }
 
-        private void OpenContainer()
-        {
-            if (!currentContainer) return;
-            
-            currentContainer.Open();
-            var colliders = Physics.OverlapSphere(GameObject.transform.position, 0.5f);
-            foreach (var collider in colliders)
-            {
-                if (collider.TryGetComponent(out ContainerController container))
-                {
-                    currentContainer = container;
-                    currentContainer.Enable(openContainerKey);
-                    return;
-                }
-            }
-
-            currentContainer = null;
-        }
-
-        private void TakeLoot()
-        {
-            if(!currentLoot) return;
-            
-            currentLoot.TakeLoot(GameObject);
-            var colliders = Physics.OverlapSphere(GameObject.transform.position, 0.5f, Layers.LOOT_LAYER);
-            foreach (var collider in colliders)
-            {
-                if (collider.TryGetComponent(out LootController lootController))
-                {
-                    currentLoot = lootController;
-                    currentLoot.Enable(openContainerKey);
-                    return;
-                }
-            }
-
-            currentLoot = null;
-        }
-        
-        private void AfterDash()
-        {
-            isDashing = false;
-            gravity.ActivateGravity();
-            StateMachine.InActiveBlockChangeState();
-        }
-        
-        public void CheckItemEnter(GameObject other)
-        {
-            if (other.TryGetComponent(out IItem item))
-            {
-                if (item is ContainerController containerController)
-                {
-                    containerController.Enable(openContainerKey);
-                    currentContainer = containerController;
-                }
-                else if (item is LootController lootController)
-                {
-                    currentLoot = lootController;
-                    currentLoot.Enable(takeLootKey);
-                }
-            }
-        }
-
-        public void CheckItemExit(GameObject other)
-        {
-            if (other.TryGetComponent(out IItem item))
-            {
-                if (item is ContainerController containerController)
-                {
-                    containerController.Disable();
-                    currentContainer = null;
-                }
-                else if (item is LootController lootController)
-                {
-                    lootController.Disable();
-                    currentLoot = null;
-                }
-            }
-        }
     }
     
     public class PlayerControlDesktopBuilder : CharacterControlDesktopBuilder
@@ -390,13 +296,12 @@ namespace Unit.Character.Player
         {
         }
 
-        public PlayerControlDesktopBuilder SetHandleSkill(SkillHandler skillHandler)
+        public PlayerControlDesktopBuilder SetPlayerController(PlayerController playerController)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SkillHandler = skillHandler;
+                playerControlDesktop.PlayerController = playerController;
             return this;
         }
-
         public PlayerControlDesktopBuilder SetStateMachine(StateMachine stateMachine)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
@@ -411,14 +316,14 @@ namespace Unit.Character.Player
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(PlayerSwitchAttack playerSwitchAttack)
+        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(ISwitchState playerSwitchAttack)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.PlayerSwitchAttack = playerSwitchAttack;
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetPlayerSwitchMove(PlayerSwitchMove playerSwitchMove)
+        public PlayerControlDesktopBuilder SetPlayerSwitchMove(ISwitchState playerSwitchMove)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.PlayerSwitchMove = playerSwitchMove;
@@ -446,10 +351,10 @@ namespace Unit.Character.Player
             return this;
         }
         
-        public PlayerControlDesktopBuilder SetPlayerEndurance(PlayerEndurance playerEndurance)
+        public PlayerControlDesktopBuilder SetEndurance(IEndurance playerEndurance)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PlayerEndurance = playerEndurance;
+                playerControlDesktop.Endurance = playerEndurance;
             return this;
         }
         

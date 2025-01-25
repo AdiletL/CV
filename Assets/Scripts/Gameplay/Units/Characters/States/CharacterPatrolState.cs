@@ -4,7 +4,7 @@ namespace Unit.Character
 {
     public class CharacterPatrolState : CharacterBaseMovementState, IPatrol
     {
-        public CharacterSwitchAttack CharacterSwitchAttack { get; set; }
+        public ISwitchState CharacterSwitchAttack { get; set; }
         public Transform Start { get; set; }
         public Transform End { get; set; }
         public float RotationSpeed { get; set; }
@@ -72,7 +72,7 @@ namespace Unit.Character
             return this;
         }
         
-        public CharacterPatrolStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttack characterSwitchAttack)
+        public CharacterPatrolStateBuilder SetCharacterSwitchAttack(ISwitchState characterSwitchAttack)
         {
             if (state is CharacterPatrolState patrolState)
             {

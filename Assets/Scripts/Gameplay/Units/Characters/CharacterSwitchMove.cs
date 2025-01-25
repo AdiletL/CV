@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterSwitchMove : ISwitch
+    public class CharacterSwitchMove : ISwitchState
     {
         protected GameObject currentTarget;
         
@@ -13,7 +13,7 @@ namespace Unit.Character
         public CharacterAnimation CharacterAnimation { get; set; }
         public GameObject GameObject  { get; set; }
         public float RotationSpeed { get; set; }
-        public CharacterSwitchAttack CharacterSwitchAttack { get; protected set; }
+        public ISwitchState CharacterSwitchAttack { get; protected set; }
 
         
         public virtual void Initialize()
@@ -38,9 +38,9 @@ namespace Unit.Character
             currentTarget = target;
         }
 
-        public void SetSwitchAttack(ISwitch attackSwitch)
+        public void SetSwitchAttack(ISwitchState attackISwitchState)
         {
-            CharacterSwitchAttack = (CharacterSwitchAttack)attackSwitch;
+            CharacterSwitchAttack = (CharacterSwitchAttack)attackISwitchState;
         }
     }
 

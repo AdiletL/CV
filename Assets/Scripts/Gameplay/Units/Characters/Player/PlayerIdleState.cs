@@ -8,7 +8,7 @@ namespace Unit.Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
-        private PlayerSwitchMove playerSwitchMove;
+        private PlayerSwitchMove _playerSwitchMove;
 
         private Vector3 targetPosition;
 
@@ -17,7 +17,7 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            playerSwitchMove = (PlayerSwitchMove)CharacterSwitchMove;
+            _playerSwitchMove = (PlayerSwitchMove)CharacterSwitchMove;
         }
         
 
@@ -58,7 +58,7 @@ namespace Unit.Character.Player
         public void SetTarget(GameObject target)
         {
             this.TargetForMove = target;
-            playerSwitchMove.SetTarget(target);
+            _playerSwitchMove.SetTarget(target);
         }
         
         private void CheckMove()
@@ -73,7 +73,7 @@ namespace Unit.Character.Player
             }
             else
             {
-                playerSwitchMove.ExitCategory(Category);
+                _playerSwitchMove.ExitCategory(Category);
             }
         }
     }

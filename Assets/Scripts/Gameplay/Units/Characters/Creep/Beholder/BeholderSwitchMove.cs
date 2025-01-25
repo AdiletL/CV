@@ -10,7 +10,7 @@ namespace Unit.Character.Creep
         private BeholderAnimation beholderAnimation;
         private BeholderRunState beholderRunState;
         private BeholderPatrolState beholderPatrolState;
-        private BeholderSwitchAttack beholderSwitchAttack;
+        private ISwitchState beholderSwitchAttack;
         
         public CharacterController CharacterController { get; set; }
         public Transform Start { get; set; }
