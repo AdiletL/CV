@@ -13,16 +13,20 @@ namespace Unit.Character
         private float cooldownReductionEndurance;
         private float countCooldownReductionEndurance;
         
+        private bool isInitialized;
 
         public override void Initialize()
         {
             base.Initialize();
             cooldownReductionEndurance = gameConfig.CooldownReductionEndurance;
             amountReductionEndurance = gameConfig.AmountReductionEndurance;
+            isInitialized = true;
+            
         }
 
         private void Update()
         {
+            if(!isInitialized) return;
             ReductionEndurance();
         }
 

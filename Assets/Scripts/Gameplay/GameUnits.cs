@@ -31,12 +31,16 @@ public class GameUnits
     {
         List<T> result = new ();
 
-        foreach (var unit in units)
+        for (int i = units.Count - 1; i >= 0; i--)
         {
-            if(unit.TryGetComponent(out T unitComponent)) 
+            if (units[i] == null)
             {
-                result.Add(unitComponent);
+                units.RemoveAt(i);
+                continue;
             }
+            
+            if(units[i].TryGetComponent(out T unitComponent)) 
+                result.Add(unitComponent);
         }
 
         return result;

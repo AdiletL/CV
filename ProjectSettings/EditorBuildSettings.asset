@@ -6,14 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 20d5413b6ec3b584487a541fc6893851
+  - enabled: 1
     path: Assets/Scenes/Bootstrap.unity
     guid: 447e6c9c499272a4396d933ced5aafc0
   - enabled: 1
     path: Assets/Scenes/Gameplay/Gameplay.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
-    path: Assets/Scenes/Laboratory/Laboratory.unity
-    guid: 970af68b58309924fb8c970ed4c7116e
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 2090c748ca68d294d8fc7bb9f0a5b5fc, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

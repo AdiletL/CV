@@ -56,3 +56,9 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  cameraPrefab:
+    m_AssetGUID: 4c5a8ea15a7b7784180be372028bfce2
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

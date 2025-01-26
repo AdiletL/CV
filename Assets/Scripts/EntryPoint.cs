@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,6 +21,9 @@ public class EntryPoint
 
     private void RunGame()
     {
+        if (!(PhotonNetwork.PrefabPool is AddressablesPrefabPool))
+            PhotonNetwork.PrefabPool = new AddressablesPrefabPool();
+        
         SceneManager.sceneLoaded += OnSceneLoaded;
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
@@ -29,22 +33,22 @@ public class EntryPoint
             Debug.Log("Current scene: " + sceneName);
             SceneManager.LoadSceneAsync(Scenes.BOOTSTRAP_NAME, LoadSceneMode.Single);
         }
-        else if (sceneName == Scenes.BOOTSTRAP_NAME)
+        else
         {
             nextSceneName = Scenes.GAMEPLAY_NAME;
-            SceneManager.LoadSceneAsync(Scenes.GAMEPLAY_NAME, LoadSceneMode.Single);
         }
         return;
 #endif
         nextSceneName = Scenes.GAMEPLAY_NAME;
-        SceneManager.LoadSceneAsync(Scenes.GAMEPLAY_NAME, LoadSceneMode.Single);
+        //nextSceneName = Scenes.GAMEPLAY_NAME;
     }
     
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if(scene.name != Scenes.BOOTSTRAP_NAME) return;
-
+        if(!PhotonNetwork.IsMasterClient) return;
+        
         BoostrapLoad();
         
         SceneManager.sceneLoaded -= OnSceneLoaded;

@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Spawner;
 using Gameplay.UI.ScreenSpace.CreatureInformation;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -29,7 +30,7 @@ namespace Gameplay.Manager
             where TInterface : class
             where TConcrete : MonoBehaviour, TInterface
         {
-            var result = await Addressables.InstantiateAsync(prefab);
+            var result = PhotonNetwork.Instantiate(prefab.AssetGUID, Vector3.zero, Quaternion.identity);
             var instance = result.GetComponent<TConcrete>();
             diContainer.Inject(instance);
             diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();

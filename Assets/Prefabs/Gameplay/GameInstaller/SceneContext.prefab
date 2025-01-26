@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 298672994006109345}
   - component: {fileID: 4721341774533391702}
   - component: {fileID: 7675124488934118779}
+  - component: {fileID: -1325146553425104104}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -77,5 +78,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65c6563818d4f14b8010d31ec3bc1ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  so_GameConfig: {fileID: 11400000, guid: 663f3157d209a694c88f78d9c0c8eb27, type: 2}
-  so_GameUIColor: {fileID: 11400000, guid: e3fb94de3c1165147afa66476aa596c3, type: 2}
+--- !u!114 &-1325146553425104104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8321453124024859272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0

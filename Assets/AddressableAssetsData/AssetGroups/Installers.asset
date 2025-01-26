@@ -16,7 +16,7 @@ MonoBehaviour:
   m_GUID: 972b24ac17c70c44991bfb0cfbf6a5ea
   m_SerializeEntries:
   - m_GUID: 7ea490d6ae5997e438b8043074baacc8
-    m_Address: SceneContext
+    m_Address: Assets/Prefabs/Gameplay/GameInstaller/SceneContext.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

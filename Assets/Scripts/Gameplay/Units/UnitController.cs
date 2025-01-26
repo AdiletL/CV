@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -7,7 +8,7 @@ namespace Unit
 {
     [SelectionBase]
     [RequireComponent(typeof(UnitCenter))]
-    public abstract class UnitController : MonoBehaviour, IUnit
+    public abstract class UnitController : MonoBehaviourPun, IUnit
     {
         [Inject] protected DiContainer diContainer;
         

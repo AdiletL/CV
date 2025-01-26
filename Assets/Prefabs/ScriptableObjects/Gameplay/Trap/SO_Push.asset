@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09042c49e47c437c8ebdffdd4eef7b90, type: 3}
   m_Name: SO_Push
   m_EditorClassIdentifier: 
-  <Damage>k__BackingField: 1
+  <Damage>k__BackingField: 10
   <ActivateClip>k__BackingField: {fileID: 7400000, guid: 886c6099395f3504b985634624764d0d, type: 2}
   <DeactivateClip>k__BackingField: {fileID: 7400000, guid: b313607f4531cbe4681d6adbc67586fd, type: 2}
   <EnemyLayer>k__BackingField:

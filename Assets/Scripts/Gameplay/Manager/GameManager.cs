@@ -1,10 +1,13 @@
-﻿using Cysharp.Threading.Tasks;
-using Gameplay.Spawner;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
+using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -18,7 +21,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject uiManagerPrefab;
         [SerializeField] private AssetReference so_SkillContainer;
         [SerializeField] private AssetReference so_GameConfig;
-
+        
         private LevelManager levelManager;
         private IPoolableObject poolManager;
         private UIManager uiManager;
@@ -58,8 +61,8 @@ namespace Gameplay.Manager
             diContainer.Bind<ExperienceSystem>().FromInstance(experienceSystem).AsSingle();
             
             await UniTask.WhenAll(
-                InstantiateUIManager(),
                 InstantiatePoolManager(),
+                InstantiateUIManager(),
                 InstantiateLevelManager()
             );
 
@@ -73,7 +76,7 @@ namespace Gameplay.Manager
             where TInterface : class
             where TConcrete : MonoBehaviour, TInterface
         {
-            var result = await Addressables.InstantiateAsync(prefab);
+            var result = PhotonNetwork.Instantiate(prefab.AssetGUID, Vector3.zero, Quaternion.identity);
             var instance = result.GetComponent<TConcrete>();
             diContainer.Inject(instance);
             diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
@@ -108,7 +111,7 @@ namespace Gameplay.Manager
 
         private async UniTask StartGame()
         {
-            await levelManager.StartLevel();
+            levelManager.StartLevelTest();
         }
     }
 }

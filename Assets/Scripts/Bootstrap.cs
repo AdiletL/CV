@@ -1,5 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Photon.Pun;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -13,12 +15,15 @@ public class Bootstrap : MonoBehaviour
 
     public async UniTask Initialize()
     {
-        var installerPrefab = await Addressables.LoadAssetAsync<GameObject>(gameInstallerPrefab).Task;
-        currentGameInstaller = Instantiate(installerPrefab).GetComponent<GameInstaller>();
+        if(!PhotonNetwork.IsMasterClient) return;
+        
+        var newObject = PhotonNetwork.Instantiate(gameInstallerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+        currentGameInstaller = newObject.GetComponent<GameInstaller>();
     }
 
     public async UniTask TransitionToScene(string sceneName)
     {
+        if(!PhotonNetwork.IsMasterClient) return;
         await CreateManagerAsync(sceneName);
         Scenes.TransitionToScene(sceneName);
     }
@@ -28,20 +33,45 @@ public class Bootstrap : MonoBehaviour
         switch (sceneName)
         {
             case Scenes.GAMEPLAY_NAME:
-                await InstantiateManagerAsync<Gameplay.Manager.GameManager>(gameManagerPrefab);
+                await InstantiateManagerAsyncA<Gameplay.Manager.GameManager>(gameManagerPrefab);
                 break;
             case Scenes.LABORATORY_NAME:
-                await InstantiateManagerAsync<Laboratory.Manager.LaboratoryManager>(laboratoryManagerPrefab);
+                await InstantiateManagerAsyncA<Laboratory.Manager.LaboratoryManager>(laboratoryManagerPrefab);
+                break;
+            case Scenes.TEST_NAME:
+                
                 break;
             default:
                 throw new ArgumentException($"Unknown scene name: {sceneName}");
         }
     }
 
-    private async UniTask<T> InstantiateManagerAsync<T>(AssetReference prefabReference) where T : MonoBehaviour
+    private async UniTask<T> InstantiateManagerAsyncA<T>(AssetReference prefabReference) where T : MonoBehaviour
     {
-        var prefab = await Addressables.LoadAssetAsync<GameObject>(prefabReference).Task;
-        var instance = currentGameInstaller.InstantiatePrefab(prefab).GetComponent<T>();
+        var instance = currentGameInstaller.InstantiatePrefab(prefabReference).GetComponent<T>();
         return instance;
     }
 }
+
+#if UNITY_EDITOR
+[InitializeOnLoad]
+public static class PlayModeCleanup
+{
+    static PlayModeCleanup()
+    {
+        EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+    }
+
+    private static void OnPlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+            var gameInstaller = GameObject.FindObjectOfType<GameInstaller>();
+            if (gameInstaller != null)
+            {
+                GameObject.DestroyImmediate(gameInstaller.gameObject);
+            }
+        }
+    }
+}
+#endif

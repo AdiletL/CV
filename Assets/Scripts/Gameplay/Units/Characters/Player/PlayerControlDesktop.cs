@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Gameplay.Skill;
 using Gameplay.Units.Item.Loot;
 using Machine;
+using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
 using Unit.Cell;
@@ -18,6 +19,7 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeyses;
 
         private event Action OnHandleInput;
+        
 
         private IClickableObject selectObject;
         private IInputHandler playerSkillInputHandler;
@@ -34,6 +36,7 @@ namespace Unit.Character.Player
         
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
+        public PhotonView PhotonView { get; set; }
         public PlayerController PlayerController { get; set; }
         public StateMachine StateMachine { get; set; }
         public GameObject GameObject { get; set; }
@@ -201,6 +204,7 @@ namespace Unit.Character.Player
 
         public override void HandleHotkey()
         {
+            if(!PhotonView.IsMine) return;
             if(!playerSkillInputHandler.IsCanInput()) return;
             
             base.HandleHotkey();
@@ -296,6 +300,12 @@ namespace Unit.Character.Player
         {
         }
 
+        public PlayerControlDesktopBuilder SetPhotonView(PhotonView view)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.PhotonView = view;
+            return this;
+        }
         public PlayerControlDesktopBuilder SetPlayerController(PlayerController playerController)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)

@@ -39,8 +39,8 @@ namespace Unit.Character.Player
         [ReadOnly] public string currentStateName;
 
         private IControl playerControlDesktop;
-        private PlayerSwitchMove _playerSwitchMove;
-        private PlayerSwitchAttack _playerSwitchAttack;
+        private PlayerSwitchMove playerSwitchMove;
+        private PlayerSwitchAttack playerSwitchAttack;
         private PlayerEndurance playerEndurance;
         
         private CharacterController characterController;
@@ -50,15 +50,15 @@ namespace Unit.Character.Player
             return new PlayerInformation(this);
         }
 
-        public override int TotalDamage() => _playerSwitchAttack.TotalDamage();
-        public override int TotalAttackSpeed() => _playerSwitchAttack.TotalAttackSpeed();
-        public override float TotalAttackRange() => _playerSwitchAttack.TotalAttackRange();
+        public override int TotalDamage() => playerSwitchAttack.TotalDamage();
+        public override int TotalAttackSpeed() => playerSwitchAttack.TotalAttackSpeed();
+        public override float TotalAttackRange() => playerSwitchAttack.TotalAttackRange();
 
         private PlayerIdleState CreateIdleState(CharacterAnimation characterAnimation, Transform center)
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetIdleClips(so_PlayerMove.IdleClip)
-                .SetCharacterSwitchMove(_playerSwitchMove)
+                .SetCharacterSwitchMove(playerSwitchMove)
                 .SetCharacterController(characterController)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCenter(center)
@@ -100,9 +100,10 @@ namespace Unit.Character.Player
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
                 .SetCharacterController(characterController)
                 .SetGameObject(gameObject)
-                .SetPlayerSwitchAttack(_playerSwitchAttack)
-                .SetPlayerSwitchMove(_playerSwitchMove)
+                .SetPlayerSwitchAttack(playerSwitchAttack)
+                .SetPlayerSwitchMove(playerSwitchMove)
                 .SetEndurance(playerEndurance)
+                .SetPhotonView(photonView)
                 .SetPlayerController(this)
                 .SetPlayerAnimation(GetComponent<PlayerAnimation>())
                 .SetPlayerMoveConfig(so_PlayerMove)
@@ -146,17 +147,17 @@ namespace Unit.Character.Player
             var characterAnimation = GetComponentInUnit<CharacterAnimation>();
             var center = GetComponentInUnit<UnitCenter>().Center;
 
-            _playerSwitchMove = CreateSwitchMoveState(characterAnimation, center);
-            diContainer.Inject(_playerSwitchMove);
+            playerSwitchMove = CreateSwitchMoveState(characterAnimation, center);
+            diContainer.Inject(playerSwitchMove);
             
-            _playerSwitchAttack = CreateSwitchAttackState(characterAnimation, center);
-            diContainer.Inject(_playerSwitchAttack);
+            playerSwitchAttack = CreateSwitchAttackState(characterAnimation, center);
+            diContainer.Inject(playerSwitchAttack);
             
-            _playerSwitchMove.SetSwitchAttack(_playerSwitchAttack);
-            _playerSwitchAttack.SetSwitchMove(_playerSwitchMove);
+            playerSwitchMove.SetSwitchAttack(playerSwitchAttack);
+            playerSwitchAttack.SetSwitchMove(playerSwitchMove);
             
-            _playerSwitchAttack.Initialize();
-            _playerSwitchMove.Initialize();
+            playerSwitchAttack.Initialize();
+            playerSwitchMove.Initialize();
         }
 
         protected override void BeforeInitializeMediator()
@@ -187,7 +188,7 @@ namespace Unit.Character.Player
         private void InitializeSword()
         {
             //TEST
-            if (_playerSwitchAttack.TryGetWeapon(typeof(Sword), out Sword component))
+            if (playerSwitchAttack.TryGetWeapon(typeof(Sword), out Sword component))
             {
                 SetWeapon(component);
             }
@@ -215,7 +216,7 @@ namespace Unit.Character.Player
 
         private void InitializeBow()
         {
-            if (_playerSwitchAttack.TryGetWeapon(typeof(Bow), out Bow component))
+            if (playerSwitchAttack.TryGetWeapon(typeof(Bow), out Bow component))
             {
                 SetWeapon(component);
             }
@@ -252,6 +253,7 @@ namespace Unit.Character.Player
         private bool isSword;
         private void Update()
         {
+            if(!photonView.IsMine) return;
             //Test
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -272,12 +274,13 @@ namespace Unit.Character.Player
 
         private void LateUpdate()
         {
+            if(!photonView.IsMine) return;
             StateMachine?.LateUpdate();
         }
         
         public void SetWeapon(Weapon weapon)
         {
-            _playerSwitchAttack.SetWeapon(weapon);
+            playerSwitchAttack.SetWeapon(weapon);
         }
 
         private void OnChangedState(Machine.IState state)
