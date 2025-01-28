@@ -44,14 +44,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245b1b297ad4496fa356e44c4426cf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  so_LevelContainer:
-    m_AssetGUID: 926376a6b98787b48a645626c87099af
+  so_LevelContainerPrefab: {fileID: 11400000, guid: 5c47ae151721af443802f97235e774f4, type: 2}
+  playerPrefab:
+    m_AssetGUID: 55c878377383c1149a6449ecfdcace72
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  playerPrefab:
-    m_AssetGUID: 55c878377383c1149a6449ecfdcace72
+  cameraPrefab:
+    m_AssetGUID: 4c5a8ea15a7b7784180be372028bfce2
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  levelControllerPrefab:
+    m_AssetGUID: 92e5c3af0579bd142a11fe0072321e74
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

@@ -15,6 +15,8 @@ namespace Gameplay.Weapon.Projectile
         public override void Initialize()
         {
             base.Initialize();
+            if(isInitialized) return;
+            
             so_Sphere = (SO_Sphere)so_Projectile;
             
             if (forwardMovement == null)
@@ -24,11 +26,11 @@ namespace Gameplay.Weapon.Projectile
                 slowMovementEffect = new SlowMovement(so_Sphere.SlowMovementInfo);
             
             forwardMovement.Initialize();
+            isInitialized = true;
         }
 
         public override void ExecuteMovement()
         {
-            if(forwardMovement == null) return;
             forwardMovement.ExecuteMovement();
         }
 

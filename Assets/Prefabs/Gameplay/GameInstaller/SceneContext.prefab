@@ -78,6 +78,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65c6563818d4f14b8010d31ec3bc1ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManagerPrefab:
+    m_AssetGUID: 323f2059c6360b348ae88126a5ab27da
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  laboratoryManagerPrefab:
+    m_AssetGUID: dbc6e935c7c1aee48a1e5707702822ed
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  networkManagerPrefab:
+    m_AssetGUID: b84368c95b1f81a4c97b8c8c6dc6d291
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
 --- !u!114 &-1325146553425104104
 MonoBehaviour:
   m_ObjectHideFlags: 0

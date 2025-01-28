@@ -2,5 +2,5 @@
 
 public interface IManager
 {
-    public UniTask Initialize();
+    public void Initialize();
 }

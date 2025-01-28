@@ -10,6 +10,7 @@ public static class Scenes
 
     public static void TransitionToScene(string sceneName)
     {
+        if(!PhotonNetwork.IsMasterClient) return;
         PhotonNetwork.LoadLevel(sceneName);
         //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
     }

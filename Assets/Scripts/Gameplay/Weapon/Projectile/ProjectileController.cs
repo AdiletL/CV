@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.Manager;
 using ScriptableObjects.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
@@ -7,7 +8,7 @@ namespace Gameplay.Weapon.Projectile
 {
     public abstract class ProjectileController : MonoBehaviour, IProjectile
     {
-        [Inject] protected IPoolableObject IPoolableObject;
+        [Inject] protected PoolManager poolManager;
 
         [SerializeField] protected SO_Projectile so_Projectile;
         
@@ -34,6 +35,7 @@ namespace Gameplay.Weapon.Projectile
 
         private void Update()
         {
+            if(!isInitialized) return;
             ExecuteMovement();
         }
         public abstract void ExecuteMovement();
@@ -63,7 +65,7 @@ namespace Gameplay.Weapon.Projectile
 
         protected void ReturnToPool()
         {
-            IPoolableObject.ReturnToPool(gameObject);
+            poolManager.ReturnToPool(gameObject);
         }
         
         private void OnTriggerEnter(Collider other)

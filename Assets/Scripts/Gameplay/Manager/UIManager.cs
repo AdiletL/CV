@@ -17,37 +17,46 @@ namespace Gameplay.Manager
         
         private UICreatureInformation uiCreatureInformation;
         private DamagePopUpSpawner damagePopUpSpawner;
+
+        private PhotonView photonView;
         
-        public async UniTask Initialize()
+        public void Initialize()
         {
-            await UniTask.WhenAll(
-                InitializeUICreatureInformation(),
-                InstantiateDamagePopUpSpawner()
-                );
+            photonView = GetComponent<PhotonView>();
+            
+            if(!PhotonNetwork.IsMasterClient) return;
+
+            var newUICreature = PhotonNetwork.Instantiate(uiCreatureInformationPrefab.AssetGUID, Vector3.zero,
+                Quaternion.identity);
+
+            var newDamage =
+                PhotonNetwork.Instantiate(damagePopUpSpawnerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            
+            photonView.RPC(nameof(InitializeUICreatureInformation), RpcTarget.AllBuffered, newUICreature.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(InstantiateDamagePopUpSpawner), RpcTarget.AllBuffered, newDamage.GetComponent<PhotonView>().ViewID);
         }
 
-        private async UniTask<TInterface> InstantiateAndBind<TInterface, TConcrete>(AssetReference prefab)
-            where TInterface : class
-            where TConcrete : MonoBehaviour, TInterface
-        {
-            var result = PhotonNetwork.Instantiate(prefab.AssetGUID, Vector3.zero, Quaternion.identity);
-            var instance = result.GetComponent<TConcrete>();
-            diContainer.Inject(instance);
-            diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
-            result.transform.SetParent(transform);
-            return instance;
-        }
         
-        private async UniTask InitializeUICreatureInformation()
+        [PunRPC]
+        private void InitializeUICreatureInformation(int viewID)
         {
-            uiCreatureInformation = await InstantiateAndBind<UICreatureInformation, UICreatureInformation>(uiCreatureInformationPrefab);
+            var result = PhotonView.Find(viewID).gameObject;
+            uiCreatureInformation = result.GetComponent<UICreatureInformation>();
+            diContainer.Inject(uiCreatureInformation);
+            diContainer.Bind(uiCreatureInformation.GetType()).FromInstance(uiCreatureInformation).AsSingle();
+            uiCreatureInformation.transform.SetParent(transform);
             uiCreatureInformation.Initialize();
         }
         
-        private async UniTask InstantiateDamagePopUpSpawner()
+        [PunRPC]
+        private void InstantiateDamagePopUpSpawner(int viewID)
         {
-            damagePopUpSpawner = await InstantiateAndBind<DamagePopUpSpawner, DamagePopUpSpawner>(damagePopUpSpawnerPrefab);
-            await damagePopUpSpawner.Initialize();
+            var result = PhotonView.Find(viewID).gameObject;
+            damagePopUpSpawner = result.GetComponent<DamagePopUpSpawner>();
+            diContainer.Inject(damagePopUpSpawner);
+            diContainer.Bind(damagePopUpSpawner.GetType()).FromInstance(damagePopUpSpawner).AsSingle();
+            damagePopUpSpawner.transform.SetParent(transform);
+            damagePopUpSpawner.Initialize();
         }
     }
 }

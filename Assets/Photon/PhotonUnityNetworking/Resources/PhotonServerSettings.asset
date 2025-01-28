@@ -43,6 +43,47 @@ MonoBehaviour:
   - InitializePlayer
   - SDF
   - FDS
+  - InitializeLevelControllerRPC
+  - InitializeLoadLevelContainerRPC
+  - Initialize
+  - InitializeRPC
+  - BindRPC
+  - SendInitializationComplete
+  - OnInitializationComplete
+  - Bind
+  - InitializeExperienceSystem
+  - InitializeGameField
+  - InitializeGameUnits
+  - InitializeLoadLevelContainer
+  - InjectComponent
+  - InjectComponents
+  - InstantiatePlayer
+  - LoadAndBindAsset
+  - AfterGameConfigLoadAndBindAsset
+  - InitializeGameConfig
+  - InitializeLevelContainer
+  - InitializeUnitInformationRPC
+  - InitializeUICreatureInformation
+  - InstantiateDamagePopUpSpawner
+  - InitializeGameHotkeys
+  - InitializeGameUIColor
+  - InitializeLevelController
+  - InitializeLevelManager
+  - InitializePoolManager
+  - InitializeUIManager
+  - InitializeGameInstaller
+  - InitializeContainer
+  - InitializePrefabPool
+  - GameManagerInjectComponents
+  - LaboratoryManagerInjectComponents
+  - InitializeManagers
+  - LoadAndBindAssets
+  - LoadAndBindAssetAsync
+  - CreatePoolParent
+  - InitializeSKill
+  - GameHotkeysAndUIColorBinding
+  - SkillAndGameConfigBinding
+  - BindA
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

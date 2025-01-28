@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -21,47 +22,49 @@ namespace Gameplay.Manager
         public Transform poolParent { get; private set; }
         public List<GameObject> PoolObjects { get; private set; } = new();
         
-        
-        public async UniTask Initialize()
-        {
-            // Создаем родительский объект для пула
-            poolParent = new GameObject("PoolParent").transform;
+        private PhotonView photonView;
 
-            // Создаем начальный запас объектов для каждого префаба
+        public void Initialize()
+        {
+            photonView = GetComponent<PhotonView>();
+            if(!PhotonNetwork.IsMasterClient) return;
+            
+            photonView.RPC(nameof(CreatePoolParent), RpcTarget.AllBuffered);
+            
             foreach (var prefabReference in poolPrefabReferences)
             {
-                // Загружаем префаб асинхронно
-                var prefabHandle = Addressables.LoadAssetAsync<GameObject>(prefabReference);
-                await prefabHandle.Task;
-
-                if (prefabHandle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                for (int i = 0; i < initialPoolSize; i++)
                 {
-                    // Создаем несколько экземпляров объекта и добавляем их в пул
-                    for (int i = 0; i < initialPoolSize; i++)
-                    {
-                        // Создаем объект из префаба
-                        var handle = await Addressables.InstantiateAsync(prefabReference);
-
-                        // Находим все компоненты в объекте и его дочерних объектах
-                        var components = handle.GetComponentsInChildren<MonoBehaviour>(true);
-                        foreach (var component in components)
-                        {
-                            // Выполняем инъекцию зависимостей через DiContainer
-                            diContainer.Inject(component);
-                        }
-
-                        ReturnToPool(handle);
-                    }
+                    var result =
+                        PhotonNetwork.Instantiate(prefabReference.AssetGUID, Vector3.zero, Quaternion.identity);
+                    photonView.RPC(nameof(InjectComponents), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
                 }
-                else
-                {
-                    Debug.LogError($"Failed to load prefab: {prefabReference.RuntimeKey}");
-                }
-
-                // Освобождаем ресурсы после завершения загрузки
-                Addressables.Release(prefabHandle);
             }
+        }
 
+        [PunRPC]
+        private void CreatePoolParent()
+        {
+            poolParent = new GameObject("PoolParent").transform;
+        }
+
+        [PunRPC]
+        private void InjectComponents(int viewID)
+        {
+            var targetGameObject = PhotonView.Find(viewID).gameObject;
+            var components = targetGameObject.GetComponents<MonoBehaviour>();
+            foreach (var component in components)
+                diContainer.Inject(component);
+            targetGameObject.transform.SetParent(poolParent);
+            targetGameObject.SetActive(false);
+        }
+
+        [PunRPC]
+        private void InjectComponent(int viewID)
+        {
+            var targetGameObject = PhotonView.Find(viewID).gameObject;
+            var component = targetGameObject.GetComponent<MonoBehaviour>();
+            diContainer.Inject(component);
         }
         
         public async UniTask<GameObject> GetObjectAsync<T>()
@@ -134,8 +137,8 @@ namespace Gameplay.Manager
                 }
 
                 // Создаем объект из найденного префаба
-                var handle = await Addressables.InstantiateAsync(suitablePrefab);
-                diContainer.Inject(handle.GetComponent<T>());
+                var handle = PhotonNetwork.Instantiate(suitablePrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+                photonView.RPC(nameof(InjectComponent), RpcTarget.All, handle.GetComponent<PhotonView>().ViewID);
                 return handle;
             }
             finally

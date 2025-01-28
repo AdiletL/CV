@@ -21,8 +21,7 @@ public class EntryPoint
 
     private void RunGame()
     {
-        if (!(PhotonNetwork.PrefabPool is AddressablesPrefabPool))
-            PhotonNetwork.PrefabPool = new AddressablesPrefabPool();
+        PhotonNetwork.PrefabPool = new AddressablesPrefabPool();
         
         SceneManager.sceneLoaded += OnSceneLoaded;
 #if UNITY_EDITOR
@@ -40,30 +39,21 @@ public class EntryPoint
         return;
 #endif
         nextSceneName = Scenes.GAMEPLAY_NAME;
-        //nextSceneName = Scenes.GAMEPLAY_NAME;
     }
     
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if(scene.name != Scenes.BOOTSTRAP_NAME) return;
-        if(!PhotonNetwork.IsMasterClient) return;
-        
+
         BoostrapLoad();
-        
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private async void BoostrapLoad()
+    private  void BoostrapLoad()
     {
-        var bootstrap = GameObject.FindFirstObjectByType<Bootstrap>();
-        if (bootstrap == null)
-        {
-            Debug.LogError($"Bootstrap not found in scene {SceneManager.GetActiveScene().name}");
-            return;
-        }
-        
-        await bootstrap.Initialize();
-        await bootstrap.TransitionToScene(nextSceneName);
+        if(!PhotonNetwork.IsMasterClient) return;
+        var bootstrap = PhotonNetwork.Instantiate("Bootstrap", Vector3.zero, Quaternion.identity, 0);
+        bootstrap.GetComponent<Bootstrap>().nextScene = nextSceneName;
     }
 }

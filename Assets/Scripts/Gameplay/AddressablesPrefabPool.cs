@@ -37,6 +37,7 @@ public class AddressablesPrefabPool : IPunPrefabPool
         return newObject;
     }
 
+    
 
     // Метод для удаления объекта
     public void Destroy(GameObject gameObject)

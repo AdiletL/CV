@@ -7,7 +7,7 @@ public interface IPoolableObject
     public Transform poolParent { get; }
     public List<GameObject> PoolObjects { get; }
 
-    public UniTask Initialize();
+    public void Initialize();
     
     public UniTask<GameObject> GetObjectAsync<T>();
     

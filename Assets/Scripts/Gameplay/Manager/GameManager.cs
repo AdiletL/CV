@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
-using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -19,39 +18,50 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject poolManagerPrefab;
         [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
         [SerializeField] private AssetReferenceGameObject uiManagerPrefab;
-        [SerializeField] private AssetReference so_SkillContainer;
-        [SerializeField] private AssetReference so_GameConfig;
+        [SerializeField] private SO_SkillContainer so_SkillContainerPrefab;
+        [SerializeField] private SO_GameConfig so_GameConfigPrefab;
         
         private LevelManager levelManager;
-        private IPoolableObject poolManager;
+        private PoolManager poolManager;
         private UIManager uiManager;
         private GameUnits gameUnits;
         private ExperienceSystem experienceSystem;
+        
+        private PhotonView photonView;
 
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
             // Подписываемся на событие загрузки сцены
-            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        
+        public void Initialize()
+        {
+            photonView = GetComponent<PhotonView>();
+            
+            if (!PhotonNetwork.IsMasterClient) return;
+            photonView.RPC(nameof(LoadAndBindAsset), RpcTarget.AllBuffered);
+        }
+        
+        [PunRPC]
+        private void LoadAndBindAsset()
+        {
+            Debug.Log(diContainer);
+            Debug.Log("1");
+            
+            diContainer.Bind<SO_SkillContainer>().FromInstance(so_SkillContainerPrefab).AsSingle();
+            diContainer.Bind<SO_GameConfig>().FromInstance(so_GameConfigPrefab).AsSingle();
+            diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfigPrefab.SO_GameHotkeys).AsSingle();
+            diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfigPrefab.SO_GameUIColor).AsSingle();
+            
+            if(!PhotonNetwork.IsMasterClient) return;
+            photonView.RPC(nameof(InitializeGameUnits), RpcTarget.AllBuffered);
         }
 
-        private async void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+        [PunRPC]
+        private void InitializeGameUnits()
         {
-            if (scene.name == "Bootstrap") return;
-
-            await Initialize();
-            // Отписываемся от события, чтобы избежать многократных вызовов
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-        }
-
-        public async UniTask Initialize()
-        {
-            await LoadAndBindAsset<SO_SkillContainer>(so_SkillContainer);
-            
-            var gameConfig = await LoadAndBindAsset<SO_GameConfig>(so_GameConfig);
-            await LoadAndBindAsset<SO_GameUIColor>(gameConfig.SO_GameUIColor);
-            await LoadAndBindAsset<SO_GameHotkeys>(gameConfig.SO_GameHotkeys);
-            
+            Debug.Log("3");
             gameUnits = new GameUnits();
             diContainer.Inject(gameUnits);
             diContainer.Bind<GameUnits>().FromInstance(gameUnits).AsSingle();
@@ -59,59 +69,74 @@ namespace Gameplay.Manager
             experienceSystem = new ExperienceSystem();
             diContainer.Inject(experienceSystem);
             diContainer.Bind<ExperienceSystem>().FromInstance(experienceSystem).AsSingle();
-            
-            await UniTask.WhenAll(
-                InstantiatePoolManager(),
-                InstantiateUIManager(),
-                InstantiateLevelManager()
-            );
 
-            Debug.Log("Initializing: " + name);
-            await UniTask.WaitForEndOfFrame();
-            
-            await StartGame();
+            InstantiatePoolManager();
         }
 
-        private async UniTask<TInterface> InstantiateAndBind<TInterface, TConcrete>(AssetReference prefab)
-            where TInterface : class
-            where TConcrete : MonoBehaviour, TInterface
+        private void InstantiatePoolManager()
         {
-            var result = PhotonNetwork.Instantiate(prefab.AssetGUID, Vector3.zero, Quaternion.identity);
-            var instance = result.GetComponent<TConcrete>();
-            diContainer.Inject(instance);
-            diContainer.Bind<TInterface>().FromInstance(instance).AsSingle();
-            result.transform.SetParent(transform);
-            return instance;
-        }
-
-        private async UniTask<T> LoadAndBindAsset<T>(AssetReference asset) where T : ScriptableObject
-        {
-            var result = await Addressables.LoadAssetAsync<T>(asset);
-            diContainer.Bind<T>().FromInstance(result).AsSingle();
-            return result;
-        }
-
-        private async UniTask InstantiateLevelManager()
-        {
-            levelManager = await InstantiateAndBind<LevelManager, LevelManager>(levelManagerPrefab);
-            await levelManager.Initialize();
-        }
-
-        private async UniTask InstantiatePoolManager()
-        {
-            poolManager = await InstantiateAndBind<IPoolableObject, PoolManager>(poolManagerPrefab);
-            await poolManager.Initialize();
+            if(!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(poolManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializePoolManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
         }
         
-        private async UniTask InstantiateUIManager()
+        [PunRPC]
+        private void InitializePoolManager(int viewID)
         {
-            uiManager = await InstantiateAndBind<UIManager, UIManager>(uiManagerPrefab);
-            await uiManager.Initialize();
+            Debug.Log("4");
+            var result = PhotonView.Find(viewID).gameObject;
+            poolManager = result.GetComponent<PoolManager>();
+            diContainer.Inject(poolManager);
+            diContainer.Bind(poolManager.GetType()).FromInstance(poolManager).AsSingle();
+            poolManager.transform.SetParent(transform);
+            poolManager.Initialize();
+            InstantiateUIManager();
         }
 
-        private async UniTask StartGame()
+        private void InstantiateUIManager()
         {
-            levelManager.StartLevelTest();
+            if (!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(uiManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeUIManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+        }
+        
+        [PunRPC]
+        private void InitializeUIManager(int viewID)
+        {
+            Debug.Log("5");
+            var result = PhotonView.Find(viewID).gameObject;
+            uiManager = result.GetComponent<UIManager>();
+            diContainer.Inject(uiManager);
+            diContainer.Bind(uiManager.GetType()).FromInstance(uiManager).AsSingle();
+            uiManager.transform.SetParent(transform);
+            uiManager.Initialize();
+            InstantiateLevelManager();
+        }
+
+        private void InstantiateLevelManager()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(levelManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeLevelManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+        }
+        
+        [PunRPC]
+        private void InitializeLevelManager(int viewID)
+        {
+            Debug.Log("6");
+            var result = PhotonView.Find(viewID).gameObject;
+            levelManager = result.GetComponent<LevelManager>();
+            Debug.Log(diContainer);
+            diContainer.Inject(levelManager);
+            diContainer.Bind(levelManager.GetType()).FromInstance(levelManager).AsSingle();
+            levelManager.transform.SetParent(transform);
+            levelManager.Initialize();
+            StartLevel();
+        }
+
+        private void StartLevel()
+        {
+            levelManager.StartLevel();
         }
     }
 }

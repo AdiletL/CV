@@ -1,5 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Manager;
 using Gameplay.UI;
+using Photon.Pun;
 using UnityEngine;
 using Zenject;
 
@@ -7,11 +9,12 @@ namespace Gameplay.Spawner
 {
     public class DamagePopUpSpawner : MonoBehaviour, ISpawner
     {
-        [Inject] private IPoolableObject poolManager;
+        [Inject] private PoolManager poolManager;
         
-        public async UniTask Initialize()
+        [PunRPC]
+        public void Initialize()
         {
-            await UniTask.CompletedTask;
+            
         }
 
         public async void CreatePopUp(Vector3 center, int damage)

@@ -40,6 +40,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b84368c95b1f81a4c97b8c8c6dc6d291
+    m_Address: Assets/Prefabs/Gameplay/Manager/NetworkManager.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dbc6e935c7c1aee48a1e5707702822ed
     m_Address: LaboratoryManager
     m_ReadOnly: 0

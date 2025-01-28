@@ -8,6 +8,8 @@ namespace Gameplay.UI
 {
     public class DamageUI : MonoBehaviour
     {
+        [Inject] private PoolManager poolManager;
+        
         [SerializeField] private TextMeshProUGUI damageText;
 
         [SerializeField] private AnimationCurve alphaCurve;
@@ -19,7 +21,6 @@ namespace Gameplay.UI
         [SerializeField] private float animationDuration = 1.0f;
         [SerializeField] private float fallDistance = 1f;
 
-        private IPoolableObject poolManager;
         private Coroutine startAnimateCoroutine;
         private float elapsedTime;
         
@@ -27,12 +28,6 @@ namespace Gameplay.UI
         {
             -.15f, -.1f, -.05f, .05f, .1f, .15f
         };
-
-        [Inject]
-        private void Construct(IPoolableObject poolManager)
-        {
-            this.poolManager = poolManager;
-        }
         
         public void Play(int damageValue)
         {

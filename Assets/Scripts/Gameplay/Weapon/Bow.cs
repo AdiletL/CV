@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using Unit;
 using UnityEngine;
@@ -8,14 +9,10 @@ namespace Gameplay.Weapon
 {
     public class Bow : Weapon
     {
-        private IPoolableObject pool;
+        [Inject] private PoolManager pool;
+        
         private Transform pointSpawnProjectile;
 
-        [Inject]
-        public void Construct(IPoolableObject pool)
-        {
-            this.pool = pool;
-        }
 
         public override void Initialize()
         {

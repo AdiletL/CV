@@ -12,18 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d804997c0e0342aaa6326a8828b2bb35, type: 3}
   m_Name: SO_GameConfig
   m_EditorClassIdentifier: 
-  <SO_GameUIColor>k__BackingField:
-    m_AssetGUID: e3fb94de3c1165147afa66476aa596c3
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  <SO_GameHotkeys>k__BackingField:
-    m_AssetGUID: 0c7f87ea8f55e4f4397c85fe5ca0a192
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  <CooldownDecreaseEndurance>k__BackingField: 0.2
-  <AmountDecreaseEndurance>k__BackingField: 0.1
+  <SO_GameUIColor>k__BackingField: {fileID: 11400000, guid: e3fb94de3c1165147afa66476aa596c3, type: 2}
+  <SO_GameHotkeys>k__BackingField: {fileID: 11400000, guid: 0c7f87ea8f55e4f4397c85fe5ca0a192, type: 2}
+  <CooldownReductionEndurance>k__BackingField: 0.2
+  <AmountReductionEndurance>k__BackingField: 0.01
   <BaseWaitTimeTrap>k__BackingField: 0.3
+  <RadiusCell>k__BackingField: 0.3

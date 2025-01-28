@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
@@ -8,7 +9,7 @@ namespace Unit.Trap.Tower
     public class TowerAttackState : UnitBaseAttackState
     {
         [Inject] private DiContainer diContainer;
-        [Inject] private IPoolableObject pool;
+        [Inject] private PoolManager pool;
         
         protected float durationAttack, countDurationAttack;
         protected float timerFire, countTimerFire;
