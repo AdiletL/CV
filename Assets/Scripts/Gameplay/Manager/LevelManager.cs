@@ -17,7 +17,7 @@ namespace Gameplay.Manager
 
         [SerializeField] protected SO_LevelContainer so_LevelContainerPrefab;
         [SerializeField] private AssetReferenceGameObject playerPrefab;
-        [SerializeField] private AssetReferenceGameObject cameraPrefab;
+        [SerializeField] private GameObject cameraPrefab;
         [SerializeField] private AssetReferenceGameObject levelControllerPrefab;
 
         private LevelController levelController;
@@ -78,10 +78,9 @@ namespace Gameplay.Manager
             var newGameObject = PhotonView.Find(viewID).gameObject;
             levelController = newGameObject.GetComponent<LevelController>();
             levelController.Initialize();
-            Debug.Log(levelController);
         }
         
-        public async void StartLevel()
+        public void StartLevel()
         {
             _ = InitializeLevel();
         }
@@ -90,23 +89,21 @@ namespace Gameplay.Manager
         {
             await UniTask.WaitUntil(() => levelController != null);
             
-            PhotonNetwork.Instantiate(cameraPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
             
             if (PhotonNetwork.IsMasterClient)
             {
+                photonView.RPC(nameof(CreateCamera), RpcTarget.AllBuffered);
                 var gameField = GetGameFieldReference(currentLevelIndex, currentGameFieldIndex);
                 var newGameField = PhotonNetwork.Instantiate(gameField.AssetGUID, Vector3.zero, Quaternion.identity);
                 photonView.RPC(nameof(InitializeGameField), RpcTarget.AllBuffered,
                     newGameField.GetComponent<PhotonView>().ViewID);
             }
 
-            Debug.Log(levelController);
-            Debug.Log(levelController.CurrentGameField);
-            Debug.Log(playerPrefab);
-            var playerGameObject1 = PhotonNetwork.Instantiate(playerPrefab.AssetGUID,
+            var playerGameObject = PhotonNetwork.Instantiate(playerPrefab.AssetGUID,
                 levelController.CurrentGameField.PlayerSpawnPoint.position,
                 levelController.CurrentGameField.PlayerSpawnPoint.rotation);
-            photonView.RPC(nameof(InitializePlayer), RpcTarget.AllBuffered, playerGameObject1.GetComponent<PhotonView>().ViewID);
+            
+            photonView.RPC(nameof(InitializePlayer), RpcTarget.AllBuffered, playerGameObject.GetComponent<PhotonView>().ViewID);
         }
 
         public void RestartLevel()
@@ -119,6 +116,13 @@ namespace Gameplay.Manager
             // Реализация остановки уровня
         }
 
+        [PunRPC]
+        private void CreateCamera()
+        {
+            Instantiate(cameraPrefab);
+        }
+
+        
         [PunRPC]
         private void InitializeGameField(int viewID)
         {

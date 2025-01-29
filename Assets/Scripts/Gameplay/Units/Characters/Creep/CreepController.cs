@@ -18,9 +18,9 @@ namespace Unit.Character.Creep
             this.StateMachine.OnChangedState += OnChangedState;
         }
 
-        protected override void UnInitializeMediator()
+        protected override void UnInitializeMediatorRPC()
         {
-            base.UnInitializeMediator();
+            base.UnInitializeMediatorRPC();
             this.StateMachine.OnChangedState -= OnChangedState;
         }
 

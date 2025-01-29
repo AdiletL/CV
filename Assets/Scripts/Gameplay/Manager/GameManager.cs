@@ -126,11 +126,11 @@ namespace Gameplay.Manager
             Debug.Log("6");
             var result = PhotonView.Find(viewID).gameObject;
             levelManager = result.GetComponent<LevelManager>();
-            Debug.Log(diContainer);
             diContainer.Inject(levelManager);
             diContainer.Bind(levelManager.GetType()).FromInstance(levelManager).AsSingle();
             levelManager.transform.SetParent(transform);
             levelManager.Initialize();
+
             StartLevel();
         }
 

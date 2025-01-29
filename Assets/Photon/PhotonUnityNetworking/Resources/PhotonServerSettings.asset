@@ -84,6 +84,33 @@ MonoBehaviour:
   - GameHotkeysAndUIColorBinding
   - SkillAndGameConfigBinding
   - BindA
+  - AppearCells
+  - AppearCharacters
+  - AppearInteractableObjects
+  - AppearTraps
+  - InitializeCells
+  - InitializeCharacters
+  - InitializeInteractableObjects
+  - InitializeTraps
+  - ShowCells
+  - ShowCharacters
+  - ShowInteractableObjects
+  - ShowTraps
+  - InitializeUnitRenderer
+  - BeforeInitializeMediatorRPC
+  - CreateStatesRPC
+  - CreateSwitchStateRPC
+  - InitializeMediatorRPC
+  - UnInitializeMediatorRPC
+  - BeforeInitializeMediator
+  - CreateStates
+  - CreateSwitchState
+  - InitializeBow
+  - InitializeMediator
+  - InitializeNormalResistanceRPC
+  - InitializeSword
+  - Trigger
+  - CreateCamera
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

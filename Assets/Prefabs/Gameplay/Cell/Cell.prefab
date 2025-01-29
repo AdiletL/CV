@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 6533177454188079626}
   - component: {fileID: 3918903221378114931}
   - component: {fileID: 1471724553134719840}
+  - component: {fileID: 8379799729648499306}
   m_Layer: 6
   m_Name: Cell
   m_TagString: Untagged
@@ -262,6 +263,7 @@ MonoBehaviour:
     - {fileID: 7336186292366945002}
   <VisualParent>k__BackingField: {fileID: 2764638693606309324}
   platformText: {fileID: 5568411240746634969}
+  <CurrentCoordinates>k__BackingField: {x: 0, y: 0}
 --- !u!65 &6533177454188079626
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -310,6 +312,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Center>k__BackingField: {fileID: 422975684627558623}
+--- !u!114 &8379799729648499306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7336186292366945002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1001 &8895950182853377278
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -223,6 +223,7 @@ namespace Unit.Character.Player
 
         public override void HandleInput()
         {
+            if(!PhotonView.IsMine) return;
             if(!playerSkillInputHandler.IsCanInput()) return;
             
             base.HandleInput();

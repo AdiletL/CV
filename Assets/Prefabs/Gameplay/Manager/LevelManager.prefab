@@ -51,12 +51,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  cameraPrefab:
-    m_AssetGUID: 4c5a8ea15a7b7784180be372028bfce2
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  cameraPrefab: {fileID: 2562937877541946257, guid: 4c5a8ea15a7b7784180be372028bfce2, type: 3}
   levelControllerPrefab:
     m_AssetGUID: 92e5c3af0579bd142a11fe0072321e74
     m_SubObjectName: 

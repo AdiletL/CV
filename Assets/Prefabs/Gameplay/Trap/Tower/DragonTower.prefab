@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 36684217355802740}
   - component: {fileID: 1792110956571568064}
   - component: {fileID: 4703627508075237118}
+  - component: {fileID: -2046505618949950147}
   m_Layer: 0
   m_Name: DragonTower
   m_TagString: Untagged
@@ -310,6 +311,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1792110956571568064}
   defaultAnimationClip: {fileID: 0}
+--- !u!114 &-2046505618949950147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6528987841846448985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &6637096747971640474
 GameObject:
   m_ObjectHideFlags: 0

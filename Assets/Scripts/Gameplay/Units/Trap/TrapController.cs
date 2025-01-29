@@ -1,4 +1,5 @@
-﻿using ScriptableObjects.Gameplay.Trap;
+﻿using Photon.Pun;
+using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
 namespace Unit.Trap
@@ -7,14 +8,25 @@ namespace Unit.Trap
     {
         [SerializeField] protected SO_Trap so_Trap;
 
+        private PhotonView photonView;
 
         protected AnimationClip activateClip;
         protected AnimationClip deactivateClip;
 
         public GameObject CurrentTarget { get; protected set; }
         public LayerMask EnemyLayer { get; protected set; }
-        
 
+        public void InitializeRPC()
+        {
+            this.photonView = GetComponent<PhotonView>();
+            this.photonView.RPC(nameof(Trigger), RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        private void Trigger()
+        {
+            Initialize();
+        }
         public override void Initialize()
         {
             base.Initialize();
@@ -22,6 +34,7 @@ namespace Unit.Trap
             deactivateClip = so_Trap.DeactivateClip;
             EnemyLayer = so_Trap.EnemyLayer;
         }
+        
 
         public abstract void Activate();
         public abstract void Deactivate();

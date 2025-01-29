@@ -14,6 +14,7 @@ namespace Unit.Character.Player
 
         public CharacterController CharacterController { get; set; }
         public PlayerEndurance PlayerEndurance { get; set; }
+        
 
         private PlayerRunState CreateRunState()
         {
@@ -22,6 +23,7 @@ namespace Unit.Character.Player
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPlayerEndurance(PlayerEndurance)
+                .SetPhotonView(PhotonView)
                 .SetCenter(Center)
                 .SetCharacterAnimation(this.CharacterAnimation)
                 .SetCharacterSwitchAttack(this.CharacterSwitchAttack)

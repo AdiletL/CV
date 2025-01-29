@@ -1,13 +1,18 @@
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using Unit.Character.Player;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
+using Zenject;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_InputField roomNameInputField;
     [SerializeField] private TextMeshProUGUI statusTxt;
 
+    [Inject] private DiContainer diContainer;
     private void Start()
     {
         Caching.ClearCache();

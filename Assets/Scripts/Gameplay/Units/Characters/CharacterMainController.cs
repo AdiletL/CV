@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ namespace Unit.Character
     public abstract class CharacterMainController : UnitController, ICharacter, IClickableObject
     {
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
+        
+        protected PhotonView photonView;
         
         public StateMachine StateMachine { get; protected set; }
         public UnitInformation UnitInformation { get; protected set; }
@@ -25,14 +28,28 @@ namespace Unit.Character
         {
             return new CharacterInformation(this);
         }
+
+        public void InitializeRPC()
+        {
+            photonView.RPC(nameof(Trigger), RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        public void Trigger()
+        {
+            Initialize();
+        }
         
         public override void Initialize()
         {
+            photonView = GetComponent<PhotonView>();
+            
             base.Initialize();
+            
             StateMachine = new StateMachine();
             UnitInformation = CreateUnitInformation();
             diContainer.Inject(UnitInformation);
-            
+
             CreateSwitchState();
             CreateStates();
 
@@ -55,23 +72,27 @@ namespace Unit.Character
             endurance?.Initialize();
         }
 
+        [PunRPC]
         protected virtual void InitializeMediator()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnDeath += GetComponentInUnit<CharacterExperience>().OnDeath;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
-
-        protected virtual void UnInitializeMediator()
+        [PunRPC]
+        protected virtual void UnInitializeMediatorRPC()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnDeath -= GetComponentInUnit<CharacterExperience>().OnDeath;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
+        [PunRPC]
         protected abstract void CreateStates();
+        [PunRPC]
         protected abstract void CreateSwitchState();
 
+        [PunRPC]
         protected virtual void BeforeInitializeMediator()
         {
             
@@ -84,7 +105,7 @@ namespace Unit.Character
 
         protected virtual void OnDestroy()
         {
-            UnInitializeMediator();
+            UnInitializeMediatorRPC();
         }
 
         public void ShowInformation() => UnitInformation.Show();

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Calculate;
 using Movement;
+using Photon.Pun;
 using Unit.Cell;
 using UnityEngine;
 
@@ -35,6 +36,7 @@ namespace Unit.Character.Player
 
     private Queue<CellController> pathQueue = new();
 
+    public PhotonView PhotonView { get; set; }
     public PlayerEndurance PlayerEndurance { get; set; }
     public Transform Center { get; set; }
     public CharacterController CharacterController { get; set; }
@@ -261,7 +263,9 @@ namespace Unit.Character.Player
             }
 
             movementDirection = (currentTargetPosition - GameObject.transform.position).normalized;
-            CharacterController.Move(movementDirection * (MovementSpeed * Time.deltaTime));
+            
+            if (PhotonView.IsMine)
+                CharacterController.Move(movementDirection * (MovementSpeed * Time.deltaTime));
 
             ReduceEndurance();
         }
@@ -331,6 +335,13 @@ namespace Unit.Character.Player
         {
             if (state is PlayerRunState playerRunState)
                 playerRunState.PlayerEndurance = endurance;
+            
+            return this;  
+        }
+        public PlayerRunStateBuilder SetPhotonView(PhotonView view)
+        {
+            if (state is PlayerRunState playerRunState)
+                playerRunState.PhotonView = view;
             
             return this;  
         }

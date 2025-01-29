@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
 using Unit.Item;
@@ -12,8 +13,8 @@ namespace Gameplay
 {
     public class GameFieldController : MonoBehaviour
     {
-        private DiContainer diContainer;
-        private GameUnits gameUnits;
+        [Inject] private DiContainer diContainer;
+        [Inject] private GameUnits gameUnits;
         
         [SerializeField] private CellController[] platforms;
         [SerializeField] private CharacterMainController[] characters;
@@ -25,17 +26,12 @@ namespace Gameplay
         
         [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
         
+        private PhotonView photonView;
+        
         private Stack<CellController> platformStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
         private Stack<ItemController> interactableObjectStack = new();
-        
-        [Inject]
-        private void Construct(DiContainer diContainer, GameUnits gameUnits)
-        {
-            this.diContainer = diContainer;
-            this.gameUnits = gameUnits;
-        }
         
         
         #region Editor
@@ -72,12 +68,15 @@ namespace Gameplay
         #region Initialize
         public void Initialize()
         {
-            InitializeCharacters();
-            InitializeTraps();
-            InitializeInteractableObjects();
-            InitializeCells();
+            photonView = GetComponent<PhotonView>();
+            
+            photonView.RPC(nameof(InitializeCharacters), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(InitializeTraps), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(InitializeInteractableObjects), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(InitializeCells), RpcTarget.AllBuffered);
         }
 
+        [PunRPC]
         private void InitializeCells()
         {
             foreach (var VARIABLE in platforms)
@@ -90,6 +89,7 @@ namespace Gameplay
                 VARIABLE.Hide();
             }
         }
+        [PunRPC]
         private void InitializeCharacters()
         {
             foreach (var VARIABLE in characters)
@@ -102,6 +102,7 @@ namespace Gameplay
                 VARIABLE.Hide();
             }
         }
+        [PunRPC]
         private void InitializeTraps()
         {
             foreach (var VARIABLE in traps)
@@ -114,6 +115,7 @@ namespace Gameplay
                 VARIABLE.Hide();
             }
         }
+        [PunRPC]
         private void InitializeInteractableObjects()
         {
             foreach (var VARIABLE in itemObjects)
@@ -131,33 +133,46 @@ namespace Gameplay
         #region StartGame
         public void StartGame()
         {
-            ShowCells();
-            ShowTraps();
-            ShowCharacters();
-            ShowInteractableObjects();
+            photonView.RPC(nameof(ShowCells), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ShowTraps), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ShowCharacters), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ShowInteractableObjects), RpcTarget.AllBuffered);
             
-            AppearCells();
-            AppearTraps();
-            AppearCharacters();
-            AppearInteractableObjects();
+            photonView.RPC(nameof(AppearCells), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(AppearTraps), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(AppearCharacters), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(AppearInteractableObjects), RpcTarget.AllBuffered);
+            //ShowCells();
+            //ShowTraps();
+            //ShowCharacters();
+            //ShowInteractableObjects();
+            
+            //AppearCells();
+            //AppearTraps();
+            //AppearCharacters();
+           // AppearInteractableObjects();
         }
 
         #region Show
+        [PunRPC]
         private void ShowCells()
         {
             foreach (var VARIABLE in platformStack)
                 VARIABLE.Show();
         }
+        [PunRPC]
         private void ShowCharacters()
         {
             foreach (var VARIABLE in charactersStack)
                 VARIABLE.Show();
         }
+        [PunRPC]
         private void ShowTraps()
         {
             foreach (var VARIABLE in trapsStack)
                 VARIABLE.Show();
         }
+        [PunRPC]
         private void ShowInteractableObjects()
         {
             foreach (var VARIABLE in interactableObjectStack)
@@ -166,21 +181,25 @@ namespace Gameplay
         #endregion
 
         #region Appear
+        [PunRPC]
         private void AppearCells()
         {
             foreach (var VARIABLE in platformStack)
                 VARIABLE.Appear();
         }
+        [PunRPC]
         private void AppearCharacters()
         {
             foreach (var VARIABLE in charactersStack)
                 VARIABLE.Appear();
         }
+        [PunRPC]
         private void AppearTraps()
         {
             foreach (var VARIABLE in trapsStack)
                 VARIABLE.Appear();
         }
+        [PunRPC]
         private void AppearInteractableObjects()
         {
             foreach (var VARIABLE in interactableObjectStack)

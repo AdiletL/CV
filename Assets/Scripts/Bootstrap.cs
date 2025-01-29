@@ -11,12 +11,12 @@ public class Bootstrap : MonoBehaviour
 
     private void Start()
     {
-        DontDestroyOnLoad(gameObject);
         if (!PhotonNetwork.IsMasterClient)
         {
             Debug.Log("Not Master Client, skipping initialization.");
             return;
         }
+        DontDestroyOnLoad(gameObject);
         var newGameObject = PhotonNetwork.Instantiate(gameInstallerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
         GetComponent<PhotonView>().RPC(nameof(Initialize), RpcTarget.AllBuffered, newGameObject.GetComponent<PhotonView>().ViewID);
     }

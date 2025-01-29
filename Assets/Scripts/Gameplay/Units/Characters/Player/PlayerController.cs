@@ -5,10 +5,12 @@ using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Weapon;
 using Machine;
+using Photon.Pun;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using ValueType = Calculate.ValueType;
 
 namespace Unit.Character.Player
@@ -34,6 +36,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_Sword so_Sword;
         [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
+        [SerializeField] private AssetReferenceGameObject cameraPrefab;
         
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
@@ -77,6 +80,7 @@ namespace Unit.Character.Player
                 .SetConfig(so_PlayerMove)
                 .SetGameObject(gameObject)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
+                .SetPhotonView(photonView)
                 .SetStateMachine(StateMachine)
                 .Build();
         }
@@ -113,18 +117,31 @@ namespace Unit.Character.Player
                 .Build();
         }
 
+        public void Init()
+        {
+            GetComponent<PhotonView>().RPC(nameof(Init), RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        private void Trigger()
+        {
+            Initialize();
+        }
         
         public override void Initialize()
         {
             characterController = GetComponent<CharacterController>();
             playerEndurance = GetComponentInUnit<PlayerEndurance>();
-            
+
             base.Initialize();
+            
+            if(photonView.IsMine)
+                FindFirstObjectByType<CameraMove>().SetTarget(gameObject);
             
             StateMachine.Initialize();
             
             //Test
-            InitializeNormalResistance();
+            InitializeNormalResistanceRPC();
             //Test
             InitializeSword();
                         
@@ -174,9 +191,9 @@ namespace Unit.Character.Player
             StateMachine.OnChangedState += OnChangedState;
         }
 
-        protected override void UnInitializeMediator()
+        protected override void UnInitializeMediatorRPC()
         {
-            base.UnInitializeMediator();
+            base.UnInitializeMediatorRPC();
             StateMachine.OnChangedState -= OnChangedState;
         }
 
@@ -185,8 +202,10 @@ namespace Unit.Character.Player
 
         }
 
+        [PunRPC]
         private void InitializeSword()
         {
+            if (!photonView.IsMine) return;
             //TEST
             if (playerSwitchAttack.TryGetWeapon(typeof(Sword), out Sword component))
             {
@@ -214,8 +233,11 @@ namespace Unit.Character.Player
             Debug.Log("Sword");
         }
 
+        [PunRPC]
         private void InitializeBow()
         {
+            if (!photonView.IsMine) return;
+            
             if (playerSwitchAttack.TryGetWeapon(typeof(Bow), out Bow component))
             {
                 SetWeapon(component);
@@ -243,7 +265,8 @@ namespace Unit.Character.Player
         }
 
         //Test
-        private void InitializeNormalResistance()
+        [PunRPC]
+        private void InitializeNormalResistanceRPC()
         {
             var normalDamageResistance = new NormalDamageResistance(80, ValueType.Percent);
             GetComponentInUnit<ResistanceHandler>().AddResistance(normalDamageResistance);
@@ -254,6 +277,7 @@ namespace Unit.Character.Player
         private void Update()
         {
             if(!photonView.IsMine) return;
+            
             //Test
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -288,8 +312,7 @@ namespace Unit.Character.Player
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
         }
-
-
+        
         private void OnTriggerEnter(Collider other)
         {
             TriggerEnter?.Invoke(other.gameObject);

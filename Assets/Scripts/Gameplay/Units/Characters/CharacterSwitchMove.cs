@@ -1,4 +1,5 @@
 ﻿using Machine;
+using Photon.Pun;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Unit.Character
     {
         protected GameObject currentTarget;
         
+        public PhotonView PhotonView { get; set; }
         public StateMachine StateMachine { get; set; }
         public SO_CharacterMove SO_CharacterMove { get; set; }
         public CharacterAnimation CharacterAnimation { get; set; }
@@ -53,12 +55,6 @@ namespace Unit.Character
             state = instance;
         }
 
-        public CharacterSwitchMoveBuilder<T> SetStateMachine(StateMachine stateMachine)
-        {
-            state.StateMachine = stateMachine;
-            return this;
-        }
-
         public CharacterSwitchMoveBuilder<T> SetGameObject(GameObject gameObject)
         {
             state.GameObject = gameObject;
@@ -79,6 +75,16 @@ namespace Unit.Character
         public CharacterSwitchMoveBuilder<T> SetRotationSpeed(float speed)
         {
             state.RotationSpeed = speed;
+            return this;
+        }
+        public CharacterSwitchMoveBuilder<T> SetPhotonView(PhotonView view)
+        {
+            state.PhotonView = view;
+            return this;
+        }
+        public CharacterSwitchMoveBuilder<T> SetStateMachine(StateMachine stateMachine)
+        {
+            state.StateMachine = stateMachine;
             return this;
         }
         public CharacterSwitchMove Build()

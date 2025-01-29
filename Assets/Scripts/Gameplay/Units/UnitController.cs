@@ -8,7 +8,7 @@ namespace Unit
 {
     [SelectionBase]
     [RequireComponent(typeof(UnitCenter))]
-    public abstract class UnitController : MonoBehaviourPun, IUnit
+    public abstract class UnitController : MonoBehaviour, IUnit
     {
         [Inject] protected DiContainer diContainer;
         
@@ -28,6 +28,7 @@ namespace Unit
             return components.TryGetComponentFromArray(out component);
         }
         
+        [PunRPC]
         public virtual void Initialize()
         {
             components.Initialize();
