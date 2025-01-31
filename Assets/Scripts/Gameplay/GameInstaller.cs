@@ -29,8 +29,8 @@ public class GameInstaller : MonoInstaller
 
     private void Initialize()
     {
-        photonView = GetComponent<PhotonView>();
         if (!PhotonNetwork.IsMasterClient)  return;
+        photonView = GetComponent<PhotonView>();
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         Scenes.TransitionToScene(nextScene);

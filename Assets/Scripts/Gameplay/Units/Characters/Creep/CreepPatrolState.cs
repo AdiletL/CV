@@ -27,14 +27,14 @@ namespace Unit.Character.Creep
         
         protected GameObject GetNextTarget()
         {
-            if (StartPosition.HasValue && Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, StartPosition.Value))
+            if (StartPosition.HasValue && Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, StartPosition.Value))
             {
-                pathFinding.SetStartPosition(GameObject.transform.position);
+                pathFinding.SetStartPosition(gameObject.transform.position);
                 pathFinding.SetTargetPosition(End.transform.position);
             }
-            else if (EndPosition.HasValue && Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, EndPosition.Value))
+            else if (EndPosition.HasValue && Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, EndPosition.Value))
             {
-                pathFinding.SetStartPosition(GameObject.transform.position);
+                pathFinding.SetStartPosition(gameObject.transform.position);
                 pathFinding.SetTargetPosition(Start.transform.position);
             }
             
@@ -54,7 +54,7 @@ namespace Unit.Character.Creep
                 .SetStartPosition(StartPosition.Value)
                 .SetEndPosition(EndPosition.Value)
                 .Build();
-            rotation = new Rotation(GameObject.transform, RotationSpeed);
+            rotation = new Rotation(gameObject.transform, RotationSpeed);
         }
 
         public override void Enter()
@@ -96,9 +96,9 @@ namespace Unit.Character.Creep
         {
             if (pathToPoint.Count == 0)
             {
-                pathFinding.SetStartPosition(GameObject.transform.position);
+                pathFinding.SetStartPosition(gameObject.transform.position);
                 
-                var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
+                var currentCell = Calculate.FindCell.GetCell(gameObject.transform.position, Vector3.down);
                 var startCell = Calculate.FindCell.GetCell(StartPosition.Value, Vector3.down);
                 var endCell = Calculate.FindCell.GetCell(EndPosition.Value, Vector3.down);
                 
@@ -116,9 +116,9 @@ namespace Unit.Character.Creep
 
         public override void ExecuteMovement()
         {
-            currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
+            currentTargetPosition = new Vector3(currentTarget.transform.position.x, gameObject.transform.position.y, currentTarget.transform.position.z);
             
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position))
+            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position))
             {
                 pathToPoint?.Dequeue();
                 currentTarget = GetNextTarget();
@@ -128,7 +128,7 @@ namespace Unit.Character.Creep
             {
                 if(!isCanMovement) return;
                 
-                direction = (currentTargetPosition - GameObject.transform.position).normalized;
+                direction = (currentTargetPosition - gameObject.transform.position).normalized;
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
                 
                 //GameObject.transform.position = Vector3.MoveTowards(GameObject.transform.position,
@@ -138,7 +138,7 @@ namespace Unit.Character.Creep
 
         private void RotateToTarget()
         {
-            if (Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTarget.transform.position))
+            if (Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
             {
                 isCanMovement = true;
             }

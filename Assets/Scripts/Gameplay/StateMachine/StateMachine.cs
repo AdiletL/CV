@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Machine;
+using Unit;
 using UnityEngine;
+using IState = Machine.IState;
 
 public class StateMachine
 {
@@ -9,15 +11,13 @@ public class StateMachine
     public event Action<IState> OnExitCategory;
     public event Action OnUpdate;
     public event Action OnLateUpdate;
-
+    
     private readonly Dictionary<StateCategory, IState> activeStates = new();
     private readonly Dictionary<Type, IState> states = new();
     private readonly List<StateCategory> cachedCategories = new();
 
     private IState defaultIdleState;
     private bool isBlockChangeState;
-
-    public Dictionary<StateCategory, IState> ActiveStates => activeStates;
 
     public bool IsStateNotNull(Type state) => FindMostDerivedState(state) != null;
 
@@ -78,8 +78,14 @@ public class StateMachine
         }
     }
 
-    public void ActiveBlockChangeState() => isBlockChangeState = true;
-    public void InActiveBlockChangeState() => isBlockChangeState = false;
+    public void ActiveBlockChangeState()
+    { 
+        isBlockChangeState = true;
+    }
+    public void InActiveBlockChangeState()
+    { 
+        isBlockChangeState = false;
+    }
     
     public void SetStates(bool isForceSetState = false, params Type[] desiredStates)
     {
@@ -132,7 +138,7 @@ public class StateMachine
         cachedCategories.Clear();
         cachedCategories.AddRange(activeStates.Keys);
         var targetState = FindMostDerivedState(installationState);
-
+        
         foreach (var category in cachedCategories)
         {
             if (category == targetState.Category ||

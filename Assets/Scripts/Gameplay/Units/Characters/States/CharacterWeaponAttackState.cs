@@ -1,7 +1,5 @@
-﻿using Calculate;
-using Gameplay.Weapon;
+﻿using Gameplay.Weapon;
 using Movement;
-using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character
@@ -11,9 +9,15 @@ namespace Unit.Character
         protected Rotation rotation;
         protected AnimationClip cooldownClip;
         protected AnimationClip[] attackClips;
+        protected Transform weaponParent;
+        protected UnitAnimation unitAnimation;
+        protected CharacterSwitchMoveState characterSwitchMoveState;
+        protected UnitEndurance unitEndurance;
+        protected LayerMask enemyLayer;
         
         protected Collider[] findUnitColliders = new Collider[10];
 
+        protected float baseReductionEndurance;
         protected float durationAttack, countDurationAttack;
         protected float timerApplyDamage, countTimerApplyDamage;
         protected float cooldown, countCooldown;
@@ -22,19 +26,17 @@ namespace Unit.Character
 
         protected bool isApplyDamage;
         protected bool isAttack;
-        
-        
-        public CharacterSwitchMove CharacterSwitchMove { get; set; }
-        public CharacterEndurance CharacterEndurance { get; set; }
+
         public Weapon CurrentWeapon { get; protected set; }
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public GameObject GameObject { get; set; }
-        public Transform Center { get; set; }
-        public Transform WeaponParent { get; set; }
-        public float BaseReductionEndurance { get; set; }
-        public int EnemyLayer { get; set; }
         public float Range { get; protected set; }
-        public float CurrentReductionEndurance { get; private set; }
+        public float CurrentReductionEndurance { get; protected set; }
+        
+        public void SetWeaponParent(Transform parent) => weaponParent = parent;
+        public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
+        public void SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => characterSwitchMoveState = characterSwitchMoveState;
+        public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
+        public void SetBaseReductionEndurance(float reductionEndurance) => baseReductionEndurance = reductionEndurance;
+        public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
         
 
         protected AnimationClip getRandomAnimationClip()
@@ -46,9 +48,9 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            rotation = new Rotation(GameObject.transform, CharacterSwitchMove.RotationSpeed);
+            rotation = new Rotation(gameObject.transform, characterSwitchMoveState.RotationSpeed);
             UpdateDurationAttack();
-            CurrentReductionEndurance = BaseReductionEndurance;
+            CurrentReductionEndurance = baseReductionEndurance;
         }
 
         public override void Enter()
@@ -62,7 +64,7 @@ namespace Unit.Character
             }
             
             CurrentWeapon.Show();
-            CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+            unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             ClearValues();
         }
 
@@ -75,22 +77,22 @@ namespace Unit.Character
                 return;
             }
 
-            if(!Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position, rangeSqr))
+            if(!Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position, rangeSqr))
             {
-                CharacterSwitchMove.SetTarget(currentTarget);
-                CharacterSwitchMove.ExitCategory(Category);
+                characterSwitchMoveState.SetTarget(currentTarget);
+                characterSwitchMoveState.ExitCategory(Category);
                 return;
             }
 
-            if (!Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position))
+            if (!Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
                 rotation.Rotate();
                
-            if(!isAttack && Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, currentTarget.transform.position, angleToTarget))
+            if(!isAttack && Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;
 
             if (!isAttack)
             {
-                CharacterAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+                unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
             }
 
@@ -157,7 +159,7 @@ namespace Unit.Character
 
         private void FindUnit()
         {
-            currentTarget = Calculate.Attack.FindUnitInRange(Center.position, Range, EnemyLayer, ref findUnitColliders);
+            currentTarget = Calculate.Attack.FindUnitInRange(center.position, Range, enemyLayer, ref findUnitColliders);
             if(!currentTarget) return;
             
             CurrentWeapon.SetTarget(currentTarget);
@@ -176,7 +178,7 @@ namespace Unit.Character
                 isApplyDamage = false;
                 countTimerApplyDamage = 0;
             }
-            CharacterEndurance.RemoveEndurance(CurrentReductionEndurance);
+            unitEndurance.RemoveEndurance(CurrentReductionEndurance);
         }
 
         protected virtual void Fire()
@@ -188,7 +190,7 @@ namespace Unit.Character
                 else
                     currentTarget = null;
             }
-            this.CharacterAnimation?.ChangeAnimationWithDuration(cooldownClip);
+            this.unitAnimation?.ChangeAnimationWithDuration(cooldownClip);
             isAttack = false;
             //FindUnit();
         }
@@ -207,7 +209,7 @@ namespace Unit.Character
                         return;
                     }
                     
-                    this.CharacterAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
+                    this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
                     isApplyDamage = true;
                 }
                 else
@@ -247,44 +249,11 @@ namespace Unit.Character
         public CharacterWeaponAttackStateBuilder(CharacterWeaponAttackState instance) : base(instance)
         {
         }
-
-        public CharacterWeaponAttackStateBuilder SetGameObject(GameObject gameObject)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.GameObject = gameObject;
-            }
-
-            return this;
-        }
         
-        public CharacterWeaponAttackStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterWeaponAttackStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.CharacterAnimation = characterAnimation;
-            }
-
-            return this;
-        }
-        
-
-        public CharacterWeaponAttackStateBuilder SetEnemyLayer(int index)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.EnemyLayer = index;
-            }
-
-            return this;
-        }
-        
-        public CharacterWeaponAttackStateBuilder SetCenter(Transform center)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.Center = center;
-            }
+                characterWeapon.SetUnitAnimation(unitAnimation);
 
             return this;
         }
@@ -292,38 +261,35 @@ namespace Unit.Character
         public CharacterWeaponAttackStateBuilder SetWeaponParent(Transform parent)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.WeaponParent = parent;
-            }
+                characterWeapon.SetWeaponParent(parent);
 
             return this;
         }
-
-
-        public CharacterWeaponAttackStateBuilder SetCharacterEndurance(CharacterEndurance endurance)
+        public CharacterWeaponAttackStateBuilder SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.CharacterEndurance = endurance;
-            }
+                characterWeapon.SetCharacterSwitchMoveState(characterSwitchMoveState);
 
             return this;
         }
-        public CharacterWeaponAttackStateBuilder SetCharacterSwitchMove(CharacterSwitchMove characterSwitchMove)
+        public CharacterWeaponAttackStateBuilder SetUnitEndurance(UnitEndurance endurance)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.CharacterSwitchMove = characterSwitchMove;
-            }
+                characterWeapon.SetUnitEndurance(endurance);
 
             return this;
         }
-        public CharacterWeaponAttackStateBuilder SetBaseReductionEndurance(float value)
+        public CharacterWeaponAttackStateBuilder SetBaseReductionEndurance(float reductionEndurance)
         {
             if (state is CharacterWeaponAttackState characterWeapon)
-            {
-                characterWeapon.BaseReductionEndurance = value;
-            }
+                characterWeapon.SetBaseReductionEndurance(reductionEndurance);
+
+            return this;
+        }
+        public CharacterWeaponAttackStateBuilder SetEnemyLayer(LayerMask enemyLayer)
+        {
+            if (state is CharacterWeaponAttackState characterWeapon)
+                characterWeapon.SetEnemyLayer(enemyLayer);
 
             return this;
         }

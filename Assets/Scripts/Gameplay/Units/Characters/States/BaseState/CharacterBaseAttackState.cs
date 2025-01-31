@@ -1,4 +1,4 @@
-﻿using Machine;
+﻿using Gameplay.Damage;
 using UnityEngine;
 
 namespace Unit.Character
@@ -7,10 +7,12 @@ namespace Unit.Character
     {
         protected GameObject currentTarget;
         
-        public override void Initialize()
+        
+        public override IDamageable GetDamageable()
         {
-            
+            return new NormalDamage(damage, gameObject);
         }
+        
         
         public override void Update()
         {
@@ -21,6 +23,7 @@ namespace Unit.Character
         {
             
         }
+
 
         public override void Attack()
         {
@@ -53,5 +56,6 @@ namespace Unit.Character
         {
             
         }
+        
     }
 }

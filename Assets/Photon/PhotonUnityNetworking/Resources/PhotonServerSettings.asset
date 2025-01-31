@@ -111,6 +111,32 @@ MonoBehaviour:
   - InitializeSword
   - Trigger
   - CreateCamera
+  - InitializeNormalResistance
+  - PlayAnimation
+  - SetSpeedClipRPC
+  - InitializeGameUnitsAndExperienceSystem
+  - ChangeAnimationWithDurationRPC
+  - ChangeAnimationWithSpeedRPC
+  - TestAnimation
+  - InitializeLevelManagerAndStartLevel
+  - SetToTargetForRunState
+  - SetTargetForMoveStateRPC
+  - SetExitOtherStatesRPC
+  - SyncPosition
+  - TransformSync
+  - ExitCategoryRPC
+  - ExitOtherStatesRPC
+  - SetStateRPC
+  - ExitCategorySwitchAttackRPC
+  - ExitCategorySwitchMoveRPC
+  - ExitOtherStatesSwitchAttackRPC
+  - ExitOtherStatesSwitchMoveRPC
+  - SetSwitchAttackRPC
+  - SetSwitchMoveRPC
+  - SetTargetForMoveRPC
+  - ActiveBlockChangeStateRPC
+  - InActiveBlockChangeStateRPC
+  - InitializeRunStateRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -4,12 +4,12 @@ namespace Unit.Character.Creep
 {
     public class BeholderPatrolState : CreepPatrolState
     {
-        private BeholderSwitchAttack beholderSwitchAttack;
+        private BeholderSwitchAttackState _beholderSwitchAttackState;
 
         public override void Initialize()
         {
             base.Initialize();
-            beholderSwitchAttack = (BeholderSwitchAttack)CharacterSwitchAttack;
+            _beholderSwitchAttackState = (BeholderSwitchAttackState)CharacterSwitchAttack;
         }
 
         public override void Enter()
@@ -25,9 +25,9 @@ namespace Unit.Character.Creep
 
         private void CheckEnemy()
         {
-            if (beholderSwitchAttack.IsFindUnitInRange())
+            if (_beholderSwitchAttackState.IsFindUnitInRange())
             {
-                beholderSwitchAttack.ExitCategory(Category);
+                _beholderSwitchAttackState.ExitCategory(Category);
             }
         }
     }

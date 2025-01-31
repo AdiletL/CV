@@ -33,7 +33,7 @@ namespace Unit.Character.Creep
 
         private bool IsFinalTargetReached()
         {
-            return Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, finalTarget.transform.position) ||
+            return Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, finalTarget.transform.position) ||
                    pathToPoint.Count == 0;
         }
 
@@ -67,10 +67,10 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            rotation = new Rotation(GameObject.transform, RotationSpeed);
+            rotation = new Rotation(gameObject.transform, RotationSpeed);
             pathFinding = new PathFindingBuilder()
-                .SetStartPosition(GameObject.transform.position)
-                .SetEndPosition(GameObject.transform.position)
+                .SetStartPosition(gameObject.transform.position)
+                .SetEndPosition(gameObject.transform.position)
                 .Build();
         }
 
@@ -103,7 +103,7 @@ namespace Unit.Character.Creep
             pathToPoint.Clear();
             finalTargetPosition = finalTarget.transform.position;
 
-            pathFinding.SetStartPosition(GameObject.transform.position);
+            pathFinding.SetStartPosition(gameObject.transform.position);
             pathFinding.SetTargetPosition(finalTargetPosition);
 
             AssignNextCurrentTarget();
@@ -139,7 +139,7 @@ namespace Unit.Character.Creep
                 return;
             }
 
-            var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
+            var currentCell = Calculate.FindCell.GetCell(gameObject.transform.position, Vector3.down);
 
             if (currentCell == null || previousTargetCoordinates == Vector2Int.zero)
                 return;
@@ -160,11 +160,11 @@ namespace Unit.Character.Creep
         {
             currentTargetPosition = new Vector3(
                 currentTarget.transform.position.x,
-                GameObject.transform.position.y,
+                gameObject.transform.position.y,
                 currentTarget.transform.position.z
             );
 
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
+            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTargetPosition))
             {
                 previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
                 ClearCurrentTarget();
@@ -178,15 +178,15 @@ namespace Unit.Character.Creep
             else
             {
                 if (!Calculate.Move.IsFacingTargetUsingAngle(
-                        GameObject.transform.position,
-                        GameObject.transform.forward,
+                        gameObject.transform.position,
+                        gameObject.transform.forward,
                         currentTargetPosition))
                 {
                     rotation.Rotate();
                     return;
                 }
 
-                direction = (currentTargetPosition - GameObject.transform.position).normalized;
+                direction = (currentTargetPosition - gameObject.transform.position).normalized;
                 CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
             }
         }

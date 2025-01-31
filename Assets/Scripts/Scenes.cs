@@ -7,6 +7,7 @@ public static class Scenes
     public const string LABORATORY_NAME = "Laboratory";
     public const string GAMEPLAY_NAME = "Gameplay";
     public const string TEST_NAME = "Test";
+    public const string LOBBY_NAME = "Lobby";
 
     public static void TransitionToScene(string sceneName)
     {

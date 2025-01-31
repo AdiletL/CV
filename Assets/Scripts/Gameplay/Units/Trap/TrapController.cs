@@ -15,18 +15,7 @@ namespace Unit.Trap
 
         public GameObject CurrentTarget { get; protected set; }
         public LayerMask EnemyLayer { get; protected set; }
-
-        public void InitializeRPC()
-        {
-            this.photonView = GetComponent<PhotonView>();
-            this.photonView.RPC(nameof(Trigger), RpcTarget.AllBuffered);
-        }
-
-        [PunRPC]
-        private void Trigger()
-        {
-            Initialize();
-        }
+        
         public override void Initialize()
         {
             base.Initialize();

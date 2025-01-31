@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 namespace Unit
@@ -8,14 +10,16 @@ namespace Unit
         [SerializeField] protected Animator animator;
         [SerializeField] protected AnimationClip defaultAnimationClip;
 
+        protected PhotonView photonView;
         protected AnimationClip currentClip;
         protected float currentSpeed;
-
-        // Кэш для хранения длительности анимационных клипов
-        protected Dictionary<AnimationClip, float> clipLengths = new();
-        protected const string TRANSITION_SPEED = "speed";
-
         private bool isBlock;
+
+        protected List<AnimationClip> allClips;
+        
+        protected Dictionary<AnimationClip, float> clipLengths = new();
+
+        protected const string TRANSITION_SPEED = "speed";
         
         /// <summary>
         /// Возвращает анимационный клип для использования.
@@ -37,6 +41,16 @@ namespace Unit
             }
 
             return clipLength;
+        }
+
+        private AnimationClip GetAnimationClip(string clipName)
+        {
+            foreach (var VARIABLE in allClips)
+            {
+                if(string.Equals(clipName, VARIABLE.name, StringComparison.Ordinal))
+                    return VARIABLE;
+            }
+            return defaultAnimationClip;
         }
 
         /// <summary>
@@ -61,13 +75,14 @@ namespace Unit
         /// </summary>
         public virtual void Initialize()
         {
-            // Переопределите в наследниках при необходимости
+            photonView = GetComponent<PhotonView>();
         }
 
         #endregion
 
         #region Public Methods
 
+        
         /// <summary>
         /// Изменение текущей анимации.
         /// </summary>
@@ -76,32 +91,44 @@ namespace Unit
         /// <param name="transitionDuration">Длительность перехода между анимациями.</param>
         /// <param name="isForce">Принудительное изменение анимации.</param>
         /// <param name="isDefault">Установить анимацию по умолчанию.</param>
-        public void ChangeAnimationWithDuration(AnimationClip clip, float duration = 0, 
+        public void ChangeAnimationWithDuration(AnimationClip clip, float duration = 0f, 
             float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false)
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
 
             clip = ResolveAnimationClip(clip, isDefault);
-            SetSpeedClip(clip, duration);
-
-            if (gameObject.activeSelf)
-            {
-                PlayAnimation(clip, transitionDuration);
-            }
+            photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration);
         }
 
-        public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1, 
+        public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1f, 
             float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false)
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
             
             clip = ResolveAnimationClip(clip, isDefault);
+            photonView.RPC(nameof(ChangeAnimationWithSpeedRPC), RpcTarget.All, clip.name, speed, transitionDuration);
+        }
+
+        [PunRPC]
+        protected void ChangeAnimationWithDurationRPC(string clipName, float duration, float transitionDuration)
+        {
+            var animationClip = GetAnimationClip(clipName);
+            SetSpeedClip(animationClip, duration);
+
+            if (gameObject.activeSelf)
+                PlayAnimation(animationClip, transitionDuration);
+        }
+
+        [PunRPC]
+        protected void ChangeAnimationWithSpeedRPC(string clipName, float speed, float transitionDuration)
+        {
             animator.SetFloat(TRANSITION_SPEED, speed);
             currentSpeed = speed;
             
             if (gameObject.activeSelf)
             {
-                PlayAnimation(clip, transitionDuration);
+                var animationClip = GetAnimationClip(clipName);
+                PlayAnimation(animationClip, transitionDuration);
             }
         }
 
@@ -112,7 +139,6 @@ namespace Unit
         public void SetBlock(bool isBlock) => this.isBlock = isBlock;
 
         #endregion
-        
         /// <summary>
         /// Установка скорости анимации.
         /// </summary>
@@ -139,6 +165,23 @@ namespace Unit
         {
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
             currentClip = clip;
+        }
+
+
+        public void AddClip(AnimationClip clip)
+        {
+            allClips ??= new List<AnimationClip>();
+            allClips.Add(clip);
+        }
+        public void AddClips(AnimationClip[] clips)
+        {
+            allClips ??= new List<AnimationClip>();
+            allClips.AddRange(clips);
+        }
+
+        public void RemoveClip(AnimationClip clip)
+        {
+            allClips.Remove(clip);
         }
     }
 }

@@ -4,12 +4,12 @@ namespace Unit.Character.Creep
 {
     public class BeholderDefaultAttackState : CreepDefaultAttackState
     {
-        private BeholderSwitchMove beholderSwitchMove;
+        private BeholderSwitchMoveState beholderSwitchMoveState;
 
         public override void Initialize()
         {
             base.Initialize();
-            beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
+            beholderSwitchMoveState = (BeholderSwitchMoveState)characterSwitchMoveState;
         }
 
         public override void Enter()
@@ -25,11 +25,11 @@ namespace Unit.Character.Creep
             
             if(!currentTarget) return;
             
-            if (!isAttack && !Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTarget.transform.position,
+            if (!isAttack && !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {
-                beholderSwitchMove.SetTarget(currentTarget);
-                beholderSwitchMove.ExitCategory(Category);
+                beholderSwitchMoveState.SetTarget(currentTarget);
+                beholderSwitchMoveState.ExitCategory(Category);
             }
         }
     }

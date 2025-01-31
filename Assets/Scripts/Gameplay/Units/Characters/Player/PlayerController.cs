@@ -1,16 +1,15 @@
 using System;
 using Gameplay.Damage;
 using Gameplay.Effect;
+using Gameplay.Factory;
 using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Weapon;
 using Machine;
-using Photon.Pun;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using ValueType = Calculate.ValueType;
 
 namespace Unit.Character.Player
@@ -28,6 +27,7 @@ namespace Unit.Character.Player
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
         
+        [Space]
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
@@ -36,15 +36,20 @@ namespace Unit.Character.Player
         [SerializeField] private SO_Sword so_Sword;
         [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
-        [SerializeField] private AssetReferenceGameObject cameraPrefab;
         
+        [Space]
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
+        private PlayerStateFactory playerStateFactory;
+        private PlayerSwitchStateFactory playerSwitchStateFactory;
+        
         private IControl playerControlDesktop;
-        private PlayerSwitchMove playerSwitchMove;
-        private PlayerSwitchAttack playerSwitchAttack;
-        private PlayerEndurance playerEndurance;
+        private CharacterSwitchMoveState characterSwitchMoveState;
+        private CharacterSwitchAttackState characterSwitchAttackState;
+        private CharacterEndurance characterEndurance;
+        private CharacterAnimation characterAnimation;
+        private UnitTransformSync unitTransformSync;
         
         private CharacterController characterController;
         
@@ -53,63 +58,22 @@ namespace Unit.Character.Player
             return new PlayerInformation(this);
         }
 
-        public override int TotalDamage() => playerSwitchAttack.TotalDamage();
-        public override int TotalAttackSpeed() => playerSwitchAttack.TotalAttackSpeed();
-        public override float TotalAttackRange() => playerSwitchAttack.TotalAttackRange();
-
-        private PlayerIdleState CreateIdleState(CharacterAnimation characterAnimation, Transform center)
-        {
-            return (PlayerIdleState)new PlayerIdleStateBuilder()
-                .SetIdleClips(so_PlayerMove.IdleClip)
-                .SetCharacterSwitchMove(playerSwitchMove)
-                .SetCharacterController(characterController)
-                .SetCharacterAnimation(characterAnimation)
-                .SetCenter(center)
-                .SetGameObject(gameObject)
-                .SetStateMachine(StateMachine)
-                .Build();
-        }
-
-        private PlayerSwitchMove CreateSwitchMoveState(CharacterAnimation characterAnimation, Transform center)
-        {
-            return (PlayerSwitchMove)new PlayerSwitchMoveBuilder()
-                .SetCharacterController(characterController)
-                .SetCenter(center)
-                .SetPlayerEndurance(playerEndurance)
-                .SetCharacterAnimation(characterAnimation)
-                .SetConfig(so_PlayerMove)
-                .SetGameObject(gameObject)
-                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
-                .SetPhotonView(photonView)
-                .SetStateMachine(StateMachine)
-                .Build();
-        }
-
-        private PlayerSwitchAttack CreateSwitchAttackState(CharacterAnimation characterAnimation, Transform center)
-        {
-            return (PlayerSwitchAttack)new PlayerSwitchAttackBuilder()
-                .SetWeaponParent(weaponParent)
-                .SetCenter(center)
-                .SetCharacterEndurance(playerEndurance)
-                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
-                .SetGameObject(gameObject)
-                .SetCharacterAnimation(characterAnimation)
-                .SetStateMachine(StateMachine)
-                .SetConfig(so_PlayerAttack)
-                .Build();
-        }
+        public override int TotalDamage() => characterSwitchAttackState.TotalDamage();
+        public override int TotalAttackSpeed() => characterSwitchAttackState.TotalAttackSpeed();
+        public override float TotalAttackRange() => characterSwitchAttackState.TotalAttackRange();
+        
 
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
                 .SetCharacterController(characterController)
                 .SetGameObject(gameObject)
-                .SetPlayerSwitchAttack(playerSwitchAttack)
-                .SetPlayerSwitchMove(playerSwitchMove)
-                .SetEndurance(playerEndurance)
+                .SetPlayerSwitchAttack(characterSwitchAttackState)
+                .SetPlayerSwitchMove(characterSwitchMoveState)
+                .SetEndurance(characterEndurance)
                 .SetPhotonView(photonView)
                 .SetPlayerController(this)
-                .SetPlayerAnimation(GetComponent<PlayerAnimation>())
+                .SetCharacterAnimation(characterAnimation)
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
@@ -117,43 +81,77 @@ namespace Unit.Character.Player
                 .Build();
         }
 
-        public void Init()
+        private PlayerStateFactory CreatePlayerStateFactory()
         {
-            GetComponent<PhotonView>().RPC(nameof(Init), RpcTarget.AllBuffered);
+            return new PlayerStateFactoryBuilder(new PlayerStateFactory())
+                .SetCharacterController(characterController)
+                .SetGameObject(gameObject)
+                .SetCharacterEndurance(characterEndurance)
+                .SetPhotonView(photonView)
+                .SetPlayerAttackConfig(so_PlayerAttack)
+                .SetPlayerMoveConfig(so_PlayerMove)
+                .SetUnitCenter(unitCenter)
+                .SetCharacterAnimation(characterAnimation)
+                .SetWeaponParent(weaponParent)
+                .SetStateMachine(StateMachine)
+                .Build();
         }
 
-        [PunRPC]
-        private void Trigger()
+        private PlayerSwitchStateFactory CreatePlayerSwitchStateFactory()
         {
-            Initialize();
+            return new PlayerSwitchStateFactoryBuilder(new PlayerSwitchStateFactory())
+                .SetPlayerState(playerStateFactory)
+                .SetCharacterController(characterController)
+                .SetCharacterAnimation(characterAnimation)
+                .SetCharacterEndurance(characterEndurance)
+                .SetGameObject(gameObject)
+                .SetPhotonView(photonView)
+                .SetWeaponParent(weaponParent)
+                .SetUnitCenter(unitCenter)
+                .SetPlayerAttackConfig(so_PlayerAttack)
+                .SetPlayerMoveConfig(so_PlayerMove)
+                .SetStateMachine(StateMachine)
+                .Build();
         }
-        
+
         public override void Initialize()
         {
-            characterController = GetComponent<CharacterController>();
-            playerEndurance = GetComponentInUnit<PlayerEndurance>();
-
             base.Initialize();
             
             if(photonView.IsMine)
                 FindFirstObjectByType<CameraMove>().SetTarget(gameObject);
             
-            StateMachine.Initialize();
-            
             //Test
-            InitializeNormalResistanceRPC();
+            InitializeNormalResistance();
             //Test
             InitializeSword();
-                        
+
+            InitializeAllAnimations();
+            
+            StateMachine.Initialize();
             StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
+        }
+
+        protected override void BeforeCreateStates()
+        {
+            base.BeforeCreateStates();
+            
+            characterController = GetComponent<CharacterController>();
+            characterEndurance = GetComponentInUnit<PlayerEndurance>();
+            characterAnimation = GetComponentInUnit<PlayerAnimation>();
+            diContainer.Inject(characterAnimation);
+            characterAnimation.Initialize();
+            
+            unitTransformSync = GetComponentInUnit<UnitTransformSync>();
+            playerStateFactory = CreatePlayerStateFactory();
+            playerSwitchStateFactory = CreatePlayerSwitchStateFactory();
         }
 
         protected override void CreateStates()
         {
-            var characterAnimation = GetComponentInUnit<CharacterAnimation>();
             var center = GetComponentInUnit<UnitCenter>().Center;
 
-            var idleState = CreateIdleState(characterAnimation, center);
+            var idleState = playerStateFactory.CreateState(typeof(PlayerIdleState));
             diContainer.Inject(idleState);
             
             StateMachine.AddStates(idleState);
@@ -161,25 +159,23 @@ namespace Unit.Character.Player
 
         protected override void CreateSwitchState()
         {
-            var characterAnimation = GetComponentInUnit<CharacterAnimation>();
-            var center = GetComponentInUnit<UnitCenter>().Center;
-
-            playerSwitchMove = CreateSwitchMoveState(characterAnimation, center);
-            diContainer.Inject(playerSwitchMove);
+            characterSwitchMoveState = playerSwitchStateFactory.CreateSwitchMoveState(typeof(PlayerSwitchMoveState));
+            diContainer.Inject(characterSwitchMoveState);
             
-            playerSwitchAttack = CreateSwitchAttackState(characterAnimation, center);
-            diContainer.Inject(playerSwitchAttack);
+            characterSwitchAttackState = playerSwitchStateFactory.CreateSwitchAttackState(typeof(PlayerSwitchAttackState));
+            diContainer.Inject(characterSwitchAttackState);
             
-            playerSwitchMove.SetSwitchAttack(playerSwitchAttack);
-            playerSwitchAttack.SetSwitchMove(playerSwitchMove);
+            characterSwitchMoveState.SetSwitchAttackState(characterSwitchAttackState);
+            characterSwitchAttackState.SetSwitchMoveState(characterSwitchMoveState);
             
-            playerSwitchAttack.Initialize();
-            playerSwitchMove.Initialize();
+            characterSwitchAttackState.Initialize();
+            characterSwitchMoveState.Initialize();
         }
 
         protected override void BeforeInitializeMediator()
         {
             base.BeforeInitializeMediator();
+            
             playerControlDesktop = CreatePlayerControlDesktop();
             diContainer.Inject(playerControlDesktop);
             playerControlDesktop.Initialize();
@@ -199,15 +195,14 @@ namespace Unit.Character.Player
 
         public override void Appear()
         {
-
+            unitTransformSync.enabled = true;
         }
 
-        [PunRPC]
         private void InitializeSword()
         {
             if (!photonView.IsMine) return;
             //TEST
-            if (playerSwitchAttack.TryGetWeapon(typeof(Sword), out Sword component))
+            if (characterSwitchAttackState.TryGetWeapon(typeof(Sword), out Sword component))
             {
                 SetWeapon(component);
             }
@@ -233,12 +228,11 @@ namespace Unit.Character.Player
             Debug.Log("Sword");
         }
 
-        [PunRPC]
         private void InitializeBow()
         {
             if (!photonView.IsMine) return;
             
-            if (playerSwitchAttack.TryGetWeapon(typeof(Bow), out Bow component))
+            if (characterSwitchAttackState.TryGetWeapon(typeof(Bow), out Bow component))
             {
                 SetWeapon(component);
             }
@@ -265,11 +259,23 @@ namespace Unit.Character.Player
         }
 
         //Test
-        [PunRPC]
-        private void InitializeNormalResistanceRPC()
+        private void InitializeNormalResistance()
         {
             var normalDamageResistance = new NormalDamageResistance(80, ValueType.Percent);
             GetComponentInUnit<ResistanceHandler>().AddResistance(normalDamageResistance);
+        }
+
+        protected override void InitializeAllAnimations()
+        {
+            characterAnimation.AddClips(so_PlayerMove.IdleClip);
+            characterAnimation.AddClips(so_PlayerMove.RunClip);
+            characterAnimation.AddClips(so_PlayerAttack.BowAttackClip);
+            characterAnimation.AddClip(so_PlayerAttack.BowCooldownClip);
+            characterAnimation.AddClips(so_PlayerAttack.DefaultAttackClips);
+            characterAnimation.AddClip(so_PlayerAttack.DefaultCooldownClip);
+            characterAnimation.AddClips(so_PlayerAttack.SwordAttackClip);
+            characterAnimation.AddClip(so_PlayerAttack.SwordCooldownClip);
+            characterAnimation.AddClip(so_PlayerMove.JumpInfo.Clip);
         }
         
         //Test
@@ -304,7 +310,7 @@ namespace Unit.Character.Player
         
         public void SetWeapon(Weapon weapon)
         {
-            playerSwitchAttack.SetWeapon(weapon);
+            characterSwitchAttackState.SetWeapon(weapon);
         }
 
         private void OnChangedState(Machine.IState state)

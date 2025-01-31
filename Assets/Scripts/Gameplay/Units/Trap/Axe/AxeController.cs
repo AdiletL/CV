@@ -27,7 +27,7 @@ namespace Unit.Trap
 
         public override void Appear()
         {
-            Activate();
+            //Activate();
         }
         
         

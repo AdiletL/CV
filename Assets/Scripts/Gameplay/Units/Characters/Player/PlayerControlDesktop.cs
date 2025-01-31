@@ -40,9 +40,9 @@ namespace Unit.Character.Player
         public PlayerController PlayerController { get; set; }
         public StateMachine StateMachine { get; set; }
         public GameObject GameObject { get; set; }
-        public PlayerAnimation PlayerAnimation { get; set; }
-        public ISwitchState PlayerSwitchAttack { get; set; }
-        public ISwitchState PlayerSwitchMove { get; set; }
+        public CharacterAnimation CharacterAnimation { get; set; }
+        public CharacterSwitchAttackState PlayerSwitchAttack { get; set; }
+        public CharacterSwitchMoveState PlayerSwitchMove { get; set; }
         public IEndurance Endurance { get; set; }
         public SO_PlayerControlDesktop SO_PlayerControlDesktop { get; set; }
         public SO_PlayerMove SO_PlayerMove { get; set; }
@@ -69,7 +69,7 @@ namespace Unit.Character.Player
                 .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
                 .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
                 .SetGameObject(GameObject)
-                .SetCharacterAnimation(PlayerAnimation)
+                .SetCharacterAnimation(CharacterAnimation)
                 .SetStateMachine(StateMachine)
                 .Build();
         }
@@ -247,7 +247,7 @@ namespace Unit.Character.Player
         private void TriggerSelectCell()
         {
             if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))
-            {
+            { 
                 PlayerSwitchMove.SetTarget(hitObject);
                 PlayerSwitchMove.ExitOtherStates();
             }
@@ -327,14 +327,14 @@ namespace Unit.Character.Player
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(ISwitchState playerSwitchAttack)
+        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(CharacterSwitchAttackState playerSwitchAttack)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.PlayerSwitchAttack = playerSwitchAttack;
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetPlayerSwitchMove(ISwitchState playerSwitchMove)
+        public PlayerControlDesktopBuilder SetPlayerSwitchMove(CharacterSwitchMoveState playerSwitchMove)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.PlayerSwitchMove = playerSwitchMove;
@@ -369,10 +369,10 @@ namespace Unit.Character.Player
             return this;
         }
         
-        public PlayerControlDesktopBuilder SetPlayerAnimation(PlayerAnimation playerAnimation)
+        public PlayerControlDesktopBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PlayerAnimation = playerAnimation;
+                playerControlDesktop.CharacterAnimation = characterAnimation;
             return this;
         }
 

@@ -40,7 +40,7 @@ namespace Unit.Trap.Hammer
         public override void Appear()
         {
             int random = Random.Range(0, 4);
-            Invoke(nameof(Deactivate), random);
+            //Invoke(nameof(Deactivate), random);
         }
         
 

@@ -13,14 +13,8 @@ namespace Gameplay.Factory
 {
     public class TrapFactory : Factory
     {
-        private PoolManager poolManager;
-
-        [Inject]
-        private void Construct(PoolManager poolManager)
-        {
-            this.poolManager = poolManager;
-        }
-
+        [Inject] private PoolManager poolManager;
+        
         public async UniTask<GameObject> Create(Type type)
         {
             GameObject result = type switch

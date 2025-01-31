@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Damage;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
@@ -19,10 +20,13 @@ namespace Unit.Trap.Tower
         
         public TowerAnimation TowerAnimation { get; set; }
         public AnimationClip AttackClip { get; set; }
-        public GameObject GameObject { get; set; }
-        public Transform Center { get; set; }
         public Transform PointSpawnProjectile { get; set; }
-        
+
+
+        public override IDamageable GetDamageable()
+        {
+            return new NormalDamage(damage, gameObject);
+        }
 
         public override void Initialize()
         {

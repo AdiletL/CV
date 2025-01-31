@@ -5,8 +5,8 @@ namespace Unit.Character.Creep
 {
     public class BeholderIdleState : CreepIdleState
     { 
-        private BeholderSwitchAttack beholderSwitchAttack;
-        private BeholderSwitchMove beholderSwitchMove;
+        private BeholderSwitchAttackState _beholderSwitchAttackState;
+        private BeholderSwitchMoveState _beholderSwitchMoveState;
         
         private float checkEnemyCooldown = .03f;
         private float countCheckEnemyCooldown;
@@ -16,8 +16,8 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            beholderSwitchAttack = (BeholderSwitchAttack)CharacterSwitchAttack;
-            beholderSwitchMove = (BeholderSwitchMove)CharacterSwitchMove;
+            _beholderSwitchAttackState = (BeholderSwitchAttackState)CharacterSwitchAttack;
+            _beholderSwitchMoveState = (BeholderSwitchMoveState)CharacterSwitchMove;
         }
         
         public override void Update()
@@ -35,8 +35,8 @@ namespace Unit.Character.Creep
 
         private void CheckMove()
         {
-            if(!beholderSwitchMove.IsCanMovement() || !isActive) return;
-            beholderSwitchMove.ExitCategory(Category);
+            if(!_beholderSwitchMoveState.IsCanMovement() || !isActive) return;
+            _beholderSwitchMoveState.ExitCategory(Category);
         }
 
         private void CheckAttack()
@@ -46,9 +46,9 @@ namespace Unit.Character.Creep
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
-                if (beholderSwitchAttack.IsFindUnitInRange())
+                if (_beholderSwitchAttackState.IsFindUnitInRange())
                 {
-                    beholderSwitchAttack.ExitCategory(Category);
+                    _beholderSwitchAttackState.ExitCategory(Category);
                 }
 
                 countCheckEnemyCooldown = 0;

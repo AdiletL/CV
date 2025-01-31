@@ -4,15 +4,23 @@ namespace Unit.Character
 {
     public class CharacterRunState : CharacterBaseMovementState
     {
+        protected CharacterSwitchAttackState characterSwitchAttackState;
+        protected UnitAnimation unitAnimation;
+        protected UnitEndurance unitEndurance;
+        protected AnimationClip[] runClips;
+
         protected float durationAnimation;
+
+        public void SetSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
+            this.characterSwitchAttackState = characterSwitchAttackState;
+        public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
+        public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
+        public void SetRunClips(AnimationClip[] runClips) => this.runClips = runClips;
         
-        public ISwitchState CharacterSwitchAttack { get; set; }
-        public CharacterAnimation CharacterAnimation  { get; set; }
-        public AnimationClip[] RunClips  { get; set; }
 
         protected AnimationClip getRandomRunClip()
         {
-            return  RunClips[Random.Range(0, RunClips.Length)];
+            return  runClips[Random.Range(0, runClips.Length)];
         }
 
         public override void Enter()
@@ -24,13 +32,13 @@ namespace Unit.Character
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
-            CharacterAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation);
+            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation);
         }
 
         protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeed;
-            CharacterAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
+            unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
         }
 
         public override void ExecuteMovement()
@@ -49,6 +57,11 @@ namespace Unit.Character
             base.RemoveMovementSpeed(value);
             UpdateDurationAnimation();
         }
+
+        public virtual void SetTarget(GameObject target)
+        {
+            
+        }
     }
 
     public class CharacterRunStateBuilder : CharacterBaseMovementStateBuilder
@@ -57,23 +70,24 @@ namespace Unit.Character
         {
         }
 
-        public CharacterRunStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterRunStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
             if(state is CharacterRunState characterRunState)
-                characterRunState.CharacterAnimation = characterAnimation;
+                characterRunState.SetUnitAnimation(unitAnimation);
             return this;
         }
 
         public CharacterRunStateBuilder SetRunClips(AnimationClip[] animationClips)
         {
             if(state is CharacterRunState characterRunState)
-                characterRunState.RunClips = animationClips;
+                characterRunState.SetRunClips(animationClips);
             return this;
         }
-        public CharacterRunStateBuilder SetCharacterSwitchAttack(ISwitchState characterSwitchAttack)
+
+        public CharacterRunStateBuilder SetUnitEndurance(UnitEndurance unitEndurance)
         {
             if(state is CharacterRunState characterRunState)
-                characterRunState.CharacterSwitchAttack = characterSwitchAttack;
+                characterRunState.SetUnitEndurance(unitEndurance);
             return this;
         }
     }

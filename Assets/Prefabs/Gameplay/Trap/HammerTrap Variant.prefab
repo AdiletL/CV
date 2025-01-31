@@ -254,6 +254,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HammerTrap Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 7206192804665567544, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
+      propertyPath: ObservedComponents.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8810709713694460316, guid: a2696c314f1a4e7489b99c227d7cb8ca, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

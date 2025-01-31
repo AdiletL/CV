@@ -7,10 +7,13 @@ public class Bootstrap : MonoBehaviour
 {
     [SerializeField] private AssetReference gameInstallerPrefab;
     
-    public string nextScene;
+    [HideInInspector] public string nextScene;
 
     private void Start()
     {
+        PhotonNetwork.SendRate = 120;
+        PhotonNetwork.SerializationRate = 120;
+        
         if (!PhotonNetwork.IsMasterClient)
         {
             Debug.Log("Not Master Client, skipping initialization.");
@@ -25,7 +28,7 @@ public class Bootstrap : MonoBehaviour
     private void Initialize(int viewID)
     {
         var newGameObject = PhotonView.Find(viewID).gameObject;
-        newGameObject.GetComponent<GameInstaller>().nextScene = Scenes.GAMEPLAY_NAME;
+        newGameObject.GetComponent<GameInstaller>().nextScene = nextScene;
     }
 }
 

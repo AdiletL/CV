@@ -60,7 +60,7 @@ namespace Gameplay.Weapon.Projectile
 
         public void SetDamageable(IDamageable damageable)
         {
-            Damageable = damageable;
+            this.Damageable = damageable;
         }
 
         protected void ReturnToPool()

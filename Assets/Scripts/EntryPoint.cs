@@ -22,7 +22,6 @@ public class EntryPoint
     private void RunGame()
     {
         PhotonNetwork.PrefabPool = new AddressablesPrefabPool();
-        
         SceneManager.sceneLoaded += OnSceneLoaded;
 #if UNITY_EDITOR
         var sceneName = SceneManager.GetActiveScene().name;
@@ -32,7 +31,7 @@ public class EntryPoint
             Debug.Log("Current scene: " + sceneName);
             SceneManager.LoadSceneAsync(Scenes.BOOTSTRAP_NAME, LoadSceneMode.Single);
         }
-        else
+        else if(sceneName == Scenes.LOBBY_NAME)
         {
             nextSceneName = Scenes.GAMEPLAY_NAME;
         }
@@ -50,7 +49,7 @@ public class EntryPoint
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private  void BoostrapLoad()
+    private void BoostrapLoad()
     {
         if(!PhotonNetwork.IsMasterClient) return;
         var bootstrap = PhotonNetwork.Instantiate("Bootstrap", Vector3.zero, Quaternion.identity, 0);

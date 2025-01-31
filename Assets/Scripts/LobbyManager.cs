@@ -1,29 +1,50 @@
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
-using Unit.Character.Player;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
-using Zenject;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_InputField roomNameInputField;
     [SerializeField] private TextMeshProUGUI statusTxt;
 
-    [Inject] private DiContainer diContainer;
+    private bool isOfflineMode = false; // Флаг оффлайн-режима
+
     private void Start()
     {
         Caching.ClearCache();
+
+            ActivateOfflineMode();
+            return;
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+        }
+
         PhotonNetwork.ConnectUsingSettings();
         statusTxt.text = "Connecting...";
     }
 
+    // Включение оффлайн-режима вручную
+    public void ActivateOfflineMode()
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Disconnect(); // Отключаемся от сервера перед оффлайном
+        }
+
+        isOfflineMode = true;
+        PhotonNetwork.OfflineMode = true;
+        statusTxt.text = "Offline Mode Activated";
+    }
+
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinLobby();
-        statusTxt.text = "Connected";
+        if (!isOfflineMode)
+        {
+            PhotonNetwork.JoinLobby();
+            statusTxt.text = "Connected to Master";
+        }
     }
 
     public override void OnJoinedLobby()
@@ -34,20 +55,42 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void CreateRoom()
     {
         string roomName = roomNameInputField.text;
-        if (!string.IsNullOrEmpty(roomName))
+        if (string.IsNullOrEmpty(roomName)) return;
+
+        if (PhotonNetwork.OfflineMode)
         {
-            PhotonNetwork.CreateRoom(roomName, new RoomOptions(){MaxPlayers = 4});
+            PhotonNetwork.CreateRoom(roomName);
+            statusTxt.text = "Offline Room Created";
+        }
+        else if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = 4 });
             statusTxt.text = "Creating room...";
+        }
+        else
+        {
+            statusTxt.text = "Not connected!";
         }
     }
 
     public void JoinRoom()
     {
         string roomName = roomNameInputField.text;
-        if (!string.IsNullOrEmpty(roomName))
+        if (string.IsNullOrEmpty(roomName)) return;
+
+        if (PhotonNetwork.OfflineMode)
+        {
+            statusTxt.text = "Offline Mode - No need to join";
+            OnJoinedRoom(); // Эмулируем вход в комнату
+        }
+        else if (PhotonNetwork.IsConnected)
         {
             PhotonNetwork.JoinRoom(roomName);
-            statusTxt.text = "Joined room...";
+            statusTxt.text = "Joining room...";
+        }
+        else
+        {
+            statusTxt.text = "Not connected!";
         }
     }
 

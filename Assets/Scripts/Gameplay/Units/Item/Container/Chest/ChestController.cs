@@ -13,6 +13,7 @@ namespace Unit.Item.Container
         
         private SO_Chest so_chest;
         private HotkeyUI hotkeyUI;
+        private ChestAnimation chestAnimation;
         
         private bool isInteractable;
 
@@ -21,7 +22,7 @@ namespace Unit.Item.Container
             base.Initialize();
 
             so_chest = (SO_Chest)so_Container;
-
+            chestAnimation = GetComponentInUnit<ChestAnimation>();
             hotkeyUI = GetComponentInUnit<HotkeyUI>();
             hotkeyUI.Hide();
         }
@@ -34,14 +35,14 @@ namespace Unit.Item.Container
         public override void Open()
         {
             isOpened = true;
-            GetComponentInUnit<ChestAnimation>().ChangeAnimationWithSpeed(openClip);
+            chestAnimation.ChangeAnimationWithSpeed(openClip);
             Disable();
             SpawnLoot();
         }
 
         public override void Close()
         {
-            GetComponentInUnit<ChestAnimation>().ChangeAnimationWithSpeed(closeClip);
+            chestAnimation.ChangeAnimationWithSpeed(closeClip);
             isOpened = false;
         }
 

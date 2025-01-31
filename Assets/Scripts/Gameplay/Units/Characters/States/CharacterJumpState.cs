@@ -29,6 +29,7 @@ namespace Unit.Character
         {
             gravity = GameObject.GetComponent<Gravity>();
             currentGravity = gravity.CurrentGravity;
+            CharacterAnimation.AddClip(JumpClip);
         }
 
         public override void Enter()

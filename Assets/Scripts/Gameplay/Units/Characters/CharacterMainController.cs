@@ -28,28 +28,13 @@ namespace Unit.Character
         {
             return new CharacterInformation(this);
         }
-
-        public void InitializeRPC()
-        {
-            photonView.RPC(nameof(Trigger), RpcTarget.AllBuffered);
-        }
-
-        [PunRPC]
-        public void Trigger()
-        {
-            Initialize();
-        }
         
         public override void Initialize()
         {
-            photonView = GetComponent<PhotonView>();
-            
             base.Initialize();
-            
-            StateMachine = new StateMachine();
-            UnitInformation = CreateUnitInformation();
-            diContainer.Inject(UnitInformation);
 
+            BeforeCreateStates();
+            
             CreateSwitchState();
             CreateStates();
 
@@ -70,16 +55,17 @@ namespace Unit.Character
             experience?.Initialize();
             health?.Initialize();
             endurance?.Initialize();
+
+            InitializeAllAnimations();
         }
 
-        [PunRPC]
+
         protected virtual void InitializeMediator()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnDeath += GetComponentInUnit<CharacterExperience>().OnDeath;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
-        [PunRPC]
         protected virtual void UnInitializeMediatorRPC()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
@@ -87,16 +73,23 @@ namespace Unit.Character
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
-        [PunRPC]
+        protected virtual void BeforeCreateStates()
+        {
+            photonView = GetComponent<PhotonView>();
+            
+            StateMachine = new StateMachine();
+            UnitInformation = CreateUnitInformation();
+            diContainer.Inject(UnitInformation);
+        }
         protected abstract void CreateStates();
-        [PunRPC]
         protected abstract void CreateSwitchState();
 
-        [PunRPC]
         protected virtual void BeforeInitializeMediator()
         {
             
         }
+
+        protected abstract void InitializeAllAnimations();
 
         protected virtual void OnEnable()
         {

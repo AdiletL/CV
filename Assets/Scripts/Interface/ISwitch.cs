@@ -1,5 +1,4 @@
-﻿
-using Machine;
+﻿using Machine;
 using UnityEngine;
 
 public interface ISwitchState
@@ -11,5 +10,4 @@ public interface ISwitchState
     public void ExitOtherStates();
 
     public void ExitCategory(StateCategory category);
-    public void SetTarget(GameObject target);
 }

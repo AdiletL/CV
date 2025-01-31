@@ -9,10 +9,11 @@ namespace Unit.Character.Player
 {
   public class PlayerRunState : CharacterRunState
 {
-    private PlayerSwitchAttack _playerSwitchAttack;
+    private PhotonView photonView;
     private PathFinding pathFinder;
     private Rotation rotationController;
     private CellController finalCell;
+    private CharacterController characterController;
 
     private GameObject finalTarget;
     private GameObject currentTarget;
@@ -29,6 +30,8 @@ namespace Unit.Character.Player
     private readonly float checkTargetCooldown = 0.2f;
     private float countCooldownheckEnemy;
     private float countCooldownCheckTarget;
+    private float rotationSpeed;
+    private float runReductionEndurance;
     
     private bool isCanRotate;
     private bool isCheckPath;
@@ -36,12 +39,10 @@ namespace Unit.Character.Player
 
     private Queue<CellController> pathQueue = new();
 
-    public PhotonView PhotonView { get; set; }
-    public PlayerEndurance PlayerEndurance { get; set; }
-    public Transform Center { get; set; }
-    public CharacterController CharacterController { get; set; }
-    public float RotationSpeed { get; set; }
-    public float RunReductionEndurance { get; set; }
+    public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
+    public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
+    public void SetRotationSpeed(float rotationSpeed) => this.rotationSpeed = rotationSpeed;
+    public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
     
 
     private bool IsFinalPositionValid()
@@ -52,11 +53,10 @@ namespace Unit.Character.Player
     public override void Initialize()
     {
         base.Initialize();
-        _playerSwitchAttack = (PlayerSwitchAttack)CharacterSwitchAttack;
-        rotationController = new Rotation(GameObject.transform, RotationSpeed);
+        rotationController = new Rotation(gameObject.transform, rotationSpeed);
         pathFinder = new PathFindingBuilder()
-            .SetStartPosition(GameObject.transform.position)
-            .SetEndPosition(GameObject.transform.position)
+            .SetStartPosition(gameObject.transform.position)
+            .SetEndPosition(gameObject.transform.position)
             .Build();
     }
 
@@ -129,7 +129,7 @@ namespace Unit.Character.Player
         }
     }
 
-    public void SetTarget(GameObject target)
+    public override void SetTarget(GameObject target)
     {
         currentTarget = null;
         ClearColorsToPath();
@@ -178,7 +178,7 @@ namespace Unit.Character.Player
     {
         pathQueue.Clear();
         finalTargetPosition = finalTarget.transform.position;
-        pathFinder.SetStartPosition(GameObject.transform.position);
+        pathFinder.SetStartPosition(gameObject.transform.position);
         pathFinder.SetTargetPosition(finalTargetPosition);
         AssignNewCurrentTarget(compareDistance);
     }
@@ -188,12 +188,15 @@ namespace Unit.Character.Player
         if (pathQueue.Count == 0)
         {
             pathQueue = pathFinder.GetPath(compareDistance);
-            
-            foreach (var cell in pathQueue)
-                cell.SetColor(Color.yellow);
 
-            if(finalCell.TryGetComponent(out UnitRenderer unitRenderer))
-                unitRenderer.SetColor(Color.red);
+            if (photonView.IsMine)
+            {
+                foreach (var cell in pathQueue)
+                    cell.SetColor(Color.yellow);
+
+                if (finalCell.TryGetComponent(out UnitRenderer unitRenderer))
+                    unitRenderer.SetColor(Color.red);
+            }
         }
 
         if (pathQueue.Count > 0)
@@ -219,7 +222,7 @@ namespace Unit.Character.Player
             return;
         }
 
-        var currentCell = Calculate.FindCell.GetCell(GameObject.transform.position, Vector3.down);
+        var currentCell = Calculate.FindCell.GetCell(gameObject.transform.position, Vector3.down);
 
         if (!currentCell || previousTargetCoordinates == Vector2Int.zero) return;
 
@@ -233,15 +236,15 @@ namespace Unit.Character.Player
 
     private void CheckIfTargetReached()
     {
-        if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, finalTarget.transform.position) || pathQueue.Count == 0)
+        if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, finalTarget.transform.position) || pathQueue.Count == 0)
             StateMachine.ExitCategory(Category, null);
     }
 
     public override void ExecuteMovement()
     {
-        currentTargetPosition = new Vector3(currentTarget.transform.position.x, GameObject.transform.position.y, currentTarget.transform.position.z);
+        currentTargetPosition = new Vector3(currentTarget.transform.position.x, gameObject.transform.position.y, currentTarget.transform.position.z);
 
-        if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, currentTargetPosition))
+        if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTargetPosition))
         {
             if (currentTarget)
             {
@@ -256,16 +259,14 @@ namespace Unit.Character.Player
         }
         else
         {
-            if (!Calculate.Move.IsFacingTargetUsingAngle(GameObject.transform.position, GameObject.transform.forward, currentTargetPosition))
+            if (!Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTargetPosition))
             {
                 rotationController.Rotate();
                 return;
             }
 
-            movementDirection = (currentTargetPosition - GameObject.transform.position).normalized;
-            
-            if (PhotonView.IsMine)
-                CharacterController.Move(movementDirection * (MovementSpeed * Time.deltaTime));
+            movementDirection = (currentTargetPosition - gameObject.transform.position).normalized;
+            characterController.Move(movementDirection * (MovementSpeed * Time.deltaTime));
 
             ReduceEndurance();
         }
@@ -278,10 +279,10 @@ namespace Unit.Character.Player
         countCooldownheckEnemy += Time.deltaTime;
         if (countCooldownheckEnemy > checkEnemyCooldown)
         {
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, enemy.transform.position, _playerSwitchAttack.RangeAttackSqr))
+            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, enemy.transform.position, characterSwitchAttackState.RangeAttackSqr))
             {
-                _playerSwitchAttack.SetTarget(finalTarget);
-                _playerSwitchAttack.ExitOtherStates();
+                characterSwitchAttackState.SetTarget(finalTarget);
+                characterSwitchAttackState.ExitOtherStates();
             }
 
             countCooldownheckEnemy = 0;
@@ -290,7 +291,7 @@ namespace Unit.Character.Player
 
     private void ReduceEndurance()
     {
-        PlayerEndurance.RemoveEndurance(RunReductionEndurance);
+        unitEndurance.RemoveEndurance(runReductionEndurance);
     }
 }
 
@@ -301,47 +302,32 @@ namespace Unit.Character.Player
         {
         }
         
-        
-        public PlayerRunStateBuilder SetCenter(Transform center)
-        {
-            if (state is PlayerRunState playerRunState)
-                playerRunState.Center = center;
-            
-            return this;
-        }
-        
         public PlayerRunStateBuilder SetCharacterController(CharacterController characterController)
         {
             if (state is PlayerRunState playerRunState)
-                playerRunState.CharacterController = characterController;
+                playerRunState.SetCharacterController(characterController);
             
             return this;  
         }
         public PlayerRunStateBuilder SetRotationSpeed(float rotationSpeed)
         {
             if (state is PlayerRunState playerRunState)
-                playerRunState.RotationSpeed = rotationSpeed;
+                playerRunState.SetRotationSpeed(rotationSpeed);
             
             return this;  
         }
         public PlayerRunStateBuilder SetRunReductionEndurance(float value)
         {
             if (state is PlayerRunState playerRunState)
-                playerRunState.RunReductionEndurance = value;
+                playerRunState.SetRunReductionEndurance(value);
             
             return this;  
         }
-        public PlayerRunStateBuilder SetPlayerEndurance(PlayerEndurance endurance)
-        {
-            if (state is PlayerRunState playerRunState)
-                playerRunState.PlayerEndurance = endurance;
-            
-            return this;  
-        }
+
         public PlayerRunStateBuilder SetPhotonView(PhotonView view)
         {
             if (state is PlayerRunState playerRunState)
-                playerRunState.PhotonView = view;
+                playerRunState.SetPhotonView(view);
             
             return this;  
         }

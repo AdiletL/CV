@@ -10,7 +10,7 @@ namespace Movement
         public ForwardMovement(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            MovementSpeed = movementSpeed;
+            this.MovementSpeed = movementSpeed;
         }
 
         public void Initialize()

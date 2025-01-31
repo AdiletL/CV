@@ -16,7 +16,8 @@ namespace Unit
         [SerializeField] protected ComponentsInGameObjects components;
         
         [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set; }
-        
+
+        protected UnitCenter unitCenter;
         
         public T GetComponentInUnit<T>() where T: class
         {
@@ -28,10 +29,10 @@ namespace Unit
             return components.TryGetComponentFromArray(out component);
         }
         
-        [PunRPC]
         public virtual void Initialize()
         {
             components.Initialize();
+            unitCenter = GetComponentInUnit<UnitCenter>();
         }
 
         public abstract void Appear();

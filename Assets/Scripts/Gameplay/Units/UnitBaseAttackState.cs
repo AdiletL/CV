@@ -1,4 +1,5 @@
 ﻿using Machine;
+using UnityEngine;
 
 namespace Unit
 {
@@ -6,8 +7,26 @@ namespace Unit
     {
         public override StateCategory Category { get; } = StateCategory.attack;
         
-        public IDamageable Damageable { get; set; }
-        public int AttackSpeed { get; set; }
+        protected GameObject gameObject;
+        protected Transform center;
+        protected int damage;
+        
+        public IDamageable Damageable { get; protected set; }
+        public int AttackSpeed { get; protected set; }
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetCenter(Transform center) => this.center = center;
+        public void SetDamage(int damage) => this.damage = damage;
+        public void SetAttackSpeed(int amount) => this.AttackSpeed = AttackSpeed;
+        
+
+        public abstract IDamageable GetDamageable();
+        
+
+        public override void Initialize()
+        {
+            Damageable = GetDamageable();
+        }
 
         public abstract void Attack();
         public abstract void ApplyDamage();
@@ -20,16 +39,27 @@ namespace Unit
         public UnitBaseAttackStateBuilder(UnitBaseAttackState instance) : base(instance)
         {
         }
-        
-        public UnitBaseAttackStateBuilder SetDamageable(IDamageable damageable)
+
+        public UnitBaseAttackStateBuilder SetGameObject(GameObject gameObject)
         {
-            state.Damageable = damageable;
+            state.SetGameObject(gameObject);
+            return this;
+        }
+
+        public UnitBaseAttackStateBuilder SetCenter(Transform center)
+        {
+            state.SetCenter(center);
+            return this;
+        }
+        public UnitBaseAttackStateBuilder SetDamage(int damage)
+        {
+            state.SetDamage(damage);
             return this;
         }
 
         public UnitBaseAttackStateBuilder SetAttackSpeed(int amount)
         {
-            state.AttackSpeed = amount;
+            state.SetAttackSpeed(amount);
             return this;
         }
     }

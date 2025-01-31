@@ -6,10 +6,17 @@ namespace Unit.Character
     public abstract class CharacterBaseMovementState : State, IMovement
     {
         public override StateCategory Category { get; } = StateCategory.move;
+
+        protected GameObject gameObject;
+        protected Transform center;
         
-        public GameObject GameObject { get; set; }
+        public float MovementSpeed { get; protected set; }
         
-        public float MovementSpeed { get; set; }
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetCenter(Transform center) => this.center = center;
+        public void SetMovementSpeed(float movementSpeed) => this.MovementSpeed = movementSpeed;
+        
         
         public override void Initialize()
         {
@@ -46,14 +53,18 @@ namespace Unit.Character
 
         public CharacterBaseMovementStateBuilder SetGameObject(GameObject gameObject)
         {
-            state.GameObject = gameObject;
+            state.SetGameObject(gameObject);
             return this;
         }
         public CharacterBaseMovementStateBuilder SetMovementSpeed(float speed)
         {
-            state.MovementSpeed = speed;
+            state.SetMovementSpeed(speed);
             return this;
         }
-        
+        public CharacterBaseMovementStateBuilder SetCenter(Transform center)
+        {
+            state.SetCenter(center);
+            return this;
+        }
     }
 }

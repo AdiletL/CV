@@ -5,8 +5,8 @@ using ScriptableObjects.Gameplay;
 using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Gameplay.Manager
 {
@@ -28,37 +28,25 @@ namespace Gameplay.Manager
         private int currentLevelIndex;
         private int currentGameFieldIndex;
 
-        protected virtual SO_Level GetLevel(int levelNumber)
+        private SO_Level GetLevel(int levelNumber)
         {
             if (so_LevelContainerPrefab.Levels.Length < levelNumber)
                 throw new IndexOutOfRangeException();
 
             return so_LevelContainerPrefab.Levels[levelNumber];
         }
-
-        private GameFieldController GetGameField(int levelIndex, int gameFieldIndex)
-        {
-            var level = GetLevel(levelIndex);
-            if (level == null)
-                throw new NullReferenceException();
-
-            if (level.GameFieldControllers.Length < gameFieldIndex)
-                throw new IndexOutOfRangeException();
-
-            var result =  Addressables.LoadAssetAsync<GameObject>(level.GameFieldControllers[gameFieldIndex]).Result;
-            return result.GetComponent<GameFieldController>();
-        }
-
         private AssetReference GetGameFieldReference(int levelIndex, int gameFieldIndex)
         {
             var level = GetLevel(levelIndex);
             if (level == null)
                 throw new NullReferenceException();
 
-            if (level.GameFieldControllers.Length < gameFieldIndex)
+            if (level.GameFields.Length < gameFieldIndex)
                 throw new IndexOutOfRangeException();
-
-            return level.GameFieldControllers[gameFieldIndex];
+            
+            var gameFields = level.GameFields[gameFieldIndex];
+            var gameField = gameFields.GameFieldControllers[Random.Range(0, gameFields.GameFieldControllers.Length)];
+            return gameField;
         }
         
 
@@ -89,21 +77,13 @@ namespace Gameplay.Manager
         {
             await UniTask.WaitUntil(() => levelController != null);
             
-            
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC(nameof(CreateCamera), RpcTarget.AllBuffered);
-                var gameField = GetGameFieldReference(currentLevelIndex, currentGameFieldIndex);
-                var newGameField = PhotonNetwork.Instantiate(gameField.AssetGUID, Vector3.zero, Quaternion.identity);
-                photonView.RPC(nameof(InitializeGameField), RpcTarget.AllBuffered,
-                    newGameField.GetComponent<PhotonView>().ViewID);
+                CreateLevel();
             }
 
-            var playerGameObject = PhotonNetwork.Instantiate(playerPrefab.AssetGUID,
-                levelController.CurrentGameField.PlayerSpawnPoint.position,
-                levelController.CurrentGameField.PlayerSpawnPoint.rotation);
-            
-            photonView.RPC(nameof(InitializePlayer), RpcTarget.AllBuffered, playerGameObject.GetComponent<PhotonView>().ViewID);
+            CreatePlayer();
         }
 
         public void RestartLevel()
@@ -122,7 +102,13 @@ namespace Gameplay.Manager
             Instantiate(cameraPrefab);
         }
 
-        
+        private void CreateLevel()
+        {
+            var gameField = GetGameFieldReference(currentLevelIndex, currentGameFieldIndex);
+            var newGameField = PhotonNetwork.Instantiate(gameField.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeGameField), RpcTarget.AllBuffered,
+                newGameField.GetComponent<PhotonView>().ViewID);
+        }
         [PunRPC]
         private void InitializeGameField(int viewID)
         {
@@ -134,6 +120,15 @@ namespace Gameplay.Manager
             gameFieldController.Initialize();
             gameFieldController.StartGame();
             levelController.SetGameField(gameFieldController);
+        }
+
+        private void CreatePlayer()
+        {
+            var playerGameObject = PhotonNetwork.Instantiate(playerPrefab.AssetGUID,
+                levelController.CurrentGameField.PlayerSpawnPoint.position,
+                levelController.CurrentGameField.PlayerSpawnPoint.rotation);
+            
+            photonView.RPC(nameof(InitializePlayer), RpcTarget.AllBuffered, playerGameObject.GetComponent<PhotonView>().ViewID);
         }
         
         [PunRPC]
