@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 466fd826bd79495f867a7381ae9d5a70
+timeCreated: 1695505525
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/WindowOrganizers/WindowOrganizerFactory.cs
+  uploadId: 637907

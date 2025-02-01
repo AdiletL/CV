@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 5bc5e2f8c0b84d5d979721935b49a97f
+timeCreated: 1696729630
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/PropertyDrawers/InspectorWindowSettings/InspectorWindowSettingsPropertyDrawer.cs
+  uploadId: 637907

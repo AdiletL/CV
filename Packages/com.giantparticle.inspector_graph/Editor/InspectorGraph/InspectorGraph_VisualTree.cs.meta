@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: c40b6a42756048a19286a564032d1786
+timeCreated: 1691376638
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/InspectorGraph_VisualTree.cs
+  uploadId: 637907

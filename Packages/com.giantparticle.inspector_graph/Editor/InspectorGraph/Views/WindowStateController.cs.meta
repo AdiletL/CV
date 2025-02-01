@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 792852df547849af98b21cb7426f0dff
+timeCreated: 1670740796
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/WindowStateController.cs
+  uploadId: 637907

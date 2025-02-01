@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8c4584115725347aaa8eee146fb588a7
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 13804, guid: 0000000000000000e000000000000000, type: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/PropertyDrawers/InspectorWindowSettings/InspectorWindowSizeSettingsPropertyDrawer.uxml
+  uploadId: 637907

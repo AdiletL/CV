@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: d5188fa151394cb1a6773c633e4c416c
+timeCreated: 1670459721
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/BaseDragManipulator.cs
+  uploadId: 637907

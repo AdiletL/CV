@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 2695b6eddbbd4a63b65a9d9b262e1080
+timeCreated: 1670455960
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/ResizeManipulator.cs
+  uploadId: 637907

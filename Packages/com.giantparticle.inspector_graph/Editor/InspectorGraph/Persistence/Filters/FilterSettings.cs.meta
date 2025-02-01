@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 17ee1f7ee84d4d9291701502530d2ed9
+timeCreated: 1696722214
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Persistence/Filters/FilterSettings.cs
+  uploadId: 637907

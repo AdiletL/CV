@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 2a053390ec444d2cb9363a66ccdb5e12
+timeCreated: 1670374254
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/ConnectionLine.cs
+  uploadId: 637907

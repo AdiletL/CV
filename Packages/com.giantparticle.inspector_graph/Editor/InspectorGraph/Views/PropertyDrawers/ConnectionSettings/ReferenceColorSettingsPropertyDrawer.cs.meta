@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 9835f39a7f894f5d90cd77148f8ab36e
+timeCreated: 1679278420
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Views/PropertyDrawers/ConnectionSettings/ReferenceColorSettingsPropertyDrawer.cs
+  uploadId: 637907

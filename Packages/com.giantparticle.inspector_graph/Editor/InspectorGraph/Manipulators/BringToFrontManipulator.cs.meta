@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: e85a81c53543472ba443109ac1f353ac
+timeCreated: 1670736906
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/BringToFrontManipulator.cs
+  uploadId: 637907

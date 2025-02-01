@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: bf041117fdee4733b43057c6dbe5f79a
+timeCreated: 1670639586
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/IScalableManipulator.cs
+  uploadId: 637907

@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 3ff36648aa104c6fb17749fb82b235f4
+timeCreated: 1696723729
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Persistence/Connections/IReferenceColorSettings.cs
+  uploadId: 637907

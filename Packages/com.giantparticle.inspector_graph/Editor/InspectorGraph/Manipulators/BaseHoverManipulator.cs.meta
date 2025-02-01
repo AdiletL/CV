@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: e6bd5a33c1264af5acd7c94bc55df0ec
+timeCreated: 1670462219
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/BaseHoverManipulator.cs
+  uploadId: 637907

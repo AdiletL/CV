@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: a7204fdc2abd4d3893170eb8ff6e0124
+timeCreated: 1670650900
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Manipulators/IPositionManipulator.cs
+  uploadId: 637907

@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 407ef01d8f844a9aac620002b6e4b3ea
+timeCreated: 1705184222
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/Editor/InspectorGraph/Data/Graph/SubTree/ObjectNodeProcessors/ComponentNodeProcessor.cs
+  uploadId: 637907

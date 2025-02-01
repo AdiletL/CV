@@ -1,8 +1,5 @@
-﻿using System;
-using Gameplay.Factory;
+﻿using Gameplay.Factory;
 using Machine;
-using ScriptableObjects.Unit.Character.Player;
-using UnityEngine;
 
 namespace Unit.Character.Player
 {

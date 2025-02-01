@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2cfeaf4bc034843f8b1895a000217841
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241962
+  packageName: Inspector Graph
+  packageVersion: 0.11.1
+  assetPath: Packages/com.giantparticle.inspector_graph/LICENSE
+  uploadId: 637907
