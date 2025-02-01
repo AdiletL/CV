@@ -1,27 +1,37 @@
 ﻿using System;
+using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
 namespace Gameplay.Skill
 {
+    [Flags]
+    public enum SkillType
+    {
+        nothing,
+        dash = 1 << 0,
+    }
+    
     public abstract class Skill : ISkill
     {
-        public event Action<ISkill> OnExit;
+        [Inject] protected DiContainer diContainer;
+        public event Action<ISkill> OnFinished;
 
-        protected DiContainer diContainer;
-        public GameObject GameObject { get; set; }
+        public GameObject GameObject { get; protected set; }
+        public InputType BlockedInputType { get; protected set; }
+        public SkillType BlockedSkillType { get; protected set; }
         public Action ExitCallBack { get; protected set; }
         public AnimationClip CastClip { get; protected set; }
+        
 
-        [Inject]
-        private void Construct(DiContainer diContainer)
-        {
-            this.diContainer = diContainer;
-        }
+        public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
+        public void SetBlockedInputType(InputType inputType) => this.BlockedInputType = inputType;
+        public void SetBlockedSkillType(SkillType skillType) => this.BlockedSkillType = skillType;
+        public void SetCastClip(AnimationClip clip) => this.CastClip = clip;
+        
 
-        public virtual void Initialize(AnimationClip castClip = null)
+        public virtual void Initialize()
         {
-            CastClip = castClip;
         }
 
         public virtual void Execute(Action exitCallBack = null)
@@ -36,9 +46,10 @@ namespace Gameplay.Skill
         public virtual void Exit()
         {
             ExitCallBack?.Invoke();
-            OnExit?.Invoke(this);
+            OnFinished?.Invoke(this);
         }
     }
+    
 
     public abstract class SkillBuilder<T> where T : Skill
     {
@@ -51,7 +62,17 @@ namespace Gameplay.Skill
 
         public SkillBuilder<T> SetGameObject(GameObject gameObject)
         {
-            skill.GameObject = gameObject;
+            skill.SetGameObject(gameObject);
+            return this;
+        }
+        public SkillBuilder<T> SetBlockedInputType(InputType inputType)
+        {
+            skill.SetBlockedInputType(inputType);
+            return this;
+        }
+        public SkillBuilder<T> SetBlockedSkillType(SkillType skillType)
+        {
+            skill.SetBlockedSkillType(skillType);
             return this;
         }
         

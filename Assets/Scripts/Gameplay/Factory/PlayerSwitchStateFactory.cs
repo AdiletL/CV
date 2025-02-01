@@ -44,7 +44,8 @@ namespace Gameplay.Factory
         {
             CharacterSwitchAttackState result = stateType switch
             {
-                _ when stateType == typeof(PlayerSwitchAttackState) => CreateSwitchAttack()
+                _ when stateType == typeof(PlayerSwitchAttackState) => CreateSwitchAttack(),
+                _ => throw new ArgumentException($"Unknown switchState type: {stateType}")
             };
             return result;
         }
@@ -53,6 +54,7 @@ namespace Gameplay.Factory
             CharacterSwitchMoveState result = stateType switch
             {
                 _ when stateType == typeof(PlayerSwitchMoveState) => CreateSwitchMove(),
+                _ => throw new ArgumentException($"Unknown switchState type: {stateType}")
             };
             return result;
         }

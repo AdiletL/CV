@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Unit
 {
+    [RequireComponent(typeof(PhotonView))]
     public abstract class UnitAnimation : MonoBehaviour
     {
         [SerializeField] protected Animator animator;

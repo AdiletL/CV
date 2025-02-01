@@ -4,6 +4,11 @@ namespace Unit.Character
 {
     public class CharacterControlDesktop : UnitControlDesktop
     {
+        protected GameObject gameObject;
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+
+        
         public override void Initialize()
         {
             
@@ -28,6 +33,14 @@ namespace Unit.Character
     {
         public CharacterControlDesktopBuilder(UnitControlDesktop instance) : base(instance)
         {
+        }
+
+        public CharacterControlDesktopBuilder SetGameObject(GameObject gameObject)
+        {
+            if(unitControlDesktop is CharacterControlDesktop characterControlDesktop)
+                characterControlDesktop.SetGameObject(gameObject);
+            
+            return this;
         }
     }
 }

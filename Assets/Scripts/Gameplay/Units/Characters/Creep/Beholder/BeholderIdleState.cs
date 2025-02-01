@@ -12,13 +12,7 @@ namespace Unit.Character.Creep
         private float countCheckEnemyCooldown;
         
         private bool isCheckAttack = true;
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            _beholderSwitchAttackState = (BeholderSwitchAttackState)CharacterSwitchAttack;
-            _beholderSwitchMoveState = (BeholderSwitchMoveState)CharacterSwitchMove;
-        }
+        
         
         public override void Update()
         {

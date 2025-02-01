@@ -22,7 +22,7 @@ namespace Unit.Item.Container
             base.Initialize();
 
             so_chest = (SO_Chest)so_Container;
-            chestAnimation = GetComponentInUnit<ChestAnimation>();
+            chestAnimation = (ChestAnimation)containerAnimation;
             hotkeyUI = GetComponentInUnit<HotkeyUI>();
             hotkeyUI.Hide();
         }

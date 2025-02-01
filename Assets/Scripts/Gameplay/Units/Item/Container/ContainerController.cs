@@ -7,6 +7,7 @@ namespace Unit.Item.Container
     {
         protected SO_Container so_Container;
 
+        protected ContainerAnimation containerAnimation;
         protected AnimationClip openClip;
         protected AnimationClip closeClip;
         protected bool isOpened;
@@ -14,10 +15,13 @@ namespace Unit.Item.Container
         public override void Initialize()
         {
             base.Initialize();
+            containerAnimation = GetComponentInUnit<ContainerAnimation>();
+            containerAnimation.Initialize();
             so_Container = (SO_Container)so_Item;
             openClip = so_Container.OpenClip;
             closeClip = so_Container.CloseClip;
-            
+            containerAnimation.AddClip(openClip);
+            containerAnimation.AddClip(closeClip);
         }
 
         public abstract void Open();

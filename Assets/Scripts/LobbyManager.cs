@@ -15,8 +15,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Caching.ClearCache();
 
-            ActivateOfflineMode();
-            return;
+        ActivateOfflineMode();
+        return;
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
         }
@@ -36,6 +36,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         isOfflineMode = true;
         PhotonNetwork.OfflineMode = true;
         statusTxt.text = "Offline Mode Activated";
+        CreateRoom();
     }
 
     public override void OnConnectedToMaster()

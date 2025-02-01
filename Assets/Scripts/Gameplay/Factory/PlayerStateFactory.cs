@@ -1,16 +1,20 @@
 ﻿using System;
 using Machine;
 using Photon.Pun;
+using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
 using Unit;
 using Unit.Character;
 using Unit.Character.Player;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Factory
 {
     public class PlayerStateFactory : Factory
     {
+        [Inject] private SO_GameHotkeys so_GameHotkeys;
+        
         private GameObject gameObject;
         private CharacterController characterController;
         private StateMachine stateMachine;
@@ -48,6 +52,8 @@ namespace Gameplay.Factory
                 _ when stateType == typeof(PlayerDefaultAttackState) => CreateDefaultAttackState(),
                 _ when stateType == typeof(PlayerWeaponAttackState) => CreateWeaponState(),
                 _ when stateType == typeof(PlayerRunState) => CreateRunState(),
+                _ when stateType == typeof(PlayerJumpState) => CreateJumpState(),
+                _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
             return result;
@@ -56,9 +62,8 @@ namespace Gameplay.Factory
         private PlayerIdleState CreateIdleState()
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()
-                .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
-                .SetCharacterController(characterController)
+                .SetIdleClips(so_PlayerMove.IdleClip)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCenter(unitCenter.Center)
                 .SetGameObject(gameObject)
@@ -117,6 +122,22 @@ namespace Gameplay.Factory
                 .SetGameObject(gameObject)
                 .SetMovementSpeed(so_PlayerMove.RunSpeed)
                 .SetCenter(unitCenter.Center)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
+        
+        private PlayerJumpState CreateJumpState()
+        {
+            return (PlayerJumpState)new PlayerJumpStateBuilder()
+                .SetEndurance(characterEndurance)
+                .SetJumpKey(so_GameHotkeys.JumpKey)
+                .SetReductionEndurance(so_PlayerMove.JumpInfo.BaseReductionEndurance)
+                .SetCharacterController(characterController)
+                .SetMaxJumpCount(so_PlayerMove.JumpInfo.MaxCount)
+                .SetJumpClip(so_PlayerMove.JumpInfo.Clip)
+                .SetJumpHeight(so_PlayerMove.JumpInfo.Height)
+                .SetGameObject(gameObject)
+                .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
         }

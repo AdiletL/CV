@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections;
-using ScriptableObjects.Unit.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 namespace Unit.Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
-        private PlayerSwitchMoveState _playerSwitchMoveState;
+        private CharacterSwitchMoveState characterSwitchMove;
+        private CharacterSwitchAttackState characterSwitchAttack;
 
+        private GameObject targetForMove;
         private Vector3 targetPosition;
 
-        public GameObject TargetForMove { get; set; }
         
-        public override void Initialize()
-        {
-            base.Initialize();
-            _playerSwitchMoveState = (PlayerSwitchMoveState)CharacterSwitchMove;
-        }
+        public void SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => characterSwitchMove = characterSwitchMoveState;
+        public void SetCharacterSwitchAttackState(CharacterSwitchAttackState characterSwitchAttackState) =>
+            characterSwitchAttack = characterSwitchAttackState;
         
 
         public override void Subscribe()
@@ -42,7 +38,7 @@ namespace Unit.Character.Player
         public override void Exit()
         {
             base.Exit();
-            TargetForMove = null;
+            targetForMove = null;
         }
         
         private void OnExitCategory(Machine.IState state)
@@ -57,23 +53,23 @@ namespace Unit.Character.Player
         
         public void SetTarget(GameObject target)
         {
-            this.TargetForMove = target;
-            _playerSwitchMoveState.SetTarget(target);
+            this.targetForMove = target;
+            characterSwitchMove.SetTarget(target);
         }
         
         private void CheckMove()
         {
-            if(!TargetForMove) return;
+            if(!targetForMove) return;
 
-            targetPosition = new Vector3(TargetForMove.transform.position.x, GameObject.transform.position.y, TargetForMove.transform.position.z);
+            targetPosition = new Vector3(targetForMove.transform.position.x, gameObject.transform.position.y, targetForMove.transform.position.z);
             
-            if (Calculate.Distance.IsNearUsingSqr(GameObject.transform.position, targetPosition))
+            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, targetPosition))
             {
-                TargetForMove = null;
+                targetForMove = null;
             }
             else
             {
-                _playerSwitchMoveState.ExitCategory(Category);
+                characterSwitchMove.ExitCategory(Category);
             }
         }
     }
@@ -84,6 +80,14 @@ namespace Unit.Character.Player
         public PlayerIdleStateBuilder() : base(new PlayerIdleState())
         {
             
+        }
+
+        public PlayerIdleStateBuilder SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMove)
+        {
+            if(state is PlayerIdleState playerIdleState)
+                playerIdleState.SetCharacterSwitchMoveState(characterSwitchMove);
+
+            return this;
         }
     }
 }

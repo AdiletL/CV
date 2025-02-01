@@ -7,8 +7,12 @@ namespace Unit
     public abstract class UnitIdleState : State
     {
         public override StateCategory Category { get; } = StateCategory.idle;
-        public GameObject GameObject { get; set; }
-        public Transform Center { get; set; }
+        
+        protected GameObject gameObject;
+        protected Transform center;
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetCenter(Transform center) => this.center = center;
         
         public override void Initialize()
         {
@@ -33,13 +37,13 @@ namespace Unit
 
         public UnitIdleStateBuilder SetGameObject(GameObject gameObject)
         {
-            state.GameObject = gameObject;
+            state.SetGameObject(gameObject);
             return this;
         }
 
         public UnitIdleStateBuilder SetCenter(Transform center)
         {
-            state.Center = center;
+            state.SetCenter(center);
             return this;
         }
     }

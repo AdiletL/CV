@@ -9,12 +9,12 @@ namespace Unit.Character
     public class CharacterIdleState : UnitIdleState
     {
         public override StateCategory Category { get; } = StateCategory.idle;
+
+        protected CharacterAnimation characterAnimation;
+        protected AnimationClip[] IdleClips;
         
-        public ISwitchState CharacterSwitchMove { get; set; }
-        public ISwitchState CharacterSwitchAttack { get; set; }
-        public CharacterController CharacterController { get; set; }
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public AnimationClip[] IdleClips { get; set; }
+        public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
+        public void SetIdleClips(AnimationClip[] idleClips) => IdleClips = idleClips;
         
 
         protected AnimationClip getRandomIdleClip()
@@ -30,7 +30,7 @@ namespace Unit.Character
 
         protected void PlayAnimation()
         {
-            CharacterAnimation.ChangeAnimationWithDuration(getRandomIdleClip(), transitionDuration: .5f);
+            characterAnimation.ChangeAnimationWithDuration(getRandomIdleClip(), transitionDuration: .5f);
         }
     }
 
@@ -43,9 +43,7 @@ namespace Unit.Character
         public CharacterIdleStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if (state is CharacterIdleState characterIdleIdleState)
-            {
-                characterIdleIdleState.CharacterAnimation = characterAnimation;
-            }
+                characterIdleIdleState.SetCharacterAnimation(characterAnimation);
             return this;
         }
         
@@ -53,38 +51,7 @@ namespace Unit.Character
         public CharacterIdleStateBuilder SetIdleClips(AnimationClip[] idleClips)
         {
             if (state is CharacterIdleState characterIdleIdleState)
-            {
-                characterIdleIdleState.IdleClips = idleClips;
-            }
-
-            return this;
-        }
-        
-        public CharacterIdleStateBuilder SetCharacterSwitchMove(ISwitchState characterSwitchMove)
-        {
-            if (state is CharacterIdleState characterIdleIdleState)
-            {
-                characterIdleIdleState.CharacterSwitchMove = characterSwitchMove;
-            }
-
-            return this;
-        }
-        public CharacterIdleStateBuilder SetCharacterSwitchAttack(ISwitchState characterSwitchAttack)
-        {
-            if (state is CharacterIdleState characterIdleIdleState)
-            {
-                characterIdleIdleState.CharacterSwitchAttack = characterSwitchAttack;
-            }
-
-            return this;
-        }
-        public CharacterIdleStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if (state is CharacterIdleState characterIdleIdleState)
-            {
-                characterIdleIdleState.CharacterController = characterController;
-            }
-
+                characterIdleIdleState.SetIdleClips(idleClips);
             return this;
         }
     }

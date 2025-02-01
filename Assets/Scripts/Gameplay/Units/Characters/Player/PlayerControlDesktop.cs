@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gameplay.Skill;
+using Gameplay.Factory;
 using Gameplay.Units.Item.Loot;
 using Machine;
 using Photon.Pun;
@@ -13,16 +13,33 @@ using Zenject;
 
 namespace Unit.Character.Player
 {
+    [Flags]
+    public enum InputType
+    {
+        nothing,
+        movement = 1 << 0,
+        jump = 1 << 1,
+        selectObject = 1 << 2,
+        attack = 1 << 3,
+    }
     public class PlayerControlDesktop : CharacterControlDesktop
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeyses;
-
         private event Action OnHandleInput;
         
+        private PhotonView photonView;
+        private PlayerController playerController;
+        private PlayerStateFactory playerStateFactory;
+        private CharacterSwitchAttackState characterSwitchAttack;
+        private CharacterSwitchMoveState characterSwitchMove;
+        private SO_PlayerControlDesktop so_PlayerControlDesktop;
+        private CharacterController characterController;
+        private StateMachine stateMachine;
+        private LayerMask enemyLayer;
 
         private IClickableObject selectObject;
-        private IInputHandler playerSkillInputHandler;
+        private PlayerSkillInputHandler playerSkillInputHandler;
 
         private RaycastHit[] hits = new RaycastHit[5];
         private Texture2D selectAttackTexture;
@@ -33,47 +50,28 @@ namespace Unit.Character.Player
         private int selectCellMouseButton;
         
         private bool isSelectedAttack;
+        private bool isJumping;
         
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
-        public PhotonView PhotonView { get; set; }
-        public PlayerController PlayerController { get; set; }
-        public StateMachine StateMachine { get; set; }
-        public GameObject GameObject { get; set; }
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public CharacterSwitchAttackState PlayerSwitchAttack { get; set; }
-        public CharacterSwitchMoveState PlayerSwitchMove { get; set; }
-        public IEndurance Endurance { get; set; }
-        public SO_PlayerControlDesktop SO_PlayerControlDesktop { get; set; }
-        public SO_PlayerMove SO_PlayerMove { get; set; }
-        public CharacterController CharacterController { get; set; }
-        public LayerMask EnemyLayer { get; set; }
-        public bool IsJumping { get; private set; }
-        public bool IsUseSkill { get; private set; }
-        
         ~PlayerControlDesktop()
         {
             UnInitializeMediator();
             UnRegisterInteraction();
         }
-
         
-        private PlayerJumpState CreateJumpState()
-        {
-            return (PlayerJumpState)new PlayerJumpStateBuilder()
-                .SetEndurance(Endurance)
-                .SetJumpKey(so_GameHotkeyses.JumpKey)
-                .SetReductionEndurance(SO_PlayerMove.JumpInfo.BaseReductionEndurance)
-                .SetCharacterController(CharacterController)
-                .SetMaxJumpCount(SO_PlayerMove.JumpInfo.MaxCount)
-                .SetJumpClip(SO_PlayerMove.JumpInfo.Clip)
-                .SetJumpHeight(SO_PlayerMove.JumpInfo.Height)
-                .SetGameObject(GameObject)
-                .SetCharacterAnimation(CharacterAnimation)
-                .SetStateMachine(StateMachine)
-                .Build();
-        }
-
+        public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
+        public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
+        public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
+        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
+        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
+            this.characterSwitchAttack = characterSwitchAttackState;
+        public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
+        public void SetConfig(SO_PlayerControlDesktop config) => this.so_PlayerControlDesktop = config;
+        public void SetPlayerController(PlayerController playerController) => this.playerController = playerController;
+        public void SetEnemyLayer(LayerMask layerMask) => enemyLayer = layerMask;
+        
+        
         private bool tryGetHitPosition<T>(out GameObject hitObject, LayerMask layerMask)
         {
             Vector3 mousePosition = Input.mousePosition;
@@ -112,14 +110,10 @@ namespace Unit.Character.Player
 
             InitializeHotkeys();
             InitializeInteractionHandler();
-            
-            playerSkillInputHandler = new PlayerSkillInputHandler(GameObject, StateMachine, this, CharacterController);
-            diContainer.Inject(playerSkillInputHandler);
-            playerSkillInputHandler.Initialize();
-            
+            InitializeSkillInputHandler();
             InitializeMediator();
             
-            selectAttackTexture = SO_PlayerControlDesktop.SelectAttackIcon.texture;
+            selectAttackTexture = so_PlayerControlDesktop.SelectAttackIcon.texture;
         }
 
         private void InitializeHotkeys()
@@ -133,8 +127,8 @@ namespace Unit.Character.Player
 
         private void InitializeInteractionHandler()
         {
-            var containerInteractionHandler = new ContainerInteractionHandler(GameObject, this);
-            var lootInteractionHandler = new LootInteractionHandler(GameObject, this);
+            var containerInteractionHandler = new ContainerInteractionHandler(gameObject, this);
+            var lootInteractionHandler = new LootInteractionHandler(gameObject, this);
             RegisterInteraction(containerInteractionHandler);
             RegisterInteraction(lootInteractionHandler);
         }
@@ -144,8 +138,8 @@ namespace Unit.Character.Player
             handler.Initialize();
             interactionHandlers.Add(handler);
             OnHandleInput += handler.HandleInput;
-            PlayerController.TriggerEnter += handler.CheckTriggerEnter;
-            PlayerController.TriggerExit += handler.CheckTriggerExit;
+            playerController.TriggerEnter += handler.CheckTriggerEnter;
+            playerController.TriggerExit += handler.CheckTriggerExit;
         }
         
         public void UnRegisterInteraction()
@@ -153,30 +147,36 @@ namespace Unit.Character.Player
             foreach (var VARIABLE in interactionHandlers)
             {
                 OnHandleInput -= VARIABLE.HandleInput;
-                PlayerController.TriggerEnter -= VARIABLE.CheckTriggerEnter;
-                PlayerController.TriggerExit -= VARIABLE.CheckTriggerExit;
+                playerController.TriggerEnter -= VARIABLE.CheckTriggerEnter;
+                playerController.TriggerExit -= VARIABLE.CheckTriggerExit;
             }
         }
 
+        private void InitializeSkillInputHandler()
+        {
+            playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, this, characterController);
+            diContainer.Inject(playerSkillInputHandler);
+            playerSkillInputHandler.Initialize();
+        }
         private void InitializeJumpState()
         {
-            if (!StateMachine.IsStateNotNull(typeof(PlayerJumpState)))
+            if (!stateMachine.IsStateNotNull(typeof(PlayerJumpState)))
             {
-                var jumpState = CreateJumpState();
+                var jumpState = playerStateFactory.CreateState(typeof(PlayerJumpState));
                 jumpState.Initialize();
-                StateMachine.AddStates(jumpState);
+                stateMachine.AddStates(jumpState);
             }
         }
 
         private void InitializeMediator()
         {
-            StateMachine.OnExitCategory += OnExitCategory;
+            stateMachine.OnExitCategory += OnExitCategory;
             OnHandleInput += playerSkillInputHandler.HandleInput;
         }
 
         private void UnInitializeMediator()
         {
-            StateMachine.OnExitCategory -= OnExitCategory;
+            stateMachine.OnExitCategory -= OnExitCategory;
             OnHandleInput -= playerSkillInputHandler.HandleInput;
         }
 
@@ -184,7 +184,7 @@ namespace Unit.Character.Player
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
-                IsJumping = false;
+                isJumping = false;
             }
         }
 
@@ -204,18 +204,17 @@ namespace Unit.Character.Player
 
         public override void HandleHotkey()
         {
-            if(!PhotonView.IsMine) return;
-            if(!playerSkillInputHandler.IsCanInput()) return;
-            
+            if(!photonView.IsMine) return;
             base.HandleHotkey();
             
-            if (Input.GetKeyDown(attackKey) && !IsJumping)
+            if (Input.GetKeyDown(attackKey) && !isJumping)
             {
                 isSelectedAttack = true;
                 Cursor.SetCursor(selectAttackTexture, Vector2.zero, CursorMode.Auto);
                 ClearSelectObject();
             }
-            else if (Input.GetKeyDown(jumpKey) && !IsJumping)
+            else if (Input.GetKeyDown(jumpKey) && !isJumping &&
+                     !playerSkillInputHandler.IsInputBlocked(InputType.jump))
             {
                 TriggerJump();
             }
@@ -223,20 +222,20 @@ namespace Unit.Character.Player
 
         public override void HandleInput()
         {
-            if(!PhotonView.IsMine) return;
-            if(!playerSkillInputHandler.IsCanInput()) return;
-            
+            if(!photonView.IsMine) return;
             base.HandleInput();
 
-            if (Input.GetMouseButtonDown(selectCellMouseButton))
+            if (Input.GetMouseButtonDown(selectCellMouseButton) && !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
                 TriggerSelectCell();
             }
-            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && !IsJumping)
+            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && 
+                     !isJumping && !playerSkillInputHandler.IsInputBlocked(InputType.attack))
             {
                 TriggerAttack();
             }
-            else if (Input.GetMouseButtonDown(selectObjectMousButton) && !IsJumping)
+            else if (Input.GetMouseButtonDown(selectObjectMousButton) && 
+                     !isJumping && !playerSkillInputHandler.IsInputBlocked(InputType.selectObject))
             {
                 TriggerSelectObject();
             }
@@ -248,18 +247,18 @@ namespace Unit.Character.Player
         {
             if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))
             { 
-                PlayerSwitchMove.SetTarget(hitObject);
-                PlayerSwitchMove.ExitOtherStates();
+                characterSwitchMove.SetTarget(hitObject);
+                characterSwitchMove.ExitOtherStates();
             }
             ClearHotkeys();
         }
         
         private void TriggerAttack()
         {
-            if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, EnemyLayer))
+            if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, enemyLayer))
             { 
-                PlayerSwitchAttack.SetTarget(gameObject);
-                PlayerSwitchAttack.ExitOtherStates();
+                characterSwitchAttack.SetTarget(gameObject);
+                characterSwitchAttack.ExitOtherStates();
             }
             ClearHotkeys();
         }
@@ -287,10 +286,10 @@ namespace Unit.Character.Player
             ClearHotkeys();
             ClearSelectObject();
             InitializeJumpState();
-            StateMachine.ExitCategory(StateCategory.attack, null);
-            StateMachine.ExitCategory(StateCategory.action, null);
-            StateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
-            IsJumping = true;
+            stateMachine.ExitCategory(StateCategory.attack, null);
+            stateMachine.ExitCategory(StateCategory.action, null);
+            stateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
+            isJumping = true;
         }
 
     }
@@ -301,86 +300,65 @@ namespace Unit.Character.Player
         {
         }
 
+        public PlayerControlDesktopBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.SetPlayerStateFactory(playerStateFactory);
+            return this;
+        }
         public PlayerControlDesktopBuilder SetPhotonView(PhotonView view)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PhotonView = view;
+                playerControlDesktop.SetPhotonView(view);
             return this;
         }
         public PlayerControlDesktopBuilder SetPlayerController(PlayerController playerController)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PlayerController = playerController;
+                playerControlDesktop.SetPlayerController(playerController);
             return this;
         }
         public PlayerControlDesktopBuilder SetStateMachine(StateMachine stateMachine)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.StateMachine = stateMachine;
+                playerControlDesktop.SetStateMachine(stateMachine);
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetGameObject(GameObject gameObject)
+        public PlayerControlDesktopBuilder SetCharacterSwitchAttack(CharacterSwitchAttackState playerSwitchAttack)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.GameObject = gameObject;
+                playerControlDesktop.SetCharacterSwitchAttack(playerSwitchAttack);
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetPlayerSwitchAttack(CharacterSwitchAttackState playerSwitchAttack)
+        public PlayerControlDesktopBuilder SetCharacterSwitchMove(CharacterSwitchMoveState playerSwitchMove)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PlayerSwitchAttack = playerSwitchAttack;
-            return this;
-        }
-
-        public PlayerControlDesktopBuilder SetPlayerSwitchMove(CharacterSwitchMoveState playerSwitchMove)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.PlayerSwitchMove = playerSwitchMove;
+                playerControlDesktop.SetCharacterSwitchMove(playerSwitchMove);
             return this;
         }
 
         public PlayerControlDesktopBuilder SetPlayerControlDesktopConfig(SO_PlayerControlDesktop soPlayerControlDesktop)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SO_PlayerControlDesktop = soPlayerControlDesktop;
-            return this;
-        }
-
-        public PlayerControlDesktopBuilder SetPlayerMoveConfig(SO_PlayerMove soPlayerMove)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SO_PlayerMove = soPlayerMove;
+                playerControlDesktop.SetConfig(soPlayerControlDesktop);
             return this;
         }
 
         public PlayerControlDesktopBuilder SetCharacterController(CharacterController characterController)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.CharacterController = characterController;
+                playerControlDesktop.SetCharacterController(characterController);
             return this;
         }
         
-        public PlayerControlDesktopBuilder SetEndurance(IEndurance playerEndurance)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.Endurance = playerEndurance;
-            return this;
-        }
-        
-        public PlayerControlDesktopBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.CharacterAnimation = characterAnimation;
-            return this;
-        }
-
         public PlayerControlDesktopBuilder SetEnemyLayer(LayerMask enemyLayer)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.EnemyLayer = enemyLayer;
+                playerControlDesktop.SetEnemyLayer(enemyLayer);
             return this;
         }
     }
+
 }

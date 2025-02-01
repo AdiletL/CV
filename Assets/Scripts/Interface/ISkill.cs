@@ -1,15 +1,19 @@
 ﻿using System;
+using Gameplay.Skill;
+using Unit.Character.Player;
 using UnityEngine;
 
 public interface ISkill
 {
-    public event Action<ISkill> OnExit;
+    public event Action<ISkill> OnFinished;
     
     public GameObject GameObject { get; }
-    public Action ExitCallBack { get; }
     public AnimationClip CastClip { get; }
+    public InputType BlockedInputType { get; }
+    public SkillType BlockedSkillType { get; }
+    public Action ExitCallBack { get; }
     
-    public void Initialize(AnimationClip castClip = null);
+    public void Initialize();
     public void Execute(Action callback = null);
 
     public void Update();

@@ -8,9 +8,10 @@ namespace Gameplay.Skill
     {
         public event Action OnUpdate;
         public event Action OnLateUpdate;
-        
+
+
         private Dictionary<Type, ISkill> currentSkills = new();
-        
+
 
         public bool IsSkillActive(Type skill)
         {
@@ -21,16 +22,21 @@ namespace Gameplay.Skill
         {
             return currentSkills.ContainsKey(skill);
         }
-        
+
+        public ISkill GetSkill(Type skill)
+        {
+            return currentSkills[skill];
+        }
+
         public void Initialize()
         {
-            
+
         }
-        
+
         private void Update() => OnUpdate?.Invoke();
 
         private void LateUpdate() => OnLateUpdate?.Invoke();
-        
+
         public void Execute(Type skillType, Action exitCallback = null)
         {
             if (currentSkills.ContainsKey(skillType))
@@ -38,16 +44,16 @@ namespace Gameplay.Skill
                 var skill = currentSkills[skillType];
                 OnUpdate += skill.Update;
                 OnLateUpdate += skill.LateUpdate;
-                skill.OnExit += OnExit;
+                skill.OnFinished += OnFinished;
                 skill.Execute(exitCallback);
             }
         }
 
-        private void OnExit(ISkill skill)
+        private void OnFinished(ISkill skill)
         {
             OnUpdate -= skill.Update;
             OnLateUpdate -= skill.LateUpdate;
-            skill.OnExit -= OnExit;
+            skill.OnFinished -= OnFinished;
         }
 
         public void AddSkill(ISkill skill)
@@ -62,7 +68,7 @@ namespace Gameplay.Skill
         {
             if (currentSkills.ContainsKey(skill.GetType()))
             {
-                OnExit(skill);
+                OnFinished(skill);
                 currentSkills.Remove(skill.GetType());
             }
         }

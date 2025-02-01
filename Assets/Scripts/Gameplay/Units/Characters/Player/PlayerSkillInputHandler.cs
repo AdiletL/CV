@@ -1,4 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Gameplay.Skill;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
@@ -17,13 +19,13 @@ namespace Unit.Character.Player
         private Gravity gravity;
         private KeyCode dashKey;
 
-        private bool isDisableInput;
-
         private readonly GameObject gameObject;
         private readonly StateMachine stateMachine;
         private readonly CharacterController characterController;
         private readonly CharacterControlDesktop characterControlDesktop;
-
+        
+        private Dictionary<InputType, int> blockedInputs = new();
+        private Dictionary<SkillType, int> blockedSkills = new();
 
         public PlayerSkillInputHandler(GameObject gameObject, StateMachine stateMachine, 
             CharacterControlDesktop characterControlDesktop, CharacterController characterController)
@@ -34,11 +36,6 @@ namespace Unit.Character.Player
             this.characterController = characterController;
         }
 
-        public bool IsCanInput()
-        {
-            return !isDisableInput;
-        }
-        
         private async UniTask<Dash> CreateDash()
         {
             var so_Dash = await so_SkillContainer.GetSkillConfig<SO_SkillDash>();
@@ -48,11 +45,102 @@ namespace Unit.Character.Player
                 .SetCharacterController(characterController)
                 .SetDuration(so_Dash.DashDuration)
                 .SetSpeed(so_Dash.DashSpeed)
+                .SetBlockedInputType(so_Dash.BlockedInputType)
+                .SetBlockedSkillType(so_Dash.BlockedSkillType)
                 .SetGameObject(gameObject)
                 .Build();
         }
+
+        /// <summary>
+        /// Проверяет, заблокирован ли ввод.
+        /// </summary>
+        public bool IsInputBlocked(InputType input)
+        {
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
+            {
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
+
+                if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
+                    return true;
+            }
+            return false;
+        }
+        private bool isSkillBlocked(SkillType input)
+        {
+            foreach (SkillType flag in Enum.GetValues(typeof(SkillType)))
+            {
+                if (flag == SkillType.nothing || (input & flag) == 0) continue;
+
+                if (blockedSkills.ContainsKey(flag) && blockedSkills[flag] > 0)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Блокирует ввод (увеличивает счётчик блокировок).
+        /// </summary>
+        public void BlockInput(InputType input)
+        {
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
+            {
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
+
+                if (!blockedInputs.ContainsKey(flag))
+                    blockedInputs[flag] = 0;
+
+                blockedInputs[flag]++;
+            }
+        }
+       
+        /// <summary>
+        /// Разблокирует ввод (уменьшает счётчик блокировок).
+        /// </summary>
+        public void UnblockInput(InputType input)
+        {
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
+            {
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
+
+                if (blockedInputs.ContainsKey(flag))
+                {
+                    blockedInputs[flag]--;
+
+                    if (blockedInputs[flag] <= 0) 
+                        blockedInputs.Remove(flag);
+                }
+            }
+        }
         
+        private void BlockSkill(SkillType input)
+        {
+            foreach (SkillType flag in Enum.GetValues(typeof(SkillType)))
+            {
+                if (flag == SkillType.nothing || (input & flag) == 0) continue;
+
+                if (!blockedSkills.ContainsKey(flag))
+                    blockedSkills[flag] = 0;
+
+                blockedSkills[flag]++;
+            }
+        }
         
+        private void UnblockSkill(SkillType input)
+        {
+            foreach (SkillType flag in Enum.GetValues(typeof(SkillType)))
+            {
+                if (flag == SkillType.nothing || (input & flag) == 0) continue;
+
+                if (blockedSkills.ContainsKey(flag))
+                {
+                    blockedSkills[flag]--;
+
+                    if (blockedSkills[flag] <= 0) 
+                        blockedSkills.Remove(flag);
+                }
+            }
+        }
+
         public async void Initialize()
         {
             gravity = gameObject.GetComponent<Gravity>();
@@ -60,7 +148,6 @@ namespace Unit.Character.Player
             dashKey = so_GameHotkeys.DashKey;
             await InitializeDash();
         }
-        
                 
         private async UniTask InitializeDash()
         {
@@ -74,28 +161,33 @@ namespace Unit.Character.Player
         
         public async void HandleInput()
         {
-            if (!Input.GetKeyDown(dashKey)) return;
-            
-            await TriggerDash();
+            if (Input.GetKeyDown(dashKey) &&
+                skillHandler.IsSkillNotNull(typeof(Dash)) &&
+                !isSkillBlocked(SkillType.dash))
+            {
+                await TriggerDash();
+            }
         }
         
         private async UniTask TriggerDash()
         {
             await InitializeDash();
 
-            isDisableInput = true;
             gravity.InActivateGravity();
             this.stateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
             this.stateMachine.ActiveBlockChangeState();
             skillHandler.Execute(typeof(Dash), AfterDash);
             characterControlDesktop.ClearHotkeys();
+            BlockInput(skillHandler.GetSkill(typeof(Dash)).BlockedInputType);
+            BlockSkill(skillHandler.GetSkill(typeof(Dash)).BlockedSkillType);
         }
                 
         private void AfterDash()
         {
             gravity.ActivateGravity();
             this.stateMachine.InActiveBlockChangeState();
-            isDisableInput = false;
+            UnblockInput(skillHandler.GetSkill(typeof(Dash)).BlockedInputType);
+            UnblockSkill(skillHandler.GetSkill(typeof(Dash)).BlockedSkillType);
         }
     }
 }

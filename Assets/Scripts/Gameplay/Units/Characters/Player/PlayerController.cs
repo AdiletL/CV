@@ -67,17 +67,15 @@ namespace Unit.Character.Player
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
                 .SetCharacterController(characterController)
-                .SetGameObject(gameObject)
-                .SetPlayerSwitchAttack(characterSwitchAttackState)
-                .SetPlayerSwitchMove(characterSwitchMoveState)
-                .SetEndurance(characterEndurance)
+                .SetCharacterSwitchAttack(characterSwitchAttackState)
+                .SetCharacterSwitchMove(characterSwitchMoveState)
                 .SetPhotonView(photonView)
                 .SetPlayerController(this)
-                .SetCharacterAnimation(characterAnimation)
-                .SetPlayerMoveConfig(so_PlayerMove)
+                .SetPlayerStateFactory(playerStateFactory)
                 .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetStateMachine(this.StateMachine)
+                .SetGameObject(gameObject)
                 .Build();
         }
 
@@ -138,19 +136,20 @@ namespace Unit.Character.Player
             
             characterController = GetComponent<CharacterController>();
             characterEndurance = GetComponentInUnit<PlayerEndurance>();
+            
             characterAnimation = GetComponentInUnit<PlayerAnimation>();
             diContainer.Inject(characterAnimation);
             characterAnimation.Initialize();
             
             unitTransformSync = GetComponentInUnit<UnitTransformSync>();
             playerStateFactory = CreatePlayerStateFactory();
+            diContainer.Inject(playerStateFactory);
             playerSwitchStateFactory = CreatePlayerSwitchStateFactory();
+            diContainer.Inject(playerSwitchStateFactory);
         }
 
         protected override void CreateStates()
         {
-            var center = GetComponentInUnit<UnitCenter>().Center;
-
             var idleState = playerStateFactory.CreateState(typeof(PlayerIdleState));
             diContainer.Inject(idleState);
             
@@ -161,9 +160,11 @@ namespace Unit.Character.Player
         {
             characterSwitchMoveState = playerSwitchStateFactory.CreateSwitchMoveState(typeof(PlayerSwitchMoveState));
             diContainer.Inject(characterSwitchMoveState);
+            playerStateFactory.SetCharacterSwitchMove(characterSwitchMoveState);
             
             characterSwitchAttackState = playerSwitchStateFactory.CreateSwitchAttackState(typeof(PlayerSwitchAttackState));
             diContainer.Inject(characterSwitchAttackState);
+            playerStateFactory.SetCharacterSwitchAttack(characterSwitchAttackState);
             
             characterSwitchMoveState.SetSwitchAttackState(characterSwitchAttackState);
             characterSwitchAttackState.SetSwitchMoveState(characterSwitchMoveState);

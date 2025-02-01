@@ -23,7 +23,7 @@ namespace Unit.Item.Container
             this.characterControlDesktop = characterControlDesktop;
         }
 
-        public bool IsCanInput()
+        public bool IsBlocked()
         {
             return true;
         }
