@@ -8,20 +8,13 @@ namespace Unit.Character.Player
 {
     public class PlayerSwitchMoveState : CharacterSwitchMoveState
     {
-        private SO_PlayerMove so_PlayerMove;
         private CharacterRunState characterRunState;
         private PlayerStateFactory playerStateFactory;
         
-        
         public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
         
-        public override void Initialize()
-        {
-            base.Initialize();
-            so_PlayerMove = (SO_PlayerMove)so_CharacterMove;
-        }
 
-        public void InitializeRunState()
+        public void InitializeRunStateOrig()
         {
             if (!this.stateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
@@ -30,46 +23,29 @@ namespace Unit.Character.Player
                 this.stateMachine.AddStates(characterRunState);
             }
         }
+        
         public override void SetState()
         {
             base.SetState();
-            if (currentTarget)
-            {
-                InitializeRunState();
-
-                characterRunState.SetTarget(currentTarget);
-                if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
-                    this.stateMachine.SetStates(desiredStates: characterRunState.GetType());
-            }
-            currentTarget = null;
+            InitializeRunStateOrig();
+            if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
+                this.stateMachine.SetStates(desiredStates: characterRunState.GetType());
         }
 
         public override void ExitCategory(StateCategory category)
         {
             base.ExitCategory(category);
-            if (currentTarget)
-            {
-                InitializeRunState();
-                
-                characterRunState.SetTarget(currentTarget);
-                if (!this.stateMachine.IsActivateType(characterRunState.GetType()))
-                    this.stateMachine.ExitCategory(category, characterRunState.GetType());
-            }
-            currentTarget = null;
+            InitializeRunStateOrig();
+            if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
+                this.stateMachine.ExitCategory(category, characterRunState.GetType());
         }
 
         public override void ExitOtherStates()
         {
             base.ExitOtherStates();
-            if (currentTarget)
-            {
-                InitializeRunState();
-
-                characterRunState.SetTarget(currentTarget);
-                if (!this.stateMachine.IsActivateType(characterRunState.GetType()))
-                    this.stateMachine.ExitOtherStates(characterRunState.GetType());
-            }
-            currentTarget = null;
+            InitializeRunStateOrig();
+            if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
+                this.stateMachine.ExitOtherStates(characterRunState.GetType());
         }
     }
 

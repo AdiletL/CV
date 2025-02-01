@@ -78,7 +78,7 @@ namespace Unit.Character
                 if (Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
                     isAttack = true;
                 else
-                    rotation.Rotate();
+                    rotation.RotateToTarget();
                 
                 unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;

@@ -162,7 +162,6 @@ namespace Unit.Character.Player
         public async void HandleInput()
         {
             if (Input.GetKeyDown(dashKey) &&
-                skillHandler.IsSkillNotNull(typeof(Dash)) &&
                 !isSkillBlocked(SkillType.dash))
             {
                 await TriggerDash();

@@ -51,7 +51,8 @@ namespace Gameplay.Factory
                 _ when stateType == typeof(PlayerIdleState) => CreateIdleState(),
                 _ when stateType == typeof(PlayerDefaultAttackState) => CreateDefaultAttackState(),
                 _ when stateType == typeof(PlayerWeaponAttackState) => CreateWeaponState(),
-                _ when stateType == typeof(PlayerRunState) => CreateRunState(),
+                _ when stateType == typeof(PlayerRunToTargetState) => CreateRunState(),
+                _ when stateType == typeof(PlayerRunState) => CreateRunStateOrig(),
                 _ when stateType == typeof(PlayerJumpState) => CreateJumpState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
@@ -109,12 +110,29 @@ namespace Gameplay.Factory
                 .Build();
         }
         
-        private PlayerRunState CreateRunState()
+        private PlayerRunToTargetState CreateRunState()
+        {
+            return (PlayerRunToTargetState)new PlayerRunToTargetStateBuilder()
+                .SetCharacterController(characterController)
+                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
+                .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
+                .SetPhotonView(photonView)
+                .SetUnitAnimation(characterAnimation)
+                .SetRunClips(so_PlayerMove.RunClip)
+                .SetUnitEndurance(characterEndurance)
+                .SetGameObject(gameObject)
+                .SetMovementSpeed(so_PlayerMove.RunSpeed)
+                .SetCenter(unitCenter.Center)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
+        
+        private PlayerRunState CreateRunStateOrig()
         {
             return (PlayerRunState)new PlayerRunStateBuilder()
                 .SetCharacterController(characterController)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
-                .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
+                .SetReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
                 .SetRunClips(so_PlayerMove.RunClip)

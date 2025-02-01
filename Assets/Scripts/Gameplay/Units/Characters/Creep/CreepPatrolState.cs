@@ -144,7 +144,7 @@ namespace Unit.Character.Creep
             }
             else
             {
-                rotation.Rotate();
+                rotation.RotateToTarget();
                 isCanMovement = false;
             }
         }

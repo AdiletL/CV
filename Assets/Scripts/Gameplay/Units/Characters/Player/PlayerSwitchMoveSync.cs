@@ -15,20 +15,6 @@ namespace Unit.Character.Player
             this._playerSwitchMoveState = playerSwitchMoveState;
             photonView = GetComponent<PhotonView>();
         }
-
-        public void InitializeRunState()
-        {
-            if(!photonView.IsMine) return;
-            
-            photonView.RPC(nameof(InitializeRunStateRPC), RpcTarget.AllBuffered);
-        }
-
-        [PunRPC]
-        private void InitializeRunStateRPC()
-        {
-            if(photonView.IsMine) return;
-            
-            _playerSwitchMoveState.InitializeRunState();
-        }
+        
     }
 }

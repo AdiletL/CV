@@ -36,21 +36,19 @@ namespace Unit.Character.Player
         private SO_PlayerControlDesktop so_PlayerControlDesktop;
         private CharacterController characterController;
         private StateMachine stateMachine;
-        private LayerMask enemyLayer;
 
         private IClickableObject selectObject;
         private PlayerSkillInputHandler playerSkillInputHandler;
 
         private RaycastHit[] hits = new RaycastHit[5];
         private Texture2D selectAttackTexture;
-        
+        private LayerMask enemyLayer;
+
         private KeyCode jumpKey;
-        private KeyCode attackKey;
         private int selectObjectMousButton, attackMouseButton;
-        private int selectCellMouseButton;
         
-        private bool isSelectedAttack;
         private bool isJumping;
+        private bool isMovement;
         
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
@@ -118,8 +116,6 @@ namespace Unit.Character.Player
 
         private void InitializeHotkeys()
         {
-            selectCellMouseButton = so_GameHotkeyses.SelectCellMouseButton;
-            attackKey = so_GameHotkeyses.AttackKey;
             attackMouseButton = so_GameHotkeyses.AttackMouseButton;
             selectObjectMousButton = so_GameHotkeyses.SelectObjectMouseButton;
             jumpKey = so_GameHotkeyses.JumpKey;
@@ -186,12 +182,16 @@ namespace Unit.Character.Player
             {
                 isJumping = false;
             }
+
+            if (state.GetType().IsAssignableFrom(typeof(PlayerRunState)))
+            {
+                isMovement = false;
+            }
         }
 
         public override void ClearHotkeys()
         {
             base.ClearHotkeys();
-            isSelectedAttack = false;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             ClearSelectObject();
         }
@@ -207,29 +207,25 @@ namespace Unit.Character.Player
             if(!photonView.IsMine) return;
             base.HandleHotkey();
             
-            if (Input.GetKeyDown(attackKey) && !isJumping)
-            {
-                isSelectedAttack = true;
-                Cursor.SetCursor(selectAttackTexture, Vector2.zero, CursorMode.Auto);
-                ClearSelectObject();
-            }
-            else if (Input.GetKeyDown(jumpKey) && !isJumping &&
-                     !playerSkillInputHandler.IsInputBlocked(InputType.jump))
-            {
-                TriggerJump();
-            }
+            
         }
 
         public override void HandleInput()
         {
             if(!photonView.IsMine) return;
             base.HandleInput();
-
-            if (Input.GetMouseButtonDown(selectCellMouseButton) && !playerSkillInputHandler.IsInputBlocked(InputType.movement))
+            
+            if (!isMovement &&
+                (Input.GetKeyDown(KeyCode.A) || 
+                Input.GetKeyDown(KeyCode.D) || 
+                Input.GetKeyDown(KeyCode.W) || 
+                Input.GetKeyDown(KeyCode.S)) && 
+                !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
-                TriggerSelectCell();
+                characterSwitchMove.ExitOtherStates();
+                isMovement = true;
             }
-            else if (isSelectedAttack && Input.GetMouseButtonDown(attackMouseButton) && 
+            else if (Input.GetMouseButtonDown(attackMouseButton) && 
                      !isJumping && !playerSkillInputHandler.IsInputBlocked(InputType.attack))
             {
                 TriggerAttack();
@@ -239,10 +235,15 @@ namespace Unit.Character.Player
             {
                 TriggerSelectObject();
             }
+            else if (Input.GetKeyDown(jumpKey) && !isJumping &&
+                !playerSkillInputHandler.IsInputBlocked(InputType.jump))
+            {
+                TriggerJump();
+            }
             
             OnHandleInput?.Invoke();
         }
-        
+
         private void TriggerSelectCell()
         {
             if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))

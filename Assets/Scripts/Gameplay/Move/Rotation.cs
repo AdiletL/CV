@@ -35,7 +35,7 @@ namespace Movement
             this.isIgonreZ = isIgnoreZ;
         }
         
-        public void Rotate()
+        public void RotateToTarget()
         {
             var direction = target.position - transform.position;
             if (direction == Vector3.zero) return;
@@ -54,6 +54,12 @@ namespace Movement
             // Обновляем поворот с учетом игнорируемых осей
             Quaternion finalRotation = Quaternion.Euler(targetEulerAngles);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, rotationSpeed * Time.deltaTime);
+        }
+
+        public void RotateToDirection(Vector3 direction)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
         }
     }
 }

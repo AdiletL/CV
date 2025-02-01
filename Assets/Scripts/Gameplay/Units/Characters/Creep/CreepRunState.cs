@@ -182,7 +182,7 @@ namespace Unit.Character.Creep
                         gameObject.transform.forward,
                         currentTargetPosition))
                 {
-                    rotation.Rotate();
+                    rotation.RotateToTarget();
                     return;
                 }
 

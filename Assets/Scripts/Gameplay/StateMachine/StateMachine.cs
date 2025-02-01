@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Machine;
 using Unit;
+using Unit.Character.Player;
 using UnityEngine;
 using IState = Machine.IState;
 
@@ -170,10 +171,8 @@ public class StateMachine
         }
 
         if (installationState != null)
-        {
             SetStates(isForceSetState, installationState);
-        }
-
+        
         if (activeStates.Count == 0)
             SetDefaultState();
     }

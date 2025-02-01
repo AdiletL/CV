@@ -85,7 +85,7 @@ namespace Unit.Character
             }
 
             if (!Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
-                rotation.Rotate();
+                rotation.RotateToTarget();
                
             if(!isAttack && Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
                 isAttack = true;

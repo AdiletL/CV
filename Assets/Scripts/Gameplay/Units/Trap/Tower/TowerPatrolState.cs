@@ -112,7 +112,7 @@ namespace Unit.Trap.Tower
             }
             else
             {
-                rotation.Rotate();
+                rotation.RotateToTarget();
                 isCanMovement = false;
             }
         }
