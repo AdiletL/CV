@@ -7,7 +7,7 @@ namespace Gameplay.Weapon
         
         public override async UniTask FireAsync()
         {
-            if(Calculate.Move.IsFacingTargetUsingAngle(this.GameObject.transform.position, this.GameObject.transform.forward, CurrentTarget.transform.position, AngleToTarget))
+            if(Calculate.Move.IsFacingTargetUsingAngle(this.gameObject.transform.position, this.gameObject.transform.forward, CurrentTarget.transform.position, angleToTarget))
                 ApplyDamage();
             await UniTask.CompletedTask;
         }

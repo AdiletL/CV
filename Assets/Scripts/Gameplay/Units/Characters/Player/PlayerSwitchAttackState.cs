@@ -218,7 +218,7 @@ namespace Unit.Character.Player
         }
 
 
-        public void SetWeapon(Weapon weapon)
+        public override void SetWeapon(Weapon weapon)
         {
             if (!TryGetWeapon(weapon.GetType()))
                 currentWeapons.Add(weapon);

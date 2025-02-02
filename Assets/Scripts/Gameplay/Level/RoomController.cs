@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using Unit.Character;
@@ -6,32 +7,37 @@ using Unit.Cell;
 using Unit.Item;
 using Unit.Trap;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
 {
-    public class GameFieldController : MonoBehaviour
+    public class RoomController : MonoBehaviour
     {
         [Inject] private DiContainer diContainer;
         [Inject] private GameUnits gameUnits;
+
+        public static Action<int, List<Vector3>> OnSpawnNextRooms;
         
+        [Space(10)]
         [SerializeField] private CellController[] platforms;
         [SerializeField] private CharacterMainController[] characters;
         [SerializeField] private TrapController[] traps;
-        [FormerlySerializedAs("interactableObjects")] [SerializeField] private ItemController[] itemObjects;
+        [SerializeField] private ItemController[] itemObjects;
         
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
-        [field: SerializeField] public Transform EndPoint { get; private set; } 
+        [field: SerializeField] public Transform[] EndPoints { get; private set; } 
         
         [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
         
         private PhotonView photonView;
+        private bool isTriggerPlayer;
         
         private Stack<CellController> platformStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
         private Stack<ItemController> interactableObjectStack = new();
+        
+        public int ID { get; private set; }
         
         
         #region Editor
@@ -208,5 +214,22 @@ namespace Gameplay
         #endregion
         #endregion
         
+        public void SetID(int id) => this.ID = id;
+
+        private void SpawnNextRooms()
+        {
+            var endPositions = new List<Vector3>(EndPoints.Length);
+            for (int i = 0; i < EndPoints.Length; i++)
+                endPositions.Add(EndPoints[i].position);
+            
+            OnSpawnNextRooms?.Invoke(ID, endPositions);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if(isTriggerPlayer) return;
+            isTriggerPlayer = true;
+            SpawnNextRooms();
+        }
     }
 }

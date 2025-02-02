@@ -8,16 +8,16 @@ namespace Gameplay
 {
     public class LevelController : MonoBehaviour
     {
-        public GameFieldController CurrentGameField { get; private set; }
+        public RoomController CurrentRoom { get; private set; }
         
         public void Initialize()
         {
             
         }
 
-        public void SetGameField(GameFieldController gameFieldController)
+        public void SetGameField(RoomController roomController)
         {
-            CurrentGameField = gameFieldController;
+            CurrentRoom = roomController;
         }
     }
 }

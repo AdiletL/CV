@@ -93,7 +93,7 @@ namespace Gameplay.Tool
             }
 
             MarkDirty();
-            createGameFieldTool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentRoom.SortingArray();
         }
 
         public void DestroyBlocks()
@@ -112,7 +112,7 @@ namespace Gameplay.Tool
             }
 
             MarkDirty();
-            createGameFieldTool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentRoom.SortingArray();
         }
     }
         #endif

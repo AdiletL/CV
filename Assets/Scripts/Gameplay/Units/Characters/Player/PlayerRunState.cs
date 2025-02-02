@@ -25,13 +25,7 @@ namespace Unit.Character.Player
             base.Initialize();
             rotation = new Rotation(gameObject.transform, rotationSpeed);
         }
-
-        public override void Enter()
-        {
-            base.Enter();
-            Debug.Log("enter");
-        }
-
+        
         public override void Subscribe()
         {
             base.Subscribe();
@@ -58,12 +52,7 @@ namespace Unit.Character.Player
             Rotate();
             ExecuteMovement();
         }
-
-        public override void Exit()
-        {
-            base.Exit();
-            Debug.Log("ExitRun");
-        }
+        
         private void OnExitCategory(Machine.IState state)
         {
             if(!isActive) return;

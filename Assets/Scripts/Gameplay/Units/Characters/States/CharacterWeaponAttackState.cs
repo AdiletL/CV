@@ -33,7 +33,7 @@ namespace Unit.Character
         
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
-        public void SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => characterSwitchMoveState = characterSwitchMoveState;
+        public void SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMoveState = characterSwitchMoveState;
         public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
         public void SetBaseReductionEndurance(float reductionEndurance) => baseReductionEndurance = reductionEndurance;
         public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
@@ -138,6 +138,7 @@ namespace Unit.Character
             CurrentWeapon = weapon;
             Range = CurrentWeapon.Range;
             rangeSqr = Range * Range;
+            CurrentWeapon.SetWeaponParent(weaponParent);
 
             CurrentWeapon.UpdateCharacterStates(this);
             

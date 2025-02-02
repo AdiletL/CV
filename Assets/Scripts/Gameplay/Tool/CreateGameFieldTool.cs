@@ -20,26 +20,26 @@ namespace Gameplay.Tool
         private int maxIndex;
         private int countIndex;
         
-        private GameFieldController gameFieldController;
-        public GameFieldController CurrentGameField
+        private RoomController _roomController;
+        public RoomController CurrentRoom
         {
             get
             {
-                if(!gameFieldController)
-                    gameFieldController = GetComponentInChildren<GameFieldController>();
+                if(!_roomController)
+                    _roomController = GetComponentInChildren<RoomController>();
                 
-                return gameFieldController;
+                return _roomController;
             }
-            set => gameFieldController = value;
+            set => _roomController = value;
         }
 
         private void CheckLink()
         {
-            if (CurrentGameField == null)
+            if (CurrentRoom == null)
             {
-                CurrentGameField = GetComponentInChildren<GameFieldController>();
+                CurrentRoom = GetComponentInChildren<RoomController>();
             }
-            if (CurrentGameField == null)
+            if (CurrentRoom == null)
             {
                 Debug.LogError("Link on current game field is null");
                 return;
@@ -122,7 +122,7 @@ namespace Gameplay.Tool
         {
             var gameField = (GameObject)PrefabUtility.InstantiatePrefab(gameFieldPrefab, transform);
             gameField.transform.localPosition = Vector3.zero;
-            CurrentGameField = gameField.GetComponent<GameFieldController>();
+            CurrentRoom = gameField.GetComponent<RoomController>();
             MarkDirty();
         }
     }

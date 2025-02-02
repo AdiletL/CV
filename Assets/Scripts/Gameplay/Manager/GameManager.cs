@@ -18,12 +18,14 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject poolManagerPrefab;
         [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
         [SerializeField] private AssetReferenceGameObject uiManagerPrefab;
+        [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
         [SerializeField] private SO_SkillContainer so_SkillContainerPrefab;
         [SerializeField] private SO_GameConfig so_GameConfigPrefab;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
         private UIManager uiManager;
+        private RoomManager roomManager;
         private GameUnits gameUnits;
         private ExperienceSystem experienceSystem;
         
@@ -73,6 +75,7 @@ namespace Gameplay.Manager
         {
             InstantiatePoolManager();
             InstantiateUIManager();
+            InstantiateRoomManager();
             InstantiateLevelManager();
         }
         private void InstantiatePoolManager()
@@ -111,6 +114,24 @@ namespace Gameplay.Manager
             uiManager.Initialize();
         }
 
+        private void InstantiateRoomManager()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(roomManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeRoomManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+        }
+
+        [PunRPC]
+        private void InitializeRoomManager(int viewID)
+        {
+            var result = PhotonView.Find(viewID).gameObject;
+            roomManager = result.GetComponent<RoomManager>();
+            diContainer.Inject(roomManager);
+            diContainer.Bind(roomManager.GetType()).FromInstance(roomManager).AsSingle();
+            roomManager.transform.SetParent(transform);
+            roomManager.Initialize();
+        }
+        
         private void InstantiateLevelManager()
         {
             if (!PhotonNetwork.IsMasterClient) return;

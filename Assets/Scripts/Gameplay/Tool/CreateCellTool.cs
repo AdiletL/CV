@@ -103,7 +103,7 @@ namespace Gameplay.Tool
             }
 
             MarkDirty();
-            createGameFieldTool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentRoom.SortingArray();
         }
         
 
@@ -124,7 +124,7 @@ namespace Gameplay.Tool
             }
 
             MarkDirty();
-            createGameFieldTool.CurrentGameField.SortingArray();
+            createGameFieldTool.CurrentRoom.SortingArray();
         }
     }
         #endif

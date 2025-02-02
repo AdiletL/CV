@@ -10,23 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Levels
+  m_Name: OtherPrefabs
   m_EditorClassIdentifier: 
-  m_GroupName: Levels
-  m_GUID: 25d0cfaecb46c79458ea2f3495aa1bbe
+  m_GroupName: OtherPrefabs
+  m_GUID: 97d86b373ba96934497078e97f904096
   m_SerializeEntries:
-  - m_GUID: 721f7ac08dca2244f8529070b5eeb08a
-    m_Address: GameFieldController_1 Variant
+  - m_GUID: 92e5c3af0579bd142a11fe0072321e74
+    m_Address: LevelController
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8eb818773a2bba54d98986a5109875b4
-    m_Address: GameFieldController_2 Variant
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 971d7945543b4d64b9b503ccdb23b24e
-    m_Address: GameFieldController_3 Variant
+  - m_GUID: d4123a6286e5af449b8b6792bc93a875
+    m_Address: Bootstrap
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -34,5 +29,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 089150fb234ebe74f8e1580f0723d344, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: b3edc4f03ef494b44b1ebd74ee0bec8e, type: 2}
-    - {fileID: 11400000, guid: 8e79ae533ec7eec4080bf374a8c72eff, type: 2}
+    - {fileID: 11400000, guid: 6caf39c0338d5fa4aa50440033a3c4e0, type: 2}
+    - {fileID: 11400000, guid: 967a63b249795ab44abec6b9f2ca7207, type: 2}

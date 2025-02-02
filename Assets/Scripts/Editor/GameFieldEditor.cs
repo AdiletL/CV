@@ -2,14 +2,14 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GameFieldController))]
+[CustomEditor(typeof(RoomController))]
 public class GameFieldEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-        var gameField = (GameFieldController)target;
+        var gameField = (RoomController)target;
 
         if (GUILayout.Button("SortingArray"))
         {
