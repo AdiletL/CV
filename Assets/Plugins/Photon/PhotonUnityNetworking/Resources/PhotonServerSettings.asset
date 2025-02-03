@@ -138,6 +138,7 @@ MonoBehaviour:
   - InActiveBlockChangeStateRPC
   - InitializeRunStateRPC
   - InitializeRoomManager
+  - InitializeNavMeshManager
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

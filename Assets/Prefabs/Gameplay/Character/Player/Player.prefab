@@ -3113,6 +3113,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerUI Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 455552421036705544, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1483841207813905496, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1954340963546214717, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2381756870619208166, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2468277187498423500, guid: 5267492f7938ef640a25150630f1b776, type: 3}
       propertyPath: healthBar
       value: 
@@ -3160,6 +3176,22 @@ PrefabInstance:
     - target: {fileID: 7808812399886632136, guid: 5267492f7938ef640a25150630f1b776, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288830261527242217, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8712098916639974180, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8797197448763885710, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022557944405749125, guid: 5267492f7938ef640a25150630f1b776, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3242,6 +3274,10 @@ PrefabInstance:
     - target: {fileID: 8426830973914373507, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727248243320549466, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

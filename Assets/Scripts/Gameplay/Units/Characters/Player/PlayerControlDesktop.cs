@@ -216,10 +216,10 @@ namespace Unit.Character.Player
             base.HandleInput();
             
             if (!isMovement &&
-                (Input.GetKeyDown(KeyCode.A) || 
-                Input.GetKeyDown(KeyCode.D) || 
-                Input.GetKeyDown(KeyCode.W) || 
-                Input.GetKeyDown(KeyCode.S)) && 
+                (Input.GetKey(KeyCode.A) || 
+                Input.GetKey(KeyCode.D) || 
+                Input.GetKey(KeyCode.W) || 
+                Input.GetKey(KeyCode.S)) && 
                 !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
                 characterSwitchMove.ExitOtherStates();

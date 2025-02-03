@@ -67,6 +67,7 @@ Transform:
   - {fileID: 8899468681701373137}
   - {fileID: 630850092609712906}
   - {fileID: 6995952949732066269}
+  - {fileID: 7452989832166913966}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8641291860690897369
@@ -86,9 +87,9 @@ MonoBehaviour:
   traps: []
   itemObjects: []
   <StartPoint>k__BackingField: {fileID: 4685813199436329726}
-  <EndPoints>k__BackingField:
-  - {fileID: 8899468681701373137}
+  <EndPoints>k__BackingField: []
   <PlayerSpawnPoint>k__BackingField: {fileID: 630850092609712906}
+  <NavMeshSurfaces>k__BackingField: []
 --- !u!135 &1790772155614567076
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -257,6 +258,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba585ba287d4d3bb8d4eec3c4f29c3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &6973642887133085987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7452989832166913966}
+  m_Layer: 0
+  m_Name: NavMesh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7452989832166913966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6973642887133085987}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 218793645156990267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8518298693038422116
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,12 +21,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8eb818773a2bba54d98986a5109875b4
-    m_Address: GameFieldController_2 Variant
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 971d7945543b4d64b9b503ccdb23b24e
-    m_Address: GameFieldController_3 Variant
+    m_Address: Room_2 Variant
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

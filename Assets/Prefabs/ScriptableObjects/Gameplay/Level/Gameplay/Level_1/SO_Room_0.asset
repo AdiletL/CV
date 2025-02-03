@@ -20,5 +20,5 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   <NextRooms>k__BackingField:
-  - {fileID: 11400000, guid: 9af8aeab42ed4d34a9b991d0ec87720f, type: 2}
+  - {fileID: 11400000, guid: b5071ebcc7a94a34990a331dc253a12c, type: 2}
   - {fileID: 11400000, guid: b5071ebcc7a94a34990a331dc253a12c, type: 2}

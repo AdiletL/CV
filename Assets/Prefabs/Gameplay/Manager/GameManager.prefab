@@ -62,8 +62,20 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  navMeshManagerPrefab:
+    m_AssetGUID: 31128bea06158ae458919e36a9762bd5
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   roomManagerPrefab:
     m_AssetGUID: de6dcaacf5745154dbe0e4761886eee9
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  networkManagerPrefab:
+    m_AssetGUID: b84368c95b1f81a4c97b8c8c6dc6d291
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
-using Photon.Pun;
+﻿using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Skill;
 using UnityEngine;
@@ -18,14 +14,19 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject poolManagerPrefab;
         [SerializeField] private AssetReferenceGameObject levelManagerPrefab;
         [SerializeField] private AssetReferenceGameObject uiManagerPrefab;
+        [SerializeField] private AssetReferenceGameObject navMeshManagerPrefab;
         [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
+        [SerializeField] private AssetReferenceGameObject networkManagerPrefab;
         [SerializeField] private SO_SkillContainer so_SkillContainerPrefab;
         [SerializeField] private SO_GameConfig so_GameConfigPrefab;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
         private UIManager uiManager;
+        private NavMeshManager navMeshManager;
         private RoomManager roomManager;
+        private NetworkManager networkManager;
+        
         private GameUnits gameUnits;
         private ExperienceSystem experienceSystem;
         
@@ -73,11 +74,32 @@ namespace Gameplay.Manager
 
         private void InitializeManagers()
         {
+            InstantiateNetworkManager();
             InstantiatePoolManager();
             InstantiateUIManager();
+            InstantiateNavMeshManager();
             InstantiateRoomManager();
             InstantiateLevelManager();
         }
+        
+        private void InstantiateNetworkManager()
+        {
+            if(!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(networkManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeNetworkManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+        }
+        
+        [PunRPC]
+        private void InitializeNetworkManager(int viewID)
+        {
+            var result = PhotonView.Find(viewID).gameObject;
+            networkManager = result.GetComponent<NetworkManager>();
+            diContainer.Inject(networkManager);
+            diContainer.Bind(networkManager.GetType()).FromInstance(networkManager).AsSingle();
+            networkManager.transform.SetParent(transform);
+            networkManager.Initialize();
+        }
+        
         private void InstantiatePoolManager()
         {
             if(!PhotonNetwork.IsMasterClient) return;
@@ -112,6 +134,24 @@ namespace Gameplay.Manager
             diContainer.Bind(uiManager.GetType()).FromInstance(uiManager).AsSingle();
             uiManager.transform.SetParent(transform);
             uiManager.Initialize();
+        }
+        
+        private void InstantiateNavMeshManager()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            var result = PhotonNetwork.Instantiate(navMeshManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            photonView.RPC(nameof(InitializeNavMeshManager), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+        }
+        
+        [PunRPC]
+        private void InitializeNavMeshManager(int viewID)
+        {
+            var result = PhotonView.Find(viewID).gameObject;
+            navMeshManager = result.GetComponent<NavMeshManager>();
+            diContainer.Inject(navMeshManager);
+            diContainer.Bind(navMeshManager.GetType()).FromInstance(navMeshManager).AsSingle();
+            navMeshManager.transform.SetParent(transform);
+            navMeshManager.Initialize();
         }
 
         private void InstantiateRoomManager()

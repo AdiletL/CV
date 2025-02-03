@@ -2,8 +2,13 @@
 using Photon.Pun;
 using Photon.Realtime;
 
-public class NetworkManager : MonoBehaviourPunCallbacks
+public class NetworkManager : MonoBehaviourPunCallbacks, IManager
 {
+    public void Initialize()
+    {
+        
+    }
+    
     #region Photon Callbacks
 
     public override void OnPlayerEnteredRoom(Player other)
@@ -39,4 +44,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     #endregion
+
+    
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Photon.Pun;
@@ -13,15 +14,15 @@ namespace Gameplay.Manager
     public class RoomManager : MonoBehaviour, IManager
     {
         [Inject] private DiContainer diContainer;
+        [Inject] private NavMeshManager navMeshManager;
         
         [SerializeField] private SO_LevelContainer so_LevelContainer;
         [SerializeField] private AssetReferenceGameObject levelControllerPrefab;
         
         private PhotonView photonView;
         private LevelController levelController;
-
+        
         private List<RoomController> currentRooms = new();
-
         public Vector3 PlayerSpawnPosition { get; private set; }
 
 
@@ -85,6 +86,8 @@ namespace Gameplay.Manager
             PlayerSpawnPosition = roomController.PlayerSpawnPoint.position;
             currentRooms.Add(roomController);
 
+            BuildNavMesh(roomGameObject);
+
             var endPositions = new List<Vector3>(roomController.EndPoints.Length);
             for (int i = 0; i < endPositions.Count; i++)
                 endPositions.Add(roomController.EndPoints[i].position);
@@ -94,24 +97,43 @@ namespace Gameplay.Manager
         
         private void SpawnNextRoom(int id, List<Vector3> endPositions)
         {
+            StartCoroutine(SpawnNextRoomCoroutine(id, endPositions));
+        }
+
+        private IEnumerator SpawnNextRoomCoroutine(int id, List<Vector3> endPositions)
+        {
+            yield return new WaitForEndOfFrame();
+            
             var roomConfig = GetRoom(LevelManager.CurrentLevelIndex, id);
             var nextRoomsConfig = roomConfig.NextRooms;
+            SO_Room nextRoom = null;
+            GameObject roomGameObject = null;
 
             for (int i = 0; i < endPositions.Count; i++)
             {
-                var nextRoom = nextRoomsConfig[i];
+                if (nextRoomsConfig.Length - 1 < i) yield break;
+                
+                nextRoom = nextRoomsConfig[i];
                 var randomRoom = roomConfig.RoomObjects[Random.Range(0, nextRoom.RoomObjects.Length)];
                 
-                var roomGameObject = PhotonNetwork.Instantiate(randomRoom.AssetGUID, Vector3.zero, Quaternion.identity);
-                roomGameObject.transform.localPosition = endPositions[i] - roomGameObject.transform.localPosition;
+                roomGameObject = PhotonNetwork.Instantiate(randomRoom.AssetGUID, Vector3.zero, Quaternion.identity);
+                var roomController = roomGameObject.GetComponent<RoomController>();
+                roomGameObject.transform.localPosition = endPositions[i] - roomController.StartPoint.localPosition;
                 roomGameObject.transform.SetParent(levelController.transform);
 
-                var roomController = roomGameObject.GetComponent<RoomController>();
                 diContainer.Inject(roomController);
                 roomController.SetID(nextRoom.ID);
                 roomController.Initialize();
                 currentRooms.Add(roomController);
+                
+                BuildNavMesh(roomGameObject);
+                yield return null;
             }
+        }
+
+        private void BuildNavMesh(GameObject room)
+        {
+            navMeshManager.BuildNavMesh(room);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Gameplay.NavMesh;
 using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
@@ -24,9 +25,9 @@ namespace Gameplay
         [SerializeField] private TrapController[] traps;
         [SerializeField] private ItemController[] itemObjects;
         
+        [field: SerializeField, Space(10)] public NavMeshControl NavMeshControl { get; private set; }
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
         [field: SerializeField] public Transform[] EndPoints { get; private set; } 
-        
         [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
         
         private PhotonView photonView;

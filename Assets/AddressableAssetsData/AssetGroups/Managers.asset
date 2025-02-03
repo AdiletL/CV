@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Managers
   m_GUID: 5c94b1b8ef82f144f831f95a4a6d4441
   m_SerializeEntries:
+  - m_GUID: 31128bea06158ae458919e36a9762bd5
+    m_Address: NavMeshManager
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 323f2059c6360b348ae88126a5ab27da
     m_Address: GameManager
     m_ReadOnly: 0
