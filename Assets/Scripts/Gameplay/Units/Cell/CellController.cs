@@ -41,25 +41,11 @@ namespace Unit.Cell
                 Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
             return colliderCount == 0;
         }
-
-        public void InitializeRPC()
-        {
-            this.photonView = GetComponent<PhotonView>();
-            
-            this.photonView.RPC(nameof(Trigger), RpcTarget.AllBuffered, this.photonView.ViewID);
-        }
-
-        [PunRPC]
-        private void Trigger()
-        {
-            Initialize();
-        }
         
         public override void Initialize()
         {
             base.Initialize();
             unitRenderer = GetComponent<UnitRenderer>();
-            
         }
 
         public override void Appear()

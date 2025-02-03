@@ -98,7 +98,9 @@ namespace Unit
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
 
             clip = ResolveAnimationClip(clip, isDefault);
-            photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration);
+            
+            if(photonView.IsMine)
+                photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration);
         }
 
         public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1f, 
@@ -107,7 +109,9 @@ namespace Unit
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
             
             clip = ResolveAnimationClip(clip, isDefault);
-            photonView.RPC(nameof(ChangeAnimationWithSpeedRPC), RpcTarget.All, clip.name, speed, transitionDuration);
+            
+            if(photonView.IsMine)
+                photonView.RPC(nameof(ChangeAnimationWithSpeedRPC), RpcTarget.All, clip.name, speed, transitionDuration);
         }
 
         [PunRPC]

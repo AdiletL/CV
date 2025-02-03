@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public interface IPatrol
+public interface IPatrol : IMovement
 {
-    public Vector3? StartPosition { get; }
-    public Vector3? EndPosition { get; }
+    public Vector3[] PatrolPoints { get; }
 }

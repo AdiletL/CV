@@ -2,40 +2,39 @@
 
 namespace Unit.Character.Creep
 {
-    public class BeholderPatrolState : CreepPatrolState
+    public class BeholderPatrolState : CreepAgentPatrolState
     {
-        private BeholderSwitchAttackState _beholderSwitchAttackState;
+        private CreepSwitchAttackState creepSwitchAttackState;
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            _beholderSwitchAttackState = (BeholderSwitchAttackState)CharacterSwitchAttack;
-        }
-
-        public override void Enter()
-        {
-            base.Enter();
-            CheckEnemy();
-        }
-
+        public void SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState) =>
+            this.creepSwitchAttackState = creepSwitchAttackState;
+        
+        
         public override void LateUpdate()
         {
-            CheckEnemy();
+            //CheckEnemy();
         }
 
         private void CheckEnemy()
         {
-            if (_beholderSwitchAttackState.IsFindUnitInRange())
+            if (creepSwitchAttackState.IsFindUnitInRange())
             {
-                _beholderSwitchAttackState.ExitCategory(Category);
+                creepSwitchAttackState.ExitCategory(Category);
             }
         }
     }
     
-    public class BeholderPatrolStateBuilder : CreepPatrolStateBuilder
+    public class BeholderPatrolStateBuilder : CreepAgentPatrolStateBuilder
     {
         public BeholderPatrolStateBuilder() : base(new BeholderPatrolState())
         {
+        }
+
+        public BeholderPatrolStateBuilder SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState)
+        {
+            if(state is BeholderPatrolState beholderPatrolState)
+                beholderPatrolState.SetCreepSwitchAttackState(creepSwitchAttackState);
+            return this;
         }
     }
 }

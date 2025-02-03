@@ -6,19 +6,21 @@ namespace Unit.Character.Creep
     public class BeholderIdleState : CreepIdleState
     { 
         private BeholderSwitchAttackState _beholderSwitchAttackState;
-        private BeholderSwitchMoveState _beholderSwitchMoveState;
+        private CreepSwitchMoveState creepSwitchMoveState;
         
         private float checkEnemyCooldown = .03f;
         private float countCheckEnemyCooldown;
         
         private bool isCheckAttack = true;
         
+        public void SetCreepSwitchMoveState(CreepSwitchMoveState creepSwitchMoveState) => this.creepSwitchMoveState = creepSwitchMoveState;
+        
         
         public override void Update()
         {
             base.Update();
 
-            CheckAttack();
+            //CheckAttack();
         }
 
         public override void LateUpdate()
@@ -29,8 +31,8 @@ namespace Unit.Character.Creep
 
         private void CheckMove()
         {
-            if(!_beholderSwitchMoveState.IsCanMovement() || !isActive) return;
-            _beholderSwitchMoveState.ExitCategory(Category);
+            if(!creepSwitchMoveState.IsCanMovement() || !isActive) return;
+            creepSwitchMoveState.ExitCategory(Category);
         }
 
         private void CheckAttack()
@@ -55,6 +57,12 @@ namespace Unit.Character.Creep
         public BeholderIdleStateBuilder() : base(new BeholderIdleState())
         {
         }
-        
+
+        public BeholderIdleStateBuilder SetCreepSwitchMoveState(CreepSwitchMoveState creepSwitchMoveState)
+        {
+            if(state is BeholderIdleState beholderIdleState)
+                beholderIdleState.SetCreepSwitchMoveState(creepSwitchMoveState);
+            return this;
+        }
     }
 }

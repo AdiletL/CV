@@ -18,6 +18,7 @@ namespace Gameplay.Manager
         private IEnumerator BuildNavMeshCoroutine(GameObject room)
         {
             yield return null;
+            
             var roomController = room.GetComponent<RoomController>();
             foreach (var VARIABLE in roomController.NavMeshControl.SurfacesControls)
             {
@@ -26,6 +27,8 @@ namespace Gameplay.Manager
                 VARIABLE.InActivateMeshRenderer();
                 yield return null;
             }
+
+            roomController.StartGame();
         }
     }
 }

@@ -1,64 +1,19 @@
 ﻿using Machine;
-using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
 namespace Unit.Character.Creep
 {
     public class BeholderSwitchMoveState : CreepSwitchMoveState
     {
-        private SO_BeholderMove so_BeholderMove;
-        private BeholderAnimation beholderAnimation;
         private BeholderRunState beholderRunState;
         private BeholderPatrolState beholderPatrolState;
-        private ISwitchState beholderSwitchAttack;
-        
-        public CharacterController CharacterController { get; set; }
-        public Transform Start { get; set; }
-        public Transform End { get; set; }
-        
-
-        public override bool IsCanMovement()
-        {
-            return Start && End || currentTarget;
-        }
-
-        private BeholderPatrolState CreatePatrolState()
-        {
-            return (BeholderPatrolState)new BeholderPatrolStateBuilder()
-                .SetCharacterController(CharacterController)
-                .SetCenter(center)
-                .SetEnemyAnimation(beholderAnimation)
-                .SetWalkClip(so_BeholderMove.WalkClip)
-                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
-                .SetCharacterSwitchAttack(beholderSwitchAttack)
-                .SetStart(Start)
-                .SetEnd(End)
-                .SetGameObject(gameObject)
-                .SetMovementSpeed(so_BeholderMove.WalkSpeed)
-                .SetStateMachine(stateMachine)
-                .Build();
-        }
-
-        private BeholderRunState CreateRunState()
-        {
-            return (BeholderRunState)new BeholderRunStateBuilder()
-                .SetCenter(center)
-                .SetCharacterController(CharacterController)
-                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
-                .SetUnitAnimation(beholderAnimation)
-                .SetRunClips(so_BeholderMove.RunClip)
-                .SetGameObject(gameObject)
-                .SetMovementSpeed(so_BeholderMove.RunSpeed)
-                .SetStateMachine(stateMachine)
-                .Build();
-        }
         
 
         private void InitializeRunState()
         {
             if(!this.stateMachine.IsStateNotNull(typeof(BeholderRunState)))
             {
-                beholderRunState = CreateRunState();
+                beholderRunState = (BeholderRunState)creepStateFactory.CreateState(typeof(BeholderRunState));
                 beholderRunState.Initialize();
                 this.stateMachine.AddStates(beholderRunState);
             }
@@ -68,7 +23,7 @@ namespace Unit.Character.Creep
         {
             if (!this.stateMachine.IsStateNotNull(typeof(BeholderPatrolState)))
             {
-                beholderPatrolState = CreatePatrolState();
+                beholderPatrolState = (BeholderPatrolState)creepStateFactory.CreateState(typeof(BeholderPatrolState));
                 beholderPatrolState.Initialize();
                 this.stateMachine.AddStates(beholderPatrolState);
             }
@@ -142,29 +97,6 @@ namespace Unit.Character.Creep
     {
         public BeholderSwitchSwitchMoveStateBuilder() : base(new BeholderSwitchMoveState())
         {
-        }
-        
-        public BeholderSwitchSwitchMoveStateBuilder SetStart(Transform start)
-        {
-            if (switchState is BeholderSwitchMoveState characterSwitchMoveState)
-                characterSwitchMoveState.Start = start;
-
-            return this;
-        }
-        public BeholderSwitchSwitchMoveStateBuilder SetEnd(Transform end)
-        {
-            if (switchState is BeholderSwitchMoveState characterSwitchMoveState)
-                characterSwitchMoveState.End = end;
-
-            return this;
-        }
-
-        public BeholderSwitchSwitchMoveStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if (switchState is BeholderSwitchMoveState characterSwitchMoveState)
-                characterSwitchMoveState.CharacterController = characterController;
-
-            return this;
         }
     }
 }

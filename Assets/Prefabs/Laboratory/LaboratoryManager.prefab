@@ -62,5 +62,23 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  navMeshManagerPrefab:
+    m_AssetGUID: 31128bea06158ae458919e36a9762bd5
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  roomManagerPrefab:
+    m_AssetGUID: de6dcaacf5745154dbe0e4761886eee9
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  networkManagerPrefab:
+    m_AssetGUID: b84368c95b1f81a4c97b8c8c6dc6d291
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   so_SkillContainerPrefab: {fileID: 11400000, guid: ce8cfbb13b026434882e233fe3fe80f5, type: 2}
   so_GameConfigPrefab: {fileID: 11400000, guid: 663f3157d209a694c88f78d9c0c8eb27, type: 2}

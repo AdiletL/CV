@@ -81,17 +81,17 @@ namespace Unit.Character.Player
 
         private PlayerStateFactory CreatePlayerStateFactory()
         {
-            return new PlayerStateFactoryBuilder(new PlayerStateFactory())
+            return (PlayerStateFactory)new PlayerStateFactoryBuilder()
                 .SetCharacterController(characterController)
-                .SetGameObject(gameObject)
                 .SetCharacterEndurance(characterEndurance)
                 .SetPhotonView(photonView)
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
-                .SetUnitCenter(unitCenter)
                 .SetCharacterAnimation(characterAnimation)
                 .SetWeaponParent(weaponParent)
                 .SetStateMachine(StateMachine)
+                .SetUnitCenter(unitCenter)
+                .SetGameObject(gameObject)
                 .Build();
         }
 

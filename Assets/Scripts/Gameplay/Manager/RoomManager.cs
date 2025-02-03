@@ -92,7 +92,7 @@ namespace Gameplay.Manager
             for (int i = 0; i < endPositions.Count; i++)
                 endPositions.Add(roomController.EndPoints[i].position);
             
-            SpawnNextRoom(0, endPositions);
+            SpawnNextRoom(roomConfig.ID, endPositions);
         }
         
         private void SpawnNextRoom(int id, List<Vector3> endPositions)

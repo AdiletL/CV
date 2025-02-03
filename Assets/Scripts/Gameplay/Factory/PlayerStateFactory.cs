@@ -11,14 +11,12 @@ using Zenject;
 
 namespace Gameplay.Factory
 {
-    public class PlayerStateFactory : Factory
+    public class PlayerStateFactory : CharacterStateFactory
     {
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         
-        private GameObject gameObject;
         private CharacterController characterController;
         private StateMachine stateMachine;
-        private UnitCenter unitCenter;
         private PhotonView photonView;
         private Transform weaponParent;
         
@@ -32,8 +30,6 @@ namespace Gameplay.Factory
         
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
-        public void SetUnitCenter(UnitCenter unitCenter) => this.unitCenter = unitCenter;
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
@@ -42,9 +38,14 @@ namespace Gameplay.Factory
         public void SetCharacterEndurance(CharacterEndurance characterEndurance) => this.characterEndurance = characterEndurance;
         public void SetPhotonView(PhotonView view) => photonView = view;
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
+
+
+        public override void Initialize()
+        {
+            
+        }
         
-        
-        public State CreateState(Type stateType)
+        public override State CreateState(Type stateType)
         {
             State result = stateType switch
             {
@@ -161,78 +162,66 @@ namespace Gameplay.Factory
         }
     }
 
-    public class PlayerStateFactoryBuilder
+    public class PlayerStateFactoryBuilder : CharacterStateFactoryBuilder
     {
-        private PlayerStateFactory playerStateFactory;
-
-        public PlayerStateFactoryBuilder(PlayerStateFactory playerStateFactory)
+        public PlayerStateFactoryBuilder() : base(new PlayerStateFactory())
         {
-            this.playerStateFactory = playerStateFactory;
         }
 
         public PlayerStateFactoryBuilder SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove)
         {
-            playerStateFactory.SetPlayerMoveConfig(so_PlayerMove);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerMoveConfig(so_PlayerMove);
             return this;
         }
         
         public PlayerStateFactoryBuilder SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack)
         {
-            playerStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
-            return this;
-        }
-        
-        public PlayerStateFactoryBuilder SetUnitCenter(UnitCenter unitCenter)
-        {
-            playerStateFactory.SetUnitCenter(unitCenter);
-            return this;
-        }
-
-        public PlayerStateFactoryBuilder SetGameObject(GameObject gameObject)
-        {
-            playerStateFactory.SetGameObject(gameObject);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetStateMachine(StateMachine stateMachine)
         {
-            playerStateFactory.SetStateMachine(stateMachine);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetStateMachine(stateMachine);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            playerStateFactory.SetCharacterAnimation(characterAnimation);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetCharacterAnimation(characterAnimation);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterController(CharacterController characterController)
         {
-            playerStateFactory.SetCharacterController(characterController);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetCharacterController(characterController);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
         {
-            playerStateFactory.SetCharacterEndurance(characterEndurance);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetCharacterEndurance(characterEndurance);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetPhotonView(PhotonView view)
         {
-            playerStateFactory.SetPhotonView(view);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPhotonView(view);
             return this;
         }
         
         public PlayerStateFactoryBuilder SetWeaponParent(Transform parent)
         {
-            playerStateFactory.SetWeaponParent(parent);
+            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetWeaponParent(parent);
             return this;
-        }
-
-        public PlayerStateFactory Build()
-        {
-            return playerStateFactory;
         }
     }
 }

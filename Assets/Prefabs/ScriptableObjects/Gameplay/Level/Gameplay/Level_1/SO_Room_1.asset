@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 400c3e1ad44b42d6b61eca77123fd4bc, type: 3}
-  m_Name: SO_Room_0
+  m_Name: SO_Room_1
   m_EditorClassIdentifier: 
-  <ID>k__BackingField: 0
+  <ID>k__BackingField: 1
   <RoomObjects>k__BackingField:
-  - m_AssetGUID: 8eb818773a2bba54d98986a5109875b4
+  - m_AssetGUID: fe33e23cf46a1d440baf12d22af7a7ac
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   <NextRooms>k__BackingField:
-  - {fileID: 11400000, guid: b5071ebcc7a94a34990a331dc253a12c, type: 2}
   - {fileID: 11400000, guid: b5071ebcc7a94a34990a331dc253a12c, type: 2}

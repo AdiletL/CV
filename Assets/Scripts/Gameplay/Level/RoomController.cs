@@ -8,6 +8,7 @@ using Unit.Cell;
 using Unit.Item;
 using Unit.Trap;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
@@ -19,8 +20,9 @@ namespace Gameplay
 
         public static Action<int, List<Vector3>> OnSpawnNextRooms;
         
+        [FormerlySerializedAs("platforms")]
         [Space(10)]
-        [SerializeField] private CellController[] platforms;
+        [SerializeField] private CellController[] cells;
         [SerializeField] private CharacterMainController[] characters;
         [SerializeField] private TrapController[] traps;
         [SerializeField] private ItemController[] itemObjects;
@@ -33,7 +35,7 @@ namespace Gameplay
         private PhotonView photonView;
         private bool isTriggerPlayer;
         
-        private Stack<CellController> platformStack = new();
+        private Stack<CellController> cellStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
         private Stack<ItemController> interactableObjectStack = new();
@@ -54,7 +56,7 @@ namespace Gameplay
 
         private IEnumerator StartAllSortingCoroutine()
         {
-            platforms = GetComponentsInChildren<CellController>(true);
+            cells = GetComponentsInChildren<CellController>(true);
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
             itemObjects = GetComponentsInChildren<ItemController>(true);
@@ -77,22 +79,22 @@ namespace Gameplay
         {
             photonView = GetComponent<PhotonView>();
             
+            photonView.RPC(nameof(InitializeCells), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeCharacters), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeTraps), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeInteractableObjects), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(InitializeCells), RpcTarget.AllBuffered);
         }
 
         [PunRPC]
         private void InitializeCells()
         {
-            foreach (var VARIABLE in platforms)
+            foreach (var VARIABLE in cells)
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
-                platformStack.Push(VARIABLE);
+                if (!VARIABLE.gameObject.activeSelf) continue;
+                cellStack.Push(VARIABLE);
                 VARIABLE.Hide();
             }
         }
@@ -103,8 +105,8 @@ namespace Gameplay
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 charactersStack.Push(VARIABLE);
                 VARIABLE.Hide();
             }
@@ -116,8 +118,8 @@ namespace Gameplay
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 trapsStack.Push(VARIABLE);
                 VARIABLE.Hide();
             }
@@ -129,8 +131,8 @@ namespace Gameplay
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
-                if (!VARIABLE.gameObject.activeSelf) continue;
                 VARIABLE.Initialize();
+                if (!VARIABLE.gameObject.activeSelf) continue;
                 interactableObjectStack.Push(VARIABLE);
                 VARIABLE.Hide();
             }
@@ -164,7 +166,7 @@ namespace Gameplay
         [PunRPC]
         private void ShowCells()
         {
-            foreach (var VARIABLE in platformStack)
+            foreach (var VARIABLE in cellStack)
                 VARIABLE.Show();
         }
         [PunRPC]
@@ -191,7 +193,7 @@ namespace Gameplay
         [PunRPC]
         private void AppearCells()
         {
-            foreach (var VARIABLE in platformStack)
+            foreach (var VARIABLE in cellStack)
                 VARIABLE.Appear();
         }
         [PunRPC]

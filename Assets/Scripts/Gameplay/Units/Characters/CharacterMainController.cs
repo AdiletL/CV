@@ -91,11 +91,6 @@ namespace Unit.Character
 
         protected abstract void InitializeAllAnimations();
 
-        protected virtual void OnEnable()
-        {
-            this.StateMachine?.ExitOtherStates(typeof(CharacterIdleState));
-        }
-
         protected virtual void OnDestroy()
         {
             UnInitializeMediatorRPC();

@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79af803789444d90adb4a7ab6a359501, type: 3}
   m_Name: SO_Level_Test
   m_EditorClassIdentifier: 
-  <GameFields>k__BackingField:
-  - GameFieldControllers:
-    - m_AssetGUID: 721f7ac08dca2244f8529070b5eeb08a
-      m_SubObjectName: 
-      m_SubObjectGUID: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 0
+  <StartRoom>k__BackingField: {fileID: 11400000, guid: 97d8a8344f146c7458ad64cdb8d01235, type: 2}
+  <Rooms>k__BackingField:
+  - {fileID: 11400000, guid: 97d8a8344f146c7458ad64cdb8d01235, type: 2}
+  - {fileID: 11400000, guid: b5071ebcc7a94a34990a331dc253a12c, type: 2}
