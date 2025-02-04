@@ -21,10 +21,6 @@ public abstract class Gravity : MonoBehaviour
     {
         velocity.y = velocityY;
     }
-    private void LateUpdate()
-    {
-        UseGravity();
-    }
     
     protected abstract void UseGravity();
 }

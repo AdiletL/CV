@@ -19,7 +19,7 @@ namespace Unit.Character
 
         protected float baseReductionEndurance;
         protected float durationAttack, countDurationAttack;
-        protected float timerApplyDamage, countTimerApplyDamage;
+        protected float cooldownApplyDamage, countTimerApplyDamage;
         protected float cooldown, countCooldown;
         protected float angleToTarget = 10;
         protected float rangeSqr;
@@ -119,7 +119,7 @@ namespace Unit.Character
         protected void UpdateDurationAttack()
         {
             durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
-            timerApplyDamage = durationAttack * .55f;
+            cooldownApplyDamage = durationAttack * .55f;
             cooldown = durationAttack * .3f;
         }
         
@@ -173,7 +173,7 @@ namespace Unit.Character
             if (!isApplyDamage) return;
             
             countTimerApplyDamage += Time.deltaTime;
-            if (countTimerApplyDamage > timerApplyDamage)
+            if (countTimerApplyDamage > cooldownApplyDamage)
             {
                 Fire();
                 isApplyDamage = false;

@@ -2,6 +2,7 @@
 using Gameplay;
 using Photon.Pun;
 using TMPro;
+using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,12 +12,11 @@ namespace Unit.Cell
     public class CellController : UnitController
     {
         [SerializeField] private TextMeshPro platformText;
+       [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
 
         private PhotonView photonView;
         private UnitRenderer unitRenderer;
         private Collider[] colliders = new Collider[1];
-
-       [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
 
         public bool IsBlocked()
         {
@@ -52,7 +52,8 @@ namespace Unit.Cell
         {
             //Debug.Log(CurrentCoordinates);
         }
-        
+
+
         public void SetColor(Color color)
         {
             unitRenderer.SetColor(color);

@@ -17,7 +17,7 @@ namespace Unit
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
         public void SetDamage(int damage) => this.damage = damage;
-        public void SetAttackSpeed(int amount) => this.AttackSpeed = AttackSpeed;
+        public void SetAttackSpeed(int amount) => this.AttackSpeed = amount;
         
 
         public abstract IDamageable GetDamageable();

@@ -1,7 +1,5 @@
-﻿using System;
-using Gameplay.Damage;
+﻿using Gameplay.Factory.Character.Creep;
 using Machine;
-using ScriptableObjects.Unit.Character.Creep;
 using Zenject;
 
 namespace Unit.Character.Creep
@@ -10,25 +8,10 @@ namespace Unit.Character.Creep
     {
         [Inject] private DiContainer diContainer;
         
-        private SO_BeholderAttack so_BeholderAttack;
-        private BeholderSwitchMoveState _beholderSwitchMoveState;
+        private CreepStateFactory creepStateFactory;
         private BeholderDefaultAttackState beholderDefaultAttackState;
         
-        private BeholderDefaultAttackState CreateDefaultAttack()
-        {
-            return (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
-                .SetUnitAnimation(unitAnimation)
-                .SetAttackClips(so_BeholderAttack.AttackClips)
-                .SetCooldownClip(so_BeholderAttack.CooldownClip)
-                .SetRange(so_BeholderAttack.Range)
-                .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
-                .SetAttackSpeed(so_BeholderAttack.AttackSpeed)
-                .SetDamage(so_BeholderAttack.Damage)
-                .SetGameObject(gameObject)
-                .SetCenter(center)
-                .SetStateMachine(stateMachine)
-                .Build();
-        }
+        public void SetCreepStateFactory(CreepStateFactory creepStateFactory) => this.creepStateFactory = creepStateFactory;
 
         public override int TotalDamage()
         {
@@ -50,9 +33,8 @@ namespace Unit.Character.Creep
         {
             base.Initialize();
 
-            so_BeholderAttack = (SO_BeholderAttack)so_CharacterAttack;
-            RangeAttack = so_BeholderAttack.Range;
-
+            RangeAttack = so_CharacterAttack.Range;
+            
             InitializeDefaultAttackState();
         }
 
@@ -60,7 +42,7 @@ namespace Unit.Character.Creep
         {
             if (!this.stateMachine.IsStateNotNull(typeof(BeholderDefaultAttackState)))
             {
-                beholderDefaultAttackState = CreateDefaultAttack();
+                beholderDefaultAttackState = (BeholderDefaultAttackState)creepStateFactory.CreateState(typeof(BeholderDefaultAttackState));
                 diContainer.Inject(beholderDefaultAttackState);
                 beholderDefaultAttackState.Initialize();
                 this.stateMachine.AddStates(beholderDefaultAttackState);
@@ -101,11 +83,17 @@ namespace Unit.Character.Creep
         }
     }
     
-    public class BeholderSwitchAttackStateAttackStateBuilder : CreepSwitchAttackStateSwitchAttackStateBuilder
+    public class BeholderSwitchAttackStateBuilder : CreepSwitchAttackStateBuilder
     {
-        public BeholderSwitchAttackStateAttackStateBuilder() : base(new BeholderSwitchAttackState())
+        public BeholderSwitchAttackStateBuilder() : base(new BeholderSwitchAttackState())
         {
         }
 
+        public BeholderSwitchAttackStateBuilder SetCreepStateFactory(CreepStateFactory creepStateFactory)
+        {
+            if(switchState is BeholderSwitchAttackState beholderSwitchAttackState)
+                beholderSwitchAttackState.SetCreepStateFactory(creepStateFactory);
+            return this;
+        }
     }
 }

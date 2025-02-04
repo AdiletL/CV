@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gameplay.Factory;
+using Gameplay.Factory.Character.Player;
 using Gameplay.Units.Item.Loot;
 using Machine;
 using Photon.Pun;

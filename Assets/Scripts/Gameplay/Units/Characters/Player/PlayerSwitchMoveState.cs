@@ -1,4 +1,5 @@
-﻿using Gameplay.Factory;
+﻿using Gameplay.Factory.Character;
+using Gameplay.Factory.Character.Player;
 using Machine;
 
 namespace Unit.Character.Player
@@ -6,16 +7,16 @@ namespace Unit.Character.Player
     public class PlayerSwitchMoveState : CharacterSwitchMoveState
     {
         private CharacterRunState characterRunState;
-        private PlayerStateFactory playerStateFactory;
+        private CharacterStateFactory characterStateFactory;
         
-        public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
+        public void SetCharacterStateFactory(CharacterStateFactory characterStateFactory) => this.characterStateFactory = characterStateFactory;
         
 
         public void InitializeRunStateOrig()
         {
             if (!this.stateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
-                characterRunState = (PlayerRunState)playerStateFactory.CreateState(typeof(PlayerRunState));
+                characterRunState = (PlayerRunState)characterStateFactory.CreateState(typeof(PlayerRunState));
                 characterRunState.Initialize();
                 this.stateMachine.AddStates(characterRunState);
             }
@@ -52,10 +53,10 @@ namespace Unit.Character.Player
         {
         }
         
-        public PlayerSwitchMoveStateBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
+        public PlayerSwitchMoveStateBuilder SetCharacterStateFactory(CharacterStateFactory characterStateFactory)
         {
             if (switchState is PlayerSwitchMoveState playerSwitchAttackState)
-                playerSwitchAttackState.SetPlayerStateFactory(playerStateFactory);
+                playerSwitchAttackState.SetCharacterStateFactory(characterStateFactory);
 
             return this;
         }

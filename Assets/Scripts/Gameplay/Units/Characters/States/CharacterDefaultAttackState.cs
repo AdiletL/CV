@@ -26,7 +26,7 @@ namespace Unit.Character
 
         public float Range { get; protected set; }
         
-        public void SetSwitchMoveState(CharacterSwitchState characterSwitchState) => this.characterSwitchMoveState = (CharacterSwitchMoveState)characterSwitchState;
+        public void SetSwitchMoveState(CharacterSwitchMoveState characterSwitchState) => this.characterSwitchMoveState = characterSwitchState;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetCooldownClip(AnimationClip cooldownClip) => this.cooldownClip = cooldownClip;
         public void SetAttackClips(AnimationClip[] attackClips) => this.attackClips = attackClips;
@@ -78,7 +78,7 @@ namespace Unit.Character
                 if (Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
                     isAttack = true;
                 else
-                    rotation.RotateToTarget();
+                    RotateToTarget();
                 
                 unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
@@ -107,6 +107,11 @@ namespace Unit.Character
         {
             currentTarget = Calculate.Attack.FindUnitInRange(center.position, Range, enemyLayer, ref findUnitColliders);
             rotation.SetTarget(currentTarget?.transform);
+        }
+
+        protected virtual void RotateToTarget()
+        {
+            rotation.RotateToTarget();
         }
         
         protected virtual void Cooldown()
@@ -169,7 +174,7 @@ namespace Unit.Character
         {
         }
 
-        public CharacterDefaultAttackStateBuilder SetSwitchMoveState(CharacterSwitchState characterSwitchState)
+        public CharacterDefaultAttackStateBuilder SetSwitchMoveState(CharacterSwitchMoveState characterSwitchState)
         {
             if(state is CharacterDefaultAttackState defaultState)
                 defaultState.SetSwitchMoveState(characterSwitchState);

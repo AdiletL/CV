@@ -13,7 +13,7 @@ namespace Unit.Character.Creep
         protected int currentPointIndex;
         protected float durationAnimation;
         protected float rotationSpeed;
-        protected float stoppingDistance = .2f;
+        protected const float stoppingDistance = .2f;
 
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
@@ -36,6 +36,7 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
+            navMeshAgent.speed = MovementSpeed;
             SetTargetPoint();
             PlayAnimation();
         }
@@ -46,16 +47,26 @@ namespace Unit.Character.Creep
             ExecuteMovement();
         }
 
+        public override void Exit()
+        {
+            base.Exit();
+            navMeshAgent.isStopped = true;
+            navMeshAgent.ResetPath();
+        }
+
         private void SetTargetPoint()
         {
             navMeshAgent.destination = PatrolPoints[currentPointIndex];
             currentPointIndex = (currentPointIndex + 1) % PatrolPoints.Length;
+            navMeshAgent.isStopped = false;
         }
         
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < stoppingDistance)
+            if (navMeshAgent.isOnNavMesh &&
+                !navMeshAgent.pathPending && 
+                navMeshAgent.remainingDistance < stoppingDistance)
             {
                 SetTargetPoint();
                 PlayAnimation();

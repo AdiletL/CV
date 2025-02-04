@@ -1,7 +1,7 @@
 using System;
 using Gameplay.Damage;
 using Gameplay.Effect;
-using Gameplay.Factory;
+using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Weapon;
@@ -48,6 +48,7 @@ namespace Unit.Character.Player
         private CharacterSwitchMoveState characterSwitchMoveState;
         private CharacterSwitchAttackState characterSwitchAttackState;
         private CharacterEndurance characterEndurance;
+        private CharacterExperience characterExperience;
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
         
@@ -97,18 +98,18 @@ namespace Unit.Character.Player
 
         private PlayerSwitchStateFactory CreatePlayerSwitchStateFactory()
         {
-            return new PlayerSwitchStateFactoryBuilder(new PlayerSwitchStateFactory())
-                .SetPlayerState(playerStateFactory)
+            return (PlayerSwitchStateFactory)new PlayerSwitchStateFactoryBuilder()
+                .SetCharacterState(playerStateFactory)
                 .SetCharacterController(characterController)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCharacterEndurance(characterEndurance)
-                .SetGameObject(gameObject)
                 .SetPhotonView(photonView)
                 .SetWeaponParent(weaponParent)
-                .SetUnitCenter(unitCenter)
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetStateMachine(StateMachine)
+                .SetGameObject(gameObject)
+                .SetUnitCenter(unitCenter)
                 .Build();
         }
 
@@ -118,6 +119,14 @@ namespace Unit.Character.Player
             
             if(photonView.IsMine)
                 FindFirstObjectByType<CameraMove>().SetTarget(gameObject);
+
+            characterExperience = GetComponentInUnit<CharacterExperience>();
+            diContainer.Inject(characterExperience);
+            characterExperience.Initialize();
+            
+            characterEndurance = GetComponentInUnit<CharacterEndurance>();
+            diContainer.Inject(characterEndurance);
+            characterEndurance.Initialize();
             
             //Test
             InitializeNormalResistance();

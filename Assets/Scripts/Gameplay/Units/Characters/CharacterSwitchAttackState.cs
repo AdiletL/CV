@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.Factory.Character;
 using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character;

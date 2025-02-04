@@ -3,7 +3,7 @@ using Machine;
 using Unit;
 using UnityEngine;
 
-namespace Gameplay.Factory
+namespace Gameplay.Factory.Character
 {
     public abstract class CharacterStateFactory : Factory
     {
@@ -20,28 +20,28 @@ namespace Gameplay.Factory
 
     public abstract class CharacterStateFactoryBuilder
     {
-        protected CharacterStateFactory characterStateFactory;
+        protected CharacterStateFactory factory;
 
-        public CharacterStateFactoryBuilder(CharacterStateFactory characterStateFactory)
+        public CharacterStateFactoryBuilder(CharacterStateFactory factory)
         {
-            this.characterStateFactory = characterStateFactory;
+            this.factory = factory;
         }
 
         public CharacterStateFactoryBuilder SetGameObject(GameObject gameObject)
         {
-            this.characterStateFactory.SetGameObject(gameObject);
+            this.factory.SetGameObject(gameObject);
             return this;
         }
 
         public CharacterStateFactoryBuilder SetUnitCenter(UnitCenter unitCenter)
         {
-            this.characterStateFactory.SetUnitCenter(unitCenter);
+            this.factory.SetUnitCenter(unitCenter);
             return this;
         }
 
         public CharacterStateFactory Build()
         {
-            return characterStateFactory;
+            return factory;
         }
     }
 }

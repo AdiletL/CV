@@ -1,34 +1,29 @@
 ﻿using System;
 using Photon.Pun;
 using ScriptableObjects.Unit.Character.Player;
-using Unit;
 using Unit.Character;
 using Unit.Character.Player;
 using UnityEngine;
 
-namespace Gameplay.Factory
+namespace Gameplay.Factory.Character.Player
 {
-    public class PlayerSwitchStateFactory : Factory
+    public class PlayerSwitchStateFactory : CharacterSwitchStateFactory
     {
-        private GameObject gameObject;
         private CharacterController characterController;
         private StateMachine stateMachine;
-        private UnitCenter unitCenter;
         private PhotonView photonView;
         private Transform weaponParent;
         
         private CharacterAnimation characterAnimation;
         private CharacterSwitchMoveState characterSwitchMoveState;
         private CharacterEndurance characterEndurance;
-        private PlayerStateFactory playerStateFactory;
+        private CharacterStateFactory characterStateFactory;
         
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
         
-        public void SetPlayerState(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
+        public void SetCharacterState(CharacterStateFactory characterStateFactory) => this.characterStateFactory = characterStateFactory;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
-        public void SetUnitCenter(UnitCenter unitCenter) => this.unitCenter = unitCenter;
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
@@ -37,10 +32,14 @@ namespace Gameplay.Factory
         public void SetPhotonView(PhotonView view) => this.photonView = view;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
         public void SetWeaponParent(Transform parent) => this.weaponParent = parent;
-        
-        
-        
-        public CharacterSwitchAttackState CreateSwitchAttackState(Type stateType)
+
+
+        public override void Initialize()
+        {
+            
+        }
+
+        public override CharacterSwitchAttackState CreateSwitchAttackState(Type stateType)
         {
             CharacterSwitchAttackState result = stateType switch
             {
@@ -49,7 +48,7 @@ namespace Gameplay.Factory
             };
             return result;
         }
-        public CharacterSwitchMoveState CreateSwitchMoveState(Type stateType)
+        public override CharacterSwitchMoveState CreateSwitchMoveState(Type stateType)
         {
             CharacterSwitchMoveState result = stateType switch
             {
@@ -62,7 +61,7 @@ namespace Gameplay.Factory
         private PlayerSwitchMoveState CreateSwitchMove()
         {
             return (PlayerSwitchMoveState)new PlayerSwitchMoveStateBuilder()
-                .SetPlayerStateFactory(playerStateFactory)
+                .SetCharacterStateFactory(characterStateFactory)
                 .SetConfig(so_PlayerMove)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetEndurance(characterEndurance)
@@ -76,7 +75,7 @@ namespace Gameplay.Factory
         private PlayerSwitchAttackState CreateSwitchAttack()
         {
             return (PlayerSwitchAttackState)new PlayerSwitchAttackStateBuilder()
-                .SetPlayerStateFactory(playerStateFactory)
+                .SetCharacterStateFactory(characterStateFactory)
                 .SetCharacterEndurance(characterEndurance)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetConfig(so_PlayerAttack)
@@ -87,82 +86,73 @@ namespace Gameplay.Factory
         }
     }
 
-    public class PlayerSwitchStateFactoryBuilder
+    public class PlayerSwitchStateFactoryBuilder : CharacterSwitchStateFactoryBuilder
     {
-        private PlayerSwitchStateFactory playerSwitchStateFactory;
-
-        public PlayerSwitchStateFactoryBuilder(PlayerSwitchStateFactory playerSwitchStateFactory)
+        public PlayerSwitchStateFactoryBuilder() : base(new PlayerSwitchStateFactory())
         {
-            this.playerSwitchStateFactory = playerSwitchStateFactory;
+            
         }
 
         public PlayerSwitchStateFactoryBuilder SetCharacterController(CharacterController characterController)
         {
-            playerSwitchStateFactory.SetCharacterController(characterController);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetCharacterController(characterController);
             return this;
         }
-        public PlayerSwitchStateFactoryBuilder SetPlayerState(PlayerStateFactory playerStateFactory)
+        public PlayerSwitchStateFactoryBuilder SetCharacterState(CharacterStateFactory characterStateFactory)
         {
-            playerSwitchStateFactory.SetPlayerState(playerStateFactory);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetCharacterState(characterStateFactory);
             return this;
         }
-        public PlayerSwitchStateFactoryBuilder SetGameObject(GameObject gameObject)
-        {
-            playerSwitchStateFactory.SetGameObject(gameObject);
-            return this;
-        }
-
+        
         public PlayerSwitchStateFactoryBuilder SetStateMachine(StateMachine stateMachine)
         {
-            playerSwitchStateFactory.SetStateMachine(stateMachine);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetStateMachine(stateMachine);
             return this;
         }
 
         public PlayerSwitchStateFactoryBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            playerSwitchStateFactory.SetCharacterAnimation(characterAnimation);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetCharacterAnimation(characterAnimation);
             return this;
         }
-
-        public PlayerSwitchStateFactoryBuilder SetUnitCenter(UnitCenter unitCenter)
-        {
-            playerSwitchStateFactory.SetUnitCenter(unitCenter);
-            return this;
-        }
-
+        
         public PlayerSwitchStateFactoryBuilder SetPhotonView(PhotonView view)
         {
-            playerSwitchStateFactory.SetPhotonView(view);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetPhotonView(view);
             return this;
         }
 
         public PlayerSwitchStateFactoryBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
         {
-            playerSwitchStateFactory.SetCharacterEndurance(characterEndurance);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetCharacterEndurance(characterEndurance);
             return this;
         }
 
         public PlayerSwitchStateFactoryBuilder SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove)
         {
-            playerSwitchStateFactory.SetPlayerMoveConfig(so_PlayerMove);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetPlayerMoveConfig(so_PlayerMove);
             return this;
         }
 
         public PlayerSwitchStateFactoryBuilder SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack)
         {
-            playerSwitchStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
             return this;
         }
 
         public PlayerSwitchStateFactoryBuilder SetWeaponParent(Transform parent)
         {
-            playerSwitchStateFactory.SetWeaponParent(parent);
+            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
+                playerSwitchStateFactory.SetWeaponParent(parent);
             return this;
-        }
-
-        public PlayerSwitchStateFactory Build()
-        {
-            return playerSwitchStateFactory;
         }
     }
 }

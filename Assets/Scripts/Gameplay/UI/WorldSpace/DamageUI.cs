@@ -68,7 +68,10 @@ namespace Gameplay.UI
             transform.localScale = endScale;
             transform.position = endPosition;
 
-            poolManager.ReturnToPool(gameObject); // Or return to pool if pooling is used
+            if(poolManager != null)
+                poolManager.ReturnToPool(gameObject); // Or return to pool if pooling is used
+            else
+                Destroy(gameObject);
         }
     }
 }

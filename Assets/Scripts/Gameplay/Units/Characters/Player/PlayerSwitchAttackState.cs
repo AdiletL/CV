@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Gameplay.Damage;
 using Gameplay.Factory;
+using Gameplay.Factory.Character;
+using Gameplay.Factory.Character.Player;
 using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
@@ -14,16 +16,14 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         
+        private CharacterStateFactory characterStateFactory;
         private CharacterWeaponAttackState characterWeaponAttackState;
         private CharacterDefaultAttackState characterDefaultAttackState;
         private SO_PlayerAttack so_PlayerAttack;
         
-        private PlayerStateFactory playerStateFactory;
-        
         private List<Weapon> currentWeapons = new();
 
-        
-        public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
+        public void SetCharacterSwitchStateFactory(CharacterStateFactory characterStateFactory) => this.characterStateFactory = characterStateFactory;
         
 
         public override bool TryGetWeapon(Type weaponType)
@@ -112,7 +112,7 @@ namespace Unit.Character.Player
         {
             if(!this.stateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)))
             {
-                characterWeaponAttackState = (PlayerWeaponAttackState)playerStateFactory.CreateState(typeof(PlayerWeaponAttackState));
+                characterWeaponAttackState = (PlayerWeaponAttackState)characterStateFactory.CreateState(typeof(PlayerWeaponAttackState));
                 diContainer.Inject(characterWeaponAttackState);
                 characterWeaponAttackState.Initialize();
                 this.stateMachine.AddStates(characterWeaponAttackState);
@@ -123,7 +123,7 @@ namespace Unit.Character.Player
         {
             if(!this.stateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
             {
-                characterDefaultAttackState = (PlayerDefaultAttackState)playerStateFactory.CreateState(typeof(PlayerDefaultAttackState));
+                characterDefaultAttackState = (PlayerDefaultAttackState)characterStateFactory.CreateState(typeof(PlayerDefaultAttackState));
                 diContainer.Inject(characterDefaultAttackState);
                 characterDefaultAttackState.Initialize();
                 this.stateMachine.AddStates(characterDefaultAttackState);
@@ -238,10 +238,10 @@ namespace Unit.Character.Player
         {
         }
 
-        public PlayerSwitchAttackStateBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
+        public PlayerSwitchAttackStateBuilder SetCharacterStateFactory(CharacterStateFactory playerStateFactory)
         {
             if (switchState is PlayerSwitchAttackState playerSwitchAttackState)
-                playerSwitchAttackState.SetPlayerStateFactory(playerStateFactory);
+                playerSwitchAttackState.SetCharacterSwitchStateFactory(playerStateFactory);
 
             return this;
         }

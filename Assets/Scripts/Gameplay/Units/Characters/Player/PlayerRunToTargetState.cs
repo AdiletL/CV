@@ -129,7 +129,7 @@ namespace Unit.Character.Player
         }
     }
 
-    public override void SetTarget(GameObject target)
+    public void SetTarget(GameObject target)
     {
         currentTarget = null;
         ClearColorsToPath();
@@ -279,11 +279,6 @@ namespace Unit.Character.Player
         countCooldownheckEnemy += Time.deltaTime;
         if (countCooldownheckEnemy > checkEnemyCooldown)
         {
-            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, enemy.transform.position, characterSwitchAttackState.RangeAttackSqr))
-            {
-                characterSwitchAttackState.SetTarget(finalTarget);
-                characterSwitchAttackState.ExitOtherStates();
-            }
 
             countCooldownheckEnemy = 0;
         }

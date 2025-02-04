@@ -4,13 +4,15 @@ namespace Unit.Character.Creep
 {
     public class BeholderRunState : CreepRunState
     {
-        private BeholderSwitchAttackState _beholderSwitchAttackState;
+        private CharacterSwitchAttackState characterSwitchAttack;
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            _beholderSwitchAttackState = (BeholderSwitchAttackState)characterSwitchAttackState;
-        }
+        private float countCooldownCheckEnemy;
+
+        private const float cooldownCheckEnemy = .3f;
+
+        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
+            this.characterSwitchAttack = characterSwitchAttackState;
+        
 
         public override void Update()
         {
@@ -21,8 +23,14 @@ namespace Unit.Character.Creep
 
         private void CheckEnemy()
         {
-            if (_beholderSwitchAttackState.IsFindUnitInRange())
-                _beholderSwitchAttackState.ExitCategory(Category);
+            countCooldownCheckEnemy += Time.deltaTime;
+            if (countCooldownCheckEnemy > cooldownCheckEnemy)
+            {
+                if (characterSwitchAttack.IsFindUnitInRange())
+                    characterSwitchAttack.ExitCategory(Category);
+                
+                countCooldownCheckEnemy = 0;
+            }
         }
     }
     
@@ -30,6 +38,13 @@ namespace Unit.Character.Creep
     {
         public BeholderRunStateBuilder() : base(new BeholderRunState())
         {
+        }
+
+        public BeholderRunStateBuilder SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState)
+        {
+            if(state is BeholderRunState beholderRunState)
+                beholderRunState.SetCharacterSwitchAttack(characterSwitchAttackState);
+            return this;
         }
     }
 }

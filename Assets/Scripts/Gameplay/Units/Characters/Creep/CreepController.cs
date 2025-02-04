@@ -1,4 +1,5 @@
 ﻿using Gameplay.Factory;
+using Gameplay.Factory.Character.Creep;
 using Machine;
 using Unity.Collections;
 using UnityEngine;
@@ -15,9 +16,31 @@ namespace Unit.Character.Creep
         
         protected NavMeshAgent navMeshAgent;
         protected CreepStateFactory creepStateFactory;
+        protected CreepSwitchStateFactory creepSwitchStateFactory;
         protected CharacterAnimation characterAnimation;
+        protected CharacterEndurance characterEndurance;
+        protected CharacterExperience characterExperience;
+        protected Gravity gravity;
 
         protected abstract CreepStateFactory CreateCreepStateFactory();
+        protected abstract CreepSwitchStateFactory CreateCreepSwitchStateFactory();
+
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            
+            characterExperience = GetComponentInUnit<CharacterExperience>();
+            diContainer.Inject(characterExperience);
+            characterExperience.Initialize();
+            
+            characterEndurance = GetComponentInUnit<CharacterEndurance>();
+            diContainer.Inject(characterEndurance);
+            characterEndurance.Initialize();
+            
+            gravity = GetComponentInUnit<Gravity>();
+            gravity.InActivateGravity();
+        }
 
         protected override void BeforeCreateStates()
         {
@@ -25,13 +48,17 @@ namespace Unit.Character.Creep
             navMeshAgent = GetComponentInUnit<NavMeshAgent>();
             characterAnimation = GetComponentInUnit<CharacterAnimation>();
             characterAnimation.Initialize();
+            
             creepStateFactory = CreateCreepStateFactory();
             creepStateFactory.Initialize();
+            creepSwitchStateFactory = CreateCreepSwitchStateFactory();
+            creepSwitchStateFactory.Initialize();
         }
 
         public override void Appear()
         {
             navMeshAgent.enabled = true;
+            gravity.ActivateGravity();
         }
 
         protected override void InitializeMediator()

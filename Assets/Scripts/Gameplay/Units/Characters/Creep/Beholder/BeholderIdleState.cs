@@ -5,14 +5,13 @@ namespace Unit.Character.Creep
 {
     public class BeholderIdleState : CreepIdleState
     { 
-        private BeholderSwitchAttackState _beholderSwitchAttackState;
+        private CreepSwitchAttackState creepSwitchAttackState;
         private CreepSwitchMoveState creepSwitchMoveState;
         
-        private float checkEnemyCooldown = .03f;
         private float countCheckEnemyCooldown;
+        private const float checkEnemyCooldown = .03f;
         
-        private bool isCheckAttack = true;
-        
+        public void SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState) => this.creepSwitchAttackState = creepSwitchAttackState;
         public void SetCreepSwitchMoveState(CreepSwitchMoveState creepSwitchMoveState) => this.creepSwitchMoveState = creepSwitchMoveState;
         
         
@@ -20,7 +19,7 @@ namespace Unit.Character.Creep
         {
             base.Update();
 
-            //CheckAttack();
+            CheckEnemy();
         }
 
         public override void LateUpdate()
@@ -35,17 +34,15 @@ namespace Unit.Character.Creep
             creepSwitchMoveState.ExitCategory(Category);
         }
 
-        private void CheckAttack()
+        private void CheckEnemy()
         {
-            if(!isCheckAttack || !isActive) return;
+            if(!isActive) return;
             
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
-                if (_beholderSwitchAttackState.IsFindUnitInRange())
-                {
-                    _beholderSwitchAttackState.ExitCategory(Category);
-                }
+                if (creepSwitchAttackState.IsFindUnitInRange())
+                    creepSwitchAttackState.ExitCategory(Category);
 
                 countCheckEnemyCooldown = 0;
             }
@@ -62,6 +59,13 @@ namespace Unit.Character.Creep
         {
             if(state is BeholderIdleState beholderIdleState)
                 beholderIdleState.SetCreepSwitchMoveState(creepSwitchMoveState);
+            return this;
+        }
+        
+        public BeholderIdleStateBuilder SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState)
+        {
+            if(state is BeholderIdleState beholderIdleState)
+                beholderIdleState.SetCreepSwitchAttackState(creepSwitchAttackState);
             return this;
         }
     }

@@ -9,7 +9,7 @@ using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Factory
+namespace Gameplay.Factory.Character.Player
 {
     public class PlayerStateFactory : CharacterStateFactory
     {
@@ -170,56 +170,56 @@ namespace Gameplay.Factory
 
         public PlayerStateFactoryBuilder SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPlayerMoveConfig(so_PlayerMove);
             return this;
         }
         
         public PlayerStateFactoryBuilder SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetStateMachine(StateMachine stateMachine)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetStateMachine(stateMachine);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetCharacterAnimation(characterAnimation);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterController(CharacterController characterController)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetCharacterController(characterController);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetCharacterEndurance(characterEndurance);
             return this;
         }
 
         public PlayerStateFactoryBuilder SetPhotonView(PhotonView view)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPhotonView(view);
             return this;
         }
         
         public PlayerStateFactoryBuilder SetWeaponParent(Transform parent)
         {
-            if(characterStateFactory is PlayerStateFactory playerStateFactory)
+            if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetWeaponParent(parent);
             return this;
         }

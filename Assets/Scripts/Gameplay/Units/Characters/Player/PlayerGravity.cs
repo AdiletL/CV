@@ -14,6 +14,11 @@ namespace Unit.Character.Player
             CurrentGravity = Physics.gravity.y + 2;
         }
 
+        private void LateUpdate()
+        {
+            UseGravity();
+        }
+
         protected override void UseGravity()
         {
             if (!isGravity)

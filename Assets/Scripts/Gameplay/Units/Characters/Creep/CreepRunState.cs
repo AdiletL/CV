@@ -3,191 +3,72 @@ using Calculate;
 using Movement;
 using Unit.Cell;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Unit.Character.Creep
 {
     public class CreepRunState : CharacterRunState
     {
-        private PathFinding pathFinding;
-        private Rotation rotation;
+        protected NavMeshAgent navMeshAgent;
+        protected GameObject currentTarget;
 
-        private GameObject finalTarget;
-        private GameObject currentTarget;
+        protected float rotationSpeed;
 
-        private Vector3 finalTargetPosition;
-        private Vector3 currentTargetPosition;
-        private Vector3 direction;
+        protected const float stoppingDistance = .2f;
+        
+        public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
+        public void SetRotationSpeed(float rotationSpeed) => this.rotationSpeed = rotationSpeed;
 
-        private Vector2Int currentTargetCoordinates;
-        private Vector2Int previousTargetCoordinates;
-
-        private const float CooldownCheckTarget = 0.2f;
-        private float countCooldownCheckTarget;
-
-        private Queue<CellController> pathToPoint = new();
-
-        public Transform Center { get; set; }
-        public CharacterController CharacterController { get; set; }
-        public float RotationSpeed { get; set; }
-
-
-        private bool IsFinalTargetReached()
-        {
-            return Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, finalTarget.transform.position) ||
-                   pathToPoint.Count == 0;
-        }
-
-        private bool IsTargetInvalid()
-        {
-            if (currentTarget != null)
-                return false;
-
-            AssignNextCurrentTarget();
-
-            if (currentTarget == null)
-            {
-                StateMachine.ExitCategory(Category, null);
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsFinalPositionValid()
-        {
-            return Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition);
-        }
-
-        private bool IsTargetCellUnchanged(CellController currentCell)
-        {
-            return currentTargetCoordinates == currentCell.CurrentCoordinates ||
-                   previousTargetCoordinates == currentCell.CurrentCoordinates;
-        }
-
+        
         public override void Initialize()
         {
             base.Initialize();
-            rotation = new Rotation(gameObject.transform, RotationSpeed);
-            pathFinding = new PathFindingBuilder()
-                .SetStartPosition(gameObject.transform.position)
-                .SetEndPosition(gameObject.transform.position)
-                .Build();
+            navMeshAgent.speed = MovementSpeed;
+            navMeshAgent.angularSpeed = rotationSpeed;
+            navMeshAgent.stoppingDistance = stoppingDistance;
+        }
+
+        public override void Enter()
+        {
+            base.Enter();
+            navMeshAgent.speed = MovementSpeed;
+            navMeshAgent.destination = currentTarget.transform.position;
+            navMeshAgent.isStopped = false;
+            PlayAnimation();
         }
 
         public override void Update()
         {
             base.Update();
-
-            if (IsTargetInvalid())
-                return;
-
-            CheckPath();
-            MoveToCurrentTarget();
+            ExecuteMovement();
         }
 
         public override void Exit()
         {
             base.Exit();
-            ClearCurrentTarget();
+            currentTarget = null;
+            navMeshAgent.isStopped = true;
+            navMeshAgent.ResetPath();
         }
-
+        
         public void SetTarget(GameObject target)
         {
-            ClearCurrentTarget();
-            finalTarget = target;
-            FindNewPathToFinalTarget();
-        }
-
-        private void FindNewPathToFinalTarget()
-        {
-            pathToPoint.Clear();
-            finalTargetPosition = finalTarget.transform.position;
-
-            pathFinding.SetStartPosition(gameObject.transform.position);
-            pathFinding.SetTargetPosition(finalTargetPosition);
-
-            AssignNextCurrentTarget();
-        }
-
-        private void AssignNextCurrentTarget()
-        {
-            if (pathToPoint.Count == 0)
-                pathToPoint = pathFinding.GetPath();
-
-            if (pathToPoint.Count == 0) return;
-
-            var nextCell = pathToPoint.Peek();
-            if (nextCell == null) return;
-
-            currentTarget = nextCell.gameObject;
-            rotation.SetTarget(currentTarget.transform);
-            currentTargetCoordinates = nextCell.CurrentCoordinates;
-        }
-
-        private void CheckPath()
-        {
-            countCooldownCheckTarget += Time.deltaTime;
-
-            if (countCooldownCheckTarget < CooldownCheckTarget)
-                return;
-
-            countCooldownCheckTarget = 0;
-
-            if (!IsFinalPositionValid())
+            currentTarget = target;
+            if (isActive)
             {
-                FindNewPathToFinalTarget();
-                return;
+                navMeshAgent.destination = currentTarget.transform.position;
+                PlayAnimation();
             }
-
-            var currentCell = Calculate.FindCell.GetCell(gameObject.transform.position, Vector3.down);
-
-            if (currentCell == null || previousTargetCoordinates == Vector2Int.zero)
-                return;
-
-            if (IsTargetCellUnchanged(currentCell))
-                return;
-
-            FindNewPathToFinalTarget();
         }
 
-
-        private void ClearCurrentTarget()
+        public override void ExecuteMovement()
         {
-            currentTarget = null;
-        }
-
-        private void MoveToCurrentTarget()
-        {
-            currentTargetPosition = new Vector3(
-                currentTarget.transform.position.x,
-                gameObject.transform.position.y,
-                currentTarget.transform.position.z
-            );
-
-            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTargetPosition))
+            base.ExecuteMovement();
+            if (navMeshAgent.isOnNavMesh &&
+                !navMeshAgent.pathPending &&
+                navMeshAgent.remainingDistance < stoppingDistance)
             {
-                previousTargetCoordinates = currentTarget.GetComponent<CellController>().CurrentCoordinates;
-                ClearCurrentTarget();
-
-                if (pathToPoint.Count > 0)
-                    pathToPoint.Dequeue();
-
-                if (IsFinalTargetReached())
-                    StateMachine.ExitCategory(Category, null);
-            }
-            else
-            {
-                if (!Calculate.Move.IsFacingTargetUsingAngle(
-                        gameObject.transform.position,
-                        gameObject.transform.forward,
-                        currentTargetPosition))
-                {
-                    rotation.RotateToTarget();
-                    return;
-                }
-
-                direction = (currentTargetPosition - gameObject.transform.position).normalized;
-                CharacterController.Move(direction * (MovementSpeed * Time.deltaTime));
+                StateMachine.ExitCategory(Category, null);
             }
         }
     }
@@ -199,27 +80,17 @@ public class CreepRunStateBuilder : CharacterRunStateBuilder
         }
 
 
-        public CreepRunStateBuilder SetCenter(Transform center)
+        public CreepRunStateBuilder SetNavMesh(NavMeshAgent navMeshAgent)
         {
-            if (state is CreepRunState playerRunState)
-                playerRunState.Center = center;
-
+            if (state is CreepRunState creepRunState)
+                creepRunState.SetNavMeshAgent(navMeshAgent);
             return this;
         }
-
-        public CreepRunStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if (state is CreepRunState playerRunState)
-                playerRunState.CharacterController = characterController;
-
-            return this;
-        }
-
+        
         public CreepRunStateBuilder SetRotationSpeed(float rotationSpeed)
         {
-            if (state is CreepRunState playerRunState)
-                playerRunState.RotationSpeed = rotationSpeed;
-
+            if (state is CreepRunState creepRunState)
+                creepRunState.SetRotationSpeed(rotationSpeed);
             return this;
         }
     }

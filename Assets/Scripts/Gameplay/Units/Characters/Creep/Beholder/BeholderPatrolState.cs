@@ -6,20 +6,28 @@ namespace Unit.Character.Creep
     {
         private CreepSwitchAttackState creepSwitchAttackState;
 
+        private float countCooldownCheckEnemy;
+        private const float cooldownCheckPlayer = .3f;
+
         public void SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState) =>
             this.creepSwitchAttackState = creepSwitchAttackState;
         
         
         public override void LateUpdate()
         {
-            //CheckEnemy();
+            base.LateUpdate();
+            CheckEnemy();
         }
 
         private void CheckEnemy()
         {
-            if (creepSwitchAttackState.IsFindUnitInRange())
+            countCooldownCheckEnemy += Time.deltaTime;
+            if (countCooldownCheckEnemy > cooldownCheckPlayer)
             {
-                creepSwitchAttackState.ExitCategory(Category);
+                if (creepSwitchAttackState.IsFindUnitInRange())
+                    creepSwitchAttackState.ExitCategory(Category);
+
+                countCooldownCheckEnemy = 0;
             }
         }
     }

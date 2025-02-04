@@ -1,4 +1,4 @@
-﻿using Gameplay.Factory;
+﻿using Gameplay.Factory.Character.Creep;
 using UnityEngine.AI;
 
 namespace Unit.Character.Creep

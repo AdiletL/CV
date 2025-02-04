@@ -42,19 +42,13 @@ namespace Unit.Character
             InitializeMediator();
 
             var ui = GetComponentInUnit<CharacterUI>();
-            var experience = GetComponentInUnit<CharacterExperience>();
             var health = GetComponentInUnit<CharacterHealth>();
-            var endurance = GetComponentInUnit<CharacterEndurance>();
             
             diContainer.Inject(ui);
-            diContainer.Inject(experience);
             diContainer.Inject(health);
-            diContainer.Inject(endurance);
             
             ui?.Initialize();
-            experience?.Initialize();
             health?.Initialize();
-            endurance?.Initialize();
 
             InitializeAllAnimations();
         }

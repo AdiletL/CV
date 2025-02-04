@@ -5,6 +5,7 @@ using Gameplay.NavMesh;
 using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
+using Unit.Character.Player;
 using Unit.Item;
 using Unit.Trap;
 using UnityEngine;
@@ -231,8 +232,11 @@ namespace Gameplay
         private void OnTriggerEnter(Collider other)
         {
             if(isTriggerPlayer) return;
-            isTriggerPlayer = true;
-            SpawnNextRooms();
+            if (other.TryGetComponent(out PlayerController player))
+            {
+                isTriggerPlayer = true;
+                SpawnNextRooms();
+            }
         }
     }
 }

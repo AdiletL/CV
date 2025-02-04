@@ -4,15 +4,13 @@ namespace Unit.Character
 {
     public class CharacterRunState : CharacterBaseMovementState
     {
-        protected CharacterSwitchAttackState characterSwitchAttackState;
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
         protected AnimationClip[] runClips;
 
         protected float durationAnimation;
-
-        public void SetSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
-            this.characterSwitchAttackState = characterSwitchAttackState;
+        
+        
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
         public void SetRunClips(AnimationClip[] runClips) => this.runClips = runClips;
@@ -56,11 +54,6 @@ namespace Unit.Character
         {
             base.RemoveMovementSpeed(value);
             UpdateDurationAnimation();
-        }
-
-        public virtual void SetTarget(GameObject target)
-        {
-            
         }
     }
 

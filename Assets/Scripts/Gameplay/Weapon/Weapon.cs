@@ -98,8 +98,10 @@ namespace Gameplay.Weapon
         {
             Damageable.AddAdditionalDamage(characterWeaponAttackState.Damageable.CurrentDamage);
             var attackSpeedValue = new GameValue(increaseAttackSpeed, increaseAttackSpeedType);
+            
             characterAttackSpeed = attackSpeedValue.Calculate(characterWeaponAttackState.AttackSpeed);
             characterWeaponAttackState.AddAttackSpeed(characterAttackSpeed);
+            
             var reductionEnduranceValue = new GameValue(reductionEndurance, reductionEnduranceType);
             characterReductionEndurance =
                 reductionEnduranceValue.Calculate(characterWeaponAttackState.CurrentReductionEndurance);

@@ -6,7 +6,6 @@ namespace Calculate
 {
     public static class Attack
     {
-        
         public static float TotalDurationInSecond(float attackSpeed)
         {
             return 100 / attackSpeed;

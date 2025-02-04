@@ -1,4 +1,5 @@
 ﻿using Gameplay.Factory;
+using Gameplay.Factory.Character.Creep;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
@@ -25,37 +26,29 @@ namespace Unit.Character.Creep
                 patrolPoints[i] = this.patrolPoints[i].position;
             
             return (BeholderStateFactory)new BeholderStateFactoryBuilder()
+                .SetBeholderAttackConfig(so_BeholderAttack)
+                .SetBeholderMoveConfig(so_BeholderMove)
                 .SetCharacterAnimation(characterAnimation)
                 .SetNavMeshAgent(navMeshAgent)
                 .SetStateMachine(StateMachine)
                 .SetPatrolPoints(patrolPoints)
-                .SetCreepMoveConfig(so_BeholderMove)
                 .SetUnitCenter(unitCenter)
                 .SetGameObject(gameObject)
                 .Build();
         }
 
-        private BeholderSwitchMoveState CreateBeholderSwitchMove()
+        protected override CreepSwitchStateFactory CreateCreepSwitchStateFactory()
         {
-            return (BeholderSwitchMoveState)new BeholderSwitchSwitchMoveStateBuilder()
+            return (BeholderSwitchStateFactory)new BeholderSwitchStateFactoryBuilder()
+                .SetBeholderMoveConfig(so_BeholderMove)
+                .SetBeholderAttackConfig(so_BeholderAttack)
+                .SetCreepStateFactory(creepStateFactory)
+                .SetStateMachine(StateMachine)
                 .SetNavMeshAgent(navMeshAgent)
-                .SetCreepStateFactory(beholderStateFactory)
-                .SetUnitAnimation(GetComponentInUnit<BeholderAnimation>())
+                .SetCharacterAnimation(characterAnimation)
+                .SetCharacterEndurance(characterEndurance)
+                .SetUnitCenter(unitCenter)
                 .SetGameObject(gameObject)
-                .SetCenter(unitCenter.Center)
-                .SetStateMachine(this.StateMachine)
-                .Build();
-        }
-
-        private BeholderSwitchAttackState CreateBeholderSwitchAttackState()
-        {
-            return (BeholderSwitchAttackState)new BeholderSwitchAttackStateAttackStateBuilder()
-                .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
-                .SetConfig(so_BeholderAttack)
-                .SetUnitAnimation(GetComponentInUnit<BeholderAnimation>())
-                .SetGameObject(gameObject)
-                .SetStateMachine(this.StateMachine)
-                .SetCenter(unitCenter.Center)
                 .Build();
         }
 
@@ -101,18 +94,20 @@ namespace Unit.Character.Creep
 
         protected override void CreateSwitchState()
         {
-            creepSwitchMoveState = CreateBeholderSwitchMove();
+            creepSwitchMoveState = (BeholderSwitchMoveState)creepSwitchStateFactory.CreateSwitchMoveState(typeof(BeholderSwitchMoveState));
             diContainer.Inject(creepSwitchMoveState);
 
-            //creepSwitchAttackState = CreateBeholderSwitchAttackState();
-            //diContainer.Inject(creepSwitchAttackState);
+            creepSwitchAttackState = (BeholderSwitchAttackState)creepSwitchStateFactory.CreateSwitchAttackState(typeof(BeholderSwitchAttackState));
+            diContainer.Inject(creepSwitchAttackState);
             
             creepSwitchMoveState.SetSwitchAttackState(creepSwitchAttackState);
-            //creepSwitchAttackState.SetSwitchMoveState(creepSwitchMoveState);
+            creepSwitchAttackState.SetSwitchMoveState(creepSwitchMoveState);
+            
+            beholderStateFactory.SetCreepSwitchMoveState(creepSwitchMoveState);
+            beholderStateFactory.SetCreepSwitchAttackState(creepSwitchAttackState);
             
             creepSwitchMoveState.Initialize();
-            beholderStateFactory.SetCreepSwitchMoveState(creepSwitchMoveState);
-            //creepSwitchAttackState.Initialize();
+            creepSwitchAttackState.Initialize();
         }
 
         protected override void InitializeAllAnimations()
@@ -120,6 +115,8 @@ namespace Unit.Character.Creep
             characterAnimation.AddClips(so_BeholderMove.IdleClip);
             characterAnimation.AddClips(so_BeholderMove.WalkClips);
             characterAnimation.AddClips(so_BeholderMove.RunClips);
+            characterAnimation.AddClips(so_BeholderAttack.AttackClips);
+            characterAnimation.AddClip(so_BeholderAttack.CooldownClip);
         }
 
         public override void Appear()

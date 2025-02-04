@@ -15,6 +15,14 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
+            if (currentTarget &&
+                !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
+                    rangeSqr))
+            {
+                StateMachine.ExitCategory(Category, null);
+                return;
+            }
+                
             if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
                 unitRenderer.SetColor(Color.yellow);
         }
