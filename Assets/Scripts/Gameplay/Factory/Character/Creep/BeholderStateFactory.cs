@@ -74,6 +74,7 @@ namespace Gameplay.Factory.Character.Creep
             return (BeholderRunState)new BeholderRunStateBuilder()
                 .SetCharacterSwitchAttack(creepSwitchAttackState)
                 .SetNavMesh(navMeshAgent)
+                .SetTimerRunToTarget(so_BeholderMove.TimerRunToTarget)
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetUnitAnimation(characterAnimation)
                 .SetRunClips(so_BeholderMove.RunClips)
@@ -86,7 +87,6 @@ namespace Gameplay.Factory.Character.Creep
         
         private BeholderDefaultAttackState CreateDefaultAttack()
         {
-            Debug.Log(creepSwitchMoveState);
             return (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
                 .SetNavMeshAgent(navMeshAgent)
                 .SetSwitchMoveState(creepSwitchMoveState)

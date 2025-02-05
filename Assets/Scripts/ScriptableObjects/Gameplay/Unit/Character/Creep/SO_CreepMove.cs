@@ -11,5 +11,7 @@ namespace ScriptableObjects.Unit.Character.Creep
 
         [field: SerializeField] public AnimationClip[] WalkClips { get; private set; }
         [field: SerializeField] public float WalkSpeed { get; private set; }
+        
+        [field: SerializeField, Space] public float TimerRunToTarget { get; private set; } 
     }
 }

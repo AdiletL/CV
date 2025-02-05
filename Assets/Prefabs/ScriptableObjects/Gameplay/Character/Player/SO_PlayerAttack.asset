@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_PlayerAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 10
-  <AttackSpeed>k__BackingField: 300
+  <AttackSpeed>k__BackingField: 100
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 128

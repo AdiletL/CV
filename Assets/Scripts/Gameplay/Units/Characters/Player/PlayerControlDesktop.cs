@@ -198,6 +198,7 @@ namespace Unit.Character.Player
 
         private void ClearSelectObject()
         {
+            selectObject?.UnSelectObject();
             selectObject?.HideInformation();
             selectObject = null;
         }
@@ -272,8 +273,10 @@ namespace Unit.Character.Player
                 unit.UpdateInformation();
                 if (selectObject == null || selectObject != unit)
                 {
+                    selectObject?.UnSelectObject();
                     selectObject = unit;
                     selectObject.ShowInformation();
+                    selectObject.SelectObject();
                 }
                 else
                 {
@@ -287,9 +290,10 @@ namespace Unit.Character.Player
             ClearHotkeys();
             ClearSelectObject();
             InitializeJumpState();
-            stateMachine.ExitCategory(StateCategory.attack, null);
-            stateMachine.ExitCategory(StateCategory.action, null);
-            stateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
+            stateMachine.ExitOtherStates(typeof(PlayerJumpState), true);
+            //stateMachine.ExitCategory(StateCategory.attack, null);
+            //stateMachine.ExitCategory(StateCategory.action, null);
+            //stateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
             isJumping = true;
         }
 

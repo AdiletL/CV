@@ -9,6 +9,8 @@ namespace Unit.Trap.Tower
     {
         [Space] [SerializeField] protected Transform pointSpawnProjectile;
         
+        [field: SerializeField, Space] public GameObject SelectedObjectVisual { get; private set; }
+        
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
@@ -72,5 +74,8 @@ namespace Unit.Trap.Tower
         {
             throw new System.NotImplementedException();
         }
+        
+        public void SelectObject() => SelectedObjectVisual.SetActive(true);
+        public void UnSelectObject() => SelectedObjectVisual.SetActive(false);
     }
 }

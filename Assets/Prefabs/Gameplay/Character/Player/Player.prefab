@@ -3337,7 +3337,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4311928825062576341}
+    - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8871355657616788559}
   m_SourcePrefab: {fileID: 100100000, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+--- !u!1 &1290455938804012064 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4824014644126308582, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+  m_PrefabInstance: {fileID: 5988319743367089350}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3028568621814086812 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8727248243320549466, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
@@ -3367,7 +3375,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 0.8
-  m_Radius: 0.24
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -3392,6 +3400,7 @@ MonoBehaviour:
     - {fileID: 2702775495190288114}
   <VisualParent>k__BackingField: {fileID: 3028568621814086812}
   <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 649551c077e567b46a3b9ce25aba6e1b, type: 2}
+  <SelectedObjectVisual>k__BackingField: {fileID: 1290455938804012064}
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
   so_PlayerControlDesktop: {fileID: 11400000, guid: 0bed9273856cd0a47b9da97da2cae779, type: 2}
@@ -3552,6 +3561,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fccae93cd964ffe862d479d81fea972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8871355657616788559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3905064192937531579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617d19936fdfe75479efb734f84a3aa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRenderers:
+  - {fileID: 2154833952339412076}
 --- !u!4 &5590145490901760701 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2201950844900472443, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}

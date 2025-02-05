@@ -13,7 +13,7 @@ namespace Unit.Character.Player
         private int currentJumpCount;
         private int maxJumpCount;
 
-        private readonly float cooldownCheckGround = .01f;
+        private readonly float cooldownCheckGround = .05f;
         private float jumpReductionEndurance;
         private float countCooldownCheckGround;
         private float currentGravity;
@@ -60,7 +60,7 @@ namespace Unit.Character.Player
             countCooldownCheckGround += Time.deltaTime;
             if (countCooldownCheckGround > cooldownCheckGround)
             {
-                if (characterController.isGrounded)
+                if (Physics.Raycast(gameObject.transform.position, Vector3.down, .05f))
                 {
                     isCanExit = true;
                     characterAnimation.SetBlock(false);

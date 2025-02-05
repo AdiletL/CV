@@ -29,7 +29,7 @@ public class EntryPoint
         {
             nextSceneName = sceneName;
             Debug.Log("Current scene: " + sceneName);
-            SceneManager.LoadSceneAsync(Scenes.BOOTSTRAP_NAME, LoadSceneMode.Single);
+            SceneManager.LoadSceneAsync(Scenes.LOBBY_NAME, LoadSceneMode.Single);
         }
         else if(sceneName == Scenes.LOBBY_NAME)
         {

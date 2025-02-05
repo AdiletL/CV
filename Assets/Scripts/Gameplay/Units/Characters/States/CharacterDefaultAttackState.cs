@@ -53,12 +53,6 @@ namespace Unit.Character
         {
             base.Enter();
             
-            if (!currentTarget)
-            {
-                this.StateMachine.ExitCategory(Category, null);
-                return;
-            }
-            
             unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             ResetValues();
         }
@@ -163,7 +157,6 @@ namespace Unit.Character
             }
             unitAnimation?.ChangeAnimationWithDuration(cooldownClip);
             isAttack = false;
-            FindUnit();
         }
     }
     

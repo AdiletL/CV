@@ -2320,14 +2320,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
-    - target: {fileID: 8297330417614300368, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
-      propertyPath: m_Height
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8297330417614300368, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
-      propertyPath: m_Radius
-      value: 0.4
-      objectReference: {fileID: 0}
     - target: {fileID: 9130611321084849887, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2431,6 +2423,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3375638988197747630, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
   m_PrefabInstance: {fileID: 1729787804338602457}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5816200542816922211 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5239440379189570490, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
+  m_PrefabInstance: {fileID: 1729787804338602457}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7401387025314344710 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9130611321084849887, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
@@ -2465,6 +2462,7 @@ MonoBehaviour:
     - {fileID: 2432419330478243577}
   <VisualParent>k__BackingField: {fileID: 7735062511587869407}
   <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 481d9a66ba7896046a4d7b437deed80a, type: 2}
+  <SelectedObjectVisual>k__BackingField: {fileID: 5816200542816922211}
   currentStateCategory: 0
   currentStateName: 
   patrolPoints: []

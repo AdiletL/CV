@@ -22,3 +22,4 @@ MonoBehaviour:
   <WalkClips>k__BackingField:
   - {fileID: 7400000, guid: 38b0b6ad62ca4f8fa72ac537c889c8dc, type: 3}
   <WalkSpeed>k__BackingField: 1
+  <TimerRunToTarget>k__BackingField: 5

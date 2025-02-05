@@ -9,7 +9,9 @@ namespace Unit.Character
     public abstract class CharacterMainController : UnitController, ICharacter, IClickableObject
     {
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
-        
+
+        [field: SerializeField, Space] public GameObject SelectedObjectVisual { get; private set; }
+
         protected PhotonView photonView;
         
         public StateMachine StateMachine { get; protected set; }
@@ -93,5 +95,7 @@ namespace Unit.Character
         public void ShowInformation() => UnitInformation.Show();
         public void UpdateInformation() => UnitInformation.UpdateData();
         public void HideInformation() => UnitInformation.Hide();
+        public void SelectObject() => SelectedObjectVisual.SetActive(true);
+        public void UnSelectObject() => SelectedObjectVisual.SetActive(false);
     }
 }

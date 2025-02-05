@@ -50,8 +50,11 @@ namespace Unit.Character.Creep
         public override void Exit()
         {
             base.Exit();
-            navMeshAgent.isStopped = true;
-            navMeshAgent.ResetPath();
+            if (navMeshAgent.isOnNavMesh)
+            {
+                navMeshAgent.isStopped = true;
+                navMeshAgent.ResetPath();
+            }
         }
 
         private void SetTargetPoint()

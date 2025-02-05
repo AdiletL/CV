@@ -14,13 +14,15 @@ namespace Unit
         protected PhotonView photonView;
         protected AnimationClip currentClip;
         protected float currentSpeed;
-        private bool isBlock;
+        protected bool isBlock;
 
         protected List<AnimationClip> allClips;
         
         protected Dictionary<AnimationClip, float> clipLengths = new();
 
         protected const string TRANSITION_SPEED = "speed";
+        
+        public bool IsBlocked => isBlock;
         
         /// <summary>
         /// Возвращает анимационный клип для использования.

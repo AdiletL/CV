@@ -17,7 +17,6 @@ namespace Unit.Character.Creep
         public override void Update()
         {
             base.Update();
-            
             CheckEnemy();
         }
 

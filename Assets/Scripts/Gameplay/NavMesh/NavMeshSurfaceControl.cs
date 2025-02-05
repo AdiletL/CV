@@ -1,13 +1,22 @@
-﻿using Unity.AI.Navigation;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Gameplay.NavMesh
 {
-    [RequireComponent(typeof(NavMeshSurface))]
     public class NavMeshSurfaceControl : MonoBehaviour
     {
-        public NavMeshSurface GetSurface() => GetComponent<NavMeshSurface>();
-        public void ActivateMeshRenderer() => GetComponent<MeshRenderer>().enabled = true;
-        public void InActivateMeshRenderer() => GetComponent<MeshRenderer>().enabled = false;
+        private MeshRenderer meshRenderer;
+        public void ActivateMeshRenderer()
+        {
+            if(meshRenderer == null)
+                meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.enabled = true;
+        }
+
+        public void InActivateMeshRenderer()
+        {
+            if(meshRenderer == null)
+                meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.enabled = false;
+        }
     }
 }
