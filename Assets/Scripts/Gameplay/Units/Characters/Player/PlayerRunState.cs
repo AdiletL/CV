@@ -29,13 +29,13 @@ namespace Unit.Character.Player
         public override void Subscribe()
         {
             base.Subscribe();
-            StateMachine.OnExitCategory += OnExitCategory;
+            stateMachine.OnExitCategory += OnExitCategory;
         }
 
         public override void Unsubscribe()
         {
             base.Unsubscribe();
-            StateMachine.OnExitCategory -= OnExitCategory;
+            stateMachine.OnExitCategory -= OnExitCategory;
         }
 
         public override void Update()
@@ -45,7 +45,7 @@ namespace Unit.Character.Player
             CheckDirectionMovement();
             if (directionMovement.magnitude == 0)
             {
-                StateMachine.ExitCategory(Category, null);
+                stateMachine.ExitCategory(Category, null);
                 return;
             }
             

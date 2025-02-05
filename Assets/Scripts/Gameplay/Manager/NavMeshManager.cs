@@ -40,10 +40,10 @@ namespace Gameplay.Manager
             if (navMeshSurfaceControls.Count == 0 || mainSurface == null) return;
 
             Bounds bounds = new Bounds(navMeshSurfaceControls[0].transform.position, Vector3.zero);
-            foreach (var surfaceControl in navMeshSurfaceControls)
+            for (int i = 0; i < navMeshSurfaceControls.Count; i++)
             {
-                surfaceControl.ActivateMeshRenderer();
-                bounds.Encapsulate(surfaceControl.transform.position);
+                navMeshSurfaceControls[i].ActivateMeshRenderer();
+                bounds.Encapsulate(navMeshSurfaceControls[i].transform.position);
             }
 
             // Устанавливаем новую зону покрытия
@@ -53,8 +53,8 @@ namespace Gameplay.Manager
             // Перестраиваем общий NavMesh
             mainSurface.BuildNavMesh();
 
-            foreach (var surfaceControl in navMeshSurfaceControls)
-                surfaceControl.InActivateMeshRenderer();
+            for (int i = navMeshSurfaceControls.Count - 1; i >= 0; i--)
+                navMeshSurfaceControls[i].InActivateMeshRenderer();
         }
     }
 

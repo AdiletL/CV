@@ -24,7 +24,7 @@ namespace Unit.Trap.Tower
                 .SetAttackClip(SO_Tower.AttackClip)
                 .SetPointSpawnProjectile(PointSpawnProjectile)
                 .SetAttackSpeed(SO_Tower.AttackSpeed)
-                .SetStateMachine(this.StateMachine)
+                .SetStateMachine(this.stateMachine)
                 .Build();
         }
         
@@ -40,10 +40,10 @@ namespace Unit.Trap.Tower
                 diContainer.Inject(attackState);
                 attackState.Initialize();
                 
-                this.StateMachine.AddStates(attackState);
+                this.stateMachine.AddStates(attackState);
             }
             
-            this.StateMachine.ExitCategory(Category, typeof(TowerAttackState));
+            this.stateMachine.ExitCategory(Category, typeof(TowerAttackState));
         }
         
     }

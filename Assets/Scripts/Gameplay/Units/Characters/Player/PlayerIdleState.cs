@@ -20,7 +20,7 @@ namespace Unit.Character.Player
         public override void Subscribe()
         {
             base.Subscribe();
-            this.StateMachine.OnExitCategory += OnExitCategory;
+            this.stateMachine.OnExitCategory += OnExitCategory;
         }
 
         public override void Update()
@@ -32,7 +32,7 @@ namespace Unit.Character.Player
         public override void Unsubscribe()
         {
             base.Unsubscribe();
-            this.StateMachine.OnExitCategory -= OnExitCategory;
+            this.stateMachine.OnExitCategory -= OnExitCategory;
         }
 
         public override void Exit()

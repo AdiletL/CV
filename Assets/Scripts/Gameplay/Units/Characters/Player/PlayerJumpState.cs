@@ -64,7 +64,7 @@ namespace Unit.Character.Player
                 {
                     isCanExit = true;
                     characterAnimation.SetBlock(false);
-                    this.StateMachine.ExitCategory(Category, null);
+                    this.stateMachine.ExitCategory(Category, null);
                 }
             }
         }

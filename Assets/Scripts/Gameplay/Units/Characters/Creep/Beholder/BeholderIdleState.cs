@@ -1,5 +1,4 @@
-﻿using Unit.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Unit.Character.Creep
 {
@@ -18,7 +17,6 @@ namespace Unit.Character.Creep
         public override void Update()
         {
             base.Update();
-
             CheckEnemy();
         }
 
@@ -26,6 +24,12 @@ namespace Unit.Character.Creep
         {
             base.LateUpdate();
             CheckMove();
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            countCheckEnemyCooldown = 0;
         }
 
         private void CheckMove()
@@ -37,7 +41,6 @@ namespace Unit.Character.Creep
         private void CheckEnemy()
         {
             if(!isActive) return;
-            
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {
@@ -45,6 +48,14 @@ namespace Unit.Character.Creep
                     creepSwitchAttackState.ExitCategory(Category);
 
                 countCheckEnemyCooldown = 0;
+            }
+            else
+            {
+                if (currentTarget != null)
+                {
+                    creepSwitchAttackState.SetTarget(currentTarget);
+                    creepSwitchAttackState.ExitCategory(Category);
+                }
             }
         }
     }

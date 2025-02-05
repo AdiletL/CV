@@ -19,7 +19,7 @@ namespace Unit.Character.Player
                 !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {
-                StateMachine.ExitCategory(Category, null);
+                stateMachine.ExitCategory(Category, null);
                 return;
             }
                 

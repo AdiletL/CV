@@ -59,7 +59,7 @@ namespace Unit.Character
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category, null);
+                this.stateMachine.ExitCategory(Category, null);
                 return;
             }
             
@@ -73,7 +73,7 @@ namespace Unit.Character
             base.Update();
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category, null);
+                this.stateMachine.ExitCategory(Category, null);
                 return;
             }
 

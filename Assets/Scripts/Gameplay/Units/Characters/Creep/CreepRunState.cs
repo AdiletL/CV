@@ -7,6 +7,7 @@ namespace Unit.Character.Creep
     {
         protected NavMeshAgent navMeshAgent;
         protected GameObject currentTarget;
+        protected CreepIdleState creepIdleState;
 
         protected float rotationSpeed;
         protected float timerRunToTarget;
@@ -32,9 +33,13 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
-            navMeshAgent.speed = MovementSpeed;
-            navMeshAgent.destination = currentTarget.transform.position;
-            navMeshAgent.isStopped = false;
+            creepIdleState ??= stateMachine.GetState<CreepIdleState>();
+            if (navMeshAgent.isOnNavMesh)
+            {
+                navMeshAgent.speed = MovementSpeed;
+                navMeshAgent.destination = currentTarget.transform.position;
+                navMeshAgent.isStopped = false;
+            }
             PlayAnimation();
         }
 
@@ -81,7 +86,7 @@ namespace Unit.Character.Creep
                 if (!navMeshAgent.pathPending &&
                     navMeshAgent.remainingDistance < stoppingDistance)
                 {
-                    StateMachine.ExitCategory(Category, null);
+                    stateMachine.ExitCategory(Category, null);
                 }
             }
         }
@@ -101,7 +106,8 @@ namespace Unit.Character.Creep
             countTimerRunToTarget += Time.deltaTime;
             if (countTimerRunToTarget >= timerRunToTarget)
             {
-                StateMachine.ExitCategory(Category, null);
+                creepIdleState.SetTarget(null);
+                stateMachine.ExitCategory(Category, null);
                 countTimerRunToTarget = 0;
             }
         }

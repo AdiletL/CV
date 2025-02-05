@@ -3,9 +3,11 @@
     public abstract class State : IState
     {
         public abstract StateCategory Category { get; }
-        public StateMachine StateMachine { get; set; }
+        public StateMachine stateMachine { get; protected set; }
         public bool isActive { get; private set; }
         public bool isCanExit { get; protected set; } = true;
+        
+        public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         
         public abstract void Initialize();
         public virtual void Enter()
@@ -16,8 +18,8 @@
 
         public virtual void Subscribe()
         {
-            StateMachine.OnUpdate += Update;
-            StateMachine.OnLateUpdate += LateUpdate;
+            stateMachine.OnUpdate += Update;
+            stateMachine.OnLateUpdate += LateUpdate;
         }
 
         public abstract void Update();
@@ -25,8 +27,8 @@
         
         public virtual void Unsubscribe()
         {
-            StateMachine.OnUpdate -= Update;
-            StateMachine.OnLateUpdate -= LateUpdate;
+            stateMachine.OnUpdate -= Update;
+            stateMachine.OnLateUpdate -= LateUpdate;
         }
 
         public virtual void Exit()
@@ -47,7 +49,7 @@
 
         public StateBuilder<T> SetStateMachine(StateMachine stateMachine)
         {
-            state.StateMachine = stateMachine;
+            state.SetStateMachine(stateMachine);
             return this;
         }
 

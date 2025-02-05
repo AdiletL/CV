@@ -9,7 +9,7 @@ namespace Unit.Trap
         [SerializeField] protected SO_Trap so_Trap;
 
         private PhotonView photonView;
-
+        protected TrapAnimation trapAnimation;
         protected AnimationClip activateClip;
         protected AnimationClip deactivateClip;
 
@@ -22,6 +22,10 @@ namespace Unit.Trap
             activateClip = so_Trap.ActivateClip;
             deactivateClip = so_Trap.DeactivateClip;
             EnemyLayer = so_Trap.EnemyLayer;
+            trapAnimation = GetComponentInUnit<TrapAnimation>();
+            trapAnimation.Initialize();
+            trapAnimation.AddClip(activateClip);
+            trapAnimation.AddClip(deactivateClip);
         }
         
 

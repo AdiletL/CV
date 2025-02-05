@@ -62,8 +62,6 @@ namespace Unit.Item.Container
         private async UniTask SpawnLoot()
         {
             Vector3 point;
-            float randomX;
-            float randomZ;
             foreach (var VARIABLE in lootPrefabs)
             {
                 var loot = await Addressables.InstantiateAsync(VARIABLE);
@@ -71,9 +69,8 @@ namespace Unit.Item.Container
                 diContainer.Inject(lootController);
                 lootController.Initialize();
                 loot.transform.position = transform.position;
-                randomX = Random.Range(-.3f, .3f);
-                randomZ = Random.Range(0, 1f);
-                point = transform.forward + new Vector3(transform.position.x + randomX, transform.position.y, randomZ);
+                Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(0.5f, 1f));
+                point = transform.position + transform.right * randomOffset.x + transform.forward * randomOffset.z;
                 lootController.JumpToPoint(point);
             }
         }

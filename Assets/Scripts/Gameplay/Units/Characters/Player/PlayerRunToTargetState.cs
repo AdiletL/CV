@@ -66,8 +66,8 @@ namespace Unit.Character.Player
         
         countCooldownheckEnemy = checkEnemyCooldown;
 
-        isCheckAttack = !StateMachine.IsActivateType(typeof(PlayerJumpState));
-        isCheckPath = !StateMachine.IsActivateType(typeof(PlayerJumpState));
+        isCheckAttack = !stateMachine.IsActivateType(typeof(PlayerJumpState));
+        isCheckPath = !stateMachine.IsActivateType(typeof(PlayerJumpState));
         UpdatePathToTarget();
         UpdateValuesCheckEnemy();
     }
@@ -75,7 +75,7 @@ namespace Unit.Character.Player
     public override void Subscribe()
     {
         base.Subscribe();
-        StateMachine.OnExitCategory += OnExitCategory;
+        stateMachine.OnExitCategory += OnExitCategory;
     }
 
     public override void Update()
@@ -87,7 +87,7 @@ namespace Unit.Character.Player
             AssignNewCurrentTarget();
             if (!currentTarget)
             {
-                StateMachine.ExitCategory(Category, null);
+                stateMachine.ExitCategory(Category, null);
                 return;
             }
         }
@@ -105,7 +105,7 @@ namespace Unit.Character.Player
     public override void Unsubscribe()
     {
         base.Unsubscribe();
-        StateMachine.OnExitCategory -= OnExitCategory;
+        stateMachine.OnExitCategory -= OnExitCategory;
     }
 
     public override void Exit()
@@ -149,7 +149,7 @@ namespace Unit.Character.Player
         if (!finalTarget.TryGetComponent(out CellController cellController))
         {
             enemy = finalTarget;
-            isCheckAttack = !StateMachine.IsActivateType(typeof(PlayerJumpState));
+            isCheckAttack = !stateMachine.IsActivateType(typeof(PlayerJumpState));
         }
         else
         {
@@ -237,7 +237,7 @@ namespace Unit.Character.Player
     private void CheckIfTargetReached()
     {
         if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, finalTarget.transform.position) || pathQueue.Count == 0)
-            StateMachine.ExitCategory(Category, null);
+            stateMachine.ExitCategory(Category, null);
     }
 
     public override void ExecuteMovement()

@@ -36,6 +36,9 @@ namespace Unit.Character.Player
         [SerializeField] private SO_Sword so_Sword;
         [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
+
+        [Space]
+        [SerializeField] private GameObject rangeVisual;
         
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
@@ -319,6 +322,7 @@ namespace Unit.Character.Player
         public void SetWeapon(Weapon weapon)
         {
             characterSwitchAttackState.SetWeapon(weapon);
+            rangeVisual.transform.localScale = Vector3.one * (weapon.Range * 2);
         }
 
         private void OnChangedState(Machine.IState state)

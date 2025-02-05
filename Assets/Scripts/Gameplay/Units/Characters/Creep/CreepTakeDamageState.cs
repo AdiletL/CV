@@ -24,7 +24,7 @@ namespace Unit.Character.Creep
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation > durationAnimation)
             {
-                this.StateMachine.ExitCategory(Category, null);
+                this.stateMachine.ExitCategory(Category, null);
                 countTimeAnimation = 0;
             }
         }

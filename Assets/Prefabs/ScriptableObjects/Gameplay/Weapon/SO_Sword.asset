@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <WeaponPrefab>k__BackingField: {fileID: 8218668140323578366, guid: f0aae4c8b38e02e48a4124483b105340, type: 3}
   <Damage>k__BackingField: 1
-  <Range>k__BackingField: 1.3
-  <AngleToTarget>k__BackingField: 10
+  <Range>k__BackingField: 1.5
+  <AngleToTarget>k__BackingField: 100
   <ReductionEndurance>k__BackingField:
     Value: 50
     ValueType: 1
   <IncreaseAttackSpeed>k__BackingField:
-    Value: 100
+    Value: 250
     ValueType: 1

@@ -63,7 +63,7 @@ namespace Unit.Character
             
             if (!currentTarget)
             {
-                this.StateMachine.ExitCategory(Category, null);
+                this.stateMachine.ExitCategory(Category, null);
                 return;
             }
             
@@ -97,7 +97,7 @@ namespace Unit.Character
             countCooldown = 0;
         }
 
-        protected void FindUnit()
+        protected virtual void FindUnit()
         {
             currentTarget = Calculate.Attack.FindUnitInRange(center.position, Range, enemyLayer, ref findUnitColliders);
             rotation.SetTarget(currentTarget?.transform);

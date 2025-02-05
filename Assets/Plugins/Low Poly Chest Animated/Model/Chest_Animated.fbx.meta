@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 25b15e2e62fbab049bca989fb80a7995
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247127
+  packageName: Low Poly Chest Animated
+  packageVersion: 1.0
+  assetPath: Assets/Low Poly Chest Animated/Model/Chest_Animated.fbx
+  uploadId: 563280
 ModelImporter:
-  serializedVersion: 21300
+  serializedVersion: 22200
   internalIDToNameTable:
   - first:
       74: 9121596058886294860
@@ -34,8 +41,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -137,7 +142,7 @@ ModelImporter:
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -145,6 +150,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -172,6 +178,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -204,15 +211,9 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 0
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 247127
-  packageName: Low Poly Chest Animated
-  packageVersion: 1.0
-  assetPath: Assets/Low Poly Chest Animated/Model/Chest_Animated.fbx
-  uploadId: 563280

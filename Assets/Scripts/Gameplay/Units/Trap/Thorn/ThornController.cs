@@ -11,7 +11,6 @@ namespace Unit.Trap
     public class ThornController : TrapController, IApplyDamage
     {
         private SO_Thorn so_Thorn;
-        private ThornAnimation thornAnimation;
         private SphereCollider sphereCollider;
 
         private Coroutine startTimerCoroutine;
@@ -45,7 +44,6 @@ namespace Unit.Trap
             sphereCollider.isTrigger = true;
             sphereCollider.radius = radius;
 
-            thornAnimation = components.GetComponentFromArray<ThornAnimation>();
             isReady = true;
         }
 
@@ -72,7 +70,7 @@ namespace Unit.Trap
         }
         public override void Deactivate()
         {
-            thornAnimation.ChangeAnimationWithDuration(deactivateClip);
+            trapAnimation.ChangeAnimationWithDuration(deactivateClip);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
                 
@@ -112,7 +110,7 @@ namespace Unit.Trap
             float countTimer = 0;
 
             HashSet<GameObject> affectedEnemies = new HashSet<GameObject>();
-            thornAnimation.ChangeAnimationWithDuration(activateClip);
+            trapAnimation.ChangeAnimationWithDuration(activateClip);
             var interval = activateClip.length;
             
             yield return new WaitForSeconds(interval - .1f);

@@ -22,8 +22,6 @@ namespace Unit
 
         protected const string TRANSITION_SPEED = "speed";
         
-        public bool IsBlocked => isBlock;
-        
         /// <summary>
         /// Возвращает анимационный клип для использования.
         /// </summary>
@@ -95,14 +93,14 @@ namespace Unit
         /// <param name="isForce">Принудительное изменение анимации.</param>
         /// <param name="isDefault">Установить анимацию по умолчанию.</param>
         public void ChangeAnimationWithDuration(AnimationClip clip, float duration = 0f, 
-            float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false)
+            float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false, int layer = 0)
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
 
             clip = ResolveAnimationClip(clip, isDefault);
             
             if(photonView.IsMine)
-                photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration);
+                photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration, layer);
         }
 
         public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1f, 
@@ -117,13 +115,13 @@ namespace Unit
         }
 
         [PunRPC]
-        protected void ChangeAnimationWithDurationRPC(string clipName, float duration, float transitionDuration)
+        protected void ChangeAnimationWithDurationRPC(string clipName, float duration, float transitionDuration, int layer)
         {
             var animationClip = GetAnimationClip(clipName);
             SetSpeedClip(animationClip, duration);
 
             if (gameObject.activeSelf)
-                PlayAnimation(animationClip, transitionDuration);
+                PlayAnimation(animationClip, transitionDuration, layer);
         }
 
         [PunRPC]
@@ -135,7 +133,7 @@ namespace Unit
             if (gameObject.activeSelf)
             {
                 var animationClip = GetAnimationClip(clipName);
-                PlayAnimation(animationClip, transitionDuration);
+                PlayAnimation(animationClip, transitionDuration, 0);
             }
         }
 
@@ -168,9 +166,9 @@ namespace Unit
         /// <summary>
         /// Запускает воспроизведение анимации с указанной длительностью перехода.
         /// </summary>
-        private void PlayAnimation(AnimationClip clip, float transitionDuration)
+        private void PlayAnimation(AnimationClip clip, float transitionDuration, int layer)
         {
-            animator.CrossFadeInFixedTime(clip.name, transitionDuration, 0);
+            animator.CrossFadeInFixedTime(clip.name, transitionDuration, layer);
             currentClip = clip;
         }
 

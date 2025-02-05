@@ -6,12 +6,14 @@ namespace Unit.Character.Creep
     public class CreepDefaultAttackState : CharacterDefaultAttackState
     {
         protected NavMeshAgent navMeshAgent;
+        protected CreepIdleState creepIdleState;
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
-
+        
         public override void Enter()
         {
             base.Enter();
+            creepIdleState ??= stateMachine.GetState<CreepIdleState>();
             navMeshAgent.updateRotation = false;
         }
 
@@ -19,6 +21,12 @@ namespace Unit.Character.Creep
         {
             base.Exit();
             navMeshAgent.updateRotation = true;
+        }
+
+        protected override void FindUnit()
+        {
+            base.FindUnit();
+            creepIdleState.SetTarget(currentTarget);
         }
     }
     
