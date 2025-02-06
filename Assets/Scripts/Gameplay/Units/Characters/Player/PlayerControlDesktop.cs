@@ -48,7 +48,8 @@ namespace Unit.Character.Player
         private int selectObjectMousButton, attackMouseButton;
         
         private bool isJumping;
-        private bool isMovement;
+        private bool isMoving;
+        private bool isAttacking;
         
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
@@ -180,6 +181,12 @@ namespace Unit.Character.Player
 
         private void OnExitCategory(Machine.IState state)
         {
+            if (stateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)) || 
+                stateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
+            {
+                isAttacking = false;
+            }
+            
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 isJumping = false;
@@ -187,7 +194,7 @@ namespace Unit.Character.Player
 
             if (state.GetType().IsAssignableFrom(typeof(PlayerRunState)))
             {
-                isMovement = false;
+                isMoving = false;
             }
         }
 
@@ -218,7 +225,7 @@ namespace Unit.Character.Player
             if(!photonView.IsMine) return;
             base.HandleInput();
             
-            if (!isMovement &&
+            if (!isMoving &&
                 (Input.GetKey(KeyCode.A) || 
                 Input.GetKey(KeyCode.D) || 
                 Input.GetKey(KeyCode.W) || 
@@ -226,10 +233,11 @@ namespace Unit.Character.Player
                 !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
                 characterSwitchMove.ExitOtherStates();
-                isMovement = true;
+                isMoving = true;
             }
             else if (Input.GetMouseButtonDown(attackMouseButton) && 
-                     !isJumping && !playerSkillInputHandler.IsInputBlocked(InputType.attack))
+                     !isJumping && !isAttacking && 
+                     !playerSkillInputHandler.IsInputBlocked(InputType.attack))
             {
                 TriggerAttack();
             }
@@ -261,9 +269,11 @@ namespace Unit.Character.Player
         {
             if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, enemyLayer))
             { 
-                characterSwitchAttack.SetTarget(gameObject);
-                characterSwitchAttack.ExitOtherStates();
+                //characterSwitchAttack.SetTarget(gameObject);
             }
+
+            isAttacking = true;
+            characterSwitchAttack.ExitOtherStates();
             ClearHotkeys();
         }
         

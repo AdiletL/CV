@@ -56,11 +56,16 @@ namespace Unit.Character.Player
         {
             Velocity = new Vector3(newVelocity.x, Velocity.y, newVelocity.z);
         }
-
-        public void Jump(float jumpForce)
+        
+        public void AddVelocity(Vector3 newVelocity)
         {
-            Velocity = new Vector3(Velocity.x, 0, Velocity.z);
-            Velocity += new Vector3(0, jumpForce, 0);
+            ClearVelocity();
+            Velocity += newVelocity;
+        }
+
+        public void ClearVelocity()
+        {
+            Velocity = Vector3.zero;
         }
 
         public void ForceUnground()

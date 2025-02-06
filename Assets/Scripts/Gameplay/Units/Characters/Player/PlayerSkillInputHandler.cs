@@ -33,6 +33,7 @@ namespace Unit.Character.Player
             this.gameObject = gameObject;
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
+            this.playerKinematicControl = playerKinematicControl;
         }
 
         private async UniTask<Dash> CreateDash()
@@ -171,7 +172,7 @@ namespace Unit.Character.Player
         {
             await InitializeDash();
 
-            gravity.InActivateGravity();
+            //gravity.InActivateGravity();
             this.stateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
             this.stateMachine.ActiveBlockChangeState();
             skillHandler.Execute(typeof(Dash), AfterDash);
@@ -182,7 +183,7 @@ namespace Unit.Character.Player
                 
         private void AfterDash()
         {
-            gravity.ActivateGravity();
+            //gravity.ActivateGravity();
             this.stateMachine.InActiveBlockChangeState();
             UnblockInput(skillHandler.GetSkill(typeof(Dash)).BlockedInputType);
             UnblockSkill(skillHandler.GetSkill(typeof(Dash)).BlockedSkillType);

@@ -56,14 +56,14 @@ namespace Unit.Character
         public override void Enter()
         {
             base.Enter();
-            
+            /*
             if (!currentTarget)
             {
                 this.stateMachine.ExitCategory(Category, null);
                 return;
-            }
+            }*/
             
-            CurrentWeapon.Show();
+            CurrentWeapon?.Show();
             unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             ClearValues();
         }
@@ -71,7 +71,7 @@ namespace Unit.Character
         public override void Update()
         {
             base.Update();
-            if (!currentTarget)
+            /*if (!currentTarget)
             {
                 this.stateMachine.ExitCategory(Category, null);
                 return;
@@ -94,7 +94,7 @@ namespace Unit.Character
             {
                 unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 return;
-            }
+            }*/
 
             Cooldown();
             Attack();
@@ -184,6 +184,7 @@ namespace Unit.Character
 
         protected virtual void Fire()
         {
+            FindUnit();
             if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
             {
                 if (health.IsLive)
@@ -202,7 +203,7 @@ namespace Unit.Character
             
             if (countCooldown > cooldown)
             {
-                if (currentTarget)
+                /*if (currentTarget)
                 {
                     if (!currentTarget.TryGetComponent(out IHealth health) || !health.IsLive)
                     {
@@ -216,9 +217,14 @@ namespace Unit.Character
                 else
                 {
                     isAttack = false;
-                }
-
+                }*/
+                this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
+                isApplyDamage = true;
                 countCooldown = 0;
+            }
+            else
+            {
+                unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             }
         }
 

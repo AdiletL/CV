@@ -15,7 +15,7 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            if (currentTarget &&
+            /*if (currentTarget &&
                 !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {
@@ -24,7 +24,7 @@ namespace Unit.Character.Player
             }
                 
             if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
-                unitRenderer.SetColor(Color.yellow);
+                unitRenderer.SetColor(Color.yellow);*/
         }
 
         public override void Exit()
@@ -43,6 +43,7 @@ namespace Unit.Character.Player
         }
         public override void SetTarget(GameObject target)
         {
+            if(target == null) return;
             ClearColorAtTarget();
             
             base.SetTarget(target);

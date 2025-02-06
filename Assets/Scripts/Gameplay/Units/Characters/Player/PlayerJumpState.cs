@@ -85,10 +85,11 @@ namespace Unit.Character.Player
             currentJumpCount++;
             var currentPower = jumpPower;
             if (currentJumpCount >= maxJumpCount)
-                currentPower /= 1.5f;
+                currentPower /= 1.3f;
             
+            var velocity = new Vector3(0, currentPower, 0);
             characterAnimation.ChangeAnimationWithDuration(jumpClip, isForce: true);
-            playerKinematicControl.Jump(currentPower);
+            playerKinematicControl.AddVelocity(velocity);
             playerKinematicControl.ForceUnground();
             ReductionEndurance();
         }

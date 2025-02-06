@@ -2,6 +2,7 @@
 using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Gameplay.Skill
 {
@@ -41,10 +42,11 @@ namespace Gameplay.Skill
             if (dashTimer > 0f)
             {
                 dashTimer -= Time.deltaTime;
-                playerKinematicControl.SetVelocity(GameObject.transform.forward * Speed);
+                playerKinematicControl.AddVelocity(GameObject.transform.forward * Speed);
             }
             else
             {
+                playerKinematicControl.ClearVelocity();
                 isDashing = false;
                 Exit();
             }
