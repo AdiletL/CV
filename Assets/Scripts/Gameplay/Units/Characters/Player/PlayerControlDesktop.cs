@@ -37,7 +37,9 @@ namespace Unit.Character.Player
         private SO_PlayerControlDesktop so_PlayerControlDesktop;
         private StateMachine stateMachine;
 
-        private IClickableObject selectObject;
+        private IClickableObject selectedObject;
+        private UnitRenderer selectedRenderer;
+        private UnitRenderer highlightedRenderer;
         private PlayerSkillInputHandler playerSkillInputHandler;
 
         private RaycastHit[] hits = new RaycastHit[5];
@@ -46,6 +48,10 @@ namespace Unit.Character.Player
 
         private KeyCode jumpKey;
         private int selectObjectMousButton, attackMouseButton;
+        private int hitRayOnObjectCount, hitsCount;
+
+        private const float cooldownHighlighObject = .2f;
+        private float countCooldownHighlighObject;
         
         private bool isJumping;
         private bool isMoving;
@@ -80,16 +86,18 @@ namespace Unit.Character.Player
             float closestDistance = Mathf.Infinity; // Ищем ближайший объект
             GameObject closestHit = null;
 
-            var hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, layerMask);
+            hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, layerMask);
 
             for (int i = 0; i < hitsCount; i++)
             {
-                float targetDistance = Vector3.Distance(ray.origin, hits[i].point);
-                
-                if (targetDistance < closestDistance && hits[i].transform.TryGetComponent(out T component))
+                if (hits[i].transform.TryGetComponent(out T component))
                 {
-                    closestDistance = targetDistance;
-                    closestHit = hits[i].transform.gameObject;
+                    float targetDistance = hits[i].distance;
+                    if (targetDistance < closestDistance)
+                    {
+                        closestDistance = targetDistance;
+                        closestHit = hits[i].transform.gameObject;
+                    }
                 }
             }
 
@@ -207,9 +215,10 @@ namespace Unit.Character.Player
 
         private void ClearSelectObject()
         {
-            selectObject?.UnSelectObject();
-            selectObject?.HideInformation();
-            selectObject = null;
+            selectedObject?.UnSelectObject();
+            selectedObject?.HideInformation();
+            selectedRenderer?.UnSelectedObject();
+            selectedObject = null;
         }
 
         public override void HandleHotkey()
@@ -255,6 +264,40 @@ namespace Unit.Character.Player
             OnHandleInput?.Invoke();
         }
 
+        public override void HandleHighlight()
+        {
+            countCooldownHighlighObject += Time.deltaTime;
+            
+            if(countCooldownHighlighObject < cooldownHighlighObject) return;
+            countCooldownHighlighObject = 0;
+            
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            hitRayOnObjectCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, Layers.CREEP_LAYER | Layers.PLAYER_LAYER);
+
+            UnitRenderer newHighlightedRenderer = null;
+            float closestDistance = Mathf.Infinity;
+
+            for (int i = 0; i < hitRayOnObjectCount; i++)
+            {
+                if (hits[i].transform.TryGetComponent(out UnitRenderer unitRenderer))
+                {
+                    float targetDistance = hits[i].distance;
+                    if (targetDistance < closestDistance)
+                    {
+                        closestDistance = targetDistance;
+                        newHighlightedRenderer = unitRenderer;
+                    }
+                }
+            }
+
+            if (newHighlightedRenderer == highlightedRenderer) return; // Если объект тот же, выходим
+
+            highlightedRenderer?.UnHighlightedObject(); // Снимаем подсветку с предыдущего
+            highlightedRenderer = newHighlightedRenderer;
+            highlightedRenderer?.HighlightedObject();   // Подсвечиваем новый
+        }
+
+
         private void TriggerSelectCell()
         {
             if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))
@@ -281,14 +324,18 @@ namespace Unit.Character.Player
         {
             if (tryGetHitPosition<IClickableObject>(out GameObject hitObject, Layers.EVERYTHING_LAYER))
             {
-                var unit = hitObject.GetComponent<IClickableObject>();
-                unit.UpdateInformation();
-                if (selectObject == null || selectObject != unit)
+                var clickableObject = hitObject.GetComponent<IClickableObject>();
+                clickableObject.UpdateInformation();
+                if (selectedObject == null || selectedObject != clickableObject)
                 {
-                    selectObject?.UnSelectObject();
-                    selectObject = unit;
-                    selectObject.ShowInformation();
-                    selectObject.SelectObject();
+                    selectedObject?.UnSelectObject();
+                    selectedRenderer?.UnSelectedObject();
+                    
+                    selectedObject = clickableObject;
+                    selectedObject.ShowInformation();
+                    selectedObject.SelectObject();
+                    selectedRenderer = hitObject.GetComponent<UnitRenderer>();
+                    selectedRenderer.SelectedObject();
                 }
                 else
                 {

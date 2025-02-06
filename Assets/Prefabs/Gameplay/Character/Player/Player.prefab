@@ -3481,7 +3481,6 @@ MonoBehaviour:
   so_Sword: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}
   so_Bow: {fileID: 11400000, guid: 0529271f169c5f34385e5629b95f7f14, type: 2}
   weaponParent: {fileID: 2888781842470922690}
-  rangeVisual: {fileID: 571700094542742763}
   currentStateCategory: 0
   currentStateName: 
 --- !u!114 &1634422324230795542
@@ -3638,6 +3637,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRenderers:
   - {fileID: 2154833952339412076}
+  - {fileID: 3038800472530841984}
+  - {fileID: 2805917253128922478}
+  rangeVisual: {fileID: 571700094542742763}
+  selectedObject: {fileID: 1290455938804012064}
 --- !u!136 &1836599491007769117
 CapsuleCollider:
   m_ObjectHideFlags: 8

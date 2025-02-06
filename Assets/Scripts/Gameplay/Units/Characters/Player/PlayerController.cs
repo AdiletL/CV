@@ -35,9 +35,6 @@ namespace Unit.Character.Player
         [SerializeField] private SO_Sword so_Sword;
         [SerializeField] private SO_Bow so_Bow;
         [SerializeField] private Transform weaponParent;
-
-        [Space]
-        [SerializeField] private GameObject rangeVisual;
         
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
@@ -46,7 +43,7 @@ namespace Unit.Character.Player
         private PlayerStateFactory playerStateFactory;
         private PlayerSwitchStateFactory playerSwitchStateFactory;
         
-        private IControl playerControlDesktop;
+        private CharacterControlDesktop playerControlDesktop;
         private CharacterSwitchMoveState characterSwitchMoveState;
         private CharacterSwitchAttackState characterSwitchAttackState;
         private CharacterEndurance characterEndurance;
@@ -144,6 +141,7 @@ namespace Unit.Character.Player
         {
             base.BeforeCreateStates();
 
+            unitRenderer = GetComponentInUnit<UnitRenderer>();
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             characterEndurance = GetComponentInUnit<PlayerEndurance>();
             
@@ -306,6 +304,7 @@ namespace Unit.Character.Player
                 }
             }
 
+            playerControlDesktop?.HandleHighlight();
             playerControlDesktop?.HandleHotkey();
             playerControlDesktop?.HandleInput();
             StateMachine?.Update();
@@ -320,7 +319,8 @@ namespace Unit.Character.Player
         public void SetWeapon(Weapon weapon)
         {
             characterSwitchAttackState.SetWeapon(weapon);
-            rangeVisual.transform.localScale = Vector3.one * (weapon.Range * 2);
+            unitRenderer.SetRangeScale(weapon.Range);
+            unitRenderer.ShowRangeVisual();
         }
 
         private void OnChangedState(Machine.IState state)

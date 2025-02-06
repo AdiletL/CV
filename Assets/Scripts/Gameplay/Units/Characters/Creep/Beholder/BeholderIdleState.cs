@@ -17,6 +17,12 @@ namespace Unit.Character.Creep
         public override void Update()
         {
             base.Update();
+            if (currentTarget != null)
+            {
+                creepSwitchAttackState.SetTarget(currentTarget);
+                creepSwitchAttackState.ExitCategory(Category);
+            }
+            
             CheckEnemy();
         }
 
@@ -48,14 +54,6 @@ namespace Unit.Character.Creep
                     creepSwitchAttackState.ExitCategory(Category);
 
                 countCheckEnemyCooldown = 0;
-            }
-            else
-            {
-                if (currentTarget != null)
-                {
-                    creepSwitchAttackState.SetTarget(currentTarget);
-                    creepSwitchAttackState.ExitCategory(Category);
-                }
             }
         }
     }

@@ -15,7 +15,6 @@ namespace Unit.Cell
        [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
 
         private PhotonView photonView;
-        private UnitRenderer unitRenderer;
         private Collider[] colliders = new Collider[1];
 
         public bool IsBlocked()
@@ -40,12 +39,6 @@ namespace Unit.Cell
             var colliderCount =
                 Physics.OverlapSphereNonAlloc(transform.position, .3f, this.colliders, ~Layers.CELL_LAYER);
             return colliderCount == 0;
-        }
-        
-        public override void Initialize()
-        {
-            base.Initialize();
-            unitRenderer = GetComponent<UnitRenderer>();
         }
 
         public override void Appear()

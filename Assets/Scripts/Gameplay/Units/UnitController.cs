@@ -18,6 +18,7 @@ namespace Unit
         [field: SerializeField, Space(10)] public GameObject VisualParent { get; protected set; }
 
         protected UnitCenter unitCenter;
+        protected UnitRenderer unitRenderer;
         
         public T GetComponentInUnit<T>() where T: class
         {
@@ -33,6 +34,11 @@ namespace Unit
         {
             components.Initialize();
             unitCenter = GetComponentInUnit<UnitCenter>();
+            if (TryGetComponentInUnit(out unitRenderer))
+            {
+                diContainer.Inject(unitRenderer);
+                unitRenderer.Initialize();
+            }
         }
 
         public abstract void Appear();

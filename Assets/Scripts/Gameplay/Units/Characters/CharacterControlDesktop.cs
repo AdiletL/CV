@@ -27,6 +27,11 @@ namespace Unit.Character
         public override void HandleInput()
         {
         }
+
+        public virtual void HandleHighlight()
+        {
+            
+        }
     }
 
     public class CharacterControlDesktopBuilder : UnitControlDesktopBuilder<CharacterControlDesktop>

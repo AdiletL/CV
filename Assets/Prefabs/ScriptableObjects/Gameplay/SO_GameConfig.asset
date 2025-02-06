@@ -17,4 +17,5 @@ MonoBehaviour:
   <CooldownReductionEndurance>k__BackingField: 0.2
   <AmountReductionEndurance>k__BackingField: 0.01
   <BaseWaitTimeTrap>k__BackingField: 0.3
+  <HighlightedMaterial>k__BackingField: {fileID: 2100000, guid: c44e347a12c67184cbf1e39631e44732, type: 2}
   <RadiusCell>k__BackingField: 0.3
