@@ -190,7 +190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8510484712835594185, guid: 24ba9154733adc145aca3ca7f45079a1, type: 3}
       propertyPath: m_Name
-      value: WorldCanvas Variant
+      value: TextUI Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

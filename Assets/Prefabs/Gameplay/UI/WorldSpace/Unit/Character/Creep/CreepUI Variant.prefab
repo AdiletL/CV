@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 504076760558194513, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
       propertyPath: m_Name
-      value: CharacterUI Variant Variant
+      value: CreepUI Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7850579159582968977, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
       propertyPath: m_LocalPosition.x

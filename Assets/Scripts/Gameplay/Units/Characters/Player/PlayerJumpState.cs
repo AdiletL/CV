@@ -4,21 +4,20 @@ namespace Unit.Character.Player
 {
     public class PlayerJumpState : CharacterJumpState
     {
-        private Gravity gravity;
-        private CharacterController characterController;
+        private PlayerKinematicControl playerKinematicControl;
         private IEndurance endurance;
-        private Vector3 velocity;
 
         private KeyCode jumpKey;
         private int currentJumpCount;
         private int maxJumpCount;
 
-        private readonly float cooldownCheckGround = .05f;
+        private readonly float cooldownCheckGround = .1f;
         private float jumpReductionEndurance;
         private float countCooldownCheckGround;
-        private float currentGravity;
+        private float currentGravity = -9;
 
-        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
+        
+        public void SetPlayerKinematicControl(PlayerKinematicControl control) => playerKinematicControl = control;
         public void SetEndurance(IEndurance endurance) => this.endurance = endurance;
         public void SetJumpKey(KeyCode jumpKey) => this.jumpKey = jumpKey;
         public void SetJumpReductionEndurance(float jumpReductionEndurance) => this.jumpReductionEndurance = jumpReductionEndurance;
@@ -28,8 +27,7 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            gravity = gameObject.GetComponent<Gravity>();
-            currentGravity = gravity.CurrentGravity;
+            SetPlayerKinematicControl(gameObject.GetComponent<PlayerKinematicControl>());
             characterAnimation.AddClip(jumpClip);
         }
 
@@ -60,7 +58,7 @@ namespace Unit.Character.Player
             countCooldownCheckGround += Time.deltaTime;
             if (countCooldownCheckGround > cooldownCheckGround)
             {
-                if (Physics.Raycast(gameObject.transform.position, Vector3.down, .05f))
+                if (playerKinematicControl.IsGrounded)
                 {
                     isCanExit = true;
                     characterAnimation.SetBlock(false);
@@ -80,15 +78,18 @@ namespace Unit.Character.Player
         {
             currentJumpCount = 0;
             countCooldownCheckGround = 0;
-            velocity.y = 0f;
         }
         
         private void StartJump()
         {
             currentJumpCount++;
+            var currentPower = jumpPower;
+            if (currentJumpCount >= maxJumpCount)
+                currentPower /= 1.5f;
+            
             characterAnimation.ChangeAnimationWithDuration(jumpClip, isForce: true);
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * currentGravity);
-            gravity.SetVelocityY(velocity.y);
+            playerKinematicControl.Jump(currentPower);
+            playerKinematicControl.ForceUnground();
             ReductionEndurance();
         }
         
@@ -122,14 +123,6 @@ namespace Unit.Character.Player
         {
             if(state is PlayerJumpState playerJumpState)
                 playerJumpState.SetJumpReductionEndurance(jumpReductionEndurance);
-            
-            return this;
-        }
-
-        public PlayerJumpStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if(state is PlayerJumpState playerJumpState)
-                playerJumpState.SetCharacterController(characterController);
             
             return this;
         }

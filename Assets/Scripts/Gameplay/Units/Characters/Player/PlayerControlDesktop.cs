@@ -28,13 +28,13 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeyses;
         private event Action OnHandleInput;
         
+        private PlayerKinematicControl playerKinematicControl;
         private PhotonView photonView;
         private PlayerController playerController;
         private PlayerStateFactory playerStateFactory;
         private CharacterSwitchAttackState characterSwitchAttack;
         private CharacterSwitchMoveState characterSwitchMove;
         private SO_PlayerControlDesktop so_PlayerControlDesktop;
-        private CharacterController characterController;
         private StateMachine stateMachine;
 
         private IClickableObject selectObject;
@@ -58,10 +58,11 @@ namespace Unit.Character.Player
             UnRegisterInteraction();
         }
         
+        
+        public void SetPlayerKinematicControl(PlayerKinematicControl playerControl) => this.playerKinematicControl = playerControl;
         public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
-        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
         public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
             this.characterSwitchAttack = characterSwitchAttackState;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
@@ -150,7 +151,8 @@ namespace Unit.Character.Player
 
         private void InitializeSkillInputHandler()
         {
-            playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, this, characterController);
+            playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, 
+                this, playerKinematicControl);
             diContainer.Inject(playerSkillInputHandler);
             playerSkillInputHandler.Initialize();
         }
@@ -305,6 +307,12 @@ namespace Unit.Character.Player
         {
         }
 
+        public PlayerControlDesktopBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.SetPlayerKinematicControl(playerKinematicControl);
+            return this;
+        }
         public PlayerControlDesktopBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
@@ -351,13 +359,6 @@ namespace Unit.Character.Player
             return this;
         }
 
-        public PlayerControlDesktopBuilder SetCharacterController(CharacterController characterController)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetCharacterController(characterController);
-            return this;
-        }
-        
         public PlayerControlDesktopBuilder SetEnemyLayer(LayerMask enemyLayer)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)

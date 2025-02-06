@@ -15,7 +15,7 @@ namespace Gameplay.Factory.Character.Player
     {
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         
-        private CharacterController characterController;
+        private PlayerKinematicControl playerKinematicControl;
         private StateMachine stateMachine;
         private PhotonView photonView;
         private Transform weaponParent;
@@ -28,11 +28,11 @@ namespace Gameplay.Factory.Character.Player
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
         
+        public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMoveState = characterSwitchMoveState;
         public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) => this.characterSwitchAttackState = characterSwitchAttackState;
         public void SetCharacterEndurance(CharacterEndurance characterEndurance) => this.characterEndurance = characterEndurance;
@@ -114,7 +114,6 @@ namespace Gameplay.Factory.Character.Player
         private PlayerRunToTargetState CreateRunState()
         {
             return (PlayerRunToTargetState)new PlayerRunToTargetStateBuilder()
-                .SetCharacterController(characterController)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
@@ -131,7 +130,7 @@ namespace Gameplay.Factory.Character.Player
         private PlayerRunState CreateRunStateOrig()
         {
             return (PlayerRunState)new PlayerRunStateBuilder()
-                .SetCharacterController(characterController)
+                .SetPlayerKinematicControl(playerKinematicControl)
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
@@ -151,10 +150,9 @@ namespace Gameplay.Factory.Character.Player
                 .SetEndurance(characterEndurance)
                 .SetJumpKey(so_GameHotkeys.JumpKey)
                 .SetReductionEndurance(so_PlayerMove.JumpInfo.BaseReductionEndurance)
-                .SetCharacterController(characterController)
                 .SetMaxJumpCount(so_PlayerMove.JumpInfo.MaxCount)
                 .SetJumpClip(so_PlayerMove.JumpInfo.Clip)
-                .SetJumpHeight(so_PlayerMove.JumpInfo.Height)
+                .SetJumpPower(so_PlayerMove.JumpInfo.Power)
                 .SetGameObject(gameObject)
                 .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
@@ -195,14 +193,7 @@ namespace Gameplay.Factory.Character.Player
                 playerStateFactory.SetCharacterAnimation(characterAnimation);
             return this;
         }
-
-        public PlayerStateFactoryBuilder SetCharacterController(CharacterController characterController)
-        {
-            if(factory is PlayerStateFactory playerStateFactory)
-                playerStateFactory.SetCharacterController(characterController);
-            return this;
-        }
-
+        
         public PlayerStateFactoryBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
         {
             if(factory is PlayerStateFactory playerStateFactory)
@@ -221,6 +212,13 @@ namespace Gameplay.Factory.Character.Player
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetWeaponParent(parent);
+            return this;
+        }
+        
+        public PlayerStateFactoryBuilder SetKPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerKinematicControl(playerKinematicControl);
             return this;
         }
     }

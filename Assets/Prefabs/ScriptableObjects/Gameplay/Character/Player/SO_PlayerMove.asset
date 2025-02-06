@@ -23,6 +23,6 @@ MonoBehaviour:
   <BaseRunReductionEndurance>k__BackingField: 0.01
   <JumpInfo>k__BackingField:
     Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
-    Height: 1.4
+    Power: 6
     MaxCount: 2
     BaseReductionEndurance: 0.1

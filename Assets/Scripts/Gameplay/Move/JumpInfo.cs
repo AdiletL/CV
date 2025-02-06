@@ -7,7 +7,7 @@ namespace Movement
     public class JumpInfo
     {
         public AnimationClip Clip;
-        public float Height = 1.5f;
+        public float Power = 1.5f;
         public int MaxCount = 1;
         public float BaseReductionEndurance = .1f;
     }

@@ -21,19 +21,18 @@ namespace Unit.Character.Player
 
         private readonly GameObject gameObject;
         private readonly StateMachine stateMachine;
-        private readonly CharacterController characterController;
         private readonly CharacterControlDesktop characterControlDesktop;
+        private readonly PlayerKinematicControl playerKinematicControl;
         
         private Dictionary<InputType, int> blockedInputs = new();
         private Dictionary<SkillType, int> blockedSkills = new();
 
         public PlayerSkillInputHandler(GameObject gameObject, StateMachine stateMachine, 
-            CharacterControlDesktop characterControlDesktop, CharacterController characterController)
+            CharacterControlDesktop characterControlDesktop, PlayerKinematicControl playerKinematicControl)
         {
             this.gameObject = gameObject;
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
-            this.characterController = characterController;
         }
 
         private async UniTask<Dash> CreateDash()
@@ -42,7 +41,7 @@ namespace Unit.Character.Player
             if(!so_Dash) return null;
 
             return (Dash)new DashBuilder()
-                .SetCharacterController(characterController)
+                .SetPlayerKinematicControl(playerKinematicControl)
                 .SetDuration(so_Dash.DashDuration)
                 .SetSpeed(so_Dash.DashSpeed)
                 .SetBlockedInputType(so_Dash.BlockedInputType)

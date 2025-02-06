@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4732171441596646458, guid: d704ca8b87e738543bc9be1be8847999, type: 3}
       propertyPath: m_Name
-      value: Text (TMP) Variant
+      value: DescriptionTxt Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4955390780674837758, guid: d704ca8b87e738543bc9be1be8847999, type: 3}
       propertyPath: m_text

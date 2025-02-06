@@ -11,12 +11,12 @@ namespace Unit.Character
         protected GameObject gameObject;
         protected AnimationClip jumpClip;
         protected CharacterAnimation characterAnimation;
-        protected float jumpHeight;
+        protected float jumpPower;
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetJumpClip(AnimationClip animationClip) => jumpClip = animationClip;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetJumpHeight(float jumpHeight) => this.jumpHeight = jumpHeight;
+        public void SetJumpPower(float jumpPower) => this.jumpPower = jumpPower;
         
         
         public override void Initialize()
@@ -57,9 +57,9 @@ namespace Unit.Character
             return this;
         }
 
-        public CharacterJumpStateBuilder SetJumpHeight(float value)
+        public CharacterJumpStateBuilder SetJumpPower(float value)
         {
-            state.SetJumpHeight(value);
+            state.SetJumpPower(value);
             return this;
         }
     }

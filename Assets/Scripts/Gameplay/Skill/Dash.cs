@@ -1,4 +1,5 @@
 ﻿using System;
+using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -9,9 +10,11 @@ namespace Gameplay.Skill
         private float dashTimer;
         private bool isDashing;
         
-        public CharacterController CharacterController { get; set; }
+        private PlayerKinematicControl playerKinematicControl;
         public float Duration { get; set; }
         public float Speed { get; set; }
+        
+        public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
 
         public override void Execute(Action exitCallback = null)
         {
@@ -38,7 +41,7 @@ namespace Gameplay.Skill
             if (dashTimer > 0f)
             {
                 dashTimer -= Time.deltaTime;
-                CharacterController.Move(GameObject.transform.forward * Speed * Time.deltaTime);
+                playerKinematicControl.SetVelocity(GameObject.transform.forward * Speed);
             }
             else
             {
@@ -54,12 +57,13 @@ namespace Gameplay.Skill
         {
         }
         
-        public DashBuilder SetCharacterController(CharacterController characterController)
+        public DashBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
         {
             if(skill is Dash dash)
-                dash.CharacterController = characterController;
+                dash.SetPlayerKinematicControl(playerKinematicControl);
             return this;
         }
+
         public DashBuilder SetDuration(float duration)
         {
             if(skill is Dash dash)

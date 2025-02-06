@@ -1,4 +1,5 @@
 using System;
+using Unit.Character.Player;
 using UnityEngine;
 
 public abstract class Gravity : MonoBehaviour
@@ -6,7 +7,11 @@ public abstract class Gravity : MonoBehaviour
     protected Vector3 velocity;
     protected bool isGravity = true;
 
+    public PlayerKinematicControl PlayerKinematicControl;
     public float CurrentGravity { get; protected set; } = 1;
+
+    public abstract bool IsGrounded { get; }
+
     
     public void ActivateGravity()
     {
@@ -17,9 +22,9 @@ public abstract class Gravity : MonoBehaviour
         this.isGravity = false;
     }
 
-    public void SetVelocityY(float velocityY)
+    public virtual void AddVelocity(Vector3 velocity)
     {
-        velocity.y = velocityY;
+        this.velocity += velocity;
     }
     
     protected abstract void UseGravity();

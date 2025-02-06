@@ -71,10 +71,7 @@ namespace Gameplay.Manager
             diContainer.Inject(playerController);
             diContainer.Bind<PlayerController>().FromInstance(playerController);
             
-            var characterController = playerGameObject.GetComponent<CharacterController>();
-            characterController.enabled = false;
             playerController.Initialize();
-            characterController.enabled = true;
 
             gameUnits.AddUnits(playerController.gameObject);
             playerController.Appear();

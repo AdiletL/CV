@@ -7,25 +7,23 @@ namespace Unit.Character.Player
     public class PlayerRunState : CharacterRunState
     {
         private PhotonView photonView;
-        private CharacterController characterController;
-        private Rotation rotation;
+        private PlayerKinematicControl playerKinematicControl;
         
         private Vector3 directionMovement;
         private float runReductionEndurance;
         private float rotationSpeed;
         
-        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
+        public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetRotationSpeed(float speed) => this.rotationSpeed = speed;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
 
-
         public override void Initialize()
         {
             base.Initialize();
-            rotation = new Rotation(gameObject.transform, rotationSpeed);
+            playerKinematicControl.SetRotationSpeed(rotationSpeed);
         }
-        
+
         public override void Subscribe()
         {
             base.Subscribe();
@@ -43,14 +41,11 @@ namespace Unit.Character.Player
             base.Update();
             
             CheckDirectionMovement();
-            if (directionMovement.magnitude == 0)
-            {
-                stateMachine.ExitCategory(Category, null);
-                return;
-            }
-            
             Rotate();
             ExecuteMovement();
+            
+            if (directionMovement.magnitude == 0)
+                stateMachine.ExitCategory(Category, null);
         }
         
         private void OnExitCategory(Machine.IState state)
@@ -67,22 +62,21 @@ namespace Unit.Character.Player
             if (Input.GetKey(KeyCode.D)) directionMovement.x = 1;
             if (Input.GetKey(KeyCode.W)) directionMovement.z = 1;
             if (Input.GetKey(KeyCode.S)) directionMovement.z = -1;
+            
+            if(directionMovement.magnitude > 0)
+                directionMovement.Normalize();
         }
         
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            if (directionMovement.magnitude > 0)
-            {
-                characterController.Move(directionMovement * (MovementSpeed * Time.deltaTime));
-                unitEndurance.RemoveEndurance(runReductionEndurance);
-            }
+            playerKinematicControl.SetVelocity(directionMovement * (MovementSpeed));
+            unitEndurance.RemoveEndurance(runReductionEndurance);
         }
 
         private void Rotate()
         {
-            if (directionMovement.magnitude > 0)
-                rotation.RotateToDirection(directionMovement);
+            playerKinematicControl.SetDirectionRotate(directionMovement);
         }
     }
 
@@ -90,13 +84,6 @@ namespace Unit.Character.Player
     {
         public PlayerRunStateBuilder() : base(new PlayerRunState())
         {
-        }
-
-        public PlayerRunStateBuilder SetCharacterController(CharacterController characterController)
-        {
-            if(state is PlayerRunState playerRunStateOrig)
-                playerRunStateOrig.SetCharacterController(characterController);
-            return this;
         }
         
         public PlayerRunStateBuilder SetRotationSpeed(float speed)
@@ -117,6 +104,13 @@ namespace Unit.Character.Player
         {
             if(state is PlayerRunState playerRunStateOrig)
                 playerRunStateOrig.SetRunReductionEndurance(reductionEndurance);
+            return this;
+        }
+        
+        public PlayerRunStateBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        {
+            if(state is PlayerRunState playerRunStateOrig)
+                playerRunStateOrig.SetPlayerKinematicControl(playerKinematicControl);
             return this;
         }
     }

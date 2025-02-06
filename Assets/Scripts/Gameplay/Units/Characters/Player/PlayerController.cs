@@ -18,7 +18,6 @@ namespace Unit.Character.Player
     [RequireComponent(typeof(PlayerEndurance))]
     [RequireComponent(typeof(PlayerAnimation))]
     [RequireComponent(typeof(PlayerExperience))]
-    [RequireComponent(typeof(PlayerGravity))]
     [RequireComponent(typeof(EffectHandler))]
     [RequireComponent(typeof(SkillHandler))]
     
@@ -55,7 +54,7 @@ namespace Unit.Character.Player
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
         
-        private CharacterController characterController;
+        private PlayerKinematicControl playerKinematicControl;
         
         protected override UnitInformation CreateUnitInformation()
         {
@@ -70,7 +69,7 @@ namespace Unit.Character.Player
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
-                .SetCharacterController(characterController)
+                .SetPlayerKinematicControl(playerKinematicControl)
                 .SetCharacterSwitchAttack(characterSwitchAttackState)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
                 .SetPhotonView(photonView)
@@ -86,7 +85,7 @@ namespace Unit.Character.Player
         private PlayerStateFactory CreatePlayerStateFactory()
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
-                .SetCharacterController(characterController)
+                .SetKPlayerKinematicControl(playerKinematicControl)
                 .SetCharacterEndurance(characterEndurance)
                 .SetPhotonView(photonView)
                 .SetPlayerAttackConfig(so_PlayerAttack)
@@ -103,7 +102,6 @@ namespace Unit.Character.Player
         {
             return (PlayerSwitchStateFactory)new PlayerSwitchStateFactoryBuilder()
                 .SetCharacterState(playerStateFactory)
-                .SetCharacterController(characterController)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCharacterEndurance(characterEndurance)
                 .SetPhotonView(photonView)
@@ -145,8 +143,8 @@ namespace Unit.Character.Player
         protected override void BeforeCreateStates()
         {
             base.BeforeCreateStates();
-            
-            characterController = GetComponent<CharacterController>();
+
+            playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             characterEndurance = GetComponentInUnit<PlayerEndurance>();
             
             characterAnimation = GetComponentInUnit<PlayerAnimation>();
