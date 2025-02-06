@@ -1,21 +1,3 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// An attribute to add to static methods to they can be called via the MMDebugMenu's command line
-    /// </summary>
-    [AttributeUsage(System.AttributeTargets.Method, AllowMultiple = false)]
-    public class MMDebugLogCommandArgumentCountAttribute : System.Attribute
-    {
-        public readonly int ArgumentCount;
-
-        public MMDebugLogCommandArgumentCountAttribute(int argumentCount)
-        {
-            this.ArgumentCount = argumentCount;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a2402f4d09cc1b2e705df6e06457b283aab9061eed914e73a3d8e2fad36fea7b
+size 642

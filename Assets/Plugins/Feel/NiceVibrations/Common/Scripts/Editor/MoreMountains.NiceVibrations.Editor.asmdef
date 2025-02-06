@@ -1,17 +1,3 @@
-{
-    "name": "MoreMountains.NiceVibrations.Editor",
-    "references": [
-        "GUID:865b414a121ed594e91db2e09f65d38c",
-        "GUID:041029188fa88c54f9efffc039b6a1c9"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": []
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:89c3a6e91d546e5a33cffa9afa35c1acb0695184ee426be092abf9e1b959490c
+size 450

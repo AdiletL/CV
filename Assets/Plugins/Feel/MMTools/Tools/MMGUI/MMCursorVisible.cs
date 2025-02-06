@@ -1,35 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using UnityEngine.UI;
-using MoreMountains.Tools;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Add this class to an object and it'll make sure that the cursor is either visible or invisible
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/GUI/MMCursorVisible")]
-    public class MMCursorVisible : MonoBehaviour
-    {
-        /// The possible states of the cursor
-        public enum CursorVisibilities { Visible, Invisible }
-        /// Whether that cursor should be visible or invisible
-        public CursorVisibilities CursorVisibility = CursorVisibilities.Visible;
-
-        /// <summary>
-        /// On Update we change the status of our cursor accordingly
-        /// </summary>
-        protected virtual void Update()
-        {
-            if (CursorVisibility == CursorVisibilities.Visible)
-            {
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.visible = false;
-            }
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:57107fd8e892ac88b1910686f9f08bff97873f9a0557dcfd6ee2988d2be02993
+size 1092

@@ -1,30 +1,3 @@
-﻿using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// An event used to broadcast button events from a MMDebugMenu
-    /// </summary>
-    public struct MMDebugMenuButtonEvent
-    {
-        public enum EventModes { FromButton, SetButton }
-
-        public delegate void Delegate(string buttonEventName, bool active = true, EventModes eventMode = EventModes.FromButton);
-        static private event Delegate OnEvent;
-
-        static public void Register(Delegate callback)
-        {
-            OnEvent += callback;
-        }
-
-        static public void Unregister(Delegate callback)
-        {
-            OnEvent -= callback;
-        }
-
-        static public void Trigger(string buttonEventName, bool active = true, EventModes eventMode = EventModes.FromButton)
-        {
-            OnEvent?.Invoke(buttonEventName, active, eventMode);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7bef3e452ca9f2dc22b91de4f8c7d8eec91a65cacf48e6d789f835b122d4daf5
+size 908

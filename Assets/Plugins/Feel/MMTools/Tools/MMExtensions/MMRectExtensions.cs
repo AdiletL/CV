@@ -1,24 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Rect extensions
-    /// </summary>
-    public static class RectExtensions
-    {
-        /// <summary>
-        /// Returns true if this rectangle intersects the other specified rectangle
-        /// </summary>
-        /// <param name="thisRectangle"></param>
-        /// <param name="otherRectangle"></param>
-        /// <returns></returns>
-        public static bool MMIntersects(this Rect thisRectangle, Rect otherRectangle)
-        {
-            return !((thisRectangle.x > otherRectangle.xMax) || (thisRectangle.xMax < otherRectangle.x) || (thisRectangle.y > otherRectangle.yMax) || (thisRectangle.yMax < otherRectangle.y));
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba643312c2d5b815b97206f5cc58592446d7345ff758a5ffb1400cd7002ba0e9
+size 833

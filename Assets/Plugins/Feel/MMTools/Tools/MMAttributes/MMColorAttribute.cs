@@ -1,17 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-
-namespace MoreMountains.Tools
-{
-    public class MMColorAttribute : PropertyAttribute
-    {
-        public Color color;
-
-        public MMColorAttribute(float red = 1, float green = 0, float blue = 0)
-        {
-            this.color = new Color(red, green, blue, 1);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cdc23f97b214491a641c125b50a8652cd003ffe327c65f2c0406776f310ba860
+size 388

@@ -1,27 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// A class used to expose a beat level from a target MMAudioAnalyzer, to be broadcasted by a MMAudioBroadcaster
-    /// </summary>
-    public class MMRadioSignalAudioAnalyzer : MMRadioSignal
-    {
-        [Header("Audio Analyzer")]
-        /// the MMAudioAnalyzer to read the value on
-        public MMAudioAnalyzer TargetAnalyzer;
-        /// the ID of the beat to listen to
-        public int BeatID;
-
-        /// <summary>
-        /// On Shake, we output our beat value
-        /// </summary>
-        protected override void Shake()
-        {
-            base.Shake();
-            CurrentLevel = TargetAnalyzer.Beats[BeatID].CurrentValue * GlobalMultiplier;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6865ebbb30461326f6c9c058b0976a84ee886c0258c58f11e9c39a756ca0c395
+size 844

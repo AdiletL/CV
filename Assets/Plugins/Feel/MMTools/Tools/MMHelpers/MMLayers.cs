@@ -1,21 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace MoreMountains.Tools
-{	
-	public class MMLayers  
-	{
-		public static bool LayerInLayerMask(int layer, LayerMask layerMask)
-		{
-			if(((1 << layer) & layerMask) != 0)	
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4827b9aa4a27ba1aea29b93b4867bc437c355e909396c8f4ecfcf6acecc26191
+size 318

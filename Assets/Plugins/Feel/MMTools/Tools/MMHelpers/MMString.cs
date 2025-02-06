@@ -1,26 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// String helpers
-    /// </summary>
-    public static class MMString 
-    {
-        /// <summary>
-        /// Uppercases the first letter of the parameter string
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static string UppercaseFirst(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-            {
-                return string.Empty;
-            }
-            return char.ToUpper(s[0]) + s.Substring(1);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0241a7550ae054a0cfc6a32adc07b12e147bc15afcb5e469088121c1e05fa6bb
+size 663

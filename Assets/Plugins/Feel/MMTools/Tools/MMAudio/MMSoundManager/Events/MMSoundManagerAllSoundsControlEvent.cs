@@ -1,35 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    public enum MMSoundManagerAllSoundsControlEventTypes
-    {
-        Pause, Play, Stop, Free, FreeAllButPersistent, FreeAllLooping
-    }
-    
-    /// <summary>
-    /// This event will let you pause/play/stop/free all sounds playing through the MMSoundManager at once
-    ///
-    /// Example : MMSoundManagerAllSoundsControlEvent.Trigger(MMSoundManagerAllSoundsControlEventTypes.Stop);
-    /// will stop all sounds playing at once
-    /// </summary>
-    public struct MMSoundManagerAllSoundsControlEvent
-    {
-        public MMSoundManagerAllSoundsControlEventTypes EventType;
-        
-        public MMSoundManagerAllSoundsControlEvent(MMSoundManagerAllSoundsControlEventTypes eventType)
-        {
-            EventType = eventType;
-        }
-
-        static MMSoundManagerAllSoundsControlEvent e;
-        public static void Trigger(MMSoundManagerAllSoundsControlEventTypes eventType)
-        {
-            e.EventType = eventType;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-}
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:d50520a4e28c3276064567c5e8008465b8921ff02700209a97b669823e974668
+size 1147

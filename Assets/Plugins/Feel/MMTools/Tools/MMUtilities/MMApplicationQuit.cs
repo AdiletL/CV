@@ -1,28 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// A super simple mono you can add to an object to call its Quit method, which will force the application to quit.
-    /// </summary>
-    public class MMApplicationQuit : MonoBehaviour
-    {
-        [Header("Debug")]
-        [MMInspectorButton("Quit")] 
-        public bool QuitButton;
-        
-        /// <summary>
-        /// Forces the application to quit
-        /// </summary>
-        public virtual void Quit()
-        {
-            #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-            #else
-                Application.Quit();
-            #endif
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8eaf161c92ae353cf1dc47f890cf490b67097f5eb5988c99f94978ceba3a5657
+size 779

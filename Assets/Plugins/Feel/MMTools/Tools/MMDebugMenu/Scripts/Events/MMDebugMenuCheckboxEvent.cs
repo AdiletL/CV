@@ -1,30 +1,3 @@
-﻿using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// An event used to broadcast checkbox events from a MMDebugMenu
-    /// </summary>
-    public struct MMDebugMenuCheckboxEvent
-    {
-        public enum EventModes { FromCheckbox, SetCheckbox }
-
-        public delegate void Delegate(string checkboxEventName, bool value, EventModes eventMode = EventModes.FromCheckbox);
-        static private event Delegate OnEvent;
-
-        static public void Register(Delegate callback)
-        {
-            OnEvent += callback;
-        }
-
-        static public void Unregister(Delegate callback)
-        {
-            OnEvent -= callback;
-        }
-
-        static public void Trigger(string checkboxEventName, bool value, EventModes eventMode = EventModes.FromCheckbox)
-        {
-            OnEvent?.Invoke(checkboxEventName, value, eventMode);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8c56357b56e50fcb1c05f40702b5b4710e1342ce017ea56cef137146898480d6
+size 909

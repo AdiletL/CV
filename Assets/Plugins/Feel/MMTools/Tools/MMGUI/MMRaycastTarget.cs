@@ -1,23 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Add this class to a UI object to have it act as a raycast target without needing an Image component
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/GUI/MMRaycastTarget")]
-    public class MMRaycastTarget : Graphic
-    {
-        public override void SetVerticesDirty() { return; }
-        public override void SetMaterialDirty() { return; }
-
-        protected override void OnPopulateMesh(VertexHelper vh)
-        {
-            vh.Clear();
-            return;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:712f5bd8ed3796b8d127f7b83ae553ebef96fdf435dc4d3810d2c675185e26e0
+size 656

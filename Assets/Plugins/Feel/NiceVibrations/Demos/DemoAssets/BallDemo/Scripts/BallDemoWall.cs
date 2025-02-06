@@ -1,20 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.NiceVibrations
-{
-    public class BallDemoWall : MonoBehaviour
-    {
-        protected RectTransform _rectTransform;
-        protected BoxCollider2D _boxCollider2D;
-
-        protected virtual void OnEnable()
-        {
-            _rectTransform = this.gameObject.GetComponent<RectTransform>();
-            _boxCollider2D = this.gameObject.GetComponent<BoxCollider2D>();
-
-            _boxCollider2D.size = new Vector2(_rectTransform.rect.size.x , _rectTransform.rect.size.y );
-        }        
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ea1b1af5b883e684b1adc990ed43b045b0402e39fecca8e18377f2d9a296263c
+size 629

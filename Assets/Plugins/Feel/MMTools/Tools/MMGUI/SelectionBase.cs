@@ -1,17 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-
-namespace MoreMountains.Tools
-{	
-	[SelectionBase]
-    /// <summary>
-    /// Add this component to an object and it'll always get selection in scene view, even if you select one of its children
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/GUI/SelectionBase")]
-    public class SelectionBase : MonoBehaviour 
-	{
-
-
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ec55777a497bb6bb9cc8e6e737c2a0b38d574d8f851d5d86625c7afbd575f1a2
+size 415

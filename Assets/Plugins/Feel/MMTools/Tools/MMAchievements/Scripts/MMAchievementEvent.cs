@@ -1,31 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace MoreMountains.Tools
-{
-	/// <summary>
-	/// An event type used to broadcast the fact that an achievement has been unlocked
-	/// </summary>
-	public struct MMAchievementUnlockedEvent
-	{
-		/// the achievement that has been unlocked
-		public MMAchievement Achievement;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="newAchievement">New achievement.</param>
-		public MMAchievementUnlockedEvent(MMAchievement newAchievement)
-		{
-			Achievement = newAchievement;
-        }
-
-        static MMAchievementUnlockedEvent e;
-        public static void Trigger(MMAchievement newAchievement)
-        {
-            e.Achievement = newAchievement;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:66fd3fe8bfd84343861f3ba9863f1b96492f09b0fd7993e66a512e5bba3bb244
+size 837

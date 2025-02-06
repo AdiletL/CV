@@ -1,15 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Feel
-{
-    /// <summary>
-    /// A class used to identify the ball in Feel's Strike demo
-    /// </summary>
-    public class StrikeBall : MonoBehaviour
-    {
-    
-    }    
-}
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:c24d95cab30db5f7a6b946ca8dffe314fba98283b782df9a54a40b7b006693fa
+size 298

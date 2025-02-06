@@ -1,30 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using MoreMountains.Tools;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine.UI;
-
-namespace MoreMountains.Tools
-{
-	[CustomEditor(typeof(MMAchievementList),true)]
-	/// <summary>
-	/// Custom inspector for the MMAchievementList scriptable object. 
-	/// </summary>
-	public class MMAchievementListInspector : Editor 
-	{
-		/// <summary>
-		/// When drawing the GUI, adds a "Reset Achievements" button, that does exactly what you think it does.
-		/// </summary>
-		public override void OnInspectorGUI()
-		{
-			DrawDefaultInspector ();
-			MMAchievementList achievementList = (MMAchievementList)target;
-			if(GUILayout.Button("Reset Achievements"))
-			{
-				achievementList.ResetAchievements();
-			}	
-			EditorUtility.SetDirty (achievementList);
-		}
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1cee8834e2bb531eb200da95be361c9252570fdd9cb63d95fadb9c241e1f086e
+size 841

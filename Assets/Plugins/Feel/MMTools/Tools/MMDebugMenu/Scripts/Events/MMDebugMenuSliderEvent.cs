@@ -1,30 +1,3 @@
-﻿using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// An event used to broadcast slider events from a MMDebugMenu
-    /// </summary>
-    public struct MMDebugMenuSliderEvent
-    {
-        public enum EventModes { FromSlider, SetSlider }
-
-        public delegate void Delegate(string sliderEventName, float value, EventModes eventMode = EventModes.FromSlider);
-        static private event Delegate OnEvent;
-
-        static public void Register(Delegate callback)
-        {
-            OnEvent += callback;
-        }
-
-        static public void Unregister(Delegate callback)
-        {
-            OnEvent -= callback;
-        }
-
-        static public void Trigger(string sliderEventName, float value, EventModes eventMode = EventModes.FromSlider)
-        {
-            OnEvent?.Invoke(sliderEventName, value, eventMode);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:38ea19961fcdf09776b553857f8a783b6c592aa9e4dc1d0212c71ed7d88b0ab2
+size 893

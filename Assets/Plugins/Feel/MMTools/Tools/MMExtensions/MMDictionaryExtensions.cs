@@ -1,35 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Dictionary extensions
-    /// </summary>
-    public static class MMDictionaryExtensions
-    {
-        /// <summary>
-        /// Finds a key (if there's one) that matches the value set in parameters
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="W"></typeparam>
-        /// <param name="dictionary"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static T KeyByValue<T, W>(this Dictionary<T, W> dictionary, T value)
-        {
-            T key = default;
-            foreach (KeyValuePair<T, W> pair in dictionary)
-            {
-                if (pair.Value.Equals(value))
-                {
-                    key = pair.Key;
-                    break;
-                }
-            }
-            return key;
-        }
-    }
-}
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4ab52ca34a14e7e8277762fb9698b5e8d0017ff84aa7aa748a2066f63aeda850
+size 1005

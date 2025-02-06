@@ -1,19 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-using MoreMountains.Tools;
-using UnityEditor;
-
-namespace MoreMountains.Tools
-{	
-	public static class MMAchievementMenu 
-	{
-		[MenuItem("Tools/More Mountains/Reset all achievements", false,21)]
-		/// <summary>
-		/// Adds a menu item to enable help
-		/// </summary>
-		private static void EnableHelpInInspectors()
-		{
-			MMAchievementManager.ResetAllAchievements ();
-		}
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5954579a551bf66439d8ce2bd91e7f01825593f9f22021a90161001f9e6c6d6a
+size 438

@@ -1,23 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// A test class used to demonstrate how MMObservable works in the MMObservableTest demo scene  
-    /// </summary>
-    public class MMObservableDemoSubject : MonoBehaviour
-    {
-        /// a public float we expose, outputting the x position of our object
-        public MMObservable<float> PositionX = new MMObservable<float>();
-
-        /// <summary>
-        /// On Update we update our x position
-        /// </summary>
-        protected virtual void Update()
-        {
-            PositionX.Value = this.transform.position.x;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9de2b6bed360ba4f84f70f5e1ddadaf53946ed2358a7abac2f69842ec1e4291
+size 709

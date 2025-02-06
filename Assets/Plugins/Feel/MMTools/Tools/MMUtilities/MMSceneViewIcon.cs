@@ -1,17 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Add this class to a gameobject and it'll display its name on the scene view, selected or not.
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/Icons/MMSceneViewIcon")]
-
-    public class MMSceneViewIcon : MonoBehaviour
-	{
-		  
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3ddfbde6bf91972f701adc0075b70c9460c1c0100ab709c99493427e82e43f61
+size 405

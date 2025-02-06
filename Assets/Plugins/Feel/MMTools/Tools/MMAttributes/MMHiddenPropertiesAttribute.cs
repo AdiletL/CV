@@ -1,21 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-namespace MoreMountains.Tools
-{
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public class MMHiddenPropertiesAttribute : Attribute
-    {
-        public string[] PropertiesNames;
-
-        public MMHiddenPropertiesAttribute(params string[] propertiesNames)
-        {
-            PropertiesNames = propertiesNames;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7151616b28e944dbff54f155156952696970ab91d943865f9ce907b74d526b0c
+size 524

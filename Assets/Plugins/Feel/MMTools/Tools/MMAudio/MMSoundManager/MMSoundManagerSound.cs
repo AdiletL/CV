@@ -1,23 +1,3 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// A simple struct used to store information about the sounds played by the MMSoundManager
-    /// </summary>
-    [Serializable]
-    public struct MMSoundManagerSound
-    {
-        /// the ID of the sound 
-        public int ID;
-        /// the track the sound is being played on
-        public MMSoundManager.MMSoundManagerTracks Track;
-        /// the associated audiosource
-        public AudioSource Source;
-        /// whether or not this sound will play over multiple scenes
-        public bool Persistent;
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:68c70664f7343d1f2030f337bbe6714abcaa6758564f60b7438ac19e423d2883
+size 696

@@ -1,21 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using MoreMountains.Tools;
-using UnityEngine.EventSystems;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Add this bar to an object and link it to a bar (possibly the same object the script is on), and you'll be able to resize the bar object based on a current value, located between a min and max value.
-    /// See the HealthBar.cs script for a use case
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/GUI/MMGetFocusOnEnable")]
-    public class MMGetFocusOnEnable : MonoBehaviour
-	{
-		protected virtual void OnEnable()
-		{
-			EventSystem.current.SetSelectedGameObject(this.gameObject, null);
-		}
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ed8187ad77bec7a068677b4e3b9c9ea43bfa1151ceac5fa124c4ba562d1e9de2
+size 719

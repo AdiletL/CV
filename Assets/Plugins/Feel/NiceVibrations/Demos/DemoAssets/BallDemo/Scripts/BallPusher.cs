@@ -1,27 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.NiceVibrations
-{
-    public class BallPusher : MonoBehaviour
-    {
-        public float Force = 5f;
-        public BallDemoBall TargetBall;
-        protected Vector2 _direction;
-
-        protected virtual void OnTriggerEnter2D(Collider2D collider)
-        {
-            if (collider.gameObject != TargetBall.gameObject)
-            {
-                return;
-            }
-
-            _direction = (collider.transform.position - this.transform.position).normalized;
-            _direction.y = 1f;
-            collider.attachedRigidbody.linearVelocity = Vector2.zero;
-            collider.attachedRigidbody.AddForce(_direction * Force);
-            TargetBall.HitPusher();
-        }        
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:441c48fcb2e96633ade049c66d3656647f2683d64837be1387ec479ae6d28601
+size 832

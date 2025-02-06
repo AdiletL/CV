@@ -1,18 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// A class used to bind a text item to a MMDebugMenu
-    /// </summary>
-    public class MMDebugMenuItemText : MonoBehaviour
-    {
-        [Header("Bindings")]
-        /// a text comp used to display the text
-        [TextArea]
-        public Text ContentText;
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:769a44085ceb8b38e15b3b84399ba42dd6e60a578ae34a48e51f91152e565005
+size 447

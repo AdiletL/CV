@@ -1,18 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-
-namespace MoreMountains.Tools
-{
-	public static class MMGUI 
-	{
-		public static void SetSize(RectTransform rectTransform, Vector2 newSize) 
-		{
-	        Vector2 currSize = rectTransform.rect.size;
-	        Vector2 sizeDiff = newSize - currSize;
-	        rectTransform.offsetMin = rectTransform.offsetMin - new Vector2(sizeDiff.x * rectTransform.pivot.x, sizeDiff.y * rectTransform.pivot.y);
-	        rectTransform.offsetMax = rectTransform.offsetMax + new Vector2(sizeDiff.x * (1.0f - rectTransform.pivot.x), sizeDiff.y * (1.0f - rectTransform.pivot.y));
-	    }
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:94b2e88acee84db80f6ce26a1294901359fcb4aa17d2902952cec8f565f101b6
+size 667

@@ -1,36 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    public enum MMSoundManagerEventTypes
-    {
-        SaveSettings,
-        LoadSettings,
-        ResetSettings
-    }
-    
-    /// <summary>
-    /// This event will let you trigger a save/load/reset on the MMSoundManager settings
-    ///
-    /// Example : MMSoundManagerEvent.Trigger(MMSoundManagerEventTypes.SaveSettings);
-    /// will save settings. 
-    /// </summary>
-    public struct MMSoundManagerEvent
-    {
-        public MMSoundManagerEventTypes EventType;
-        
-        public MMSoundManagerEvent(MMSoundManagerEventTypes eventType)
-        {
-            EventType = eventType;
-        }
-
-        static MMSoundManagerEvent e;
-        public static void Trigger(MMSoundManagerEventTypes eventType)
-        {
-            e.EventType = eventType;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f159a93b941376a19370d5f8267173b4a121f97d478a4915ef964bf1385d97da
+size 973

@@ -1,5 +1,3 @@
-﻿You can't redistribute the code or any of the content of the asset.
-
-The names Nice Vibrations, More Mountains and Reuno Corp are © More Mountains.
-
-Apart from that, feel free to use all code and visual assets included in the asset in your games.
+version https://git-lfs.github.com/spec/v1
+oid sha256:64ce5c8b034c4cdb361d4ca5c595df69d589c146fc67f359446826feafbceca8
+size 254

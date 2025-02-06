@@ -1,26 +1,3 @@
-﻿using System;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// An attribute used to group inspector fields under common dropdowns
-    /// Implementation inspired by Rodrigo Prinheiro's work, available at https://github.com/RodrigoPrinheiro/unityFoldoutAttribute
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct, Inherited = true)]
-    public class MMInspectorGroupAttribute : PropertyAttribute
-    {
-	    public string GroupName;
-        public bool GroupAllFieldsUntilNextGroupAttribute;
-        public int GroupColorIndex;
-
-        public MMInspectorGroupAttribute(string groupName, bool groupAllFieldsUntilNextGroupAttribute = false, int groupColorIndex = 24)
-        {
-            if (groupColorIndex > 139) { groupColorIndex = 139; }
-
-		    this.GroupName = groupName;
-            this.GroupAllFieldsUntilNextGroupAttribute = groupAllFieldsUntilNextGroupAttribute;
-            this.GroupColorIndex = groupColorIndex;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:37a2f70d182783ed45b9a4e092bfbbe4a05feacf9570f33ed520a09b264b4b05
+size 1088

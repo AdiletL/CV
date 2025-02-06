@@ -1,24 +1,3 @@
-{
-    "name": "MoreMountains.Tools.Cinemachine",
-    "references": [
-        "GUID:4a1cb1490dc4df8409b2580d6b44e75e",
-        "GUID:4307f53044263cf4b835bd812fc161a4"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "MOREMOUNTAINS_CINEMACHINE_INSTALLED",
-        "MOREMOUNTAINS_TOOLS"
-    ],
-    "versionDefines": [
-        {
-            "name": "com.unity.cinemachine",
-            "expression": "1.0.0",
-            "define": "MOREMOUNTAINS_CINEMACHINE_INSTALLED"
-        }
-    ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:05d53ccc864db099454d270ab5db6a0dff22ec8923ed037c95f4de29d1a9eaa9
+size 678

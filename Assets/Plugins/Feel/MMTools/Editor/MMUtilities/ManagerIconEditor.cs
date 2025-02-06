@@ -1,26 +1,3 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-
-namespace MoreMountains.Tools
-{
-	/// <summary>
-	/// This class adds names for each LevelMapPathElement next to it on the scene view, for easier setup
-	/// </summary>
-	[CustomEditor(typeof(MMSceneViewIcon))]
-	[InitializeOnLoad]
-	public class SceneViewIconEditor : Editor 
-	{		
-		//protected SceneViewIcon _sceneViewIcon;
-
-		[DrawGizmo(GizmoType.InSelectionHierarchy | GizmoType.NotInSelectionHierarchy)]
-		static void DrawGameObjectName(MMSceneViewIcon sceneViewIcon, GizmoType gizmoType)
-		{   
-			GUIStyle style = new GUIStyle();
-	        style.normal.textColor = Color.blue;	 
-			Handles.Label(sceneViewIcon.transform.position, sceneViewIcon.gameObject.name,style);
-		}
-
-
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c0faaf4a49705d03e38b92a85ebaa5075a35471889ea4f9e52a836aed509499c
+size 771

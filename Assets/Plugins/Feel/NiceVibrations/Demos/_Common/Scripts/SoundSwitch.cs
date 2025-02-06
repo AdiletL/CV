@@ -1,32 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.NiceVibrations
-{
-    public class SoundSwitch : MonoBehaviour
-    {
-        public V2DemoManager DemoManager;
-
-        protected MMSwitch _switch;
-
-        protected virtual void Awake()
-        {
-            _switch = this.gameObject.GetComponent<MMSwitch>();
-        }
-
-        protected virtual void OnEnable()
-        {
-            if (DemoManager.SoundActive)
-            {
-                _switch.CurrentSwitchState = MMSwitch.SwitchStates.On;
-                _switch.InitializeState();
-            }
-            else
-            {
-                _switch.CurrentSwitchState = MMSwitch.SwitchStates.Off;
-                _switch.InitializeState();
-            }            
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ff8b9bfed323c754a953925dac6d6038fa87f2de13fd0f89394010299091e19b
+size 836

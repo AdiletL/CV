@@ -1,27 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Add this class to an empty object in your scene and it'll act as a point of control to enable or disable logs and debug draws
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/Utilities/MMDebugController")]
-    public class MMDebugController : MonoBehaviour
-    {
-        /// whether or not debug logs (MMDebug.DebugLogTime, MMDebug.DebugOnScreen) should be displayed
-        public bool DebugLogsEnabled = true;
-        /// whether or not debug draws should be executed
-        public bool DebugDrawEnabled = true;
-
-        /// <summary>
-        /// On Awake we turn our static debug checks on or off
-        /// </summary>
-        protected virtual void Awake()
-        {
-            MMDebug.SetDebugLogsEnabled(DebugLogsEnabled);
-            MMDebug.SetDebugDrawEnabled(DebugDrawEnabled);
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1ad67989afd3ae98c17e67bf49626b9c5bc2c5665470a8230f3d57691dd9bc54
+size 991

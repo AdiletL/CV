@@ -1,26 +1,3 @@
-{
-    "name": "MoreMountains.Feedbacks.HDRP",
-    "references": [
-        "GUID:dad624460036b51448e1b1849358a96a",
-        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
-        "GUID:457756d89b35d2941b3e7b37b4ece6f1"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "MOREMOUNTAINS_HDRP_INSTALLED",
-        "MOREMOUNTAINS_FEEDBACKS"
-    ],
-    "versionDefines": [
-        {
-            "name": "com.unity.render-pipelines.high-definition",
-            "expression": "1.0.0",
-            "define": "MOREMOUNTAINS_HDRP_INSTALLED"
-        }
-    ],
-    "noEngineReferences": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:555f91e18fced45524f5e254656a7e9ea50451bb138bd90f06f6f4f6d32ecc3f
+size 770

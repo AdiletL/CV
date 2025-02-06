@@ -1,27 +1,3 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace MoreMountains.Tools
-{
-    public class MMPlotterAxis : MonoBehaviour
-    {
-        public Text Label;
-        public Text TimeLabel;
-        public Transform PlotterCurvePoint;
-
-        public Transform PositionPoint;
-        public Transform PositionPointVertical;
-        public Transform RotationPoint;
-        public Transform ScalePoint;
-        
-        public virtual void SetLabel(string newLabel)
-        {
-            Label.text = newLabel;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e5d29339857628a425afaa5759afc7f746f597b27e93460c1f1cf0a62905548a
+size 669

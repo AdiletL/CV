@@ -1,20 +1,3 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace MoreMountains.Tools
-{
-    /// <summary>
-    /// Adds this class to particles to force their sorting layer
-    /// </summary>
-    [AddComponentMenu("More Mountains/Tools/Particles/MMVisibleParticle")]
-    public class MMVisibleParticle : MonoBehaviour {
-
-	    /// <summary>
-	    /// Sets the particle system's renderer to the Visible Particles sorting layer
-	    /// </summary>
-	    protected virtual void Start () 
-		{
-			GetComponent<ParticleSystem>().GetComponent<Renderer>().sortingLayerName = "VisibleParticles";
-		}		
-	}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6dd7d5f0f3da1da6422ca3197ec2950ef3a03c00fa181e05e6aaec955077861f
+size 607

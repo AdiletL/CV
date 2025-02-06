@@ -1,28 +1,3 @@
-﻿using UnityEngine;
-
-namespace  MoreMountains.Tools
-{
-    /// <summary>
-    /// A scriptable object containing a MMLootTable definition for game objects
-    /// </summary>
-    [CreateAssetMenu(fileName="LootDefinition",menuName="MoreMountains/Loot Definition")]
-    public class MMLootTableGameObjectSO : ScriptableObject
-    {
-        /// the loot table 
-        public MMLootTableGameObject LootTable;
-
-        /// returns an object from the loot table
-        public virtual GameObject GetLoot()
-        {
-            return LootTable.GetLoot()?.Loot;
-        }
-        
-        /// <summary>
-        /// computes the loot table's weights
-        /// </summary>
-        public virtual void ComputeWeights()
-        {
-            LootTable.ComputeWeights();
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6ea6512efe17e22924dc15b55a40924562bd86f5f641a2383cb16e1e36176b1e
+size 808

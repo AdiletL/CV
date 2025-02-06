@@ -1,36 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using MoreMountains.Feedbacks;
-using UnityEngine;
-
-namespace MoreMountains.Feel
-{
-    public class FeelCardsUIStackButton : MonoBehaviour
-    {
-        /// the MMFeedback to play when pressing the stack button
-        public MMFeedbacks StackFeedback;
-        /// a list of feedbacks that should prevent the button from working if any of them is still playing 
-        public List<MMFeedbacks> BlockerFeedbacks;
-
-        public virtual void Stack()
-        {
-            bool blocked = false;
-            foreach (MMFeedbacks feedbacks in BlockerFeedbacks)
-            {
-                if (feedbacks.IsPlaying)
-                {
-                    blocked = true;
-                }
-            }
-
-            if (blocked)
-            {
-                return;
-            }
-            
-            StackFeedback?.PlayFeedbacks();
-            this.gameObject.SetActive(false);
-        }
-    }    
-}
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4a66b7920c98283d280d19310b1d794c7a4f61c1e4bf79cf57df0800a505978f
+size 1001

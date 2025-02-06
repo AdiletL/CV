@@ -52,6 +52,12 @@ namespace Unit.Character.Player
                 unitRenderer.SetColor(Color.yellow);
         }
 
+        protected override void Fire()
+        {
+            base.Fire();
+            stateMachine.ExitCategory(Category, null);
+        }
+
         public override void SetWeapon(Weapon weapon)
         {
             base.SetWeapon(weapon);

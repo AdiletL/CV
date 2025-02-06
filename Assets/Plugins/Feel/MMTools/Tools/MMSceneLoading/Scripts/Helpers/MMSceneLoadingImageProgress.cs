@@ -1,33 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace MoreMountains.Tools
-{	
-    /// <summary>
-    /// A very simple class, meant to be used within a MMSceneLoading screen, to update the fill amount of an Image
-    /// based on loading progress
-    /// </summary>
-    public class MMSceneLoadingImageProgress : MonoBehaviour
-    {
-        protected Image _image;
-
-        /// <summary>
-        /// On Awake we store our Image
-        /// </summary>
-        protected virtual void Awake()
-        {
-            _image = this.gameObject.GetComponent<Image>();
-        }
-        
-        /// <summary>
-        /// Meant to be called by the MMSceneLoadingManager, turns the progress of a load into fill amount
-        /// </summary>
-        /// <param name="newValue"></param>
-        public virtual void SetProgress(float newValue)
-        {
-            _image.fillAmount = newValue;
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b81f722215296d5f3d50c3f419276281edf3b10f1518b7fd2b8b96d98b59a25f
+size 991

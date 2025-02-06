@@ -1,27 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using MoreMountains.Feedbacks;
-using Cinemachine;
-
-namespace MoreMountains.FeedbacksForThirdParty
-{
-    [AddComponentMenu("")]
-    [FeedbackPath("Camera/Cinemachine Impulse Clear")]
-    [FeedbackHelp("This feedback lets you trigger a Cinemachine Impulse clear, stopping instantly any impulse that may be playing.")]
-    public class MMFeedbackCinemachineImpulseClear : MMFeedback
-    {
-        /// sets the inspector color for this feedback
-        #if UNITY_EDITOR
-        public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-        #endif
-
-        protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1.0f)
-        {
-            if (Active)
-            {
-                CinemachineImpulseManager.Instance.Clear();
-            }
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ccfca4327d65634f058eb7ec6699d853be3913485dd7362b61b6fd40def48537
+size 936
