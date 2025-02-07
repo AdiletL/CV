@@ -6,6 +6,7 @@ using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Weapon;
 using Machine;
+using Movement;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
@@ -52,6 +53,7 @@ namespace Unit.Character.Player
         private UnitTransformSync unitTransformSync;
         
         private PlayerKinematicControl playerKinematicControl;
+        private Camera baseCamera;
         
         protected override UnitInformation CreateUnitInformation()
         {
@@ -72,8 +74,6 @@ namespace Unit.Character.Player
                 .SetPhotonView(photonView)
                 .SetPlayerController(this)
                 .SetPlayerStateFactory(playerStateFactory)
-                .SetPlayerControlDesktopConfig(so_PlayerControlDesktop)
-                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetStateMachine(this.StateMachine)
                 .SetGameObject(gameObject)
                 .Build();
@@ -82,7 +82,8 @@ namespace Unit.Character.Player
         private PlayerStateFactory CreatePlayerStateFactory()
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
-                .SetKPlayerKinematicControl(playerKinematicControl)
+                .SetPlayerKinematicControl(playerKinematicControl)
+                .SetBaseCamera(baseCamera)
                 .SetCharacterEndurance(characterEndurance)
                 .SetPhotonView(photonView)
                 .SetPlayerAttackConfig(so_PlayerAttack)
@@ -114,9 +115,6 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-            
-            if(photonView.IsMine)
-                FindFirstObjectByType<CameraMove>().SetTarget(gameObject);
 
             characterExperience = GetComponentInUnit<CharacterExperience>();
             diContainer.Inject(characterExperience);
@@ -141,6 +139,13 @@ namespace Unit.Character.Player
         {
             base.BeforeCreateStates();
 
+            if (photonView.IsMine)
+            {
+                var cameraMove = FindFirstObjectByType<CameraMove>();
+                cameraMove.SetTarget(gameObject);
+                baseCamera = cameraMove.GetComponent<Camera>();
+            }
+            
             unitRenderer = GetComponentInUnit<UnitRenderer>();
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             characterEndurance = GetComponentInUnit<PlayerEndurance>();
@@ -304,7 +309,6 @@ namespace Unit.Character.Player
                 }
             }
 
-            playerControlDesktop?.HandleHighlight();
             playerControlDesktop?.HandleHotkey();
             playerControlDesktop?.HandleInput();
             StateMachine?.Update();

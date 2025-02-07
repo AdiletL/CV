@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea959a802274470b900938a7d1e5651c, type: 3}
   m_Name: SO_GameHotkeys
   m_EditorClassIdentifier: 
-  <SelectObjectMouseButton>k__BackingField: 0
-  <AttackMouseButton>k__BackingField: 1
+  <SelectObjectMouseButton>k__BackingField: 1
+  <AttackMouseButton>k__BackingField: 0
   <JumpKey>k__BackingField: 32
   <OpenContainerKey>k__BackingField: 101
   <TakeLootKey>k__BackingField: 102

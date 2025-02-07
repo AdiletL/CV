@@ -17,10 +17,11 @@ namespace Unit.Character.Player
         public void SetRotationSpeed(float speed) => this.rotationSpeed = speed;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
+        
 
-        public override void Initialize()
+        public override void Enter()
         {
-            base.Initialize();
+            base.Enter();
             playerKinematicControl.SetRotationSpeed(rotationSpeed);
         }
 

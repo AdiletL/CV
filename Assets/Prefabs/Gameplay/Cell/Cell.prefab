@@ -298,6 +298,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRenderers:
   - {fileID: 5922919985975680491}
+  rangeVisual: {fileID: 0}
+  selectedObject: {fileID: 0}
 --- !u!114 &1471724553134719840
 MonoBehaviour:
   m_ObjectHideFlags: 0

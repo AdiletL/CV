@@ -2,3 +2,4 @@
 *.png filter=lfs diff=lfs merge=lfs -text
 Assets/Plugins/Feel/FeelDemos/Brass/FeelBrass.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Plugins/Feel/** filter=lfs diff=lfs merge=lfs -text
+Assets/Plugins/Hovl[[:space:]]Studio/** filter=lfs diff=lfs merge=lfs -text

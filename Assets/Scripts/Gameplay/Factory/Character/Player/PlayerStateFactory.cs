@@ -19,6 +19,7 @@ namespace Gameplay.Factory.Character.Player
         private StateMachine stateMachine;
         private PhotonView photonView;
         private Transform weaponParent;
+        private Camera baseCamera;
         
         private CharacterAnimation characterAnimation;
         private CharacterEndurance characterEndurance;
@@ -38,6 +39,7 @@ namespace Gameplay.Factory.Character.Player
         public void SetCharacterEndurance(CharacterEndurance characterEndurance) => this.characterEndurance = characterEndurance;
         public void SetPhotonView(PhotonView view) => photonView = view;
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
+        public void SetBaseCamera(Camera camera) => baseCamera = camera;
 
 
         public override void Initialize()
@@ -93,16 +95,16 @@ namespace Gameplay.Factory.Character.Player
         private PlayerWeaponAttackState CreateWeaponState()
         {
             return (PlayerWeaponAttackState)new PlayerWeaponAttackStateStateBuilder()
+                .SetPlayerKinematicControl(playerKinematicControl)
+                .SetRotationSpeed(so_PlayerAttack.RotationSpeed)
                 .SetSwordAttackClip(so_PlayerAttack.SwordAttackClip)
-                .SetSwordCooldownClip(so_PlayerAttack.SwordCooldownClip)
                 .SetBowAttackClip(so_PlayerAttack.BowAttackClip)
-                .SetBowCooldownClip(so_PlayerAttack.BowCooldownClip)
+                .SetBaseCamera(baseCamera)
                 .SetUnitAnimation(characterAnimation)
                 .SetWeaponParent(weaponParent)
                 .SetUnitEndurance(characterEndurance)
                 .SetBaseReductionEndurance(so_PlayerAttack.BaseReductionEndurance)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
-                .SetCharacterSwitchMoveState(characterSwitchMoveState)
                 .SetCenter(unitCenter.Center)
                 .SetDamage(so_PlayerAttack.Damage)
                 .SetGameObject(gameObject)
@@ -215,10 +217,17 @@ namespace Gameplay.Factory.Character.Player
             return this;
         }
         
-        public PlayerStateFactoryBuilder SetKPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        public PlayerStateFactoryBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPlayerKinematicControl(playerKinematicControl);
+            return this;
+        }
+        
+        public PlayerStateFactoryBuilder SetBaseCamera(Camera camera)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetBaseCamera(camera);
             return this;
         }
     }

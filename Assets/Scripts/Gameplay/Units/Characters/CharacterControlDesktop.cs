@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit.Character.Player;
+using UnityEngine;
 
 namespace Unit.Character
 {
@@ -8,6 +9,10 @@ namespace Unit.Character
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
 
+        public virtual bool IsInputBlocked(InputType input)
+        {
+            return false;
+        }
         
         public override void Initialize()
         {
@@ -26,11 +31,6 @@ namespace Unit.Character
 
         public override void HandleInput()
         {
-        }
-
-        public virtual void HandleHighlight()
-        {
-            
         }
     }
 

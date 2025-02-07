@@ -36,7 +36,8 @@ namespace Unit.Character.Creep
         public override void Enter()
         {
             base.Enter();
-            navMeshAgent.speed = MovementSpeed;
+            if (navMeshAgent.isOnNavMesh)
+                navMeshAgent.speed = MovementSpeed;
             SetTargetPoint();
             PlayAnimation();
         }
@@ -59,6 +60,7 @@ namespace Unit.Character.Creep
 
         private void SetTargetPoint()
         {
+            if (!navMeshAgent.isOnNavMesh) return;
             navMeshAgent.destination = PatrolPoints[currentPointIndex];
             currentPointIndex = (currentPointIndex + 1) % PatrolPoints.Length;
             navMeshAgent.isStopped = false;

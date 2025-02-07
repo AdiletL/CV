@@ -1,7 +1,6 @@
 ﻿using System;
 using ScriptableObjects.Gameplay;
 using Unit.Character;
-using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 

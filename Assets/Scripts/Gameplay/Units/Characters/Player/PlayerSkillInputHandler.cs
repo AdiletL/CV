@@ -16,7 +16,6 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeys;
 
         private SkillHandler skillHandler;
-        private Gravity gravity;
         private KeyCode dashKey;
 
         private readonly GameObject gameObject;
@@ -143,7 +142,6 @@ namespace Unit.Character.Player
 
         public async void Initialize()
         {
-            gravity = gameObject.GetComponent<Gravity>();
             skillHandler = gameObject.GetComponent<SkillHandler>();
             dashKey = so_GameHotkeys.DashKey;
             await InitializeDash();

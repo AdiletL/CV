@@ -19,6 +19,7 @@ namespace ScriptableObjects.Unit.Character.Player
         [field: SerializeField, Space(10), Header("BowClips")] 
         public AnimationClip[] BowAttackClip { get; private set; }
         [field: SerializeField] public AnimationClip BowCooldownClip { get; private set; }
-        
+
+        [field: SerializeField, Space(10)] public float RotationSpeed { get; private set; } = 1000;
     }
 }

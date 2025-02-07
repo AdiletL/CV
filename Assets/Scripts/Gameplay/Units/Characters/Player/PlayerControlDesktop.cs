@@ -25,46 +25,32 @@ namespace Unit.Character.Player
     public class PlayerControlDesktop : CharacterControlDesktop
     {
         [Inject] private DiContainer diContainer;
-        [Inject] private SO_GameHotkeys so_GameHotkeyses;
+        [Inject] private SO_GameHotkeys so_GameHotkeyse;
         private event Action OnHandleInput;
         
-        private PlayerKinematicControl playerKinematicControl;
         private PhotonView photonView;
-        private PlayerController playerController;
-        private PlayerStateFactory playerStateFactory;
         private CharacterSwitchAttackState characterSwitchAttack;
         private CharacterSwitchMoveState characterSwitchMove;
-        private SO_PlayerControlDesktop so_PlayerControlDesktop;
         private StateMachine stateMachine;
 
-        private IClickableObject selectedObject;
-        private UnitRenderer selectedRenderer;
-        private UnitRenderer highlightedRenderer;
+        private PlayerController playerController;
+        private PlayerStateFactory playerStateFactory;
+        private PlayerKinematicControl playerKinematicControl;
         private PlayerSkillInputHandler playerSkillInputHandler;
-
-        private RaycastHit[] hits = new RaycastHit[5];
-        private Texture2D selectAttackTexture;
-        private LayerMask enemyLayer;
+        private PlayerMouseInputHandler playerMouseInputHandler;
 
         private KeyCode jumpKey;
-        private int selectObjectMousButton, attackMouseButton;
-        private int hitRayOnObjectCount, hitsCount;
 
-        private const float cooldownHighlighObject = .2f;
-        private float countCooldownHighlighObject;
-        
         private bool isJumping;
         private bool isMoving;
-        private bool isAttacking;
         
+        private Dictionary<InputType, int> blockedInputs = new();
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
         ~PlayerControlDesktop()
         {
             UnInitializeMediator();
-            UnRegisterInteraction();
         }
-        
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerControl) => this.playerKinematicControl = playerControl;
         public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
@@ -73,44 +59,49 @@ namespace Unit.Character.Player
         public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
             this.characterSwitchAttack = characterSwitchAttackState;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
-        public void SetConfig(SO_PlayerControlDesktop config) => this.so_PlayerControlDesktop = config;
         public void SetPlayerController(PlayerController playerController) => this.playerController = playerController;
-        public void SetEnemyLayer(LayerMask layerMask) => enemyLayer = layerMask;
         
         
-        private bool tryGetHitPosition<T>(out GameObject hitObject, LayerMask layerMask)
+        public override bool IsInputBlocked(InputType input)
         {
-            Vector3 mousePosition = Input.mousePosition;
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-
-            float closestDistance = Mathf.Infinity; // Ищем ближайший объект
-            GameObject closestHit = null;
-
-            hitsCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, layerMask);
-
-            for (int i = 0; i < hitsCount; i++)
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (hits[i].transform.TryGetComponent(out T component))
-                {
-                    float targetDistance = hits[i].distance;
-                    if (targetDistance < closestDistance)
-                    {
-                        closestDistance = targetDistance;
-                        closestHit = hits[i].transform.gameObject;
-                    }
-                }
-            }
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
 
-            if (closestHit != null)
-            {
-                hitObject = closestHit;
-                return true;
+                if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
+                    return true;
             }
-
-            hitObject = default;
             return false;
         }
+
+        public void BlockInput(InputType input)
+        {
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
+            {
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
+
+                if (!blockedInputs.ContainsKey(flag))
+                    blockedInputs[flag] = 0;
+
+                blockedInputs[flag]++;
+            }
+        }
         
+        public void UnblockInput(InputType input)
+        {
+            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
+            {
+                if (flag == InputType.nothing || (input & flag) == 0) continue;
+
+                if (blockedInputs.ContainsKey(flag))
+                {
+                    blockedInputs[flag]--;
+
+                    if (blockedInputs[flag] <= 0) 
+                        blockedInputs.Remove(flag);
+                }
+            }
+        }
 
         public override void Initialize()
         {
@@ -119,16 +110,13 @@ namespace Unit.Character.Player
             InitializeHotkeys();
             InitializeInteractionHandler();
             InitializeSkillInputHandler();
+            InitializeMouseInputHandler();
             InitializeMediator();
-            
-            selectAttackTexture = so_PlayerControlDesktop.SelectAttackIcon.texture;
         }
 
         private void InitializeHotkeys()
         {
-            attackMouseButton = so_GameHotkeyses.AttackMouseButton;
-            selectObjectMousButton = so_GameHotkeyses.SelectObjectMouseButton;
-            jumpKey = so_GameHotkeyses.JumpKey;
+            jumpKey = so_GameHotkeyse.JumpKey;
         }
 
         private void InitializeInteractionHandler()
@@ -142,20 +130,7 @@ namespace Unit.Character.Player
         {
             diContainer.Inject(handler);
             handler.Initialize();
-            interactionHandlers.Add(handler);
-            OnHandleInput += handler.HandleInput;
-            playerController.TriggerEnter += handler.CheckTriggerEnter;
-            playerController.TriggerExit += handler.CheckTriggerExit;
-        }
-        
-        public void UnRegisterInteraction()
-        {
-            foreach (var VARIABLE in interactionHandlers)
-            {
-                OnHandleInput -= VARIABLE.HandleInput;
-                playerController.TriggerEnter -= VARIABLE.CheckTriggerEnter;
-                playerController.TriggerExit -= VARIABLE.CheckTriggerExit;
-            }
+            interactionHandlers.Add(handler);;
         }
 
         private void InitializeSkillInputHandler()
@@ -165,6 +140,15 @@ namespace Unit.Character.Player
             diContainer.Inject(playerSkillInputHandler);
             playerSkillInputHandler.Initialize();
         }
+
+        private void InitializeMouseInputHandler()
+        {
+            playerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
+                playerSkillInputHandler, characterSwitchAttack);
+            diContainer.Inject(playerMouseInputHandler);
+            playerMouseInputHandler.Initialize();
+        }
+        
         private void InitializeJumpState()
         {
             if (!stateMachine.IsStateNotNull(typeof(PlayerJumpState)))
@@ -179,30 +163,40 @@ namespace Unit.Character.Player
         {
             stateMachine.OnExitCategory += OnExitCategory;
             OnHandleInput += playerSkillInputHandler.HandleInput;
+            OnHandleInput += playerMouseInputHandler.HandleInput;
+            foreach (var VARIABLE in interactionHandlers)
+            {
+                OnHandleInput += VARIABLE.HandleInput;
+                playerController.TriggerEnter += VARIABLE.CheckTriggerEnter;
+                playerController.TriggerExit += VARIABLE.CheckTriggerExit;
+            }
         }
 
         private void UnInitializeMediator()
         {
             stateMachine.OnExitCategory -= OnExitCategory;
             OnHandleInput -= playerSkillInputHandler.HandleInput;
+            OnHandleInput -= playerMouseInputHandler.HandleInput;
+            foreach (var VARIABLE in interactionHandlers)
+            {
+                OnHandleInput -= VARIABLE.HandleInput;
+                playerController.TriggerEnter -= VARIABLE.CheckTriggerEnter;
+                playerController.TriggerExit -= VARIABLE.CheckTriggerExit;
+            }
         }
 
         private void OnExitCategory(Machine.IState state)
         {
-            if (stateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)) || 
-                stateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
-            {
-                isAttacking = false;
-            }
-            
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 isJumping = false;
+                UnblockInput(InputType.attack);
             }
 
             if (state.GetType().IsAssignableFrom(typeof(PlayerRunState)))
             {
                 isMoving = false;
+                UnblockInput(InputType.attack);
             }
         }
 
@@ -210,22 +204,14 @@ namespace Unit.Character.Player
         {
             base.ClearHotkeys();
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            ClearSelectObject();
+            playerMouseInputHandler.ClearSelectObject();
         }
 
-        private void ClearSelectObject()
-        {
-            selectedObject?.UnSelectObject();
-            selectedObject?.HideInformation();
-            selectedRenderer?.UnSelectedObject();
-            selectedObject = null;
-        }
 
         public override void HandleHotkey()
         {
             if(!photonView.IsMine) return;
             base.HandleHotkey();
-            
             
         }
 
@@ -241,119 +227,27 @@ namespace Unit.Character.Player
                 Input.GetKey(KeyCode.S)) && 
                 !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
-                characterSwitchMove.ExitOtherStates();
                 isMoving = true;
+                BlockInput(InputType.attack);
+                characterSwitchMove.ExitOtherStates();
             }
-            else if (Input.GetMouseButtonDown(attackMouseButton) && 
-                     !isJumping && !isAttacking && 
-                     !playerSkillInputHandler.IsInputBlocked(InputType.attack))
-            {
-                TriggerAttack();
-            }
-            else if (Input.GetMouseButtonDown(selectObjectMousButton) && 
-                     !isJumping && !playerSkillInputHandler.IsInputBlocked(InputType.selectObject))
-            {
-                TriggerSelectObject();
-            }
-            else if (Input.GetKeyDown(jumpKey) && !isJumping &&
-                !playerSkillInputHandler.IsInputBlocked(InputType.jump))
+            else if (!isJumping && Input.GetKeyDown(jumpKey) &&
+                     !playerMouseInputHandler.IsInputBlocked(InputType.jump) &&
+                     !playerSkillInputHandler.IsInputBlocked(InputType.jump))
             {
                 TriggerJump();
             }
             
             OnHandleInput?.Invoke();
         }
-
-        public override void HandleHighlight()
-        {
-            countCooldownHighlighObject += Time.deltaTime;
-            
-            if(countCooldownHighlighObject < cooldownHighlighObject) return;
-            countCooldownHighlighObject = 0;
-            
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            hitRayOnObjectCount = Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, Layers.CREEP_LAYER | Layers.PLAYER_LAYER);
-
-            UnitRenderer newHighlightedRenderer = null;
-            float closestDistance = Mathf.Infinity;
-
-            for (int i = 0; i < hitRayOnObjectCount; i++)
-            {
-                if (hits[i].transform.TryGetComponent(out UnitRenderer unitRenderer))
-                {
-                    float targetDistance = hits[i].distance;
-                    if (targetDistance < closestDistance)
-                    {
-                        closestDistance = targetDistance;
-                        newHighlightedRenderer = unitRenderer;
-                    }
-                }
-            }
-
-            if (newHighlightedRenderer == highlightedRenderer) return; // Если объект тот же, выходим
-
-            highlightedRenderer?.UnHighlightedObject(); // Снимаем подсветку с предыдущего
-            highlightedRenderer = newHighlightedRenderer;
-            highlightedRenderer?.HighlightedObject();   // Подсвечиваем новый
-        }
-
-
-        private void TriggerSelectCell()
-        {
-            if (tryGetHitPosition<CellController>(out GameObject hitObject, Layers.CELL_LAYER))
-            { 
-                characterSwitchMove.SetTarget(hitObject);
-                characterSwitchMove.ExitOtherStates();
-            }
-            ClearHotkeys();
-        }
-        
-        private void TriggerAttack()
-        {
-            if (tryGetHitPosition<IPlayerAttackable>(out GameObject gameObject, enemyLayer))
-            { 
-                //characterSwitchAttack.SetTarget(gameObject);
-            }
-
-            isAttacking = true;
-            characterSwitchAttack.ExitOtherStates();
-            ClearHotkeys();
-        }
-        
-        private void TriggerSelectObject()
-        {
-            if (tryGetHitPosition<IClickableObject>(out GameObject hitObject, Layers.EVERYTHING_LAYER))
-            {
-                var clickableObject = hitObject.GetComponent<IClickableObject>();
-                clickableObject.UpdateInformation();
-                if (selectedObject == null || selectedObject != clickableObject)
-                {
-                    selectedObject?.UnSelectObject();
-                    selectedRenderer?.UnSelectedObject();
-                    
-                    selectedObject = clickableObject;
-                    selectedObject.ShowInformation();
-                    selectedObject.SelectObject();
-                    selectedRenderer = hitObject.GetComponent<UnitRenderer>();
-                    selectedRenderer.SelectedObject();
-                }
-                else
-                {
-                    ClearHotkeys();
-                }
-            }
-        }
         
         private void TriggerJump()
         {
             ClearHotkeys();
-            ClearSelectObject();
             InitializeJumpState();
             stateMachine.ExitOtherStates(typeof(PlayerJumpState), true);
-            //stateMachine.ExitCategory(StateCategory.attack, null);
-            //stateMachine.ExitCategory(StateCategory.action, null);
-            //stateMachine.ExitCategory(StateCategory.idle, typeof(PlayerJumpState));
             isJumping = true;
+            BlockInput(InputType.attack);
         }
 
     }
@@ -408,20 +302,5 @@ namespace Unit.Character.Player
                 playerControlDesktop.SetCharacterSwitchMove(playerSwitchMove);
             return this;
         }
-
-        public PlayerControlDesktopBuilder SetPlayerControlDesktopConfig(SO_PlayerControlDesktop soPlayerControlDesktop)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetConfig(soPlayerControlDesktop);
-            return this;
-        }
-
-        public PlayerControlDesktopBuilder SetEnemyLayer(LayerMask enemyLayer)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetEnemyLayer(enemyLayer);
-            return this;
-        }
     }
-
 }
