@@ -47,7 +47,6 @@ namespace Unit.Portal
             if (motor != null)
             {
                 motor.SetPositionAndRotation(SpawnPoint.position, SpawnPoint.rotation);
-                player.BaseCamera.GetComponent<CameraMove>().SetPosition(player.transform.position);
             }
         }
 

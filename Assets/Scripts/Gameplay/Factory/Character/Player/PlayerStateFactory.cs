@@ -3,7 +3,6 @@ using Machine;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
-using Unit;
 using Unit.Character;
 using Unit.Character.Player;
 using UnityEngine;

@@ -1,4 +1,5 @@
 using System;
+using Gameplay;
 using Gameplay.Damage;
 using Gameplay.Effect;
 using Gameplay.Factory.Character.Player;
@@ -135,9 +136,9 @@ namespace Unit.Character.Player
 
             if (photonView.IsMine)
             {
-                var cameraMove = FindFirstObjectByType<CameraMove>();
-                cameraMove.SetTarget(gameObject);
-                BaseCamera = cameraMove.GetComponent<Camera>();
+                var cameraController = FindFirstObjectByType<CameraController>();
+                BaseCamera = cameraController.GetComponent<Camera>();
+                cameraController.CurrentCinemachineCamera.Follow = transform;
             }
 
             playerInventory = GetComponentInUnit<PlayerInventory>();

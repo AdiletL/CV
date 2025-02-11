@@ -52,7 +52,8 @@ namespace Gameplay.Manager
         [PunRPC]
         private void CreateCamera()
         {
-            Instantiate(cameraPrefab);
+            var cameraObject = Instantiate(cameraPrefab);
+            cameraObject.GetComponent<CameraController>().Initialize();
         }
 
         private void CreatePlayer()
