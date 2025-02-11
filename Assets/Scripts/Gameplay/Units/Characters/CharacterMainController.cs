@@ -59,13 +59,13 @@ namespace Unit.Character
         protected virtual void InitializeMediator()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
-            GetComponentInUnit<CharacterHealth>().OnDeath += GetComponentInUnit<CharacterExperience>().OnDeath;
+            GetComponentInUnit<CharacterHealth>().OnZeroHealth += GetComponentInUnit<CharacterExperience>().OnZeroHealth;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
-        protected virtual void UnInitializeMediatorRPC()
+        protected virtual void DeInitializeMediatorRPC()
         {
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
-            GetComponentInUnit<CharacterHealth>().OnDeath -= GetComponentInUnit<CharacterExperience>().OnDeath;
+            GetComponentInUnit<CharacterHealth>().OnZeroHealth -= GetComponentInUnit<CharacterExperience>().OnZeroHealth;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
         }
 
@@ -92,7 +92,7 @@ namespace Unit.Character
 
         protected virtual void OnDestroy()
         {
-            UnInitializeMediatorRPC();
+            DeInitializeMediatorRPC();
         }
 
         public void ShowInformation() => UnitInformation.Show();

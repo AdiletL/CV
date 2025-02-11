@@ -1,4 +1,4 @@
-﻿using Gameplay.Factory;
+﻿using System;
 using Gameplay.Factory.Character.Creep;
 using Machine;
 using Unity.Collections;
@@ -10,6 +10,8 @@ namespace Unit.Character.Creep
     [RequireComponent(typeof(NavMeshAgent))]
     public abstract class CreepController : CharacterMainController
     {
+        public event Action<CreepController> OnDeath; 
+        
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
@@ -65,12 +67,16 @@ namespace Unit.Character.Creep
         {
             base.InitializeMediator();
             this.StateMachine.OnChangedState += OnChangedState;
+            GetComponentInUnit<CreepHealth>().OnZeroHealth += OnZeroHealth;
+            GetComponentInUnit<CreepHealth>().OnTakeDamage += GetComponentInUnit<CreepUI>().OnTakeDamage;
         }
 
-        protected override void UnInitializeMediatorRPC()
+        protected override void DeInitializeMediatorRPC()
         {
-            base.UnInitializeMediatorRPC();
+            base.DeInitializeMediatorRPC();
             this.StateMachine.OnChangedState -= OnChangedState;
+            GetComponentInUnit<CreepHealth>().OnZeroHealth -= OnZeroHealth;
+            GetComponentInUnit<CreepHealth>().OnTakeDamage -= GetComponentInUnit<CreepUI>().OnTakeDamage;
         }
 
         protected void Update()
@@ -87,6 +93,11 @@ namespace Unit.Character.Creep
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
+        }
+
+        private void OnZeroHealth()
+        {
+            OnDeath?.Invoke(this);
         }
     }
 }

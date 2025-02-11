@@ -1,4 +1,5 @@
-﻿using Machine;
+﻿using System;
+using Machine;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace Unit.Character.Creep
 {
     public abstract class CreepHealth : CharacterHealth
     {
+        public event Action OnTakeDamage; 
+        
         protected CreepController CreepController;
         protected CharacterAnimation characterAnimation;
         protected SO_CreepHealth so_CreepHealth;
@@ -36,6 +39,7 @@ namespace Unit.Character.Creep
         {
             base.TakeDamage(damageable);
             
+            OnTakeDamage?.Invoke();
             if(!isCanTakeDamageEffect) return;
             CreepController.StateMachine.ExitOtherStates(typeof(CreepTakeDamageState), true);
         }

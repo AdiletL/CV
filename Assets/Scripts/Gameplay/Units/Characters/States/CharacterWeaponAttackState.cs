@@ -17,6 +17,7 @@ namespace Unit.Character
         protected float baseReductionEndurance;
         protected float durationAttack, countDurationAttack;
         protected float cooldownApplyDamage, countTimerApplyDamage;
+        protected float applyDamageMoment;
         protected float angleToTarget = 100;
         protected float rangeSqr;
         
@@ -29,6 +30,7 @@ namespace Unit.Character
         public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
         public void SetBaseReductionEndurance(float reductionEndurance) => baseReductionEndurance = reductionEndurance;
         public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
+        public void SetApplyDamageMoment(float damageMoment) => applyDamageMoment = damageMoment;
         
 
         protected AnimationClip getRandomAnimationClip()
@@ -76,7 +78,7 @@ namespace Unit.Character
         protected void UpdateDurationAttack()
         {
             durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
-            cooldownApplyDamage = durationAttack * .55f;
+            cooldownApplyDamage = durationAttack * applyDamageMoment;
         }
         
         public override void SetTarget(GameObject target)
@@ -220,6 +222,13 @@ namespace Unit.Character
         {
             if (state is CharacterWeaponAttackState characterWeapon)
                 characterWeapon.SetEnemyLayer(enemyLayer);
+
+            return this;
+        }
+        public CharacterWeaponAttackStateBuilder SetApplyDamageMoment(float applyDamageMoment)
+        {
+            if (state is CharacterWeaponAttackState characterWeapon)
+                characterWeapon.SetApplyDamageMoment(applyDamageMoment);
 
             return this;
         }

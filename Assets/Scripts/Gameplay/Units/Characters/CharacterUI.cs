@@ -8,22 +8,17 @@ namespace Unit.Character
 {
     public abstract class CharacterUI : UnitUI
     {
+        [Inject] protected SO_GameUIColor so_GameUIColor;
+        
         [SerializeField] protected CharacterMainController characterMainController;
         [SerializeField] protected Image healthBar;
         [SerializeField] protected Image enduranceBar;
-        
-        protected SO_GameUIColor so_GameUIColor;
         
         protected Gradient healthBarGradient;
         protected Gradient enduranceBarGradient;
         protected float resultHealth;
         protected float resultEndurance;
-
-        [Inject]
-        public void Construct(SO_GameUIColor so_GameUIColor)
-        {
-            this.so_GameUIColor = so_GameUIColor;
-        }
+        
         
         public virtual void Initialize()
         {

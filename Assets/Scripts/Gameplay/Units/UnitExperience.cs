@@ -78,7 +78,7 @@ namespace Unit
             LevelUp(value);
         }
 
-        public virtual void OnDeath()
+        public virtual void OnZeroHealth()
         {
             if(!IsGiveExperience) return;
 

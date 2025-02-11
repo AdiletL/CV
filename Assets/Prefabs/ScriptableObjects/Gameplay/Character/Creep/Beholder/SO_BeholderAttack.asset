@@ -18,6 +18,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   <Range>k__BackingField: 2
+  <ApplyDamageMoment>k__BackingField: 0.55
   <BaseReductionEndurance>k__BackingField: 0.01
   <AttackClips>k__BackingField:
   - {fileID: 7400000, guid: 0be5f44ec700489faeb0ae9c20edd329, type: 3}

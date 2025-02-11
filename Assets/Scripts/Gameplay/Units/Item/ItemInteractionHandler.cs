@@ -13,7 +13,7 @@ namespace Gameplay.Units.Item.Loot
     {
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         
-        public IItem CurrentIItem { get; private set; }
+        public IItem CurrentItem { get; private set; }
 
         private float countCooldownCheckItems;
         private readonly float countCooldownCheck = .5f;
@@ -29,11 +29,6 @@ namespace Gameplay.Units.Item.Loot
             this.gameObject = gameObject;
             this.characterControlDesktop = characterControlDesktop;
         }
-
-        public bool IsBlocked()
-        {
-            return true;
-        }
         
         public void Initialize()
         {
@@ -42,18 +37,21 @@ namespace Gameplay.Units.Item.Loot
 
         public void SetItem(IItem iItem)
         {
-            CurrentIItem = iItem;
+            CurrentItem = iItem;
         }
 
         public void HandleInput()
         {
-            CheckItems();
+            if (CurrentItem == null)
+            {
+                CheckItems();
+                return;
+            }
             
             if(!Input.GetKeyDown(takeLootKey)) return;
-            if(CurrentIItem == null) return;
 
-            CurrentIItem.TakeItem(gameObject);
-            RemoveItem(CurrentIItem);
+            CurrentItem.TakeItem(gameObject);
+            RemoveItem(CurrentItem);
 
             if (currentItems.Count != 0)
             {
@@ -69,7 +67,7 @@ namespace Gameplay.Units.Item.Loot
             countCooldownCheckItems += Time.deltaTime;
             if (countCooldownCheckItems >= countCooldownCheck)
             {
-                if (CurrentIItem == null)
+                if (CurrentItem == null)
                 {
                     for (int i = currentItems.Count - 1; i >= 0; i--)
                     {
@@ -106,7 +104,7 @@ namespace Gameplay.Units.Item.Loot
             if (other.TryGetComponent(out IItem item))
             {
                 AddItem(item);
-                if (!item.IsCanTake || CurrentIItem != null) return;
+                if (!item.IsCanTake || CurrentItem != null) return;
                 item.Enable(takeLootKey);
                 SetItem(item);
             }
@@ -117,7 +115,6 @@ namespace Gameplay.Units.Item.Loot
             if (other.TryGetComponent(out IItem item))
             {
                 RemoveItem(item);
-                item.Disable();
             }
         }
     }

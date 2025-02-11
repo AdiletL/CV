@@ -1,7 +1,9 @@
-﻿using ScriptableObjects.Gameplay;
+﻿using System.Collections.Generic;
+using ScriptableObjects.Gameplay;
 using TMPro;
 using Unit;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using Zenject;
 
@@ -17,15 +19,11 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
         [SerializeField] private TextMeshProUGUI healthTxt;
         [SerializeField] private TextMeshProUGUI enduranceTxt;
         
-        [Space]
-        [SerializeField] private TextMeshProUGUI nameTxt;
-        [SerializeField] private TextMeshProUGUI typeTxt;
-        [SerializeField] private TextMeshProUGUI levelTxt;
-        [SerializeField] private TextMeshProUGUI damageTxt;
-        [SerializeField] private TextMeshProUGUI attackSpeedTxt;
-        [SerializeField] private TextMeshProUGUI attackRangeTxt;
-        [SerializeField] private TextMeshProUGUI experienceTxt;
-        [SerializeField] private TextMeshProUGUI amountTxt;
+        [Space] 
+        [SerializeField] private Transform txtParent;
+
+        [Space] 
+        [SerializeField] private AssetReferenceGameObject informationTxtPrefab;
         
         [Space] //TODO: Change on icon
         [SerializeField] private TextMeshProUGUI skillTxt;
@@ -33,24 +31,102 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
         private Gradient healthBarGradient;
         private Gradient enduranceBarGradient;
 
-        private const string HEALTH = "";
-        private const string ENDURANCE = "";
-        private const string NAME = "Name: ";
-        private const string TYPE = "Type: ";
-        private const string LEVEL = "Level: ";
-        private const string DAMAGE = "Damage: ";
-        private const string ATTACK_SPEED = "Attack Speed: ";
-        private const string ATTACK_RANGE = "Attack Range: ";
-        private const string EXPERIENCE = "Expirience: ";
-        private const string AMOUNT = "Amount: ";
+        private readonly Vector2 sizeDelta = new Vector2(280, 25);
+        private int countText;
         
-        private string GetTypesString(EntityType type)
+        private const float baseFontSize = 25;
+        
+        private float resultHealth;
+        private float resultEndurance;
+
+        private List<TextMeshProUGUI> texts = new(10);
+
+        private TextMeshProUGUI CreateText()
+        {
+            var prefab = Addressables.LoadAssetAsync<GameObject>(informationTxtPrefab.AssetGUID).WaitForCompletion();
+            var result = Instantiate(prefab, txtParent).GetComponent<TextMeshProUGUI>();
+            result.rectTransform.sizeDelta = sizeDelta;
+            return result.GetComponent<TextMeshProUGUI>();
+        }
+        
+        public void Initialize()
+        {
+            healthBarGradient = so_GameUIColor.HealthBarGradient;
+            enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
+            ClearStats();
+        }
+
+        public void ClearStats()
+        {
+            SetIcon(null);
+            SetHealth(0, 0);
+            SetEndurance(0, 0);
+            countText = 0;
+            foreach (var VARIABLE in texts)
+                VARIABLE.text = string.Empty;
+        }
+        
+        public void SetIcon(Sprite sprite) => icon.sprite = sprite;
+        
+        public void SetHealth(int current, int max)
+        {
+            healthTxt.text = StatsNames.HEALTH + current;
+            
+            if (current == 0 || max == 0) this.resultHealth = 0;
+            else resultHealth = (float)current/max;
+            
+            healthBar.fillAmount = resultHealth;
+            healthBar.color = healthBarGradient.Evaluate(resultHealth);
+        }
+        
+        public void SetEndurance(float current, int max)
+        {
+            enduranceTxt.text = StatsNames.ENDURANCE + current;
+            
+            if (current == 0 || max == 0) this.resultEndurance = 0;
+            else resultEndurance = (float)current/max;
+            
+            enduranceBar.fillAmount = resultEndurance;
+            enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
+        }
+
+        public void AddText(string text)
+        {
+            if (countText >= texts.Count)
+                texts.Add(CreateText());
+            
+            texts[countText].text = text;
+            countText++;
+        }
+
+        public void Build()
+        {
+            var currentFontSize = baseFontSize - (countText / 2);
+            foreach (var VARIABLE in texts)
+                VARIABLE.fontSize = currentFontSize;
+        }
+    }
+
+    public static class StatsNames
+    {
+        public const string HEALTH = "";
+        public const string ENDURANCE = "";
+        public const string NAME = "Name: ";
+        public const string TYPE = "Type: ";
+        public const string LEVEL = "Level: ";
+        public const string DAMAGE = "Damage: ";
+        public const string ATTACK_SPEED = "Attack Speed: ";
+        public const string ATTACK_RANGE = "Attack Range: ";
+        public const string EXPERIENCE = "Expirience: ";
+        public const string AMOUNT = "Amount: ";
+        
+        public static string GetTypesString(EntityType type)
         {
             if (type == EntityType.nothing)
                 return "";
 
             // Создаем список для хранения названий типов
-            System.Collections.Generic.List<string> typeNames = new System.Collections.Generic.List<string>();
+            List<string> typeNames = new List<string>();
 
             // Проверяем каждый флаг
             foreach (EntityType flag in System.Enum.GetValues(typeof(EntityType)))
@@ -69,64 +145,5 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
             // Объединяем названия через слеш
             return string.Join("/", typeNames);
         }
-
-        public void Initialize()
-        {
-            healthBarGradient = so_GameUIColor.HealthBarGradient;
-            enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
-            ClearStats();
-        }
-
-        public void ClearStats()
-        {
-            SetIcon(null);
-            SetHealth(1, 1);
-            SetEndurance(1, 1);
-            SetName(null);
-            SetType(EntityType.nothing);
-            SetLevel(0);
-            SetDamage(0);
-            SetAttackSpeed(0);
-            SetAttackRange(0);
-        }
-        
-        public void SetIcon(Sprite sprite) => icon.sprite = sprite;
-        
-        public void SetHealth(int current, int max)
-        {
-            healthTxt.text = HEALTH + current;
-            var resultHealth = (float)current/max;
-            healthBar.fillAmount = resultHealth;
-            healthBar.color = healthBarGradient.Evaluate(resultHealth);
-        }
-        
-        public void SetEndurance(float current, int max)
-        {
-            enduranceTxt.text = ENDURANCE + current;
-            var resultEndurance = current/max;
-            enduranceBar.fillAmount = resultEndurance;
-            enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
-        }
-        
-        public void SetName(string name) => nameTxt.text = NAME + name;
-        
-        public void SetType(EntityType type)
-        {
-            string typesString = GetTypesString(type);
-            typeTxt.text = TYPE + typesString;
-        }
-
-        public void SetLevel(int level) => levelTxt.text = LEVEL + level;
-        
-        public void SetExperience(int value) => experienceTxt.text = EXPERIENCE + value;
-        
-        public void SetAmount(int value) => amountTxt.text = AMOUNT + value;
-        
-        public void SetDamage(int damage) => damageTxt.text = DAMAGE + damage;
-        
-        public void SetAttackSpeed(int value) => attackSpeedTxt.text = ATTACK_SPEED + value;
-        
-        public void SetAttackRange(int value) => attackRangeTxt.text = ATTACK_RANGE + value;
-        
     }
 }

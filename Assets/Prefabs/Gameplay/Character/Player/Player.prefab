@@ -3302,10 +3302,6 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2468277187498423500, guid: 5267492f7938ef640a25150630f1b776, type: 3}
-      propertyPath: healthBar
-      value: 
-      objectReference: {fileID: 6706734447408955505}
-    - target: {fileID: 2468277187498423500, guid: 5267492f7938ef640a25150630f1b776, type: 3}
       propertyPath: characterMainController
       value: 
       objectReference: {fileID: 6200176588022165938}
@@ -3380,17 +3376,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7808812399886632136, guid: 5267492f7938ef640a25150630f1b776, type: 3}
   m_PrefabInstance: {fileID: 2580665379445854714}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6706734447408955505 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9134221501332656523, guid: 5267492f7938ef640a25150630f1b776, type: 3}
-  m_PrefabInstance: {fileID: 2580665379445854714}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &5988319743367089350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3563,7 +3548,6 @@ MonoBehaviour:
     <gameObjects>k__BackingField:
     - {fileID: 3905064192937531579}
     - {fileID: 5211477448136618235}
-    - {fileID: 2702775495190288114}
     - {fileID: 2702775495190288114}
   <VisualParent>k__BackingField: {fileID: 3028568621814086812}
   <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 649551c077e567b46a3b9ce25aba6e1b, type: 2}

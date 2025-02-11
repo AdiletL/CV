@@ -7,7 +7,7 @@ namespace Unit
     public abstract class UnitHealth : MonoBehaviour, IHealth
     {
         public event Action<HealthInfo> OnChangedHealth;
-        public event Action OnDeath;
+        public event Action OnZeroHealth;
         
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitHealth so_UnitHealth;
@@ -55,7 +55,7 @@ namespace Unit
                 if (CurrentHealth <= 0)
                 {
                     isLive = false;
-                    OnDeath?.Invoke();
+                    OnZeroHealth?.Invoke();
                 }
                 else
                 {

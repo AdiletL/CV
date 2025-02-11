@@ -16,8 +16,9 @@ namespace Unit.Character
         protected Collider[] findUnitColliders = new Collider[10];
         
         protected float durationAttack, countDurationAttack;
-        protected float applyDamage, countApplyDamage;
+        protected float cooldownApplyDamage, countApplyDamage;
         protected float cooldown, countCooldown;
+        protected float applyDamageMoment;
         protected float angleToTarget = 10;
         protected float rangeSqr;
         
@@ -32,6 +33,7 @@ namespace Unit.Character
         public void SetAttackClips(AnimationClip[] attackClips) => this.attackClips = attackClips;
         public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
         public void SetRange(float range) => this.Range = range;
+        public void SetApplyDamageMoment(float applyDamageMoment) => this.applyDamageMoment = applyDamageMoment;
         
         
         protected AnimationClip getRandomAnimationClip()
@@ -45,7 +47,7 @@ namespace Unit.Character
             rotation = new Rotation(gameObject.transform, characterSwitchMoveState.RotationSpeed);
             durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             cooldown = durationAttack * .5f;
-            applyDamage = durationAttack * .55f;
+            cooldownApplyDamage = durationAttack * applyDamageMoment;
             rangeSqr = Range * Range;
         }
 
@@ -132,7 +134,7 @@ namespace Unit.Character
             if (!isApplyDamage) return;
             
             countApplyDamage += Time.deltaTime;
-            if (countApplyDamage > applyDamage)
+            if (countApplyDamage > cooldownApplyDamage)
             {
                 ApplyDamage();
                 isApplyDamage = false;
@@ -202,6 +204,12 @@ namespace Unit.Character
         {
             if(state is CharacterDefaultAttackState defaultState)
                 defaultState.SetRange(range);
+            return this;
+        }
+        public CharacterDefaultAttackStateBuilder SetApplyDamageMoment(float applyDamageMoment)
+        {
+            if(state is CharacterDefaultAttackState defaultState)
+                defaultState.SetApplyDamageMoment(applyDamageMoment);
             return this;
         }
     }

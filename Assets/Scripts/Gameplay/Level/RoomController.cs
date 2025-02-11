@@ -5,6 +5,7 @@ using Gameplay.NavMesh;
 using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
+using Unit.Character.Creep;
 using Unit.Character.Player;
 using Unit.Container;
 using Unit.Trap;
@@ -32,6 +33,7 @@ namespace Gameplay
         [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
         
         private PhotonView photonView;
+        private int countCreep;
         private bool isTriggerPlayer;
         
         private Stack<CellController> cellStack = new();
@@ -82,6 +84,8 @@ namespace Gameplay
             photonView.RPC(nameof(InitializeCharacters), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeTraps), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeInteractableObjects), RpcTarget.AllBuffered);
+
+            InitializeMediator();
         }
 
         [PunRPC]
@@ -137,6 +141,26 @@ namespace Gameplay
             }
         }
         #endregion
+
+        private void InitializeMediator()
+        {
+            foreach (var VARIABLE in characters)
+            {
+                if (VARIABLE is CreepController creepController)
+                {
+                    creepController.OnDeath += OnCreepDeath;
+                    countCreep++;
+                }
+            }
+        }
+        private void DeInitializeMediator()
+        {
+            foreach (var VARIABLE in characters)
+            {
+                if (VARIABLE is CreepController creepController)
+                    creepController.OnDeath -= OnCreepDeath;
+            }
+        }
 
         #region StartGame
         public void StartGame()
@@ -227,6 +251,15 @@ namespace Gameplay
             OnSpawnNextRooms?.Invoke(ID, endPositions);
         }
 
+        private void OnCreepDeath(CreepController creepController)
+        {
+            countCreep--;
+            if (countCreep == 0)
+            {
+                Debug.Log($"Room {ID}: {characters.Length}/{countCreep}");
+            }
+        }
+        
         private void OnTriggerEnter(Collider other)
         {
             if(isTriggerPlayer) return;
@@ -235,6 +268,11 @@ namespace Gameplay
                 isTriggerPlayer = true;
                 SpawnNextRooms();
             }
+        }
+
+        private void OnDestroy()
+        {
+            DeInitializeMediator();
         }
     }
 }

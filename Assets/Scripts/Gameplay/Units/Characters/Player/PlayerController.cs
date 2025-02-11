@@ -214,9 +214,9 @@ namespace Unit.Character.Player
             StateMachine.OnChangedState += OnChangedState;
         }
 
-        protected override void UnInitializeMediatorRPC()
+        protected override void DeInitializeMediatorRPC()
         {
-            base.UnInitializeMediatorRPC();
+            base.DeInitializeMediatorRPC();
             StateMachine.OnChangedState -= OnChangedState;
         }
 

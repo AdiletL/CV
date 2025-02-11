@@ -93,6 +93,7 @@ namespace Gameplay.Factory.Character.Creep
                 .SetUnitAnimation(characterAnimation)
                 .SetAttackClips(so_BeholderAttack.AttackClips)
                 .SetCooldownClip(so_BeholderAttack.CooldownClip)
+                .SetApplyDamageMoment(so_BeholderAttack.ApplyDamageMoment)
                 .SetRange(so_BeholderAttack.Range)
                 .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetAttackSpeed(so_BeholderAttack.AttackSpeed)
