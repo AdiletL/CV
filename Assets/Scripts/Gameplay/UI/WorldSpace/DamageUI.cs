@@ -21,57 +21,57 @@ namespace Gameplay.UI
         [SerializeField] private float animationDuration = 1.0f;
         [SerializeField] private float fallDistance = 1f;
 
-        private Coroutine startAnimateCoroutine;
         private float elapsedTime;
-        
-        private float[] randomValues = new []
-        {
-            -.15f, -.1f, -.05f, .05f, .1f, .15f
-        };
-        
+        private Vector3 startPosition;
+        private Vector3 endPosition;
+        private Color textColor;
+        private bool isAnimating;
+
+        private static readonly float[] RandomValues = { -0.15f, -0.1f, -0.05f, 0.05f, 0.1f, 0.15f };
+
         public void Play(int damageValue)
         {
             damageText.text = damageValue.ToString();
             elapsedTime = 0f;
 
             transform.localScale = startScale;
-            if(startAnimateCoroutine != null) StopCoroutine(startAnimateCoroutine);
-            startAnimateCoroutine = StartCoroutine(StartAnimateCoroutine());
+            textColor = damageText.color;
+            textColor.a = 1f;
+            damageText.color = textColor;
+
+            float randomX = RandomValues[Random.Range(0, RandomValues.Length)];
+            startPosition = transform.position + (Vector3.right * randomX);
+            endPosition = startPosition - new Vector3(0, fallDistance, 0);
+
+            isAnimating = true;
         }
 
-        private IEnumerator StartAnimateCoroutine()
+        private void Update()
         {
-            var randomX = randomValues[Random.Range(0, randomValues.Length)];
-            Vector3 startPosition = transform.position + (Vector3.right * randomX);
-            Vector3 endPosition = startPosition - new Vector3(0, fallDistance, 0);
+            if (!isAnimating) return;
 
-            Color textColor = damageText.color;
+            elapsedTime += Time.deltaTime;
+            float progress = elapsedTime / animationDuration;
 
-            while (elapsedTime < animationDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float progress = elapsedTime / animationDuration;
-
-                textColor.a = alphaCurve.Evaluate(progress);
-                damageText.color = textColor;
-
-                transform.localScale = Vector3.Lerp(startScale, endScale, sizeCurve.Evaluate(progress));
-
-                transform.position = Vector3.Lerp(startPosition, endPosition, fallCurve.Evaluate(progress));
-
-                yield return null;
-            }
-
-            // Ensure final state
-            textColor.a = 0f;
+            textColor.a = alphaCurve.Evaluate(progress);
             damageText.color = textColor;
-            transform.localScale = endScale;
-            transform.position = endPosition;
 
-            if(poolManager != null)
-                poolManager.ReturnToPool(gameObject); // Or return to pool if pooling is used
-            else
-                Destroy(gameObject);
+            transform.localScale = Vector3.Lerp(startScale, endScale, sizeCurve.Evaluate(progress));
+            transform.position = Vector3.Lerp(startPosition, endPosition, fallCurve.Evaluate(progress));
+
+            if (elapsedTime >= animationDuration)
+            {
+                isAnimating = false;
+                textColor.a = 0f;
+                damageText.color = textColor;
+                transform.localScale = endScale;
+                transform.position = endPosition;
+
+                if (poolManager != null)
+                    poolManager.ReturnToPool(gameObject);
+                else
+                    Destroy(gameObject);
+            }
         }
     }
 }

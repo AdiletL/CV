@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 
 namespace Unit.Character.Player
@@ -12,6 +13,7 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeyse;
         
         private PlayerSkillInputHandler playerSkillInputHandler;
+        private PlayerInventory playerInventory;
         private CharacterControlDesktop characterControlDesktop;
         private CharacterSwitchAttackState characterSwitchAttack;
         private StateMachine stateMachine;
@@ -38,12 +40,14 @@ namespace Unit.Character.Player
             this.characterSwitchAttack = characterSwitchAttackState;
 
         public PlayerMouseInputHandler(StateMachine stateMachine, CharacterControlDesktop characterControlDesktop,
-            PlayerSkillInputHandler playerSkillInputHandler, CharacterSwitchAttackState characterSwitchAttackState)
+            PlayerSkillInputHandler playerSkillInputHandler, CharacterSwitchAttackState characterSwitchAttackState,
+            PlayerInventory playerInventory)
         {
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
             this.playerSkillInputHandler = playerSkillInputHandler;
             this.characterSwitchAttack = characterSwitchAttackState;
+            this.playerInventory = playerInventory;
             
             stateMachine.OnExitCategory += OnExitCategory;
         }
@@ -53,6 +57,23 @@ namespace Unit.Character.Player
             stateMachine.OnExitCategory -= OnExitCategory;
         }
 
+               
+        // Оптимизированный метод для проверки, был ли клик по UI
+        private bool IsPointerOverUIObject()
+        {
+            // Используем заранее созданные объекты
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
+
+            // Список результатов Raycast
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            // Получаем все результаты Raycast
+            EventSystem.current.RaycastAll(pointerData, raycastResults);
+            // Проверяем, есть ли хотя бы один объект в UI
+            return raycastResults.Count > 0;
+        }
         public bool IsInputBlocked(InputType input)
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
@@ -121,7 +142,9 @@ namespace Unit.Character.Player
             if (!isAttacking &&
                 Input.GetMouseButtonDown(attackMouseButton) && 
                 !characterControlDesktop.IsInputBlocked(InputType.attack) &&
-                !playerSkillInputHandler.IsInputBlocked(InputType.attack))
+                !playerSkillInputHandler.IsInputBlocked(InputType.attack) && 
+                !playerInventory.IsInputBlocked(InputType.attack) && 
+                !IsPointerOverUIObject())
             {
                 TriggerAttack();
             }
@@ -133,12 +156,12 @@ namespace Unit.Character.Player
             }
         }
         
-        public void ClearSelectObject()
+        public void ClearSelectedObject()
         {
-            selectedObject?.UnSelectObject();
             selectedObject?.HideInformation();
             selectedRenderer?.UnSelectedObject();
             selectedObject = null;
+            playerInventory.ClearSelectedItem();
         }
         
         private void HandleHighlight()
@@ -189,12 +212,10 @@ namespace Unit.Character.Player
                 clickableObject.UpdateInformation();
                 if (selectedObject == null || selectedObject != clickableObject)
                 {
-                    selectedObject?.UnSelectObject();
                     selectedRenderer?.UnSelectedObject();
                     
                     selectedObject = clickableObject;
                     selectedObject.ShowInformation();
-                    selectedObject.SelectObject();
                     selectedRenderer = hitObject.GetComponent<UnitRenderer>();
                     selectedRenderer.SelectedObject();
                 }

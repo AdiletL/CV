@@ -35,8 +35,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b73ff54668ea6548acbfc575e6fdbd5
+    m_Address: SO_SkillSpawnPortal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 926376a6b98787b48a645626c87099af
     m_Address: SO_LevelContainerTest
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c6a3c09d0d069c245bf1f9c5a5fef450
+    m_Address: SO_SkillTest
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

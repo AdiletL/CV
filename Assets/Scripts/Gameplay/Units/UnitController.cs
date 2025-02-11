@@ -42,6 +42,7 @@ namespace Unit
         }
 
         public abstract void Appear();
+        public abstract void Disappear();
         
         public void Show() => VisualParent?.SetActive(true);
         public void Hide() => VisualParent?.SetActive(false);

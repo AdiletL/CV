@@ -18,4 +18,6 @@ MonoBehaviour:
   <AmountReductionEndurance>k__BackingField: 0.01
   <BaseWaitTimeTrap>k__BackingField: 0.3
   <HighlightedMaterial>k__BackingField: {fileID: 2100000, guid: c44e347a12c67184cbf1e39631e44732, type: 2}
+  <SelectedItemCursor>k__BackingField: {fileID: 2800000, guid: e577f30c6bd976a429addedf4c4ad662, type: 3}
+  <BaseCursor>k__BackingField: {fileID: 0}
   <RadiusCell>k__BackingField: 0.3

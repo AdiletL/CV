@@ -3,7 +3,6 @@ using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 using System.Collections;
-using Unit.Cell;
 using Random = UnityEngine.Random;
 
 namespace Unit.Trap.Hammer
@@ -42,7 +41,12 @@ namespace Unit.Trap.Hammer
             int random = Random.Range(0, 4);
             //Invoke(nameof(Deactivate), random);
         }
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
 
         private void OnEnable()
         {

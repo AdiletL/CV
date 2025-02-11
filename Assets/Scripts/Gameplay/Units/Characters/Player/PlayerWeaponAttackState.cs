@@ -10,6 +10,7 @@ namespace Unit.Character.Player
         private Camera baseCamera;
         private PlayerKinematicControl playerKinematicControl;
 
+        private Vector3 direction;
         private float rotationSpeed;
 
         public void SetSwordAttackClip(AnimationClip[] clips) => swordAttackClip = clips;
@@ -24,6 +25,8 @@ namespace Unit.Character.Player
             base.Enter();
             this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
             playerKinematicControl.SetRotationSpeed(rotationSpeed);
+            UpdateDirection();
+            CurrentWeapon.SetDirection(direction);
         }
 
         public override void Exit()
@@ -39,6 +42,18 @@ namespace Unit.Character.Player
                 if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
                     unitRenderer.ResetColor();
             }
+        }
+
+        private void UpdateDirection()
+        {
+            // Получаем позицию мыши в мировых координатах
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = baseCamera.transform.position.y - gameObject.transform.position.y; // Используем высоту камеры
+            Vector3 worldMousePosition = baseCamera.ScreenToWorldPoint(mousePosition);
+
+            // Вычисляем направление
+            direction = worldMousePosition - gameObject.transform.position;
+            direction.y = 0; // Игнорируем высоту, вращаем только по Y
         }
 
         public override void SetTarget(GameObject target)
@@ -67,35 +82,12 @@ namespace Unit.Character.Player
 
         protected override void RotateToTarget()
         {
-            // Получаем позицию мыши в мировых координатах
-            Vector3 mousePosition = Input.mousePosition;
-            mousePosition.z = baseCamera.transform.position.y - gameObject.transform.position.y; // Используем высоту камеры
-            Vector3 worldMousePosition = baseCamera.ScreenToWorldPoint(mousePosition);
-
-            // Вычисляем направление
-            Vector3 direction = worldMousePosition - gameObject.transform.position;
-            direction.y = 0; // Игнорируем высоту, вращаем только по Y
             playerKinematicControl.SetDirectionRotate(direction);
         }
 
         protected override void Fire()
         {
-            FindUnit();
-            
-            if(!currentTarget ||
-               !Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position,
-                   gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
-            {
-                return;
-            }
-            
-            if (currentTarget&& currentTarget.TryGetComponent(out IHealth health))
-            {
-                if (health.IsLive)
-                    CurrentWeapon.FireAsync();
-                else
-                    currentTarget = null;
-            }
+            CurrentWeapon.FireAsync();
         }
     }
 

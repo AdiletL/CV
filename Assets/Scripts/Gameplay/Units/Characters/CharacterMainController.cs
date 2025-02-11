@@ -10,8 +10,6 @@ namespace Unit.Character
     {
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
 
-        [field: SerializeField, Space] public GameObject SelectedObjectVisual { get; private set; }
-
         protected PhotonView photonView;
         
         public StateMachine StateMachine { get; protected set; }
@@ -34,24 +32,26 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-
-            BeforeCreateStates();
             
+            photonView = GetComponent<PhotonView>();
+            
+            StateMachine = new StateMachine();
+            UnitInformation = CreateUnitInformation();
+            diContainer.Inject(UnitInformation);
+            
+            var ui = GetComponentInUnit<CharacterUI>();
+            diContainer.Inject(ui);
+            ui?.Initialize();
+            
+            InitializeMediator();
+            
+            BeforeCreateStates();
             CreateSwitchState();
             CreateStates();
-
-            BeforeInitializeMediator();
-            InitializeMediator();
-
-            var ui = GetComponentInUnit<CharacterUI>();
-            var health = GetComponentInUnit<CharacterHealth>();
+            AfterCreateStates();
             
-            diContainer.Inject(ui);
-            diContainer.Inject(health);
+            AfterInitializeMediator();
             
-            ui?.Initialize();
-            health?.Initialize();
-
             InitializeAllAnimations();
         }
 
@@ -71,18 +71,21 @@ namespace Unit.Character
 
         protected virtual void BeforeCreateStates()
         {
-            photonView = GetComponent<PhotonView>();
             
-            StateMachine = new StateMachine();
-            UnitInformation = CreateUnitInformation();
-            diContainer.Inject(UnitInformation);
         }
         protected abstract void CreateStates();
         protected abstract void CreateSwitchState();
 
-        protected virtual void BeforeInitializeMediator()
+        protected virtual void AfterCreateStates()
         {
             
+        }
+
+        protected virtual void AfterInitializeMediator()
+        {
+            var health = GetComponentInUnit<CharacterHealth>();
+            diContainer.Inject(health);
+            health?.Initialize();
         }
 
         protected abstract void InitializeAllAnimations();
@@ -95,7 +98,5 @@ namespace Unit.Character
         public void ShowInformation() => UnitInformation.Show();
         public void UpdateInformation() => UnitInformation.UpdateData();
         public void HideInformation() => UnitInformation.Hide();
-        public void SelectObject() => SelectedObjectVisual.SetActive(true);
-        public void UnSelectObject() => SelectedObjectVisual.SetActive(false);
     }
 }

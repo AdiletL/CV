@@ -43,7 +43,12 @@ namespace Unit.Trap.Fall
         public override void Appear()
         {
         }
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Activate()
         {
             if(!isReady) return;

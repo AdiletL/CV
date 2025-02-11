@@ -34,7 +34,12 @@ namespace Unit.Trap
         {
             
         }
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
         private void OnEnable()
         {
             GetComponentInUnit<PushCollision>().OnHitEnter += OnHitEnter;

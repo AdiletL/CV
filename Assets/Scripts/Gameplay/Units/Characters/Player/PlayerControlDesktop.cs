@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using Gameplay.Factory.Character.Player;
 using Gameplay.Units.Item.Loot;
-using Machine;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
-using ScriptableObjects.Unit.Character.Player;
-using Unit.Cell;
 using Unit.Item.Container;
 using UnityEngine;
 using Zenject;
@@ -122,7 +119,7 @@ namespace Unit.Character.Player
         private void InitializeInteractionHandler()
         {
             var containerInteractionHandler = new ContainerInteractionHandler(gameObject, this);
-            var lootInteractionHandler = new LootInteractionHandler(gameObject, this);
+            var lootInteractionHandler = new ItemInteractionHandler(gameObject, this);
             RegisterInteraction(containerInteractionHandler);
             RegisterInteraction(lootInteractionHandler);
         }
@@ -144,7 +141,7 @@ namespace Unit.Character.Player
         private void InitializeMouseInputHandler()
         {
             playerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
-                playerSkillInputHandler, characterSwitchAttack);
+                playerSkillInputHandler, characterSwitchAttack, gameObject.GetComponent<PlayerInventory>());
             diContainer.Inject(playerMouseInputHandler);
             playerMouseInputHandler.Initialize();
         }
@@ -204,7 +201,7 @@ namespace Unit.Character.Player
         {
             base.ClearHotkeys();
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            playerMouseInputHandler.ClearSelectObject();
+            playerMouseInputHandler.ClearSelectedObject();
         }
 
 

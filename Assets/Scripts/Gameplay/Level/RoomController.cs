@@ -6,10 +6,9 @@ using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
 using Unit.Character.Player;
-using Unit.Item;
+using Unit.Container;
 using Unit.Trap;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
@@ -21,12 +20,11 @@ namespace Gameplay
 
         public static Action<int, List<Vector3>> OnSpawnNextRooms;
         
-        [FormerlySerializedAs("platforms")]
         [Space(10)]
         [SerializeField] private CellController[] cells;
         [SerializeField] private CharacterMainController[] characters;
         [SerializeField] private TrapController[] traps;
-        [SerializeField] private ItemController[] itemObjects;
+        [SerializeField] private ContainerController[] containers;
         
         [field: SerializeField, Space(10)] public NavMeshControl NavMeshControl { get; private set; }
         [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
@@ -39,7 +37,7 @@ namespace Gameplay
         private Stack<CellController> cellStack = new();
         private Stack<CharacterMainController> charactersStack = new();
         private Stack<TrapController> trapsStack = new();
-        private Stack<ItemController> interactableObjectStack = new();
+        private Stack<ContainerController> interactableObjectStack = new();
         
         public int ID { get; private set; }
         
@@ -60,7 +58,7 @@ namespace Gameplay
             cells = GetComponentsInChildren<CellController>(true);
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
-            itemObjects = GetComponentsInChildren<ItemController>(true);
+            containers = GetComponentsInChildren<ContainerController>(true);
 
             yield return null;
             MarkDirty();
@@ -128,7 +126,7 @@ namespace Gameplay
         [PunRPC]
         private void InitializeInteractableObjects()
         {
-            foreach (var VARIABLE in itemObjects)
+            foreach (var VARIABLE in containers)
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);

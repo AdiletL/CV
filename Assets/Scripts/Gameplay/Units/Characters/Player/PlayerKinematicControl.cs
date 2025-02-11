@@ -7,7 +7,7 @@ namespace Unit.Character.Player
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(KinematicCharacterMotor))]
-    public class PlayerKinematicControl : MonoBehaviour, ICharacterController
+    public class PlayerKinematicControl : MonoBehaviour, ICharacterController, IMoveControl
     {
         [SerializeField] private KinematicCharacterMotor  motor;
 
@@ -19,7 +19,7 @@ namespace Unit.Character.Player
         
         public bool IsGrounded => motor.GroundingStatus.IsStableOnGround;
 
-        private void Awake()
+        public void Initialize()
         {
             motor.CharacterController = this;
             gravity = new Vector3(0, Physics.gravity.y, 0);

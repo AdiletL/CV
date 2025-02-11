@@ -10,22 +10,22 @@ namespace Gameplay.Skill
         public event Action OnLateUpdate;
 
 
-        private Dictionary<Type, ISkill> currentSkills = new();
+        private Dictionary<SkillType, ISkill> currentSkills = new();
 
 
-        public bool IsSkillActive(Type skill)
+        public bool IsSkillActive(SkillType skillType)
         {
-            return currentSkills.ContainsKey(skill);
+            return currentSkills.ContainsKey(skillType);
         }
 
-        public bool IsSkillNotNull(Type skill)
+        public bool IsSkillNotNull(SkillType skillType)
         {
-            return currentSkills.ContainsKey(skill);
+            return currentSkills.ContainsKey(skillType);
         }
 
-        public ISkill GetSkill(Type skill)
+        public ISkill GetSkill(SkillType skillType)
         {
-            return currentSkills[skill];
+            return currentSkills[skillType];
         }
 
         public void Initialize()
@@ -37,9 +37,9 @@ namespace Gameplay.Skill
 
         private void LateUpdate() => OnLateUpdate?.Invoke();
 
-        public void Execute(Type skillType, Action exitCallback = null)
+        public void Execute(SkillType skillType, Action exitCallback = null)
         {
-            if (currentSkills.ContainsKey(skillType))
+            if (IsSkillNotNull(skillType))
             {
                 var skill = currentSkills[skillType];
                 OnUpdate += skill.Update;
@@ -58,18 +58,18 @@ namespace Gameplay.Skill
 
         public void AddSkill(ISkill skill)
         {
-            if (!currentSkills.ContainsKey(skill.GetType()))
+            if (!IsSkillNotNull(skill.SkillType))
             {
-                currentSkills.Add(skill.GetType(), skill);
+                currentSkills.Add(skill.SkillType, skill);
             }
         }
 
-        public void RemoveSkill(ISkill skill)
+        public void RemoveSkill(SkillType skillType)
         {
-            if (currentSkills.ContainsKey(skill.GetType()))
+            if (IsSkillNotNull(skillType))
             {
-                OnFinished(skill);
-                currentSkills.Remove(skill.GetType());
+                OnFinished(currentSkills[skillType]);
+                currentSkills.Remove(skillType);
             }
         }
     }

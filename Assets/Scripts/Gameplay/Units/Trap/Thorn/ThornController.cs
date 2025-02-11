@@ -60,8 +60,13 @@ namespace Unit.Trap
         {
             
         }
-        
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
+
         public override void Activate()
         {
             isReady = false;

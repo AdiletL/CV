@@ -67,6 +67,7 @@ namespace Gameplay.Manager
         {
             var newGameObject = PhotonView.Find(viewID).gameObject;
             levelController = newGameObject.GetComponent<LevelController>();
+            diContainer.Inject(levelController);
             levelController.Initialize();
         }
 

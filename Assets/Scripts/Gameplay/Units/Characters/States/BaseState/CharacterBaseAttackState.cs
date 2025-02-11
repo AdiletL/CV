@@ -1,16 +1,21 @@
 ﻿using Gameplay.Damage;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character
 {
     public class CharacterBaseAttackState : UnitBaseAttackState
     {
+        [Inject] protected DiContainer diContainer;
+        
         protected GameObject currentTarget;
         
         
         public override IDamageable GetDamageable()
         {
-            return new NormalDamage(damage, gameObject);
+            var damageable = new NormalDamage(damage, gameObject);
+            diContainer.Inject(damageable);
+            return damageable;
         }
         
         

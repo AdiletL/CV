@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Portals
+  m_EditorClassIdentifier: 
+  m_GroupName: Portals
+  m_GUID: 0e2473f2aa72091419553f9a1c452215
+  m_SerializeEntries:
+  - m_GUID: 8a598b2ad1c0c6c4a99f7e25fa3569ce
+    m_Address: StartPortal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da330314bff07d840a82963b8c96f58d
+    m_Address: SpawnPortal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 089150fb234ebe74f8e1580f0723d344, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7bda08d18a22d554f9ac4dc713c4a74a, type: 2}
+    - {fileID: 11400000, guid: bfad5b4bedfe62a418aae071fcd0d0a3, type: 2}

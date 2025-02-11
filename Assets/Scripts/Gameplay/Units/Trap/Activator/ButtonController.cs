@@ -38,8 +38,13 @@ namespace Unit.Trap.Activator
         {
             
         }
-        
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
+
         public override void Activate()
         {
             base.Activate();

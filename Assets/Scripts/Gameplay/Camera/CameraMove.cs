@@ -12,10 +12,21 @@ public class CameraMove : MonoBehaviour
 
     private Vector3 currentPosition;
 
+    private float startPositionY;
     
     public void SetTarget(GameObject target)
     {
         this.target = target;
+    }
+
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = new Vector3(position.x, startPositionY, position.z);
+    }
+
+    private void Start()
+    {
+        startPositionY = transform.position.y;
     }
 
     // Update is called once per frame

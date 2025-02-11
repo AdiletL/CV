@@ -10,6 +10,7 @@ namespace Gameplay.Skill
     {
         nothing,
         dash = 1 << 0,
+        spawnTeleport = 1 << 1,
     }
     
     public abstract class Skill : ISkill
@@ -18,10 +19,12 @@ namespace Gameplay.Skill
         public event Action<ISkill> OnFinished;
 
         public GameObject GameObject { get; protected set; }
+        public abstract SkillType SkillType { get; protected set; }
         public InputType BlockedInputType { get; protected set; }
         public SkillType BlockedSkillType { get; protected set; }
         public Action ExitCallBack { get; protected set; }
         public AnimationClip CastClip { get; protected set; }
+        public bool IsCanUseSkill { get; protected set; }
         
 
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
@@ -42,9 +45,11 @@ namespace Gameplay.Skill
         public abstract void Update();
 
         public abstract void LateUpdate();
+        public abstract void CheckTarget();
 
         public virtual void Exit()
         {
+            IsCanUseSkill = false;
             ExitCallBack?.Invoke();
             OnFinished?.Invoke(this);
         }

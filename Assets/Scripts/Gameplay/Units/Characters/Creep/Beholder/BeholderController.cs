@@ -124,5 +124,10 @@ namespace Unit.Character.Creep
             base.Appear();
             this.StateMachine.SetStates(desiredStates:typeof(BeholderIdleState));
         }
+
+        public override void Disappear()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

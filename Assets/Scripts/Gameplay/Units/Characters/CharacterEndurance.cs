@@ -21,7 +21,6 @@ namespace Unit.Character
             cooldownReductionEndurance = gameConfig.CooldownReductionEndurance;
             amountReductionEndurance = gameConfig.AmountReductionEndurance;
             isInitialized = true;
-            
         }
 
         private void Update()

@@ -11,6 +11,7 @@ using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Weapon;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ValueType = Calculate.ValueType;
 
 namespace Unit.Character.Player
@@ -43,6 +44,8 @@ namespace Unit.Character.Player
 
         private PlayerStateFactory playerStateFactory;
         private PlayerSwitchStateFactory playerSwitchStateFactory;
+        private PlayerInventory playerInventory;
+        private PlayerKinematicControl playerKinematicControl;
         
         private CharacterControlDesktop playerControlDesktop;
         private CharacterSwitchMoveState characterSwitchMoveState;
@@ -52,8 +55,7 @@ namespace Unit.Character.Player
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
         
-        private PlayerKinematicControl playerKinematicControl;
-        private Camera baseCamera;
+        public Camera BaseCamera { get; private set; }
         
         protected override UnitInformation CreateUnitInformation()
         {
@@ -83,8 +85,8 @@ namespace Unit.Character.Player
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
                 .SetPlayerKinematicControl(playerKinematicControl)
-                .SetBaseCamera(baseCamera)
-                .SetCharacterEndurance(characterEndurance)
+                .SetBaseCamera(BaseCamera)
+                .SetCharacterEndurance(GetComponentInUnit<CharacterEndurance>())
                 .SetPhotonView(photonView)
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
@@ -101,7 +103,7 @@ namespace Unit.Character.Player
             return (PlayerSwitchStateFactory)new PlayerSwitchStateFactoryBuilder()
                 .SetCharacterState(playerStateFactory)
                 .SetCharacterAnimation(characterAnimation)
-                .SetCharacterEndurance(characterEndurance)
+                .SetCharacterEndurance(GetComponentInUnit<CharacterEndurance>())
                 .SetPhotonView(photonView)
                 .SetWeaponParent(weaponParent)
                 .SetPlayerAttackConfig(so_PlayerAttack)
@@ -115,14 +117,6 @@ namespace Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
-
-            characterExperience = GetComponentInUnit<CharacterExperience>();
-            diContainer.Inject(characterExperience);
-            characterExperience.Initialize();
-            
-            characterEndurance = GetComponentInUnit<CharacterEndurance>();
-            diContainer.Inject(characterEndurance);
-            characterEndurance.Initialize();
             
             //Test
             InitializeNormalResistance();
@@ -143,20 +137,27 @@ namespace Unit.Character.Player
             {
                 var cameraMove = FindFirstObjectByType<CameraMove>();
                 cameraMove.SetTarget(gameObject);
-                baseCamera = cameraMove.GetComponent<Camera>();
+                BaseCamera = cameraMove.GetComponent<Camera>();
             }
+
+            playerInventory = GetComponentInUnit<PlayerInventory>();
+            diContainer.Inject(playerInventory);
+            playerInventory.Initialize();
             
-            unitRenderer = GetComponentInUnit<UnitRenderer>();
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
-            characterEndurance = GetComponentInUnit<PlayerEndurance>();
+            diContainer.Inject(playerKinematicControl);
+            playerKinematicControl.Initialize();
             
             characterAnimation = GetComponentInUnit<PlayerAnimation>();
             diContainer.Inject(characterAnimation);
             characterAnimation.Initialize();
             
             unitTransformSync = GetComponentInUnit<UnitTransformSync>();
+            diContainer.Inject(unitTransformSync);
+            
             playerStateFactory = CreatePlayerStateFactory();
             diContainer.Inject(playerStateFactory);
+            
             playerSwitchStateFactory = CreatePlayerSwitchStateFactory();
             diContainer.Inject(playerSwitchStateFactory);
         }
@@ -165,7 +166,6 @@ namespace Unit.Character.Player
         {
             var idleState = playerStateFactory.CreateState(typeof(PlayerIdleState));
             diContainer.Inject(idleState);
-            
             StateMachine.AddStates(idleState);
         }
 
@@ -186,13 +186,25 @@ namespace Unit.Character.Player
             characterSwitchMoveState.Initialize();
         }
 
-        protected override void BeforeInitializeMediator()
+        protected override void AfterCreateStates()
         {
-            base.BeforeInitializeMediator();
+            base.AfterCreateStates();
             
             playerControlDesktop = CreatePlayerControlDesktop();
             diContainer.Inject(playerControlDesktop);
             playerControlDesktop.Initialize();
+        }
+
+        protected override void AfterInitializeMediator()
+        {
+            base.AfterInitializeMediator();
+            characterExperience = GetComponentInUnit<CharacterExperience>();
+            diContainer.Inject(characterExperience);
+            characterExperience.Initialize();
+            
+            characterEndurance = GetComponentInUnit<CharacterEndurance>();
+            diContainer.Inject(characterEndurance);
+            characterEndurance.Initialize();
         }
 
         protected override void InitializeMediator()
@@ -212,6 +224,11 @@ namespace Unit.Character.Player
             unitTransformSync.enabled = true;
         }
 
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
         private void InitializeSword()
         {
             if (!photonView.IsMine) return;
@@ -225,6 +242,7 @@ namespace Unit.Character.Player
                 var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
                 diContainer.Inject(swordDamageable);
                 var sword = (Sword)new SwordBuilder()
+                    .SetOwnerCenter(unitCenter.Center)
                     .SetIncreaseAttackSpeed(so_Sword.IncreaseAttackSpeed.ValueType, so_Sword.IncreaseAttackSpeed.Value)
                     .SetReductionEndurance(so_Sword.ReductionEndurance.ValueType, so_Sword.ReductionEndurance.Value)
                     .SetAngleToTarget(so_Sword.AngleToTarget)

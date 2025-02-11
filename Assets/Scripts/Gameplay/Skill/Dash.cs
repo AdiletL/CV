@@ -2,7 +2,6 @@
 using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
-using Vector2 = System.Numerics.Vector2;
 
 namespace Gameplay.Skill
 {
@@ -11,11 +10,13 @@ namespace Gameplay.Skill
         private float dashTimer;
         private bool isDashing;
         
-        private PlayerKinematicControl playerKinematicControl;
+        private IMoveControl moveControl;
+        public override SkillType SkillType { get; protected set; } = SkillType.dash;
+        
         public float Duration { get; set; }
         public float Speed { get; set; }
         
-        public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
+        public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
 
         public override void Execute(Action exitCallback = null)
         {
@@ -36,17 +37,22 @@ namespace Gameplay.Skill
                 DashUpdate();
             }
         }
-        
+
+        public override void CheckTarget()
+        {
+            
+        }
+
         private void DashUpdate()
         {
             if (dashTimer > 0f)
             {
                 dashTimer -= Time.deltaTime;
-                playerKinematicControl.AddVelocity(GameObject.transform.forward * Speed);
+                moveControl.AddVelocity(GameObject.transform.forward * Speed);
             }
             else
             {
-                playerKinematicControl.ClearVelocity();
+                moveControl.ClearVelocity();
                 isDashing = false;
                 Exit();
             }
@@ -59,10 +65,10 @@ namespace Gameplay.Skill
         {
         }
         
-        public DashBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        public DashBuilder SetMoveControl(IMoveControl iMoveControl)
         {
             if(skill is Dash dash)
-                dash.SetPlayerKinematicControl(playerKinematicControl);
+                dash.SetMoveControl(iMoveControl);
             return this;
         }
 

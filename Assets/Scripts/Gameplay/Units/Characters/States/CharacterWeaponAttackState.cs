@@ -94,6 +94,7 @@ namespace Unit.Character
             Range = CurrentWeapon.Range;
             rangeSqr = Range * Range;
             CurrentWeapon.SetWeaponParent(weaponParent);
+            CurrentWeapon.SetEnemyLayer(enemyLayer);
 
             CurrentWeapon.UpdateCharacterStates(this);
             

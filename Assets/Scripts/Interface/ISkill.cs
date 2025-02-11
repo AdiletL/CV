@@ -9,15 +9,20 @@ public interface ISkill
     
     public GameObject GameObject { get; }
     public AnimationClip CastClip { get; }
-    public InputType BlockedInputType { get; }
+    public SkillType SkillType { get; }
     public SkillType BlockedSkillType { get; }
+    public InputType BlockedInputType { get; }
     public Action ExitCallBack { get; }
+    public bool IsCanUseSkill { get; }
+    
     
     public void Initialize();
     public void Execute(Action callback = null);
 
     public void Update();
     public void LateUpdate();
+
+    public void CheckTarget();
 
     public void Exit();
 }

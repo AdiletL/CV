@@ -20,7 +20,6 @@ namespace Gameplay.Factory
             GameObject result = type switch
             {
                 _ when type == typeof(AxeController) => await poolManager.GetObjectAsync<AxeController>(),
-                _ when type == typeof(FallController) => await poolManager.GetObjectAsync<FallController>(),
                 _ when type == typeof(HammerController) => await poolManager.GetObjectAsync<HammerController>(),
                 _ when type == typeof(ButtonController) => await poolManager.GetObjectAsync<ButtonController>(),
                 _ when type == typeof(PushController) => await poolManager.GetObjectAsync<PushController>(),

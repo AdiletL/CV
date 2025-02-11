@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gameplay.Damage;
-using Gameplay.Factory;
 using Gameplay.Factory.Character;
-using Gameplay.Factory.Character.Player;
 using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
-using UnityEngine;
 using Zenject;
 
 namespace Unit.Character.Player

@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
-using Unit;
 using UnityEngine;
 using Zenject;
 
@@ -12,7 +11,6 @@ namespace Gameplay.Weapon
         [Inject] private PoolManager pool;
         
         private Transform pointSpawnProjectile;
-
 
         public override void Initialize()
         {
@@ -28,7 +26,7 @@ namespace Gameplay.Weapon
             var arrow = newGameObject.GetComponent<ArrowController>();
             arrow.Initialize();
             arrow.SetDamageable(Damageable);
-            arrow.UpdateData(CurrentTarget.GetComponent<UnitCenter>().Center.position);
+            arrow.UpdateData(direction, Range);
         }
     }
     

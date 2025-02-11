@@ -9,7 +9,7 @@ namespace Gameplay.Weapon.Projectile
     public class SphereController : ProjectileController
     {
         private SO_Sphere so_Sphere;
-        private IMovement forwardMovement;
+        private IMovement directionMovement;
         private IEffect slowMovementEffect;
 
         public override void Initialize()
@@ -19,19 +19,19 @@ namespace Gameplay.Weapon.Projectile
             
             so_Sphere = (SO_Sphere)so_Projectile;
             
-            if (forwardMovement == null)
-                forwardMovement = new ForwardMovement(gameObject, MovementSpeed);
+            if (directionMovement == null)
+                directionMovement = new DirectionMovement(gameObject, MovementSpeed);
 
             if (slowMovementEffect == null)
                 slowMovementEffect = new SlowMovement(so_Sphere.SlowMovementInfo);
             
-            forwardMovement.Initialize();
+            directionMovement.Initialize();
             isInitialized = true;
         }
 
         public override void ExecuteMovement()
         {
-            forwardMovement.ExecuteMovement();
+            directionMovement.ExecuteMovement();
         }
 
         public override void ApplyDamage()

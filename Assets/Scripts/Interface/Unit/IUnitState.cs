@@ -9,7 +9,7 @@ namespace Unit
         human = 1 << 0,
         monster = 1 << 1,
         weapon = 1 << 2,
-        vegetation = 1 << 3,
+        plant = 1 << 3,
         meat = 1 << 4,
     }
     public interface IState

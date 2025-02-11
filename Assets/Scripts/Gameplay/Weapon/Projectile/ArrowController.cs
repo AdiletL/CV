@@ -6,19 +6,20 @@ namespace Gameplay.Weapon.Projectile
 {
     public class ArrowController : ProjectileController
     {
-        private ArcMovement arcMovement;
-
+        private DirectionMovement directionMovement;
+        private Vector3 startPosition;
+        private float rangeSqr;
+        private float distance;
         
         public override void Initialize()
         {
             base.Initialize();
             if(isInitialized) return;
             
-            arcMovement = new ArcMovement(gameObject, MovementSpeed, height, moveCurve);
-            arcMovement.Initialize();
+            directionMovement = new DirectionMovement(gameObject, MovementSpeed);
+            directionMovement.Initialize();
             
             isInitialized = true;
-            arcMovement.OnFinished += OnFinished;
         }
         private void OnFinished()
         {
@@ -27,18 +28,18 @@ namespace Gameplay.Weapon.Projectile
 
         public override void ExecuteMovement()
         {
-            arcMovement.ExecuteMovement();
+            distance = (startPosition - transform.position).sqrMagnitude;
+            if (distance < rangeSqr)
+                directionMovement.ExecuteMovement();
+            else
+                ReturnToPool();
         }
 
-        public void UpdateData(Vector3 targetPosition)
+        public void UpdateData(Vector3 direction, float range)
         {
-            arcMovement.UpdateData(targetPosition);
-        }
-        
-        private void OnDestroy()
-        {
-            if(arcMovement != null)
-                arcMovement.OnFinished -= OnFinished;
+            directionMovement.SetDirection(direction);
+            startPosition = transform.position;
+            this.rangeSqr = range * range;
         }
     }
 }

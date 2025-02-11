@@ -30,3 +30,4 @@ MonoBehaviour:
   <BowAttackClip>k__BackingField:
   - {fileID: 1827226128182048838, guid: 03bef14f938475e429e87b9e986bc32c, type: 3}
   <BowCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 7125eebf1200f4b4ba2f105c37668d1d, type: 3}
+  <RotationSpeed>k__BackingField: 1500

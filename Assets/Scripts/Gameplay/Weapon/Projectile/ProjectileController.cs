@@ -71,7 +71,8 @@ namespace Gameplay.Weapon.Projectile
         private void OnTriggerEnter(Collider other)
         {
             if(!Calculate.GameLayer.IsTarget(enemyLayer, other.gameObject.layer)
-            || other.gameObject == Damageable.Owner) return;
+            || other.gameObject == Damageable.Owner || 
+            other.TryGetComponent(out RoomController roomController)) return;
             
             SetTriggerTarget(other.gameObject);
             ApplyDamage();

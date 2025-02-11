@@ -39,7 +39,12 @@ namespace Unit.Trap.Tower
         {
             //stateMachine.SetStates(desiredStates: typeof(DragonIdleState));
         }
-        
+
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Activate()
         {
             this.stateMachine.ExitOtherStates(typeof(DragonIdleState));

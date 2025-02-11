@@ -1,5 +1,4 @@
 ﻿using System;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -8,24 +7,23 @@ namespace ScriptableObjects.Gameplay.Skill
     [CreateAssetMenu(fileName = "SO_SkillContainer", menuName = "SO/Gameplay/Skill/Container", order = 51)]
     public class SO_SkillContainer : ScriptableObject
     {
-        [SerializeField] private AssetReference[] skills;
+        [SerializeField] private AssetReferenceT<ScriptableObject>[] skills;
 
-        public async UniTask<T> GetSkillConfig<T>()
+        public T GetSkillConfig<T>()
         {
             foreach (var skill in skills)
             {
-                var prefabHandle = Addressables.LoadAssetAsync<T>(skill);
-                await prefabHandle.Task;
-
-                if (prefabHandle.Status ==
-                    UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                if (!skill.RuntimeKeyIsValid()) // Проверяем, что ключ существует
                 {
-                    var result = prefabHandle.Result;
-                    if (result.GetType() == typeof(T))
-                    {
-                        return result;
-                    }
+                    Debug.LogError($"Invalid Addressable key: {skill.RuntimeKey}");
+                    continue;
                 }
+                var prefabHandle = Addressables.LoadAssetAsync<ScriptableObject>(skill).WaitForCompletion();
+                if (prefabHandle is T result)
+                {
+                    return result;
+                }
+                Addressables.Release(prefabHandle);
             }
 
             throw new NullReferenceException();

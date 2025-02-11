@@ -46,6 +46,11 @@ namespace Unit.Cell
             //Debug.Log(CurrentCoordinates);
         }
 
+        public override void Disappear()
+        {
+            throw new NotImplementedException();
+        }
+
 
         public void SetColor(Color color)
         {

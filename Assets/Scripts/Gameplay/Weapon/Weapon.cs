@@ -11,8 +11,12 @@ namespace Gameplay.Weapon
         protected GameObject gameObject;
         protected GameObject weapon;
         protected Transform weaponParent;
+        protected Transform ownerCenter;
         protected ValueType reductionEnduranceType;
         protected ValueType increaseAttackSpeedType;
+        protected LayerMask enemyLayer;
+        
+        protected Vector3 direction;
         
         protected int characterAttackSpeed;
         protected int characterReductionEndurance;
@@ -21,16 +25,18 @@ namespace Gameplay.Weapon
         protected float angleToTarget;
 
         public GameObject WeaponPrefab { get; protected set; }
-        public GameObject CurrentTarget { get; private set; }
+        public GameObject CurrentTarget { get; protected set; }
         public IDamageable Damageable { get; protected set; }
         public float Range { get; protected set; }
 
         
+        public void SetOwnerCenter(Transform ownerCenter) => this.ownerCenter = ownerCenter;
         public void SetWeaponPrefab(GameObject weapon) => WeaponPrefab = weapon;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetDamageable(IDamageable damageable) => this.Damageable = damageable;
         public void SetAngleToTarget(float angle) => angleToTarget = angle;
         public void SetRange(float range) => this.Range = range;
+        public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
         
 
         public void SetReductionEndurance(ValueType reductionEnduranceType, int reductionEndurance)
@@ -68,6 +74,7 @@ namespace Gameplay.Weapon
         {
             CurrentTarget = target;
         }
+        public void SetDirection(Vector3 direction) => this.direction = direction;
 
         public abstract UniTask FireAsync();
 
@@ -118,6 +125,12 @@ namespace Gameplay.Weapon
             this.weapon = weapon;
         }
 
+        public WeaponBuilder SetOwnerCenter(Transform ownerCenter)
+        {
+            weapon.SetOwnerCenter(ownerCenter);
+            return this;
+        }
+        
         public WeaponBuilder SetDamageable(IDamageable damageable)
         {
             weapon.SetDamageable(damageable);
