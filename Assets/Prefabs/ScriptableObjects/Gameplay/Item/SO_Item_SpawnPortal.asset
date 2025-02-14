@@ -13,10 +13,29 @@ MonoBehaviour:
   m_Name: SO_Item_SpawnPortal
   m_EditorClassIdentifier: 
   <Name>k__BackingField: SpawnPortal
-  <ItemType>k__BackingField: 1
-  <SkillType>k__BackingField: 2
+  <ItemTypeID>k__BackingField: 1
   <Icon>k__BackingField: {fileID: 21300000, guid: e577f30c6bd976a429addedf4c4ad662, type: 3}
   <Amount>k__BackingField: 2
   <IsCanSelect>k__BackingField: 1
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
+  <SkillTypeID>k__BackingField: 2
+  ApplyDamageHealConfig:
+    SkillType: 0
+    BlockedInputType: 0
+    BlockedSkillType: 0
+    IsCanSelect: 0
+    ValueType: 0
+    Value: 0
+  SpawnPortalConfig:
+    SkillType: 2
+    BlockedInputType: 15
+    BlockedSkillType: 31
+    IsCanSelect: 0
+    SpawnPortalPrefab:
+      m_AssetGUID: da330314bff07d840a82963b8c96f58d
+      m_SubObjectName: 
+      m_SubObjectGUID: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    StartPortalID: {fileID: 11400000, guid: 4f9b6b5f44f2c0e4db97d3e2154c4329, type: 2}

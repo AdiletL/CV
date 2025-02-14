@@ -43,13 +43,12 @@ namespace Gameplay.Units.Item.Loot
         public void HandleInput()
         {
             if (currentItems.Count > 0)
-            {
                 CheckItems();
+            else
                 return;
-            }
             
-            if(!Input.GetKeyDown(takeLootKey)) return;
             if(CurrentItem == null) return;
+            if(!Input.GetKeyDown(takeLootKey)) return;
             
             CurrentItem.TakeItem(gameObject);
             RemoveItem(CurrentItem);
@@ -75,6 +74,7 @@ namespace Gameplay.Units.Item.Loot
                         var item = currentItems[i];
                         if (item.IsCanTake)
                         {
+                            CurrentItem = item;
                             item.Enable(takeLootKey);
                             SetItem(item);
                             break;

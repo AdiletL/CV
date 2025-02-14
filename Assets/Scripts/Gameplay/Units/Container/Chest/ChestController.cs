@@ -39,10 +39,11 @@ namespace Unit.Container
 
         public override void Open()
         {
+            if(isOpened) return;
             isOpened = true;
             chestAnimation.ChangeAnimationWithSpeed(openClip);
             Disable();
-            SpawnLoot();
+            SpawnItems();
         }
 
         public override void Close()
@@ -64,7 +65,7 @@ namespace Unit.Container
             hotkeyUI.Hide();
         }
 
-        private async UniTask SpawnLoot()
+        private async UniTask SpawnItems()
         {
             Vector3 point;
             foreach (var VARIABLE in itemPrefabs)

@@ -16,13 +16,14 @@ namespace Unit.Character.Creep
         
         private List<Transform> startRayPoints = new();
         private const float rayDistance = 1;
-        
+
         public override bool IsGrounded
         {
             get
             {
                 foreach (var VARIABLE in startRayPoints)
                 {
+                    Debug.DrawRay(VARIABLE.position, Vector3.down * rayDistance, Color.green);
                     if (Physics.Raycast(VARIABLE.position, Vector3.down, rayDistance))
                         return true;
                 }
@@ -51,8 +52,7 @@ namespace Unit.Character.Creep
             if (IsGrounded)
             {
                 rigidBody.useGravity = false;
-                if(navMeshAgent.isOnNavMesh)
-                    navMeshAgent.enabled = true;
+                navMeshAgent.enabled = true;
             }
             else
             {

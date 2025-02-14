@@ -7,7 +7,6 @@ public abstract class Gravity : MonoBehaviour
     protected Vector3 velocity;
     protected bool isGravity = true;
 
-    public PlayerKinematicControl PlayerKinematicControl;
     public float CurrentGravity { get; protected set; } = 1;
 
     public abstract bool IsGrounded { get; }

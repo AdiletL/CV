@@ -17,5 +17,6 @@ MonoBehaviour:
     SkillType: 1
     BlockedInputType: 15
     BlockedSkillType: 7
-    Speed: 10
-    Duration: 0.3
+    IsCanSelect: 0
+    Speed: 15
+    Duration: 0.15

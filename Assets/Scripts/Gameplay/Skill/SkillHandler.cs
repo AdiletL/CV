@@ -77,16 +77,11 @@ namespace Gameplay.Skill
         {
             if (!IsSkillNotNull(skill.SkillType))
                 currentSkills.Add(skill.SkillType, new List<ISkill>());
-
-            foreach (var VARIABLE in currentSkills[skill.SkillType])
-            {
-                if(VARIABLE.ID == skill.ID) return; 
-            }
             
             currentSkills[skill.SkillType].Add(skill);
         }
 
-        public void RemoveSkill(SkillType skillType, int id)
+        public void RemoveSkillByID(SkillType skillType, int id)
         {
             if (IsSkillNotNull(skillType))
             {
@@ -95,6 +90,7 @@ namespace Gameplay.Skill
                     if (currentSkills[skillType][i].ID != id) continue;
                     OnFinished(currentSkills[skillType][i]);
                     currentSkills[skillType].Remove(currentSkills[skillType][i]);
+                    break;
                 }
             }
         }

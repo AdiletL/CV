@@ -69,17 +69,7 @@ namespace Unit.Character
                 return;
             }
             
-            if (!isAttack)
-            {
-                if (Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position))
-                    isAttack = true;
-                else
-                    RotateToTarget();
-                
-                unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
-                return;
-            }
-            
+            RotateToTarget();
             Cooldown();
             Attack();
         }
@@ -132,6 +122,10 @@ namespace Unit.Character
                 unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
                 isApplyDamage = true;
                 countCooldown = 0;
+            }
+            else
+            {
+                unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             }
         }
         

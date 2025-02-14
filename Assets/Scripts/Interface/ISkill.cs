@@ -13,7 +13,8 @@ public interface ISkill
     public SkillType BlockedSkillType { get; }
     public InputType BlockedInputType { get; }
     public Action ExitCallBack { get; }
-    public bool IsCanUseSkill { get; }
+    public bool IsCanSelect { get; }
+    public bool IsCanUseSkill();
     
     
     public void Initialize();
@@ -21,8 +22,6 @@ public interface ISkill
 
     public void Update();
     public void LateUpdate();
-
-    public void CheckTarget();
 
     public void Exit();
 }

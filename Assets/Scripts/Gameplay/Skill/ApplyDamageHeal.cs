@@ -12,21 +12,6 @@ namespace Gameplay.Skill
         
         public void SetValueType(ValueType value) => ValueType = value;
         public void SetValue(int value) => Value = value;
-        
-        public override void Update()
-        {
-            
-        }
-
-        public override void LateUpdate()
-        {
-           
-        }
-
-        public override void CheckTarget()
-        {
-            
-        }
     }
 
     [System.Serializable]

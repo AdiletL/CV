@@ -1,7 +1,5 @@
 ﻿using System;
-using Unit.Character.Player;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Skill
 {
@@ -24,23 +22,12 @@ namespace Gameplay.Skill
             isDashing = true;
             dashTimer = Duration;
         }
-
-        public override void Update()
-        {
-            
-        }
+        
 
         public override void LateUpdate()
         {
             if (isDashing)
-            {
                 DashUpdate();
-            }
-        }
-
-        public override void CheckTarget()
-        {
-            
         }
 
         private void DashUpdate()

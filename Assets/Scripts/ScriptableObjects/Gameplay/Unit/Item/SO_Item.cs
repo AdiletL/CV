@@ -24,6 +24,9 @@ namespace ScriptableObjects.Unit.Item
         [ShowIf("@SkillTypeID.HasFlag(SkillType.applyDamageHeal)"), Space]
         public ApplyDamageHealConfig ApplyDamageHealConfig;
         
+        [ShowIf("@SkillTypeID.HasFlag(SkillType.spawnPortal)"), Space]
+        public SpawnPortalConfig SpawnPortalConfig;
+        
         public List<SkillConfig> GetSkillConfigs()
         {
             var skillConfigs = new List<SkillConfig>();
@@ -33,6 +36,8 @@ namespace ScriptableObjects.Unit.Item
 
                 if (ApplyDamageHealConfig.SkillType == SkillTypeID)
                     skillConfigs.Add(ApplyDamageHealConfig);
+                if(SpawnPortalConfig.SkillType == SkillTypeID)
+                    skillConfigs.Add(SpawnPortalConfig);
             }
 
             return skillConfigs;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Gameplay.Skill;
+﻿using Gameplay.Skill;
 using UnityEngine;
 
 namespace Gameplay.Factory
@@ -8,8 +7,10 @@ namespace Gameplay.Factory
     {
         private GameObject gameObject;
         private IMoveControl moveControl;
+        private Camera baseCamera;
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
         
         
@@ -18,7 +19,7 @@ namespace Gameplay.Factory
             Skill.Skill result = skillConfig.SkillType switch
             {
                 _ when skillConfig.SkillType == SkillType.dash => CreateDash(skillConfig),
-                _ when skillConfig.SkillType == SkillType.spawnTeleport => CreateSpawnPortal(skillConfig),
+                _ when skillConfig.SkillType == SkillType.spawnPortal => CreateSpawnPortal(skillConfig),
                 _ when skillConfig.SkillType == SkillType.applyDamageHeal => CreateApplyDamageHeal(skillConfig),
                 _ when skillConfig.SkillType == SkillType.nothing => null,
             };
@@ -35,6 +36,7 @@ namespace Gameplay.Factory
                 .SetSpeed(dashConfig.Speed)
                 .SetBlockedInputType(dashConfig.BlockedInputType)
                 .SetBlockedSkillType(dashConfig.BlockedSkillType)
+                .SetIsCanSelect(dashConfig.IsCanSelect)
                 .SetGameObject(gameObject)
                 .Build();
         }
@@ -45,7 +47,9 @@ namespace Gameplay.Factory
             return (SpawnPortal)new SpawnPortalBuilder()
                 .SetPortalObject(spawnPortalConfig.SpawnPortalPrefab)
                 .SetIDStartPortal(spawnPortalConfig.StartPortalID.ID)
+                .SetBaseCamera(baseCamera)
                 .SetGameObject(gameObject)
+                .SetIsCanSelect(spawnPortalConfig.IsCanSelect)
                 .SetBlockedInputType(spawnPortalConfig.BlockedInputType)
                 .SetBlockedSkillType(spawnPortalConfig.BlockedSkillType)
                 .Build();
@@ -57,6 +61,7 @@ namespace Gameplay.Factory
             return (ApplyDamageHeal)new ApplyDamageHealBuilder()
                 .SetValueType(applyDamageHealConfig.ValueType)
                 .SetValue(applyDamageHealConfig.Value)
+                .SetIsCanSelect(applyDamageHealConfig.IsCanSelect)
                 .SetBlockedSkillType(applyDamageHealConfig.BlockedSkillType)
                 .SetBlockedInputType(applyDamageHealConfig.BlockedInputType)
                 .SetGameObject(gameObject)
@@ -82,6 +87,12 @@ namespace Gameplay.Factory
         public SkillFactoryBuilder SetMoveControl(IMoveControl moveControl)
         {
             skillFactory.SetMoveControl(moveControl);
+            return this;
+        }
+        
+        public SkillFactoryBuilder SetBaseCamera(Camera camera)
+        {
+            skillFactory.SetBaseCamera(camera);
             return this;
         }
 

@@ -136,7 +136,7 @@ namespace Unit.Character.Player
         private void InitializeSkillInputHandler()
         {
             playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, 
-                this, playerKinematicControl, dashConfig);
+                this, playerKinematicControl, dashConfig, playerController.BaseCamera);
             diContainer.Inject(playerSkillInputHandler);
             playerSkillInputHandler.Initialize();
         }

@@ -10,7 +10,6 @@ namespace Gameplay.Skill
         [Inject] protected DiContainer diContainer;
         public event Action<ISkill> OnFinished;
 
-        
         public int ID { get; protected set; }
         public GameObject GameObject { get; protected set; }
         public abstract SkillType SkillType { get; protected set; }
@@ -18,7 +17,12 @@ namespace Gameplay.Skill
         public SkillType BlockedSkillType { get; protected set; }
         public Action ExitCallBack { get; protected set; }
         public AnimationClip CastClip { get; protected set; }
-        public bool IsCanUseSkill { get; protected set; }
+        public bool IsCanSelect { get; protected set; }
+
+        public virtual bool IsCanUseSkill()
+        {
+            return false;
+        }
         
 
         public void SetID(int id) => ID = id;
@@ -26,6 +30,7 @@ namespace Gameplay.Skill
         public void SetBlockedInputType(InputType inputType) => this.BlockedInputType = inputType;
         public void SetBlockedSkillType(SkillType skillType) => this.BlockedSkillType = skillType;
         public void SetCastClip(AnimationClip clip) => this.CastClip = clip;
+        public void SetIsCanSelect(bool canSelect) => this.IsCanSelect = canSelect;
         
 
         public virtual void Initialize()
@@ -37,14 +42,18 @@ namespace Gameplay.Skill
             ExitCallBack = exitCallBack;
         }
 
-        public abstract void Update();
+        public virtual void Update()
+        {
+            
+        }
 
-        public abstract void LateUpdate();
-        public abstract void CheckTarget();
-
+        public virtual void LateUpdate()
+        {
+            
+        }
+        
         public virtual void Exit()
         {
-            IsCanUseSkill = false;
             ExitCallBack?.Invoke();
             OnFinished?.Invoke(this);
         }
@@ -55,6 +64,7 @@ namespace Gameplay.Skill
         public SkillType SkillType;
         public InputType BlockedInputType;
         public SkillType BlockedSkillType;
+        public bool IsCanSelect;
     }
 
     public abstract class SkillBuilder<T> where T : Skill
@@ -79,6 +89,12 @@ namespace Gameplay.Skill
         public SkillBuilder<T> SetBlockedSkillType(SkillType skillType)
         {
             skill.SetBlockedSkillType(skillType);
+            return this;
+        }
+
+        public SkillBuilder<T> SetIsCanSelect(bool isCanSelect)
+        {
+            skill.SetIsCanSelect(isCanSelect);
             return this;
         }
         

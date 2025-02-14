@@ -22,24 +22,27 @@ namespace Unit.Character.Player
         private readonly CharacterControlDesktop characterControlDesktop;
         private readonly IMoveControl moveControl;
         private readonly DashConfig dashConfig;
+        private readonly Camera baseCamera;
         
         private Dictionary<InputType, int> blockedInputs = new();
         private Dictionary<SkillType, int> blockedSkills = new();
 
         public PlayerSkillInputHandler(GameObject gameObject, StateMachine stateMachine, 
             CharacterControlDesktop characterControlDesktop, IMoveControl moveControl,
-            DashConfig dashConfig)
+            DashConfig dashConfig, Camera baseCamera)
         {
             this.gameObject = gameObject;
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
             this.moveControl = moveControl;
             this.dashConfig = dashConfig;
+            this.baseCamera = baseCamera;
         }
 
         private SkillFactory CreateSkillFactory()
         {
             return new SkillFactoryBuilder(new SkillFactory())
+                .SetBaseCamera(baseCamera)
                 .SetGameObject(gameObject)
                 .SetMoveControl(moveControl)
                 .Build();

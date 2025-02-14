@@ -18,6 +18,7 @@ namespace Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameConfig so_GameConfig;
         
+        [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerInventory so_PlayerInventory;
         [SerializeField] private AssetReferenceGameObject uiInventoryPrefab;
         
@@ -26,7 +27,7 @@ namespace Unit.Character.Player
         private SkillHandler skillHandler;
         
         private ItemData currentSelectedItem;
-        private List<ISkill> currentSkills;
+        private List<ISkill> currentSkills = new();
 
         private Texture2D selectedItemCursor;
         private int maxCounItem;
@@ -100,6 +101,7 @@ namespace Unit.Character.Player
         private SkillFactory CreateSkillFactory()
         {
             return new SkillFactoryBuilder(new SkillFactory())
+                .SetBaseCamera(playerController.BaseCamera)
                 .SetGameObject(gameObject)
                 .Build();
         }
@@ -133,18 +135,18 @@ namespace Unit.Character.Player
 
         public void AddItem(ItemData data)
         {
-            if(countInventaryID >= maxCounItem) return;
-            
-            countInventaryID++;
             if (!TryGetItem(data.Name))
             {
+                if(countInventaryID < maxCounItem)
+                    countInventaryID++;
+                
                 currentItems.Add(data.Name, data);
+                currentItems[data.Name].SetID(countInventaryID);
                 AddSkills(data.SkillConfigs, countInventaryID);
             }
             else
             {
                 currentItems[data.Name].Amount += data.Amount;
-                currentItems[data.Name].SetID(countInventaryID);
             }
             
             uiInventory.AddItem(currentItems[data.Name]);
@@ -161,12 +163,10 @@ namespace Unit.Character.Player
             {
                 currentItems.Remove(data.Name);
                 foreach (var VARIABLE in data.SkillConfigs)
-                {
                     RemoveSkills(VARIABLE.SkillType, data.ID);
-                }
+                
+                if(countInventaryID > 0) countInventaryID--;
             }
-
-            if(countInventaryID > 0) countInventaryID--;
         }
 
         private void AddSkills(List<SkillConfig> skillConfigs, int id)
@@ -189,7 +189,7 @@ namespace Unit.Character.Player
             foreach (SkillType skillType in Enum.GetValues(typeof(SkillType)))
             {
                 if (skillTypes.HasFlag(skillType))
-                    skillHandler.RemoveSkill(skillType, id);
+                    skillHandler.RemoveSkillByID(skillType, id);
             }
         }
 
@@ -199,7 +199,10 @@ namespace Unit.Character.Player
             {
                 currentSelectedItem = currentItems[itemName];
                 foreach (var VARIABLE in currentItems[itemName].SkillConfigs)
-                    currentSkills.Add(skillHandler.GetSkill(VARIABLE.SkillType, currentSelectedItem.ID));
+                {
+                    var skill = skillHandler.GetSkill(VARIABLE.SkillType, currentSelectedItem.ID);
+                    if(skill != null) currentSkills.Add(skill);
+                }
                 
                 BlockInput(InputType.attack);
                 Cursor.SetCursor(selectedItemCursor, Vector2.zero, CursorMode.Auto);
@@ -218,27 +221,18 @@ namespace Unit.Character.Player
             if (currentSelectedItem != null && 
                 Input.GetMouseButtonDown(0))
             {
-                isSkillsCheck = true;
-    
-                // Проходим по skills один раз
-                foreach (var skill in currentSkills)
+                for (int i = currentSkills.Count - 1; i >= 0; i--)
                 {
-                    skill.CheckTarget();
-
-                    if (!skill.IsCanUseSkill)
+                    if (currentSkills[i].IsCanUseSkill())
                     {
-                        isSkillsCheck = false;
-                        return; // Прерываем выполнение, если навык не может быть использован
+                        skillHandler.Execute(currentSkills[i].SkillType, currentSelectedItem.ID);
+                        if (i == 0)
+                        {
+                            RemoveItem(currentSelectedItem);
+                            ClearSelectedItem();
+                        }
                     }
                 }
-
-                // Если все навыки могут быть использованы, выполняем действия
-                foreach (var skill in currentSkills)
-                    skillHandler.Execute(skill.SkillType, currentSelectedItem.ID);
-
-                // Очистка выбранного предмета после выполнения действий
-                RemoveItem(currentSelectedItem);
-                ClearSelectedItem();
             }
         }
     }

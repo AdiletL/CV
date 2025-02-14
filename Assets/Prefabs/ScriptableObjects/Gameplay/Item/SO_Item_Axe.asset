@@ -24,5 +24,18 @@ MonoBehaviour:
     SkillType: 4
     BlockedInputType: 0
     BlockedSkillType: 0
+    IsCanSelect: 0
     ValueType: 1
     Value: 50
+  SpawnPortalConfig:
+    SkillType: 0
+    BlockedInputType: 0
+    BlockedSkillType: 0
+    IsCanSelect: 0
+    SpawnPortalPrefab:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectGUID: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    StartPortalID: {fileID: 0}

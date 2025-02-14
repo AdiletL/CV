@@ -3835,6 +3835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6741d1f82ac04be0bc943503e9f7fe0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 6200176588022165938}
   so_PlayerInventory: {fileID: 11400000, guid: 3c3cdc11d4faae948a1db14046bae835, type: 2}
   uiInventoryPrefab:
     m_AssetGUID: 69c3b8dfa5cd73147bcfeac948d4cdbd

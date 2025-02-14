@@ -5,7 +5,6 @@ using Unit.Portal;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace Gameplay.Skill
 {
@@ -13,25 +12,34 @@ namespace Gameplay.Skill
     {
         [Inject] private PortalController[] startPortals;
         
-        public override SkillType SkillType { get; protected set; } = SkillType.spawnTeleport;
+        public override SkillType SkillType { get; protected set; } = SkillType.spawnPortal;
         
         private AssetReferenceT<GameObject> portalObject;
+        private Camera baseCamera;
         private Vector3 spawnPosition;
         private string ID;
         
+        public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
         public void SetIDEndPortal(string id) => this.ID = id;
+
+
+        public override bool IsCanUseSkill()
+        {
+            Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CELL_LAYER))
+            {
+                if (hit.collider.TryGetComponent(out CellController cellController) && 
+                    !cellController.IsBlocked())
+                {
+                    spawnPosition = hit.point;
+                    return true;
+                }
+            }
+            return false;
+        }
         
-        public override void Update()
-        {
-            
-        }
-
-        public override void LateUpdate()
-        {
-           
-        }
-
         public override void Execute(Action exitCallBack = null)
         {
             base.Execute(exitCallBack);
@@ -56,21 +64,6 @@ namespace Gameplay.Skill
             }
             portal.Initialize();
             portal.Appear();
-        }
-        
-        public override void CheckTarget()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CELL_LAYER))
-            {
-                if (hit.collider.TryGetComponent(out CellController cellController) && 
-                    !cellController.IsBlocked())
-                {
-                    spawnPosition = hit.point;
-                    IsCanUseSkill = true;
-                }
-            }
         }
     }
 
@@ -97,6 +90,12 @@ namespace Gameplay.Skill
         {
             if(skill is SpawnPortal spawnTeleport)
                 spawnTeleport.SetIDEndPortal(id);
+            return this;
+        }
+        public SpawnPortalBuilder SetBaseCamera(Camera camera)
+        {
+            if(skill is SpawnPortal spawnTeleport)
+                spawnTeleport.SetBaseCamera(camera);
             return this;
         }
     }
