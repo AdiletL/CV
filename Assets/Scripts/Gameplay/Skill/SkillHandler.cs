@@ -10,7 +10,7 @@ namespace Gameplay.Skill
         public event Action OnLateUpdate;
 
 
-        private Dictionary<SkillType, ISkill> currentSkills = new();
+        private Dictionary<SkillType, List<ISkill>> currentSkills = new();
 
 
         public bool IsSkillActive(SkillType skillType)
@@ -23,7 +23,18 @@ namespace Gameplay.Skill
             return currentSkills.ContainsKey(skillType);
         }
 
-        public ISkill GetSkill(SkillType skillType)
+        public ISkill GetSkill(SkillType skillType, int id)
+        {
+            for (int i = currentSkills[skillType].Count - 1; i >= 0; i--)
+            {
+                if (currentSkills[skillType][i].ID == id)
+                    return currentSkills[skillType][i];
+            }
+
+            return null;
+        }
+        
+        public List<ISkill> GetSkills(SkillType skillType)
         {
             return currentSkills[skillType];
         }
@@ -37,15 +48,21 @@ namespace Gameplay.Skill
 
         private void LateUpdate() => OnLateUpdate?.Invoke();
 
-        public void Execute(SkillType skillType, Action exitCallback = null)
+        public void Execute(SkillType skillType, int id, Action exitCallback = null)
         {
             if (IsSkillNotNull(skillType))
             {
-                var skill = currentSkills[skillType];
-                OnUpdate += skill.Update;
-                OnLateUpdate += skill.LateUpdate;
-                skill.OnFinished += OnFinished;
-                skill.Execute(exitCallback);
+                for (int i = currentSkills[skillType].Count - 1; i >= 0; i--)
+                {
+                    if(currentSkills[skillType][i].ID != id) continue;
+                    
+                    OnUpdate += currentSkills[skillType][i].Update;
+                    OnLateUpdate += currentSkills[skillType][i].LateUpdate;
+                    currentSkills[skillType][i].OnFinished += OnFinished;
+                    currentSkills[skillType][i].Execute(exitCallback);
+                    
+                    break;
+                }
             }
         }
 
@@ -59,17 +76,26 @@ namespace Gameplay.Skill
         public void AddSkill(ISkill skill)
         {
             if (!IsSkillNotNull(skill.SkillType))
+                currentSkills.Add(skill.SkillType, new List<ISkill>());
+
+            foreach (var VARIABLE in currentSkills[skill.SkillType])
             {
-                currentSkills.Add(skill.SkillType, skill);
+                if(VARIABLE.ID == skill.ID) return; 
             }
+            
+            currentSkills[skill.SkillType].Add(skill);
         }
 
-        public void RemoveSkill(SkillType skillType)
+        public void RemoveSkill(SkillType skillType, int id)
         {
             if (IsSkillNotNull(skillType))
             {
-                OnFinished(currentSkills[skillType]);
-                currentSkills.Remove(skillType);
+                for (int i = currentSkills[skillType].Count - 1; i >= 0; i--)
+                {
+                    if (currentSkills[skillType][i].ID != id) continue;
+                    OnFinished(currentSkills[skillType][i]);
+                    currentSkills[skillType].Remove(currentSkills[skillType][i]);
+                }
             }
         }
     }

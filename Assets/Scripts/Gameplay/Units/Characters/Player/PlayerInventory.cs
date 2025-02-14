@@ -26,10 +26,12 @@ namespace Unit.Character.Player
         private SkillHandler skillHandler;
         
         private ItemData currentSelectedItem;
-        private ISkill currentSkill;
+        private List<ISkill> currentSkills;
 
         private Texture2D selectedItemCursor;
         private int maxCounItem;
+        private int countInventaryID;
+        private bool isSkillsCheck;
         
         private Dictionary<InputType, int> blockedInputs = new();
         private Dictionary<string, ItemData> currentItems = new();
@@ -131,20 +133,18 @@ namespace Unit.Character.Player
 
         public void AddItem(ItemData data)
         {
+            if(countInventaryID >= maxCounItem) return;
+            
+            countInventaryID++;
             if (!TryGetItem(data.Name))
             {
                 currentItems.Add(data.Name, data);
-                var newSkill = skillFactory.CreateSkill(data.SkillType);
-                if (newSkill != null)
-                {
-                    diContainer.Inject(newSkill);
-                    newSkill.Initialize();
-                    skillHandler.AddSkill(newSkill);
-                }
+                AddSkills(data.SkillConfigs, countInventaryID);
             }
             else
             {
                 currentItems[data.Name].Amount += data.Amount;
+                currentItems[data.Name].SetID(countInventaryID);
             }
             
             uiInventory.AddItem(currentItems[data.Name]);
@@ -160,7 +160,36 @@ namespace Unit.Character.Player
             if (currentItems[data.Name].Amount <= 0)
             {
                 currentItems.Remove(data.Name);
-                skillHandler.RemoveSkill(data.SkillType);
+                foreach (var VARIABLE in data.SkillConfigs)
+                {
+                    RemoveSkills(VARIABLE.SkillType, data.ID);
+                }
+            }
+
+            if(countInventaryID > 0) countInventaryID--;
+        }
+
+        private void AddSkills(List<SkillConfig> skillConfigs, int id)
+        {
+            foreach (var VARIEBLE in skillConfigs)
+            {
+                var newSkill = skillFactory.CreateSkill(VARIEBLE);
+                if (newSkill != null)
+                {
+                    diContainer.Inject(newSkill);
+                    newSkill.SetID(id);
+                    newSkill.Initialize();
+                    skillHandler.AddSkill(newSkill);
+                }
+            }
+        }
+
+        private void RemoveSkills(SkillType skillTypes, int id)
+        {
+            foreach (SkillType skillType in Enum.GetValues(typeof(SkillType)))
+            {
+                if (skillTypes.HasFlag(skillType))
+                    skillHandler.RemoveSkill(skillType, id);
             }
         }
 
@@ -169,7 +198,9 @@ namespace Unit.Character.Player
             if (currentItems[itemName].IsCanSelect)
             {
                 currentSelectedItem = currentItems[itemName];
-                currentSkill = skillHandler.GetSkill(currentItems[itemName].SkillType);
+                foreach (var VARIABLE in currentItems[itemName].SkillConfigs)
+                    currentSkills.Add(skillHandler.GetSkill(VARIABLE.SkillType, currentSelectedItem.ID));
+                
                 BlockInput(InputType.attack);
                 Cursor.SetCursor(selectedItemCursor, Vector2.zero, CursorMode.Auto);
             }
@@ -187,13 +218,27 @@ namespace Unit.Character.Player
             if (currentSelectedItem != null && 
                 Input.GetMouseButtonDown(0))
             {
-                currentSkill.CheckTarget();
-                if (currentSkill.IsCanUseSkill)
+                isSkillsCheck = true;
+    
+                // Проходим по skills один раз
+                foreach (var skill in currentSkills)
                 {
-                    skillHandler.Execute(currentSkill.SkillType);
-                    RemoveItem(currentSelectedItem);
-                    ClearSelectedItem();
+                    skill.CheckTarget();
+
+                    if (!skill.IsCanUseSkill)
+                    {
+                        isSkillsCheck = false;
+                        return; // Прерываем выполнение, если навык не может быть использован
+                    }
                 }
+
+                // Если все навыки могут быть использованы, выполняем действия
+                foreach (var skill in currentSkills)
+                    skillHandler.Execute(skill.SkillType, currentSelectedItem.ID);
+
+                // Очистка выбранного предмета после выполнения действий
+                RemoveItem(currentSelectedItem);
+                ClearSelectedItem();
             }
         }
     }

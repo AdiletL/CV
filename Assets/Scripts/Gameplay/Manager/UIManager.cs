@@ -13,10 +13,9 @@ namespace Gameplay.Manager
         [Inject] private DiContainer diContainer;
         
         [SerializeField] private AssetReference uiCreatureInformationPrefab;
-        [SerializeField] private AssetReferenceGameObject damagePopUpSpawnerPrefab;
+        [SerializeField] private AssetReferenceGameObject[] popUpSpawnerPrefabs;
         
         private UICreatureInformation uiCreatureInformation;
-        private DamagePopUpSpawner damagePopUpSpawner;
 
         private PhotonView photonView;
         
@@ -29,11 +28,14 @@ namespace Gameplay.Manager
             var newUICreature = PhotonNetwork.Instantiate(uiCreatureInformationPrefab.AssetGUID, Vector3.zero,
                 Quaternion.identity);
 
-            var newDamage =
-                PhotonNetwork.Instantiate(damagePopUpSpawnerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+            foreach (var popUpSpawnerPrefab in popUpSpawnerPrefabs)
+            {
+                var popUp =
+                    PhotonNetwork.Instantiate(popUpSpawnerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
+                photonView.RPC(nameof(InstantiatePopUpSpawner), RpcTarget.AllBuffered, popUp.GetComponent<PhotonView>().ViewID);
+            }
             
             photonView.RPC(nameof(InitializeUICreatureInformation), RpcTarget.AllBuffered, newUICreature.GetComponent<PhotonView>().ViewID);
-            photonView.RPC(nameof(InstantiateDamagePopUpSpawner), RpcTarget.AllBuffered, newDamage.GetComponent<PhotonView>().ViewID);
         }
 
         
@@ -49,14 +51,14 @@ namespace Gameplay.Manager
         }
         
         [PunRPC]
-        private void InstantiateDamagePopUpSpawner(int viewID)
+        private void InstantiatePopUpSpawner(int viewID)
         {
             var result = PhotonView.Find(viewID).gameObject;
-            damagePopUpSpawner = result.GetComponent<DamagePopUpSpawner>();
-            diContainer.Inject(damagePopUpSpawner);
-            diContainer.Bind(damagePopUpSpawner.GetType()).FromInstance(damagePopUpSpawner).AsSingle();
-            damagePopUpSpawner.transform.SetParent(transform);
-            damagePopUpSpawner.Initialize();
+            var popUpPopUpSpawner = result.GetComponent<PopUpSpawner>();
+            diContainer.Inject(popUpPopUpSpawner);
+            diContainer.Bind(popUpPopUpSpawner.GetType()).FromInstance(popUpPopUpSpawner).AsSingle();
+            popUpPopUpSpawner.transform.SetParent(transform);
+            popUpPopUpSpawner.Initialize();
         }
     }
 }

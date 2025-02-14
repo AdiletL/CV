@@ -13,11 +13,13 @@ namespace Gameplay.Factory.Character.Creep
 
         private SO_BeholderAttack so_BeholderAttack;
         private SO_BeholderMove so_BeholderMove;
+        private SO_BeholderHealth so_BeholderHealth;
         
         public void SetCreepSwitchMoveState(CreepSwitchMoveState creepSwitchMoveState) => this.creepSwitchMoveState = creepSwitchMoveState;
         public void SetCreepSwitchAttackState(CreepSwitchAttackState creepSwitchAttackState) => this.creepSwitchAttackState = creepSwitchAttackState;
         public void SetBeholderAttackConfig(SO_BeholderAttack config) => so_BeholderAttack = config;
         public void SetBeholderMoveConfig(SO_BeholderMove config) => so_BeholderMove = config;
+        public void SetBeholderHealthConfig(SO_BeholderHealth config) => so_BeholderHealth = config;
         
         
         public override void Initialize()
@@ -33,6 +35,7 @@ namespace Gameplay.Factory.Character.Creep
                 _ when stateType == typeof(BeholderPatrolState) => CreatePatrolState(),
                 _ when stateType == typeof(BeholderRunState) => CreateRunState(),
                 _ when stateType == typeof(BeholderDefaultAttackState) => CreateDefaultAttack(),
+                _ when stateType == typeof(BeholderTakeDamageState) => CreateTakeDamageState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
@@ -100,6 +103,17 @@ namespace Gameplay.Factory.Character.Creep
                 .SetDamage(so_BeholderAttack.Damage)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
+
+        private BeholderTakeDamageState CreateTakeDamageState()
+        {
+            return (BeholderTakeDamageState)new BeholderTakeDamageStateBuilder()
+                .SetCharacterSwitchAttack(creepSwitchAttackState)
+                .SetCharacterAnimation(characterAnimation)
+                .SetClip(so_BeholderHealth.takeDamageClip)
+                .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using ScriptableObjects.Unit.Portal;
 using Unit.Cell;
 using Unit.Portal;
 using UnityEngine;
@@ -71,6 +72,13 @@ namespace Gameplay.Skill
                 }
             }
         }
+    }
+
+    [System.Serializable]
+    public class SpawnPortalConfig : SkillConfig
+    {
+        public AssetReferenceT<GameObject> SpawnPortalPrefab;
+        public SO_Portal StartPortalID;
     }
     
     public class SpawnPortalBuilder : SkillBuilder<SpawnPortal>

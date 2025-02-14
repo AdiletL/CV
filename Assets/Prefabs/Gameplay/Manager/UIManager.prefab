@@ -50,8 +50,13 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  damagePopUpSpawnerPrefab:
-    m_AssetGUID: 1789adeb0187bb9478f27f4284e23369
+  popUpSpawnerPrefabs:
+  - m_AssetGUID: 1789adeb0187bb9478f27f4284e23369
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: bea83ea0e5c7b234c8f8c8659d6a2ef9
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

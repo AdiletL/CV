@@ -1,5 +1,4 @@
 ﻿using System;
-using Gameplay.Skill;
 using Unit.Character.Player;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ public interface ISkill
 {
     public event Action<ISkill> OnFinished;
     
+    public int ID { get; }
     public GameObject GameObject { get; }
     public AnimationClip CastClip { get; }
     public SkillType SkillType { get; }

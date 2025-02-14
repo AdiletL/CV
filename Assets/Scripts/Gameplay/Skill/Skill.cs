@@ -5,19 +5,13 @@ using Zenject;
 
 namespace Gameplay.Skill
 {
-    [Flags]
-    public enum SkillType
-    {
-        nothing,
-        dash = 1 << 0,
-        spawnTeleport = 1 << 1,
-    }
-    
     public abstract class Skill : ISkill
     {
         [Inject] protected DiContainer diContainer;
         public event Action<ISkill> OnFinished;
 
+        
+        public int ID { get; protected set; }
         public GameObject GameObject { get; protected set; }
         public abstract SkillType SkillType { get; protected set; }
         public InputType BlockedInputType { get; protected set; }
@@ -27,6 +21,7 @@ namespace Gameplay.Skill
         public bool IsCanUseSkill { get; protected set; }
         
 
+        public void SetID(int id) => ID = id;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
         public void SetBlockedInputType(InputType inputType) => this.BlockedInputType = inputType;
         public void SetBlockedSkillType(SkillType skillType) => this.BlockedSkillType = skillType;
@@ -54,7 +49,13 @@ namespace Gameplay.Skill
             OnFinished?.Invoke(this);
         }
     }
-    
+
+    public abstract class SkillConfig
+    {
+        public SkillType SkillType;
+        public InputType BlockedInputType;
+        public SkillType BlockedSkillType;
+    }
 
     public abstract class SkillBuilder<T> where T : Skill
     {

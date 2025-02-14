@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Gameplay.Skill;
+using Unit;
+using UnityEngine;
 
 public interface IHealth
 {
@@ -11,6 +13,7 @@ public interface IHealth
 public interface IDamageable
 {
     public GameObject Owner { get; }
+    public SkillHandler SkillHandler { get; }
     public int CurrentDamage { get; }
     public int AdditionalDamage { get; }
     public void AddAdditionalDamage(int value);

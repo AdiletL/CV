@@ -33,6 +33,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
+        [SerializeField] private SO_PlayerSkills so_PlayerSkills;
         
         [Space]
         [SerializeField] private SO_Sword so_Sword;
@@ -71,6 +72,7 @@ namespace Unit.Character.Player
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
+                .SetDashConfig(so_PlayerSkills.DashConfig)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetCharacterSwitchAttack(characterSwitchAttackState)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
@@ -341,6 +343,7 @@ namespace Unit.Character.Player
         
         public void SetWeapon(Weapon weapon)
         {
+            characterSwitchAttackState.RemoveWeapon();
             characterSwitchAttackState.SetWeapon(weapon);
             unitRenderer.SetRangeScale(weapon.Range);
             unitRenderer.ShowRangeVisual();

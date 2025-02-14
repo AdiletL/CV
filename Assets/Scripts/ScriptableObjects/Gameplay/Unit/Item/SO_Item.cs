@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Gameplay.Skill;
 using Sirenix.OdinInspector;
 using Unit.Item;
 using UnityEditor;
 using UnityEngine;
-using WebSocketSharp;
 
 namespace ScriptableObjects.Unit.Item
 {
@@ -12,15 +13,30 @@ namespace ScriptableObjects.Unit.Item
     public class SO_Item : ScriptableObject
     {
         [field: SerializeField] public string Name { get; private set; }
-
-        [field: SerializeField] public ItemType ItemType { get; private set; }
-        [field: SerializeField] public SkillType SkillType { get; private set; }
+        [field: SerializeField] public ItemType ItemTypeID { get; private set; }
         [field: SerializeField] public Sprite Icon { get; private set; }
         [field: SerializeField] public int Amount { get; private set; } = 1;
         [field: SerializeField] public bool IsCanSelect { get; private set; }
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
+        [field: SerializeField, Space(15)] public SkillType SkillTypeID { get; private set; }
         
+        [ShowIf("@SkillTypeID.HasFlag(SkillType.applyDamageHeal)"), Space]
+        public ApplyDamageHealConfig ApplyDamageHealConfig;
+        
+        public List<SkillConfig> GetSkillConfigs()
+        {
+            var skillConfigs = new List<SkillConfig>();
+            foreach (SkillType VARIABLE in Enum.GetValues(typeof(SkillType)))
+            {
+                if (VARIABLE == SkillType.nothing || (SkillTypeID & VARIABLE) == 0) continue;
+
+                if (ApplyDamageHealConfig.SkillType == SkillTypeID)
+                    skillConfigs.Add(ApplyDamageHealConfig);
+            }
+
+            return skillConfigs;
+        }
         
         #if UNITY_EDITOR
         [Button]
@@ -62,5 +78,7 @@ namespace ScriptableObjects.Unit.Item
             }
         }
         #endif
+
+        
     }
 }

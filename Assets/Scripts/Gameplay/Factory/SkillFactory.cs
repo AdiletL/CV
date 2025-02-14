@@ -1,15 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Gameplay.Skill;
-using ScriptableObjects.Gameplay.Skill;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Factory
 {
     public class SkillFactory : Factory
     {
-        [Inject] private SO_SkillContainer so_SkillContainer;
-        
         private GameObject gameObject;
         private IMoveControl moveControl;
         
@@ -17,46 +13,53 @@ namespace Gameplay.Factory
         public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
         
         
-        public Skill.Skill CreateSkill(SkillType skillType)
+        public Skill.Skill CreateSkill(SkillConfig skillConfig)
         {
-            Skill.Skill result = skillType switch
+            Skill.Skill result = skillConfig.SkillType switch
             {
-                _ when skillType == SkillType.dash => CreateDash(),
-                _ when skillType == SkillType.spawnTeleport => CreateSpawnPortal(),
-                _ when skillType == SkillType.nothing => null,
+                _ when skillConfig.SkillType == SkillType.dash => CreateDash(skillConfig),
+                _ when skillConfig.SkillType == SkillType.spawnTeleport => CreateSpawnPortal(skillConfig),
+                _ when skillConfig.SkillType == SkillType.applyDamageHeal => CreateApplyDamageHeal(skillConfig),
+                _ when skillConfig.SkillType == SkillType.nothing => null,
             };
             
             return result;
         }
 
-        private Dash CreateDash()
+        private Dash CreateDash(SkillConfig skillConfig)
         {
-            var dashConfig = so_SkillContainer.GetSkillConfig<SO_SkillDash>();
-            if (dashConfig == null)
-                throw new NullReferenceException();
-            
+            var dashConfig = skillConfig as DashConfig;
             return (Dash)new DashBuilder()
                 .SetMoveControl(moveControl)
-                .SetDuration(dashConfig.DashDuration)
-                .SetSpeed(dashConfig.DashSpeed)
+                .SetDuration(dashConfig.Duration)
+                .SetSpeed(dashConfig.Speed)
                 .SetBlockedInputType(dashConfig.BlockedInputType)
                 .SetBlockedSkillType(dashConfig.BlockedSkillType)
                 .SetGameObject(gameObject)
                 .Build();
         }
 
-        private SpawnPortal CreateSpawnPortal()
+        private SpawnPortal CreateSpawnPortal(SkillConfig skillConfig)
         {
-            var spawnPortalConfig = so_SkillContainer.GetSkillConfig<SO_SkillSpawnPortal>();
-            if (spawnPortalConfig == null)
-                throw new NullReferenceException();
-
+            var spawnPortalConfig = skillConfig as SpawnPortalConfig;
             return (SpawnPortal)new SpawnPortalBuilder()
                 .SetPortalObject(spawnPortalConfig.SpawnPortalPrefab)
-                .SetIDStartPortal(spawnPortalConfig.IDStartPortal.ID)
+                .SetIDStartPortal(spawnPortalConfig.StartPortalID.ID)
                 .SetGameObject(gameObject)
                 .SetBlockedInputType(spawnPortalConfig.BlockedInputType)
                 .SetBlockedSkillType(spawnPortalConfig.BlockedSkillType)
+                .Build();
+        }
+
+        private ApplyDamageHeal CreateApplyDamageHeal(SkillConfig skillConfig)
+        {
+            var applyDamageHealConfig = skillConfig as ApplyDamageHealConfig;
+            return (ApplyDamageHeal)new ApplyDamageHealBuilder()
+                .SetValueType(applyDamageHealConfig.ValueType)
+                .SetValue(applyDamageHealConfig.Value)
+                .SetBlockedSkillType(applyDamageHealConfig.BlockedSkillType)
+                .SetBlockedInputType(applyDamageHealConfig.BlockedInputType)
+                .SetGameObject(gameObject)
                 .Build();
         }
     }

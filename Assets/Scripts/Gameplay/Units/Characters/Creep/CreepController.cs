@@ -17,13 +17,14 @@ namespace Unit.Character.Creep
         [ReadOnly] public string currentStateName;
         
         protected NavMeshAgent navMeshAgent;
-        protected CreepStateFactory creepStateFactory;
         protected CreepSwitchStateFactory creepSwitchStateFactory;
         protected CharacterAnimation characterAnimation;
         protected CharacterEndurance characterEndurance;
         protected CharacterExperience characterExperience;
         protected Gravity gravity;
 
+        public CreepStateFactory CreepStateFactory { get; private set; }
+        
         protected abstract CreepStateFactory CreateCreepStateFactory();
         protected abstract CreepSwitchStateFactory CreateCreepSwitchStateFactory();
 
@@ -31,14 +32,6 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            
-            characterExperience = GetComponentInUnit<CharacterExperience>();
-            diContainer.Inject(characterExperience);
-            characterExperience.Initialize();
-            
-            characterEndurance = GetComponentInUnit<CharacterEndurance>();
-            diContainer.Inject(characterEndurance);
-            characterEndurance.Initialize();
             
             gravity = GetComponentInUnit<Gravity>();
             gravity.InActivateGravity();
@@ -51,10 +44,22 @@ namespace Unit.Character.Creep
             characterAnimation = GetComponentInUnit<CharacterAnimation>();
             characterAnimation.Initialize();
             
-            creepStateFactory = CreateCreepStateFactory();
-            creepStateFactory.Initialize();
+            CreepStateFactory = CreateCreepStateFactory();
+            CreepStateFactory.Initialize();
             creepSwitchStateFactory = CreateCreepSwitchStateFactory();
             creepSwitchStateFactory.Initialize();
+        }
+
+        protected override void AfterInitializeMediator()
+        {
+            base.AfterInitializeMediator();
+            characterExperience = GetComponentInUnit<CharacterExperience>();
+            diContainer.Inject(characterExperience);
+            characterExperience.Initialize();
+            
+            characterEndurance = GetComponentInUnit<CharacterEndurance>();
+            diContainer.Inject(characterEndurance);
+            characterEndurance.Initialize();
         }
 
         public override void Appear()

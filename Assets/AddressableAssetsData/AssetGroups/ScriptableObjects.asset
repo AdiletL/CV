@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: ScriptableObjects
   m_GUID: 1c8ce9d0e20e10d49bbfffac493b570a
   m_SerializeEntries:
-  - m_GUID: 0280b83accf1bdc4eb4d6668da8b553a
-    m_Address: SO_SkillDash
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0c7f87ea8f55e4f4397c85fe5ca0a192
     m_Address: SO_GameHotkey
     m_ReadOnly: 0
@@ -35,23 +30,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6b73ff54668ea6548acbfc575e6fdbd5
-    m_Address: SO_SkillSpawnPortal
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 926376a6b98787b48a645626c87099af
     m_Address: SO_LevelContainerTest
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c6a3c09d0d069c245bf1f9c5a5fef450
-    m_Address: SO_SkillTest
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ce8cfbb13b026434882e233fe3fe80f5
-    m_Address: SO_SkillContainer
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

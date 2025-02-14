@@ -188,5 +188,10 @@ namespace Unit
         {
             allClips.Remove(clip);
         }
+
+        public void ExitAnimation(int layer)
+        {
+            animator.CrossFadeInFixedTime("New State", 0f, layer);
+        }
     }
 }

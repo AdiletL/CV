@@ -7,6 +7,10 @@ namespace Unit.Character
     {
         public override StateCategory Category { get; } = StateCategory.action;
 
+        protected GameObject gameObject;
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+
         public override void Initialize()
         {
             
@@ -28,6 +32,12 @@ namespace Unit.Character
     {
         public CharacterTakeDamageStateBuilder(CharacterTakeDamageState instance) : base(instance)
         {
+        }
+
+        public CharacterTakeDamageStateBuilder SetGameObject(GameObject gameObject)
+        {
+            state.SetGameObject(gameObject);
+            return this;
         }
     }
 }

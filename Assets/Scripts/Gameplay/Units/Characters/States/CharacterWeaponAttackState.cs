@@ -105,7 +105,7 @@ namespace Unit.Character
 
         public virtual void RemoveWeapon()
         {
-            CurrentWeapon.ResetCharacterStates(this);
+            CurrentWeapon?.ResetCharacterStates(this);
             CurrentWeapon = null;
             SetAnimationClip(null);
         }

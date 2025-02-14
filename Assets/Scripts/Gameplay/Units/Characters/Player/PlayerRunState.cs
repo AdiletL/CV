@@ -17,7 +17,13 @@ namespace Unit.Character.Player
         public void SetRotationSpeed(float speed) => this.rotationSpeed = speed;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
-        
+
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            animationLayer = 1;
+        }
 
         public override void Enter()
         {
@@ -48,7 +54,13 @@ namespace Unit.Character.Player
             if (directionMovement.magnitude == 0)
                 stateMachine.ExitCategory(Category, null);
         }
-        
+
+        public override void Exit()
+        {
+            base.Exit();
+            unitAnimation.ExitAnimation(animationLayer);
+        }
+
         private void OnExitCategory(Machine.IState state)
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))

@@ -9,7 +9,7 @@ namespace Unit.Character
         protected AnimationClip[] runClips;
 
         protected float durationAnimation;
-        
+        protected int animationLayer;
         
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
@@ -30,7 +30,7 @@ namespace Unit.Character
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
-            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation);
+            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation, layer: animationLayer);
         }
 
         protected void UpdateDurationAnimation()

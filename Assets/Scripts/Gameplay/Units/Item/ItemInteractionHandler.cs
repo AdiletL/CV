@@ -42,14 +42,15 @@ namespace Gameplay.Units.Item.Loot
 
         public void HandleInput()
         {
-            if (CurrentItem == null)
+            if (currentItems.Count > 0)
             {
                 CheckItems();
                 return;
             }
             
             if(!Input.GetKeyDown(takeLootKey)) return;
-
+            if(CurrentItem == null) return;
+            
             CurrentItem.TakeItem(gameObject);
             RemoveItem(CurrentItem);
 

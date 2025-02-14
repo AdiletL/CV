@@ -69,12 +69,12 @@ namespace Unit.Character
 
         public override void SetState()
         {
-           ;
+           
         }
 
         public override void ExitOtherStates()
         {
-            ;
+            
         }
 
         public override void ExitCategory(StateCategory category)
@@ -90,6 +90,11 @@ namespace Unit.Character
         public virtual void SetWeapon(Weapon weapon)
         {
             currentWeapon = weapon;
+        }
+
+        public virtual void RemoveWeapon()
+        {
+            
         }
     }
 

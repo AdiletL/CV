@@ -7,32 +7,18 @@ using Zenject;
 
 namespace Gameplay.Damage
 {
-    public class NormalDamage : IDamageable
+    public class NormalDamage : Damage
     {
-        [Inject] private DamagePopUpSpawner damagePopUpSpawner;
+        [Inject] private DamagePopUpPopUpSpawner damagePopUpPopUpSpawner;
         
-        public GameObject Owner { get; set; }
-        public int CurrentDamage { get; }
-        public int AdditionalDamage { get; private set; }
         
-        public NormalDamage(int amount, GameObject gameObject)
+        public NormalDamage(int amount, GameObject gameObject) : base(amount, gameObject)
         {
-            this.CurrentDamage = amount;
-            this.Owner = gameObject;
 
-            if (CurrentDamage < 0) CurrentDamage = 999999;
         }
+
         
-        public void AddAdditionalDamage(int value)
-        {
-            AdditionalDamage += value;
-        }
-        public void RemoveAdditionalDamage(int value)
-        {
-            AdditionalDamage -= value;
-        }
-        
-        public int GetTotalDamage(GameObject gameObject)
+        public override int GetTotalDamage(GameObject gameObject)
         {
             var result = CurrentDamage + AdditionalDamage;
             
@@ -44,11 +30,12 @@ namespace Gameplay.Damage
                 if (result < 0) result = 0;
             }
 
-            if (damagePopUpSpawner)
-            {
-                var unitCenter = gameObject.GetComponent<UnitCenter>();
-                damagePopUpSpawner.CreatePopUp(unitCenter.Center.position, result);
-            }
+            var targetUnitCenter = gameObject.GetComponent<UnitCenter>();
+            var ownerUnitCenter = Owner.GetComponent<UnitCenter>();
+            CheckSkill(result, targetUnitCenter);
+
+            if (damagePopUpPopUpSpawner)
+                damagePopUpPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
             
             return result;
         }

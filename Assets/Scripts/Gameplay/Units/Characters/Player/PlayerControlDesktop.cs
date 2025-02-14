@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gameplay.Factory.Character.Player;
+using Gameplay.Skill;
 using Gameplay.Units.Item.Loot;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
@@ -35,6 +36,7 @@ namespace Unit.Character.Player
         private PlayerKinematicControl playerKinematicControl;
         private PlayerSkillInputHandler playerSkillInputHandler;
         private PlayerMouseInputHandler playerMouseInputHandler;
+        private DashConfig dashConfig;
 
         private KeyCode jumpKey;
 
@@ -57,6 +59,7 @@ namespace Unit.Character.Player
             this.characterSwitchAttack = characterSwitchAttackState;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
         public void SetPlayerController(PlayerController playerController) => this.playerController = playerController;
+        public void SetDashConfig(DashConfig dashConfig) => this.dashConfig = dashConfig;
         
         
         public override bool IsInputBlocked(InputType input)
@@ -133,7 +136,7 @@ namespace Unit.Character.Player
         private void InitializeSkillInputHandler()
         {
             playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, 
-                this, playerKinematicControl);
+                this, playerKinematicControl, dashConfig);
             diContainer.Inject(playerSkillInputHandler);
             playerSkillInputHandler.Initialize();
         }
@@ -225,8 +228,9 @@ namespace Unit.Character.Player
                 !playerSkillInputHandler.IsInputBlocked(InputType.movement))
             {
                 isMoving = true;
-                BlockInput(InputType.attack);
-                characterSwitchMove.ExitOtherStates();
+               BlockInput(InputType.attack);
+               characterSwitchMove.ExitOtherStates();
+               //characterSwitchMove.SetState();
             }
             else if (!isJumping && Input.GetKeyDown(jumpKey) &&
                      !playerMouseInputHandler.IsInputBlocked(InputType.jump) &&
@@ -297,6 +301,13 @@ namespace Unit.Character.Player
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetCharacterSwitchMove(playerSwitchMove);
+            return this;
+        }
+        
+        public PlayerControlDesktopBuilder SetDashConfig(DashConfig dashConfig)
+        {
+            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+                playerControlDesktop.SetDashConfig(dashConfig);
             return this;
         }
     }

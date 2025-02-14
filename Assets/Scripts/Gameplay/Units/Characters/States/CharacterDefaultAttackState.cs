@@ -90,6 +90,13 @@ namespace Unit.Character
             currentTarget = null;
         }
 
+        public override void SetTarget(GameObject target)
+        {
+            base.SetTarget(target);
+            if(target == null) return;
+            rotation.SetTarget(target.transform);
+        }
+
         protected virtual void ResetValues()
         {
             isAttack = false;

@@ -140,7 +140,7 @@ namespace Unit.Character.Player
             HandleHighlight();
             
             if (!isAttacking &&
-                Input.GetMouseButtonDown(attackMouseButton) && 
+                Input.GetMouseButtonUp(attackMouseButton) && 
                 !characterControlDesktop.IsInputBlocked(InputType.attack) &&
                 !playerSkillInputHandler.IsInputBlocked(InputType.attack) && 
                 !playerInventory.IsInputBlocked(InputType.attack) && 
@@ -201,6 +201,7 @@ namespace Unit.Character.Player
         {
             isAttacking = true;
             characterSwitchAttack.ExitOtherStates();
+            //characterSwitchAttack.SetState();
             characterControlDesktop.ClearHotkeys();
         }
         

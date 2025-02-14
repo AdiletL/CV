@@ -89,14 +89,31 @@ namespace Unit
             
         }
 
+        public void AddHealth(int amount)
+        {
+            CurrentHealth += amount;
+        }
+
+        public void RemoveHealth(int amount)
+        {
+            CurrentHealth -= amount;
+        }
+
+        public void AddMaxHealth(int amount)
+        {
+            MaxHealth += amount;
+        }
+
+        public void RemoveMaxHealth(int amount)
+        {
+            MaxHealth -= amount;
+        }
         
         public virtual void TakeDamage(IDamageable damageable)
         {
             var totalDamage = damageable.GetTotalDamage(gameObject);
-            if(totalDamage == 0) return;
-            
             Damaging = damageable.Owner;
-            CurrentHealth -= totalDamage;
+            RemoveHealth(totalDamage);
         }
     }
     

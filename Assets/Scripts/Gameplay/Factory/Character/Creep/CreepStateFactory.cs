@@ -19,7 +19,6 @@ namespace Gameplay.Factory.Character.Creep
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetPatrolPoints(Vector3[] patrolPoints) => this.patrolPoints = patrolPoints;
-        
     }
     
     public class CreepStateFactoryBuilder : CharacterStateFactoryBuilder

@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Collections.Generic;
+using DG.Tweening;
 using Gameplay.Skill;
 using Gameplay.UI;
 using ScriptableObjects.Unit.Item;
@@ -24,7 +25,7 @@ namespace Unit.Item
         public override void Initialize()
         {
             base.Initialize();
-            itemData = new ItemData(so_Item.Name, so_Item.ItemType, so_Item.Icon, so_Item.Amount, so_Item.IsCanSelect, so_Item.SkillType);
+            itemData = new ItemData(so_Item.Name, so_Item.ItemTypeID, so_Item.Icon, so_Item.Amount, so_Item.IsCanSelect, so_Item.GetSkillConfigs());
             jumpPower = so_Item.JumpPower;
             jumpDuration = so_Item.JumpDuration;
             
@@ -91,19 +92,23 @@ namespace Unit.Item
     {
         public string Name { get; private set; }
         public ItemType ItemType { get; private set; }
-        public SkillType SkillType { get; private set; }
+        public List<SkillConfig> SkillConfigs { get; private set; }
         public Sprite Icon { get; private set; }
         public int Amount { get; set; }
         public bool IsCanSelect { get; private set; }
+        public int ID { get; private set; }
 
-        public ItemData(string name, ItemType itemType, Sprite icon, int amount, bool isCanSelect, SkillType skillType)
+        public ItemData(string name, ItemType itemType, Sprite icon, int amount, bool isCanSelect, 
+            List<SkillConfig> skillConfigs)
         {
             Name = name;
             ItemType = itemType;
             Icon = icon;
             Amount = amount;
             IsCanSelect = isCanSelect;
-            this.SkillType = skillType;
+            this.SkillConfigs = skillConfigs;
         }
+        
+        public void SetID(int id) => ID = id;
     }
 }

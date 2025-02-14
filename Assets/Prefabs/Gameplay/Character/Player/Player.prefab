@@ -3554,6 +3554,7 @@ MonoBehaviour:
   so_PlayerMove: {fileID: 11400000, guid: 2b0f9a11779e5474289d1335f845445d, type: 2}
   so_PlayerAttack: {fileID: 11400000, guid: a63a9470ef93bd14db7a3f98b97f0af2, type: 2}
   so_PlayerControlDesktop: {fileID: 11400000, guid: 0bed9273856cd0a47b9da97da2cae779, type: 2}
+  so_PlayerSkills: {fileID: 11400000, guid: 0d0ed737da3608143aa9bbd2b6af9b75, type: 2}
   so_Sword: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}
   so_Bow: {fileID: 11400000, guid: 0529271f169c5f34385e5629b95f7f14, type: 2}
   weaponParent: {fileID: 2888781842470922690}

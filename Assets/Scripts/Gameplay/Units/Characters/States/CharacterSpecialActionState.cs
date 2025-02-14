@@ -1,0 +1,47 @@
+﻿using Machine;
+using UnityEngine;
+
+namespace Unit.Character
+{
+    public class CharacterSpecialActionState : State, ISpecialAction
+    {
+        public override StateCategory Category { get; } = StateCategory.defense;
+
+        protected GameObject gameObject;
+        
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        
+        public override void Initialize()
+        {
+            
+        }
+
+        public override void Update()
+        {
+            
+        }
+
+        public override void LateUpdate()
+        {
+            
+        }
+
+        public virtual void Execute()
+        {
+            
+        }
+    }
+    
+    public class CharacterSpecialActionStateBuilder : StateBuilder<CharacterSpecialActionState>
+    {
+        public CharacterSpecialActionStateBuilder(CharacterSpecialActionState instance) : base(instance)
+        {
+        }
+
+        public CharacterSpecialActionStateBuilder SetGameObject(GameObject gameObject)
+        {
+            state.SetGameObject(gameObject);
+            return this;
+        }
+    }
+}

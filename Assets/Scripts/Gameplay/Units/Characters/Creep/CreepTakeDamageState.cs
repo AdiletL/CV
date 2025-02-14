@@ -4,23 +4,31 @@ namespace Unit.Character.Creep
 {
     public class CreepTakeDamageState : CharacterTakeDamageState
     {
-        public CharacterAnimation CharacterAnimation { get; set; }
-        public AnimationClip TakeDamageClip { get; set; }
+        protected CharacterAnimation characterAnimation;
+        protected AnimationClip takeDamageClip;
 
-        private float durationAnimation, countTimeAnimation;
+        protected float durationAnimation, countTimeAnimation;
+
+
+        public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
+        public void SetAnimationClip(AnimationClip animationClip) => this.takeDamageClip = animationClip;
 
         public override void Enter()
         {
             base.Enter();
-            durationAnimation = TakeDamageClip.length;
+            durationAnimation = takeDamageClip.length;
             countTimeAnimation = 0;
-            CharacterAnimation?.ChangeAnimationWithDuration(TakeDamageClip, transitionDuration: 0, isForce: true);
+            characterAnimation?.ChangeAnimationWithDuration(takeDamageClip, duration: this.durationAnimation, transitionDuration: 0, isForce: true);
         }
 
         public override void Update()
         {
             base.Update();
-            
+            CountTimeAnimation();
+        }
+
+        protected virtual void CountTimeAnimation()
+        {
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation > durationAnimation)
             {
@@ -35,13 +43,11 @@ namespace Unit.Character.Creep
         public CreepTakeDamageStateBuilder(CreepTakeDamageState instance) : base(instance)
         {
         }
-
+        
         public CreepTakeDamageStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if (state is CreepTakeDamageState enemyTakeDamageState)
-            {
-                enemyTakeDamageState.CharacterAnimation = characterAnimation;
-            }
+                enemyTakeDamageState.SetCharacterAnimation(characterAnimation);
 
             return this;
         }
@@ -49,9 +55,7 @@ namespace Unit.Character.Creep
         public CreepTakeDamageStateBuilder SetClip(AnimationClip clip)
         {
             if (state is CreepTakeDamageState enemyTakeDamageState)
-            {
-                enemyTakeDamageState.TakeDamageClip = clip;
-            }
+                enemyTakeDamageState.SetAnimationClip(clip);
 
             return this;
         }

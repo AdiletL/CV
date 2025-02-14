@@ -58,6 +58,13 @@ namespace Gameplay.Skill
             }
         }
     }
+    
+    [System.Serializable]
+    public class DashConfig : SkillConfig
+    {
+        public float Speed;
+        public float Duration;
+    }
 
     public class DashBuilder : SkillBuilder<Dash>
     {

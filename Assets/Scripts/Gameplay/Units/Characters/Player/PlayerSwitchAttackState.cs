@@ -226,6 +226,11 @@ namespace Unit.Character.Player
 
             characterWeaponAttackState.SetWeapon(currentWeapon);
         }
+
+        public override void RemoveWeapon()
+        {
+            characterWeaponAttackState?.RemoveWeapon();
+        }
     }
 
     public class PlayerSwitchAttackStateBuilder : CharacterSwitchAttackStateBuilder

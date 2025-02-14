@@ -1,6 +1,5 @@
 ﻿using Photon.Pun;
 using ScriptableObjects.Gameplay;
-using ScriptableObjects.Gameplay.Skill;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -17,7 +16,6 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject navMeshManagerPrefab;
         [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
         [SerializeField] private AssetReferenceGameObject networkManagerPrefab;
-        [SerializeField] private SO_SkillContainer so_SkillContainerPrefab;
         [SerializeField] private SO_GameConfig so_GameConfigPrefab;
         
         private LevelManager levelManager;
@@ -49,7 +47,6 @@ namespace Gameplay.Manager
         [PunRPC]
         private void LoadAndBindAsset()
         {
-            diContainer.Bind<SO_SkillContainer>().FromInstance(so_SkillContainerPrefab).AsSingle();
             diContainer.Bind<SO_GameConfig>().FromInstance(so_GameConfigPrefab).AsSingle();
             diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfigPrefab.SO_GameHotkeys).AsSingle();
             diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfigPrefab.SO_GameUIColor).AsSingle();

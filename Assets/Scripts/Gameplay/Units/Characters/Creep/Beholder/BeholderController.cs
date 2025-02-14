@@ -14,10 +14,10 @@ namespace Unit.Character.Creep
         [SerializeField] private SO_BeholderAttack so_BeholderAttack;
         [SerializeField] private SO_BeholderMove so_BeholderMove;
 
-        private BeholderStateFactory beholderStateFactory;
-        
         private CreepSwitchMoveState creepSwitchMoveState;
         private CreepSwitchAttackState creepSwitchAttackState;
+        
+        public BeholderStateFactory BeholderStateFactory { get; private set; }
 
         protected override CreepStateFactory CreateCreepStateFactory()
         {
@@ -42,7 +42,7 @@ namespace Unit.Character.Creep
             return (BeholderSwitchStateFactory)new BeholderSwitchStateFactoryBuilder()
                 .SetBeholderMoveConfig(so_BeholderMove)
                 .SetBeholderAttackConfig(so_BeholderAttack)
-                .SetCreepStateFactory(creepStateFactory)
+                .SetCreepStateFactory(CreepStateFactory)
                 .SetStateMachine(StateMachine)
                 .SetNavMeshAgent(navMeshAgent)
                 .SetCharacterAnimation(characterAnimation)
@@ -82,12 +82,12 @@ namespace Unit.Character.Creep
         protected override void BeforeCreateStates()
         {
             base.BeforeCreateStates();
-            beholderStateFactory = (BeholderStateFactory)creepStateFactory;
+            BeholderStateFactory = (BeholderStateFactory)CreepStateFactory;
         }
 
         protected override void CreateStates()
         {
-            var idleState = creepStateFactory.CreateState(typeof(BeholderIdleState));
+            var idleState = BeholderStateFactory.CreateState(typeof(BeholderIdleState));
             diContainer.Inject(idleState);
             this.StateMachine.AddStates(idleState);
         }
@@ -103,8 +103,8 @@ namespace Unit.Character.Creep
             creepSwitchMoveState.SetSwitchAttackState(creepSwitchAttackState);
             creepSwitchAttackState.SetSwitchMoveState(creepSwitchMoveState);
             
-            beholderStateFactory.SetCreepSwitchMoveState(creepSwitchMoveState);
-            beholderStateFactory.SetCreepSwitchAttackState(creepSwitchAttackState);
+            BeholderStateFactory.SetCreepSwitchMoveState(creepSwitchMoveState);
+            BeholderStateFactory.SetCreepSwitchAttackState(creepSwitchAttackState);
             
             creepSwitchMoveState.Initialize();
             creepSwitchAttackState.Initialize();

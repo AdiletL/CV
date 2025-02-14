@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using Gameplay.Factory;
 using Gameplay.Skill;
 using ScriptableObjects.Gameplay;
-using ScriptableObjects.Gameplay.Skill;
 using UnityEngine;
 using Zenject;
 
@@ -23,17 +21,20 @@ namespace Unit.Character.Player
         private readonly StateMachine stateMachine;
         private readonly CharacterControlDesktop characterControlDesktop;
         private readonly IMoveControl moveControl;
+        private readonly DashConfig dashConfig;
         
         private Dictionary<InputType, int> blockedInputs = new();
         private Dictionary<SkillType, int> blockedSkills = new();
 
         public PlayerSkillInputHandler(GameObject gameObject, StateMachine stateMachine, 
-            CharacterControlDesktop characterControlDesktop, IMoveControl moveControl)
+            CharacterControlDesktop characterControlDesktop, IMoveControl moveControl,
+            DashConfig dashConfig)
         {
             this.gameObject = gameObject;
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
             this.moveControl = moveControl;
+            this.dashConfig = dashConfig;
         }
 
         private SkillFactory CreateSkillFactory()
@@ -147,7 +148,7 @@ namespace Unit.Character.Player
         {
             if (!skillHandler.IsSkillNotNull(SkillType.dash))
             {
-                var dash = skillFactory.CreateSkill(SkillType.dash);
+                var dash = skillFactory.CreateSkill(dashConfig);
                 diContainer.Inject(dash);
                 skillHandler.AddSkill(dash);
             }
@@ -166,21 +167,19 @@ namespace Unit.Character.Player
         {
             InitializeDash();
 
-            //gravity.InActivateGravity();
             this.stateMachine.ExitOtherStates(typeof(PlayerIdleState), true);
             this.stateMachine.ActiveBlockChangeState();
-            skillHandler.Execute(SkillType.dash, AfterDash);
+            skillHandler.Execute(SkillType.dash, 0, AfterDash);
             characterControlDesktop.ClearHotkeys();
-            BlockInput(skillHandler.GetSkill(SkillType.dash).BlockedInputType);
-            BlockSkill(skillHandler.GetSkill(SkillType.dash).BlockedSkillType);
+            BlockInput(skillHandler.GetSkill(SkillType.dash, 0).BlockedInputType);
+            BlockSkill(skillHandler.GetSkill(SkillType.dash, 0).BlockedSkillType);
         }
                 
         private void AfterDash()
         {
-            //gravity.ActivateGravity();
             this.stateMachine.InActiveBlockChangeState();
-            UnblockInput(skillHandler.GetSkill(SkillType.dash).BlockedInputType);
-            UnblockSkill(skillHandler.GetSkill(SkillType.dash).BlockedSkillType);
+            UnblockInput(skillHandler.GetSkill(SkillType.dash, 0).BlockedInputType);
+            UnblockSkill(skillHandler.GetSkill(SkillType.dash, 0).BlockedSkillType);
         }
     }
 }
