@@ -9,7 +9,7 @@ namespace Unit.Character
         protected AnimationClip[] runClips;
 
         protected float durationAnimation;
-        protected int animationLayer;
+        protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
         
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
@@ -30,13 +30,13 @@ namespace Unit.Character
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
-            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation, layer: animationLayer);
+            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeed;
-            unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation);
+            unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         public override void ExecuteMovement()

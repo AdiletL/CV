@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Machine;
-using Unit;
-using Unit.Character.Player;
 using UnityEngine;
 using IState = Machine.IState;
 
@@ -101,9 +99,10 @@ public class StateMachine
 
             if (activeStates.TryGetValue(category, out var activeState))
             {
-                if (activeState.GetType() == state.GetType() && !isForceSetState)
+                if (activeState.GetType() == state.GetType() && !isForceSetState ||
+                    !activeState.isCanExit)
                     continue;
-
+                
                 activeState.Exit();
             }
 
@@ -162,7 +161,8 @@ public class StateMachine
         
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
-            if (state.isCanExit)
+            if (state.isCanExit && !isForceSetState ||
+                isForceSetState)
             {
                 state.Exit();
                 activeStates.Remove(excludedCategory);
@@ -171,7 +171,9 @@ public class StateMachine
         }
 
         if (installationState != null)
+        {
             SetStates(isForceSetState, installationState);
+        }
         
         if (activeStates.Count == 0)
             SetDefaultState();

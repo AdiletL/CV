@@ -8,7 +8,6 @@
         move,
         action,
         jump,
-        defense,
     }
 
     public interface IState

@@ -23,7 +23,7 @@ namespace Unit.Character.Creep
             {
                 foreach (var VARIABLE in startRayPoints)
                 {
-                    Debug.DrawRay(VARIABLE.position, Vector3.down * rayDistance, Color.green);
+                    //Debug.DrawRay(VARIABLE.position, Vector3.down * rayDistance, Color.green);
                     if (Physics.Raycast(VARIABLE.position, Vector3.down, rayDistance))
                         return true;
                 }

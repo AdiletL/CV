@@ -12,6 +12,8 @@ namespace Unit.Character.Player
 
         private Vector3 direction;
         private float rotationSpeed;
+        private const string SPEED_ATTACK_NAME = "SpeedAttack";
+        private const int ANIMATION_LAYER = 1;
 
         public void SetSwordAttackClip(AnimationClip[] clips) => swordAttackClip = clips;
         public void SetBowAttackClip(AnimationClip[] clips) => bowAttackClip = clips;
@@ -23,7 +25,7 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack);
+            this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack, SPEED_ATTACK_NAME, layer: ANIMATION_LAYER);
             playerKinematicControl.SetRotationSpeed(rotationSpeed);
             UpdateDirection();
             CurrentWeapon.SetDirection(direction);
@@ -33,6 +35,7 @@ namespace Unit.Character.Player
         {
             ClearColorAtTarget();
             base.Exit();
+            this.unitAnimation?.ExitAnimation(1);
         }
 
         private void ClearColorAtTarget()

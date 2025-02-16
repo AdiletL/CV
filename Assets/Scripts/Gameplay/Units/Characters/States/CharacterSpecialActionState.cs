@@ -1,11 +1,12 @@
-﻿using Machine;
+﻿using Gameplay.Skill;
+using Machine;
 using UnityEngine;
 
 namespace Unit.Character
 {
     public class CharacterSpecialActionState : State, ISpecialAction
     {
-        public override StateCategory Category { get; } = StateCategory.defense;
+        public override StateCategory Category { get; } = StateCategory.action;
 
         protected GameObject gameObject;
         
@@ -13,7 +14,6 @@ namespace Unit.Character
         
         public override void Initialize()
         {
-            
         }
 
         public override void Update()

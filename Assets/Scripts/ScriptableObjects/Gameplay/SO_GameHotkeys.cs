@@ -6,6 +6,7 @@ namespace ScriptableObjects.Gameplay
     public class SO_GameHotkeys : ScriptableObject
     {
         [field: SerializeField] public int SelectObjectMouseButton { get; private set; } = 0;
+        [field: SerializeField] public int SpecialActionMouseButton { get; private set; } = 1;
         [field: SerializeField] public int AttackMouseButton { get; private set; } = 1;
         
         [field: SerializeField, Header("Jump")] 

@@ -19,6 +19,7 @@ namespace Unit.Character.Player
         jump = 1 << 1,
         selectObject = 1 << 2,
         attack = 1 << 3,
+        specialAction = 1 << 4,
     }
     public class PlayerControlDesktop : CharacterControlDesktop
     {
@@ -144,7 +145,8 @@ namespace Unit.Character.Player
         private void InitializeMouseInputHandler()
         {
             playerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
-                playerSkillInputHandler, characterSwitchAttack, gameObject.GetComponent<PlayerInventory>());
+                playerSkillInputHandler, characterSwitchAttack, gameObject.GetComponent<PlayerInventory>(), 
+                playerStateFactory);
             diContainer.Inject(playerMouseInputHandler);
             playerMouseInputHandler.Initialize();
         }

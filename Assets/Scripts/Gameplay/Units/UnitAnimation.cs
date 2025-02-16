@@ -17,22 +17,13 @@ namespace Unit
         protected bool isBlock;
 
         protected List<AnimationClip> allClips;
-        
         protected Dictionary<AnimationClip, float> clipLengths = new();
 
-        protected const string TRANSITION_SPEED = "speed";
-        
-        /// <summary>
-        /// Возвращает анимационный клип для использования.
-        /// </summary>
-        private AnimationClip ResolveAnimationClip(AnimationClip clip, bool isDefault)
-        {
-            return isDefault ? defaultAnimationClip : clip;
-        }
+        protected const string EMPTY_ANIMATION_NAME = "New State";
 
-        /// <summary>
-        /// Возвращает длину анимационного клипа, используя кэш.
-        /// </summary>
+        private AnimationClip ResolveAnimationClip(AnimationClip clip, bool isDefault) =>
+            isDefault ? defaultAnimationClip : clip;
+
         private float GetClipLength(AnimationClip clip)
         {
             if (!clipLengths.TryGetValue(clip, out float clipLength))
@@ -40,96 +31,64 @@ namespace Unit
                 clipLength = clip.length;
                 clipLengths[clip] = clipLength;
             }
-
             return clipLength;
         }
 
         private AnimationClip GetAnimationClip(string clipName)
         {
-            foreach (var VARIABLE in allClips)
+            foreach (var clip in allClips)
             {
-                if(string.Equals(clipName, VARIABLE.name, StringComparison.Ordinal))
-                    return VARIABLE;
+                if (string.Equals(clipName, clip.name, StringComparison.Ordinal))
+                    return clip;
             }
             return defaultAnimationClip;
         }
 
-        /// <summary>
-        /// Проверяет, нужно ли пропустить изменение анимации.
-        /// </summary>
-        private bool ShouldSkipAnimationChange(AnimationClip clip, bool isForce, bool isDefault)
-        {
-            if (isBlock && !isForce) return true;
+        private bool ShouldSkipAnimationChange(AnimationClip clip, bool isForce, bool isDefault) =>
+            (isBlock && !isForce) || 
+            (isDefault ? !isForce && currentClip == defaultAnimationClip : clip == null || (!isForce && currentClip == clip));
 
-            if (isDefault)
-            {
-                return !isForce && currentClip == defaultAnimationClip;
-            }
-
-            return clip == null || (!isForce && currentClip == clip);
-        }
-        
-        #region Initialization
-
-        /// <summary>
-        /// Метод для инициализации, может быть переопределён в наследниках.
-        /// </summary>
         public virtual void Initialize()
         {
             photonView = GetComponent<PhotonView>();
         }
 
-        #endregion
-
-        #region Public Methods
-
-        
-        /// <summary>
-        /// Изменение текущей анимации.
-        /// </summary>
-        /// <param name="clip">Клип для проигрывания.</param>
-        /// <param name="duration">Продолжительность анимации.</param>
-        /// <param name="transitionDuration">Длительность перехода между анимациями.</param>
-        /// <param name="isForce">Принудительное изменение анимации.</param>
-        /// <param name="isDefault">Установить анимацию по умолчанию.</param>
-        public void ChangeAnimationWithDuration(AnimationClip clip, float duration = 0f, 
+        public void ChangeAnimationWithDuration(AnimationClip clip, float duration = 0f, string speedName = null,
             float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false, int layer = 0)
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
-
             clip = ResolveAnimationClip(clip, isDefault);
-            
-            if(photonView.IsMine)
-                photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, transitionDuration, layer);
+
+            if (photonView.IsMine)
+                photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, speedName, transitionDuration, layer);
         }
 
-        public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1f, 
+        public void ChangeAnimationWithSpeed(AnimationClip clip, float speed = 1f, string speedName = null,
             float transitionDuration = 0.1f, bool isForce = false, bool isDefault = false)
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
-            
             clip = ResolveAnimationClip(clip, isDefault);
-            
-            if(photonView.IsMine)
-                photonView.RPC(nameof(ChangeAnimationWithSpeedRPC), RpcTarget.All, clip.name, speed, transitionDuration);
+
+            if (photonView.IsMine)
+                photonView.RPC(nameof(ChangeAnimationWithSpeedRPC), RpcTarget.All, clip.name, speed, speedName, transitionDuration);
         }
 
         [PunRPC]
-        protected void ChangeAnimationWithDurationRPC(string clipName, float duration, float transitionDuration, int layer)
+        protected void ChangeAnimationWithDurationRPC(string clipName, float duration, string speedName, float transitionDuration, int layer)
         {
             var animationClip = GetAnimationClip(clipName);
-            SetSpeedClip(animationClip, duration);
+            SetSpeedClip(animationClip, duration, speedName);
 
             if (gameObject.activeSelf)
                 PlayAnimation(animationClip, transitionDuration, layer);
         }
 
         [PunRPC]
-        protected void ChangeAnimationWithSpeedRPC(string clipName, float speed, float transitionDuration)
+        protected void ChangeAnimationWithSpeedRPC(string clipName, float speed, string speedName, float transitionDuration)
         {
-            animator.SetFloat(TRANSITION_SPEED, speed);
+            animator.SetFloat(speedName, speed);
             currentSpeed = speed;
-            
+
             if (gameObject.activeSelf)
             {
                 var animationClip = GetAnimationClip(clipName);
@@ -137,19 +96,9 @@ namespace Unit
             }
         }
 
-        /// <summary>
-        /// Блокировка/разблокировка изменений анимации.
-        /// </summary>
-        /// <param name="isBlock">Флаг блокировки.</param>
         public void SetBlock(bool isBlock) => this.isBlock = isBlock;
 
-        #endregion
-        /// <summary>
-        /// Установка скорости анимации.
-        /// </summary>
-        /// <param name="clip">Клип, для которого устанавливается скорость.</param>
-        /// <param name="duration">Продолжительность воспроизведения.</param>
-        public virtual void SetSpeedClip(AnimationClip clip, float duration)
+        public virtual void SetSpeedClip(AnimationClip clip, float duration, string speedName)
         {
             float clipLength = GetClipLength(clip);
             duration = duration > 0 ? duration : clipLength;
@@ -158,26 +107,24 @@ namespace Unit
 
             if (!Mathf.Approximately(currentSpeed, speed))
             {
-                animator.SetFloat(TRANSITION_SPEED, speed);
+                if(!string.IsNullOrEmpty(speedName))
+                    animator.SetFloat(speedName, speed);
                 currentSpeed = speed;
             }
         }
 
-        /// <summary>
-        /// Запускает воспроизведение анимации с указанной длительностью перехода.
-        /// </summary>
         private void PlayAnimation(AnimationClip clip, float transitionDuration, int layer)
         {
             animator.CrossFadeInFixedTime(clip.name, transitionDuration, layer);
             currentClip = clip;
         }
 
-
         public void AddClip(AnimationClip clip)
         {
             allClips ??= new List<AnimationClip>();
             allClips.Add(clip);
         }
+
         public void AddClips(AnimationClip[] clips)
         {
             allClips ??= new List<AnimationClip>();
@@ -189,9 +136,9 @@ namespace Unit
             allClips.Remove(clip);
         }
 
-        public void ExitAnimation(int layer)
+        public void ExitAnimation(int layer, float transitionDuration = .1f)
         {
-            animator.CrossFadeInFixedTime("New State", 0f, layer);
+            animator.CrossFadeInFixedTime(EMPTY_ANIMATION_NAME, transitionDuration, layer);
         }
     }
 }

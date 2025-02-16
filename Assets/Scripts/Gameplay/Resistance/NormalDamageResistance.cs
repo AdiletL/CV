@@ -15,9 +15,9 @@ namespace Gameplay.Resistance
     }
 
     [System.Serializable]
-    public class NormalDamageResistanceInfo
+    public class NormalDamageResistanceConfig
     {
-        public int Value { get; }
-        public ValueType ValueType { get; }
+        public int Value;
+        public ValueType ValueType;
     }
 }

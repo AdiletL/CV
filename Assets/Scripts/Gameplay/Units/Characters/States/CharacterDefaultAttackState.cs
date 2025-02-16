@@ -23,7 +23,7 @@ namespace Unit.Character
         protected float rangeSqr;
         
         protected bool isApplyDamage;
-        protected bool isAttack;
+        protected bool isCooldown;
 
         public float Range { get; protected set; }
         
@@ -68,8 +68,14 @@ namespace Unit.Character
                 this.stateMachine.ExitCategory(Category, null);
                 return;
             }
+
+            if (!isCooldown && !Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position,
+                    gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
+            {
+                RotateToTarget();
+                return;
+            }
             
-            RotateToTarget();
             Cooldown();
             Attack();
         }
@@ -89,7 +95,7 @@ namespace Unit.Character
 
         protected virtual void ResetValues()
         {
-            isAttack = false;
+            isCooldown = false;
             isApplyDamage = false;
             countDurationAttack = 0;
             countApplyDamage = 0;
@@ -127,6 +133,8 @@ namespace Unit.Character
             {
                 unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
             }
+
+            isCooldown = true;
         }
         
         public override void Attack()
@@ -159,7 +167,7 @@ namespace Unit.Character
                     currentTarget = null;
             }
             unitAnimation?.ChangeAnimationWithDuration(cooldownClip);
-            isAttack = false;
+            isCooldown = false;
         }
     }
     

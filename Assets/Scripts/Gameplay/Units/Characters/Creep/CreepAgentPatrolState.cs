@@ -13,7 +13,8 @@ namespace Unit.Character.Creep
         protected int currentPointIndex;
         protected float durationAnimation;
         protected float rotationSpeed;
-        protected const float stoppingDistance = .2f;
+        protected const float STOPPING_DISTANCE = .2f;
+        protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
 
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
@@ -30,7 +31,7 @@ namespace Unit.Character.Creep
             base.Initialize();
             navMeshAgent.speed = MovementSpeed;
             navMeshAgent.angularSpeed = rotationSpeed;
-            navMeshAgent.stoppingDistance = stoppingDistance;
+            navMeshAgent.stoppingDistance = STOPPING_DISTANCE;
         }
 
         public override void Enter()
@@ -71,7 +72,7 @@ namespace Unit.Character.Creep
             base.ExecuteMovement();
             if (navMeshAgent.isOnNavMesh &&
                 !navMeshAgent.pathPending && 
-                navMeshAgent.remainingDistance < stoppingDistance)
+                navMeshAgent.remainingDistance < STOPPING_DISTANCE)
             {
                 SetTargetPoint();
                 PlayAnimation();
@@ -81,13 +82,13 @@ namespace Unit.Character.Creep
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
-            characterAnimation.ChangeAnimationWithDuration(getRandomWalkClip(), duration: durationAnimation);
+            characterAnimation.ChangeAnimationWithDuration(getRandomWalkClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeed;
-            characterAnimation.SetSpeedClip(getRandomWalkClip(), duration: durationAnimation);
+            characterAnimation.SetSpeedClip(getRandomWalkClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
     }
 

@@ -34,6 +34,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
         [SerializeField] private SO_PlayerSkills so_PlayerSkills;
+        [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
         [Space]
         [SerializeField] private SO_Sword so_Sword;
@@ -87,6 +88,7 @@ namespace Unit.Character.Player
         private PlayerStateFactory CreatePlayerStateFactory()
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
+                .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(BaseCamera)
                 .SetCharacterEndurance(GetComponentInUnit<CharacterEndurance>())
@@ -309,6 +311,7 @@ namespace Unit.Character.Player
             characterAnimation.AddClips(so_PlayerAttack.SwordAttackClip);
             characterAnimation.AddClip(so_PlayerAttack.SwordCooldownClip);
             characterAnimation.AddClip(so_PlayerMove.JumpInfo.Clip);
+            characterAnimation.AddClip(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig.BlockClip);
         }
         
         //Test

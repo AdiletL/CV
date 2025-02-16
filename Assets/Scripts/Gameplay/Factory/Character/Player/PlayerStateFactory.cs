@@ -27,10 +27,12 @@ namespace Gameplay.Factory.Character.Player
         
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
+        private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
+        public void SetPlayerSpecialAction(SO_PlayerSpecialAction so_PlayerSpecialAction) => this.so_PlayerSpecialAction = so_PlayerSpecialAction;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMoveState = characterSwitchMoveState;
@@ -56,6 +58,7 @@ namespace Gameplay.Factory.Character.Player
                 _ when stateType == typeof(PlayerRunToTargetState) => CreateRunState(),
                 _ when stateType == typeof(PlayerRunState) => CreateRunStateOrig(),
                 _ when stateType == typeof(PlayerJumpState) => CreateJumpState(),
+                _ when stateType == typeof(PlayerSpecialActionState) => CreateSpecialActionState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
@@ -161,6 +164,17 @@ namespace Gameplay.Factory.Character.Player
                 .SetStateMachine(stateMachine)
                 .Build();
         }
+
+        private PlayerSpecialActionState CreateSpecialActionState()
+        {
+            return (PlayerSpecialActionState)new PlayerSpecialActionStateBuilder()
+                .SetBlockClip(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig.BlockClip)
+                .SetCharacterAnimation(characterAnimation)
+                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig)
+                .SetGameObject(gameObject)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
     }
 
     public class PlayerStateFactoryBuilder : CharacterStateFactoryBuilder
@@ -180,6 +194,13 @@ namespace Gameplay.Factory.Character.Player
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
+            return this;
+        }
+        
+        public PlayerStateFactoryBuilder SetPlayerSpecialActionConfig(SO_PlayerSpecialAction so_PlayerSpecialAction)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerSpecialAction(so_PlayerSpecialAction);
             return this;
         }
 

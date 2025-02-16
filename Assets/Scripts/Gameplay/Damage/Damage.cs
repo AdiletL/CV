@@ -1,7 +1,10 @@
 ﻿using Calculate;
+using Gameplay.Resistance;
 using Gameplay.Skill;
 using Gameplay.Spawner;
 using Unit;
+using Unit.Character.Creep;
+using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -16,8 +19,9 @@ namespace Gameplay.Damage
         public int CurrentDamage { get; }
         public int AdditionalDamage { get; protected set; }
         
-        private UnitCenter ownerUnitCenter;
-
+        protected UnitCenter ownerUnitCenter;
+        protected int result;
+        
         public Damage(int amount, GameObject owner)
         {
             this.CurrentDamage = amount;
@@ -37,7 +41,19 @@ namespace Gameplay.Damage
             AdditionalDamage -= value;
         }
 
-        public abstract int GetTotalDamage(GameObject gameObject);
+        public virtual int GetTotalDamage(GameObject gameObject)
+        {
+            result = CurrentDamage + AdditionalDamage;
+            
+            var resistanceHandler = gameObject.GetComponent<ResistanceHandler>();
+            if (resistanceHandler && resistanceHandler.TryGetResistance<NormalDamageResistance>(out var normalResistance))
+            {
+                var resistanceValue = new GameValue(normalResistance.Value, normalResistance.ValueType);
+                result -= resistanceValue.Calculate(result);
+                if (result < 0) result = 0;
+            }
+            return result;
+        }
 
         protected virtual void CheckSkill(int totalDamage, UnitCenter targetUnitCenter)
         {

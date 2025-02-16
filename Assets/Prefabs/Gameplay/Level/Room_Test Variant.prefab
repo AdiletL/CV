@@ -6152,9 +6152,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1751645529426598188, guid: 5527beb5437490d419158bc91dc0eab9, type: 3}
+      propertyPath: ObservedComponents.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1751645529426598188, guid: 5527beb5437490d419158bc91dc0eab9, type: 3}
+      propertyPath: 'ObservedComponents.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8916872512564063171}
     - target: {fileID: 3666828197514239362, guid: 5527beb5437490d419158bc91dc0eab9, type: 3}
       propertyPath: m_Name
       value: ThornTrap Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 3666828197514239362, guid: 5527beb5437490d419158bc91dc0eab9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6175,6 +6187,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d71212b6b7146a283f7d90ce1b53169, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8916872512564063171 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4510445321192896449, guid: 5527beb5437490d419158bc91dc0eab9, type: 3}
+  m_PrefabInstance: {fileID: 4983033225373096962}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &4987065259366887756

@@ -19,25 +19,20 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField] public bool IsCanSelect { get; private set; }
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
-        [field: SerializeField, Space(15)] public SkillType SkillTypeID { get; private set; }
+        [field: SerializeField, Space(15)] public SkillConfigData SkillConfigData { get; private set; }
         
-        [ShowIf("@SkillTypeID.HasFlag(SkillType.applyDamageHeal)"), Space]
-        public ApplyDamageHealConfig ApplyDamageHealConfig;
-        
-        [ShowIf("@SkillTypeID.HasFlag(SkillType.spawnPortal)"), Space]
-        public SpawnPortalConfig SpawnPortalConfig;
         
         public List<SkillConfig> GetSkillConfigs()
         {
             var skillConfigs = new List<SkillConfig>();
             foreach (SkillType VARIABLE in Enum.GetValues(typeof(SkillType)))
             {
-                if (VARIABLE == SkillType.nothing || (SkillTypeID & VARIABLE) == 0) continue;
+                if (VARIABLE == SkillType.nothing || (SkillConfigData.SkillTypeID & VARIABLE) == 0) continue;
 
-                if (ApplyDamageHealConfig.SkillType == SkillTypeID)
-                    skillConfigs.Add(ApplyDamageHealConfig);
-                if(SpawnPortalConfig.SkillType == SkillTypeID)
-                    skillConfigs.Add(SpawnPortalConfig);
+                if (SkillConfigData.ApplyDamageHealConfig.SkillType == SkillConfigData.SkillTypeID)
+                    skillConfigs.Add(SkillConfigData.ApplyDamageHealConfig);
+                if(SkillConfigData.SpawnPortalConfig.SkillType == SkillConfigData.SkillTypeID)
+                    skillConfigs.Add(SkillConfigData.SpawnPortalConfig);
             }
 
             return skillConfigs;
