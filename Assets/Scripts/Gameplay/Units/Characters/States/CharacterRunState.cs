@@ -35,7 +35,7 @@ namespace Unit.Character
 
         protected void UpdateDurationAnimation()
         {
-            durationAnimation = 1.5f / MovementSpeed;
+            durationAnimation = 1.5f / CurrentMovementSpeed;
             unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 

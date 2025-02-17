@@ -12,7 +12,7 @@ namespace Gameplay.Weapon.Projectile
         {
             base.Initialize();
             if (directionMovement == null)
-                directionMovement = new DirectionMovement(gameObject, MovementSpeed);
+                directionMovement = new DirectionMovement(gameObject, CurrentMovementSpeed);
             
             directionMovement.Initialize();
             directionMovement.SetDirection(Vector3.forward);

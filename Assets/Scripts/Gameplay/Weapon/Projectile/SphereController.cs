@@ -20,7 +20,7 @@ namespace Gameplay.Weapon.Projectile
             so_Sphere = (SO_Sphere)so_Projectile;
             
             if (directionMovement == null)
-                directionMovement = new DirectionMovement(gameObject, MovementSpeed);
+                directionMovement = new DirectionMovement(gameObject, CurrentMovementSpeed);
 
             if (slowMovementEffect == null)
                 slowMovementEffect = new SlowMovement(so_Sphere.SlowMovementInfo);

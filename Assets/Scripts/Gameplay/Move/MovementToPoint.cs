@@ -7,12 +7,13 @@ namespace Movement
         private GameObject gameObject;
         private Vector3 point;
 
-        public float MovementSpeed { get; }
+        public float BaseMovementSpeed { get; }
+        public float CurrentMovementSpeed { get; }
 
         public MovementToPoint(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.MovementSpeed = movementSpeed;
+            this.CurrentMovementSpeed = movementSpeed;
         }
 
         public bool IsInPlace()
@@ -32,7 +33,7 @@ namespace Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, MovementSpeed * Time.deltaTime);
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, CurrentMovementSpeed * Time.deltaTime);
         }
     }
 }

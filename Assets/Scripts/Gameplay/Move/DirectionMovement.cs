@@ -6,12 +6,13 @@ namespace Movement
     {
         private GameObject gameObject;
         private Vector3 direction;
-        public float MovementSpeed { get; }
+        public float BaseMovementSpeed { get; }
+        public float CurrentMovementSpeed { get; }
 
         public DirectionMovement(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.MovementSpeed = movementSpeed;
+            this.CurrentMovementSpeed = movementSpeed;
         }
 
         public void Initialize()
@@ -23,7 +24,7 @@ namespace Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.Translate(direction * (MovementSpeed * Time.deltaTime), Space.World);
+            gameObject.transform.Translate(direction * (CurrentMovementSpeed * Time.deltaTime), Space.World);
         }
     }
 }

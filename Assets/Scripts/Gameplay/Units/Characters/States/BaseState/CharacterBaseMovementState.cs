@@ -10,17 +10,18 @@ namespace Unit.Character
         protected GameObject gameObject;
         protected Transform center;
         
-        public float MovementSpeed { get; protected set; }
+        public float BaseMovementSpeed { get; protected set; }
+        public float CurrentMovementSpeed { get; protected set; }
         
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
-        public void SetMovementSpeed(float movementSpeed) => this.MovementSpeed = movementSpeed;
+        public void SetBaseMovementSpeed(float movementSpeed) => this.BaseMovementSpeed = movementSpeed;
         
         
         public override void Initialize()
         {
-            
+            CurrentMovementSpeed = BaseMovementSpeed;
         }
         
         public override void Update()
@@ -36,12 +37,12 @@ namespace Unit.Character
         
         public virtual void AddMovementSpeed(float value)
         {
-            MovementSpeed += value;
+            CurrentMovementSpeed += value;
         }
 
         public virtual void RemoveMovementSpeed(float value)
         {
-            MovementSpeed -= value;
+            CurrentMovementSpeed -= value;
         }
     }
 
@@ -58,7 +59,7 @@ namespace Unit.Character
         }
         public CharacterBaseMovementStateBuilder SetMovementSpeed(float speed)
         {
-            state.SetMovementSpeed(speed);
+            state.SetBaseMovementSpeed(speed);
             return this;
         }
         public CharacterBaseMovementStateBuilder SetCenter(Transform center)

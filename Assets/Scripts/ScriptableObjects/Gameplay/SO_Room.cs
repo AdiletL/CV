@@ -8,6 +8,5 @@ namespace ScriptableObjects.Gameplay
     {
         [field: SerializeField] public int ID { get; private set; }
         [field: SerializeField, Space] public AssetReferenceT<GameObject>[] RoomObjects { get; private set; }
-        [field: SerializeField] public SO_Room[] NextRooms { get; private set; }
     }
 }

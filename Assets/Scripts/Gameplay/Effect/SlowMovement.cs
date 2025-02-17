@@ -67,7 +67,7 @@ namespace Gameplay.Effect
             
             foreach (var VARIABLE in movementStates)
             {
-                result = gameValue.Calculate(VARIABLE.MovementSpeed);
+                result = gameValue.Calculate(VARIABLE.CurrentMovementSpeed);
                 VARIABLE.RemoveMovementSpeed(result);
                 var movementInfo = new MovementInfo(VARIABLE, result);
                 this.movementStates.Add(movementInfo);

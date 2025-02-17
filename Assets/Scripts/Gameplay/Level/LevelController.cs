@@ -1,4 +1,5 @@
-﻿using Unit.Portal;
+﻿using System.Collections.Generic;
+using Unit.Portal;
 using UnityEngine;
 using Zenject;
 
@@ -9,8 +10,20 @@ namespace Gameplay
         [Inject] private DiContainer diContainer;
 
         [SerializeField] private PortalController startPortal;
-        public RoomController CurrentRoom { get; private set; }
         
+        private List<RoomController> rooms = new();
+        public int ID { get; private set; }
+
+        public bool IsNullRoom(int roomID)
+        {
+            for (int i = rooms.Count - 1; i >= 0; i--)
+            {
+                if (rooms[i].ID == roomID)
+                    return false;
+            }
+            return true;
+        }
+            
         public void Initialize()
         {
             diContainer.Inject(startPortal);
@@ -20,10 +33,30 @@ namespace Gameplay
             startPortal.Initialize();
             diContainer.Bind<PortalController[]>().FromInstance(portals).AsSingle();
         }
+        
+        public void SetID(int id) => ID = id;
 
-        public void SetGameField(RoomController roomController)
+        public void AddRoom(RoomController roomController)
         {
-            CurrentRoom = roomController;
+            for (int i = rooms.Count - 1; i >= 0; i--)
+            {
+                if(rooms[i].ID == roomController.ID) 
+                    return;
+            }
+            rooms.Add(roomController);
         }
+
+        public void RemoveRoom(int id)
+        {
+            for (int i = rooms.Count - 1; i >= 0; i--)
+            {
+                if (rooms[i].ID == id)
+                {
+                    rooms.Remove(rooms[i]);
+                    return;
+                }
+            }
+        }
+        
     }
 }

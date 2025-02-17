@@ -17,7 +17,8 @@ namespace Gameplay.Weapon.Projectile
         
         public IDamageable Damageable { get; private set; }
         public AnimationCurve moveCurve { get; protected set; }
-        public float MovementSpeed { get; protected set; }
+        public float BaseMovementSpeed { get; }
+        public float CurrentMovementSpeed { get; protected set; }
 
         protected float height;
         protected bool isInitialized;
@@ -28,7 +29,7 @@ namespace Gameplay.Weapon.Projectile
             if(isInitialized) return;
             
             moveCurve = so_Projectile.Curve;
-            MovementSpeed = so_Projectile.Speed;
+            CurrentMovementSpeed = so_Projectile.Speed;
             height = so_Projectile.Height;
             enemyLayer = so_Projectile.EnemyLayer;
         }

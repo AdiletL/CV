@@ -25,7 +25,7 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            navMeshAgent.speed = MovementSpeed;
+            navMeshAgent.speed = CurrentMovementSpeed;
             navMeshAgent.angularSpeed = rotationSpeed;
             navMeshAgent.stoppingDistance = stoppingDistance;
         }
@@ -36,7 +36,7 @@ namespace Unit.Character.Creep
             creepIdleState ??= stateMachine.GetState<CreepIdleState>();
             if (navMeshAgent.isOnNavMesh)
             {
-                navMeshAgent.speed = MovementSpeed;
+                navMeshAgent.speed = CurrentMovementSpeed;
                 navMeshAgent.destination = currentTarget.transform.position;
                 navMeshAgent.isStopped = false;
             }

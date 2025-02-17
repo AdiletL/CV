@@ -11,30 +11,41 @@ namespace Unit.Character.Player
         
         private Vector3 directionMovement;
         private float runReductionEndurance;
-        private float rotationSpeed;
+        private float currentRotationSpeed;
+        private float baseRotationSpeed;
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
-        public void SetRotationSpeed(float speed) => this.rotationSpeed = speed;
+        public void SetBaseRotationSpeed(float speed) => this.baseRotationSpeed = speed;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
-        
+
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            currentRotationSpeed = baseRotationSpeed;
+        }
 
         public override void Enter()
         {
             base.Enter();
-            playerKinematicControl.SetRotationSpeed(rotationSpeed);
+            ResetValue();
+            if (stateMachine.IsActivateType(typeof(PlayerSpecialActionState)))
+                ChangedStateOnPlayerSpecialActionState();
         }
 
         public override void Subscribe()
         {
             base.Subscribe();
             stateMachine.OnExitCategory += OnExitCategory;
+            stateMachine.OnChangedState += OnChangedState;
         }
 
         public override void Unsubscribe()
         {
             base.Unsubscribe();
             stateMachine.OnExitCategory -= OnExitCategory;
+            stateMachine.OnChangedState -= OnChangedState;
         }
 
         public override void Update()
@@ -53,6 +64,29 @@ namespace Unit.Character.Player
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
                 PlayAnimation();
+            
+            if (state.GetType().IsAssignableFrom(typeof(PlayerSpecialActionState)))
+                ResetValue();
+        }
+
+        private void OnChangedState(Machine.IState state)
+        {
+            if (state.GetType().IsAssignableFrom(typeof(PlayerSpecialActionState)))
+                ChangedStateOnPlayerSpecialActionState();
+        }
+
+        private void ChangedStateOnPlayerSpecialActionState()
+        {
+            CurrentMovementSpeed /= 2;
+            currentRotationSpeed = 0;
+            playerKinematicControl.SetRotationSpeed(currentRotationSpeed);
+        }
+
+        private void ResetValue()
+        {
+            CurrentMovementSpeed = BaseMovementSpeed;
+            currentRotationSpeed = baseRotationSpeed;
+            playerKinematicControl.SetRotationSpeed(currentRotationSpeed);
         }
 
         private void CheckDirectionMovement()
@@ -71,7 +105,7 @@ namespace Unit.Character.Player
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            playerKinematicControl.SetVelocity(directionMovement * (MovementSpeed));
+            playerKinematicControl.SetVelocity(directionMovement * (CurrentMovementSpeed));
             unitEndurance.RemoveEndurance(runReductionEndurance);
         }
 
@@ -90,7 +124,7 @@ namespace Unit.Character.Player
         public PlayerRunStateBuilder SetRotationSpeed(float speed)
         {
             if(state is PlayerRunState playerRunStateOrig)
-                playerRunStateOrig.SetRotationSpeed(speed);
+                playerRunStateOrig.SetBaseRotationSpeed(speed);
             return this;
         }
         

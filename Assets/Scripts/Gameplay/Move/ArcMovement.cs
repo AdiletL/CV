@@ -22,13 +22,14 @@ namespace  Movement
 
         private bool isMoveable;
 
-        public float MovementSpeed { get; private set; }
+        public float BaseMovementSpeed { get; }
+        public float CurrentMovementSpeed { get; private set; }
         
 
         public ArcMovement(GameObject gameObject, float movementSpeed, float height, AnimationCurve moveCurve)
         {
             this.gameObject = gameObject;
-            this.MovementSpeed = movementSpeed;
+            this.CurrentMovementSpeed = movementSpeed;
             this.height = height;
             this.moveCurve = moveCurve;
         }
@@ -78,7 +79,7 @@ namespace  Movement
             startPosition = gameObject.transform.position;
             var distance = Vector3.Distance(startPosition, targetPosition);
             totalHeight = (distance * .1f) * height;
-            totalDuration = distance / MovementSpeed;
+            totalDuration = distance / CurrentMovementSpeed;
             timerHeight = 0;
             isMoveable = true;
 

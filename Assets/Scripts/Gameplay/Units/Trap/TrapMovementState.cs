@@ -8,8 +8,9 @@ namespace Unit.Trap
         public override StateCategory Category { get; } = StateCategory.move;
 
         public GameObject GameObject { get; set; }
-        
-        public float MovementSpeed { get; }
+
+        public float BaseMovementSpeed { get; }
+        public float CurrentMovementSpeed { get; }
 
         public abstract void ExecuteMovement();
     }

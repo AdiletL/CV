@@ -6,10 +6,10 @@ using Photon.Pun;
 using Unit.Character;
 using Unit.Cell;
 using Unit.Character.Creep;
-using Unit.Character.Player;
 using Unit.Container;
 using Unit.Trap;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
@@ -19,7 +19,9 @@ namespace Gameplay
         [Inject] private DiContainer diContainer;
         [Inject] private GameUnits gameUnits;
 
-        public static Action<int, List<Vector3>> OnSpawnNextRooms;
+        public static Action<int> OnTriggerSpawnNextRoom;
+        
+        [SerializeField] private NextRoomContainer[] nextRoomContainers;
         
         [Space(10)]
         [SerializeField] private CellController[] cells;
@@ -28,13 +30,10 @@ namespace Gameplay
         [SerializeField] private ContainerController[] containers;
         
         [field: SerializeField, Space(10)] public NavMeshControl NavMeshControl { get; private set; }
-        [field: SerializeField, Space(10)] public Transform StartPoint { get; private set; } 
-        [field: SerializeField] public Transform[] EndPoints { get; private set; } 
         [field: SerializeField, Space(20)] public Transform PlayerSpawnPoint { get; private set; }
         
         private PhotonView photonView;
         private int countCreep;
-        private bool isTriggerPlayer;
         
         private Stack<CellController> cellStack = new();
         private Stack<CharacterMainController> charactersStack = new();
@@ -61,6 +60,7 @@ namespace Gameplay
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
             containers = GetComponentsInChildren<ContainerController>(true);
+            nextRoomContainers = GetComponentsInChildren<NextRoomContainer>(true);
 
             yield return null;
             MarkDirty();
@@ -152,6 +152,9 @@ namespace Gameplay
                     countCreep++;
                 }
             }
+
+            foreach (var VARIABLE in nextRoomContainers)
+                VARIABLE.OnTrigger += OnTriggerNextRoom;
         }
         private void DeInitializeMediator()
         {
@@ -160,6 +163,9 @@ namespace Gameplay
                 if (VARIABLE is CreepController creepController)
                     creepController.OnDeath -= OnCreepDeath;
             }
+            
+            foreach (var VARIABLE in nextRoomContainers)
+                VARIABLE.OnTrigger -= OnTriggerNextRoom;
         }
 
         #region StartGame
@@ -242,13 +248,14 @@ namespace Gameplay
         
         public void SetID(int id) => this.ID = id;
 
-        private void SpawnNextRooms()
+        private void OnTriggerNextRoom(int id)
         {
-            var endPositions = new List<Vector3>(EndPoints.Length);
-            for (int i = 0; i < EndPoints.Length; i++)
-                endPositions.Add(EndPoints[i].position);
-            
-            OnSpawnNextRooms?.Invoke(ID, endPositions);
+            SpawnNextRoom(id);
+        }
+
+        private void SpawnNextRoom(int id)
+        {
+            OnTriggerSpawnNextRoom?.Invoke(id);
         }
 
         private void OnCreepDeath(CreepController creepController)
@@ -260,15 +267,6 @@ namespace Gameplay
             }
         }
         
-        private void OnTriggerEnter(Collider other)
-        {
-            if(isTriggerPlayer) return;
-            if (other.TryGetComponent(out PlayerController player))
-            {
-                isTriggerPlayer = true;
-                SpawnNextRooms();
-            }
-        }
 
         private void OnDestroy()
         {

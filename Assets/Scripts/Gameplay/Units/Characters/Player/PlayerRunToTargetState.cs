@@ -266,7 +266,7 @@ namespace Unit.Character.Player
             }
 
             movementDirection = (currentTargetPosition - gameObject.transform.position).normalized;
-            characterController.Move(movementDirection * (MovementSpeed * Time.deltaTime));
+            characterController.Move(movementDirection * (CurrentMovementSpeed * Time.deltaTime));
 
             ReduceEndurance();
         }

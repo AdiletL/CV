@@ -16,7 +16,7 @@ namespace Gameplay.Weapon.Projectile
             base.Initialize();
             if(isInitialized) return;
             
-            directionMovement = new DirectionMovement(gameObject, MovementSpeed);
+            directionMovement = new DirectionMovement(gameObject, CurrentMovementSpeed);
             directionMovement.Initialize();
             
             isInitialized = true;

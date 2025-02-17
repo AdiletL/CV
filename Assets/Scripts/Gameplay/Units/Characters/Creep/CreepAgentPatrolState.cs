@@ -29,7 +29,7 @@ namespace Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            navMeshAgent.speed = MovementSpeed;
+            navMeshAgent.speed = CurrentMovementSpeed;
             navMeshAgent.angularSpeed = rotationSpeed;
             navMeshAgent.stoppingDistance = STOPPING_DISTANCE;
         }
@@ -38,7 +38,7 @@ namespace Unit.Character.Creep
         {
             base.Enter();
             if (navMeshAgent.isOnNavMesh)
-                navMeshAgent.speed = MovementSpeed;
+                navMeshAgent.speed = CurrentMovementSpeed;
             SetTargetPoint();
             PlayAnimation();
         }
@@ -87,7 +87,7 @@ namespace Unit.Character.Creep
 
         protected void UpdateDurationAnimation()
         {
-            durationAnimation = 1.5f / MovementSpeed;
+            durationAnimation = 1.5f / CurrentMovementSpeed;
             characterAnimation.SetSpeedClip(getRandomWalkClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
     }
