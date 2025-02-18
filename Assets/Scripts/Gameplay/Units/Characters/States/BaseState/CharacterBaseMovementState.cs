@@ -5,7 +5,7 @@ namespace Unit.Character
 {
     public abstract class CharacterBaseMovementState : State, IMovement
     {
-        public override StateCategory Category { get; } = StateCategory.move;
+        public override StateCategory Category { get; } = StateCategory.Move;
 
         protected GameObject gameObject;
         protected Transform center;

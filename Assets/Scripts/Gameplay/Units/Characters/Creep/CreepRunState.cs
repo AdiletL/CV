@@ -69,7 +69,7 @@ namespace Unit.Character.Creep
         public void SetTarget(GameObject target)
         {
             currentTarget = target;
-            if (isActive)
+            if (IsActive)
             {
                 navMeshAgent.destination = currentTarget.transform.position;
                 PlayAnimation();

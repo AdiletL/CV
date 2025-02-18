@@ -5,7 +5,7 @@ namespace Unit.Trap
 {
     public abstract class TrapMovementState : State, IMovement
     {
-        public override StateCategory Category { get; } = StateCategory.move;
+        public override StateCategory Category { get; } = StateCategory.Move;
 
         public GameObject GameObject { get; set; }
 

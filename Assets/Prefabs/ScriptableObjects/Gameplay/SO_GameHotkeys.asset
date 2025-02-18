@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: SO_GameHotkeys
   m_EditorClassIdentifier: 
   <SelectObjectMouseButton>k__BackingField: 1
+  <SpecialActionMouseButton>k__BackingField: 1
   <AttackMouseButton>k__BackingField: 0
   <JumpKey>k__BackingField: 32
   <OpenContainerKey>k__BackingField: 101
   <TakeLootKey>k__BackingField: 102
   <DashKey>k__BackingField: 304
+  <AbilityInventoryKeys>k__BackingField: 310000003200000033000000340000003500000036000000370000003800000039000000
+  amountSkillInventoryKeys: 9

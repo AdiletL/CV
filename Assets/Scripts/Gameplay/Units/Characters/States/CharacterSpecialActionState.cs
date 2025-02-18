@@ -1,4 +1,4 @@
-﻿using Gameplay.Skill;
+﻿using Gameplay.Ability;
 using Machine;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace Unit.Character
 {
     public class CharacterSpecialActionState : State, ISpecialAction
     {
-        public override StateCategory Category { get; } = StateCategory.action;
+        public override StateCategory Category { get; } = StateCategory.Action;
 
         protected GameObject gameObject;
         

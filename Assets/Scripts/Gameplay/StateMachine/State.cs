@@ -4,15 +4,15 @@
     {
         public abstract StateCategory Category { get; }
         public StateMachine stateMachine { get; protected set; }
-        public bool isActive { get; private set; }
-        public bool isCanExit { get; protected set; } = true;
+        public bool IsActive { get; private set; }
+        public bool IsCanExit { get; protected set; } = true;
         
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         
         public abstract void Initialize();
         public virtual void Enter()
         {
-            isActive = true;
+            IsActive = true;
             Subscribe();
         }
 
@@ -33,7 +33,7 @@
 
         public virtual void Exit()
         {
-            isActive = false;
+            IsActive = false;
             Unsubscribe();
         }
     }

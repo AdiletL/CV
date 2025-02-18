@@ -16,26 +16,38 @@ MonoBehaviour:
   <ItemTypeID>k__BackingField: 1
   <Icon>k__BackingField: {fileID: 21300000, guid: 6a08ec4b334ea1c46b8171679417a74f, type: 3}
   <Amount>k__BackingField: 1
-  <IsCanSelect>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
-  <SkillTypeID>k__BackingField: 4
-  ApplyDamageHealConfig:
-    SkillType: 4
-    BlockedInputType: 0
-    BlockedSkillType: 0
-    IsCanSelect: 0
-    ValueType: 1
-    Value: 50
-  SpawnPortalConfig:
-    SkillType: 0
-    BlockedInputType: 0
-    BlockedSkillType: 0
-    IsCanSelect: 0
-    SpawnPortalPrefab:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectGUID: 
-      m_SubObjectType: 
-      m_EditorAssetChanged: 0
-    StartPortalID: {fileID: 0}
+  <AbilityConfigData>k__BackingField:
+    AbilityTypeID: 4
+    ApplyDamageHealConfig:
+      Icon: {fileID: 21300002, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
+      AbilityType: 4
+      AbilityBehaviour: 32
+      BlockedInputType: 0
+      Cooldown: 0
+      ValueType: 1
+      Value: 50
+    SpawnPortalConfig:
+      Icon: {fileID: 0}
+      AbilityType: 0
+      AbilityBehaviour: 0
+      BlockedInputType: 0
+      Cooldown: 0
+      SpawnPortalPrefab:
+        m_AssetGUID: 
+        m_SubObjectName: 
+        m_SubObjectGUID: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      StartPortalID: {fileID: 0}
+    BlockPhysicalDamageConfig:
+      Icon: {fileID: 0}
+      AbilityType: 0
+      AbilityBehaviour: 0
+      BlockedInputType: 0
+      Cooldown: 0
+      NormalDamageResistanceConfig:
+        Value: 0
+        ValueType: 0
+      BlockClip: {fileID: 0}

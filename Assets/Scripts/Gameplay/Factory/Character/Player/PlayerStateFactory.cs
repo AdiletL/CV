@@ -168,9 +168,9 @@ namespace Gameplay.Factory.Character.Player
         private PlayerSpecialActionState CreateSpecialActionState()
         {
             return (PlayerSpecialActionState)new PlayerSpecialActionStateBuilder()
-                .SetBlockClip(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig.BlockClip)
+                .SetBlockClip(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip)
                 .SetCharacterAnimation(characterAnimation)
-                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig)
+                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();

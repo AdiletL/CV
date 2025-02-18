@@ -40,13 +40,13 @@ namespace Unit.Character.Creep
 
         private void CheckMove()
         {
-            if(!creepSwitchMoveState.IsCanMovement() || !isActive) return;
+            if(!creepSwitchMoveState.IsCanMovement() || !IsActive) return;
             creepSwitchMoveState.ExitCategory(Category);
         }
 
         private void CheckEnemy()
         {
-            if(!isActive) return;
+            if(!IsActive) return;
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > checkEnemyCooldown)
             {

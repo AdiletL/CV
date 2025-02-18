@@ -62,7 +62,7 @@ public class StateMachine
         foreach (var state in states.Values)
         {
             state.Initialize();
-            if (state.Category == StateCategory.idle && defaultIdleState == null)
+            if (state.Category == StateCategory.Idle && defaultIdleState == null)
             {
                 defaultIdleState = FindMostDerivedState(state.GetType());
             }
@@ -100,7 +100,7 @@ public class StateMachine
             if (activeStates.TryGetValue(category, out var activeState))
             {
                 if (activeState.GetType() == state.GetType() && !isForceSetState ||
-                    !activeState.isCanExit)
+                    !activeState.IsCanExit)
                     continue;
                 
                 activeState.Exit();
@@ -142,7 +142,7 @@ public class StateMachine
         foreach (var category in cachedCategories)
         {
             if (category == targetState.Category ||
-                !activeStates[category].isCanExit) continue;
+                !activeStates[category].IsCanExit) continue;
 
             activeStates[category].Exit();
             OnExitCategory?.Invoke(activeStates[category]);
@@ -161,7 +161,7 @@ public class StateMachine
         
         if (activeStates.TryGetValue(excludedCategory, out var state))
         {
-            if (state.isCanExit && !isForceSetState ||
+            if (state.IsCanExit && !isForceSetState ||
                 isForceSetState)
             {
                 state.Exit();

@@ -5,7 +5,7 @@ namespace Unit.Character
 {
     public class CharacterTakeDamageState : State
     {
-        public override StateCategory Category { get; } = StateCategory.action;
+        public override StateCategory Category { get; } = StateCategory.Action;
 
         protected GameObject gameObject;
         

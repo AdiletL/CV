@@ -4,7 +4,7 @@ using Gameplay.Damage;
 using Gameplay.Effect;
 using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
-using Gameplay.Skill;
+using Gameplay.Ability;
 using Gameplay.Weapon;
 using Machine;
 using Movement;
@@ -22,7 +22,7 @@ namespace Unit.Character.Player
     [RequireComponent(typeof(PlayerAnimation))]
     [RequireComponent(typeof(PlayerExperience))]
     [RequireComponent(typeof(EffectHandler))]
-    [RequireComponent(typeof(SkillHandler))]
+    [RequireComponent(typeof(AbilityHandler))]
     
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable
     {
@@ -33,7 +33,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
-        [SerializeField] private SO_PlayerSkills so_PlayerSkills;
+        [FormerlySerializedAs("soPlayerAbilities")] [FormerlySerializedAs("soPlayerAbilitys")] [FormerlySerializedAs("so_PlayerSkills")] [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
         [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
         [Space]
@@ -47,7 +47,8 @@ namespace Unit.Character.Player
 
         private PlayerStateFactory playerStateFactory;
         private PlayerSwitchStateFactory playerSwitchStateFactory;
-        private PlayerInventory playerInventory;
+        private PlayerItemInventory playerItemInventory;
+        private PlayerAbilityInventory _playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
         
         private CharacterControlDesktop playerControlDesktop;
@@ -73,7 +74,6 @@ namespace Unit.Character.Player
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
-                .SetDashConfig(so_PlayerSkills.DashConfig)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetCharacterSwitchAttack(characterSwitchAttackState)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
@@ -145,9 +145,13 @@ namespace Unit.Character.Player
                 cameraController.CurrentCinemachineCamera.Follow = transform;
             }
 
-            playerInventory = GetComponentInUnit<PlayerInventory>();
-            diContainer.Inject(playerInventory);
-            playerInventory.Initialize();
+            playerItemInventory = GetComponentInUnit<PlayerItemInventory>();
+            diContainer.Inject(playerItemInventory);
+            playerItemInventory.Initialize();
+            
+            _playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
+            diContainer.Inject(_playerAbilityInventory);
+            _playerAbilityInventory.Initialize();
             
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             diContainer.Inject(playerKinematicControl);
@@ -311,7 +315,7 @@ namespace Unit.Character.Player
             characterAnimation.AddClips(so_PlayerAttack.SwordAttackClip);
             characterAnimation.AddClip(so_PlayerAttack.SwordCooldownClip);
             characterAnimation.AddClip(so_PlayerMove.JumpInfo.Clip);
-            characterAnimation.AddClip(so_PlayerSpecialAction.SkillConfigData.BlockPhysicalDamageConfig.BlockClip);
+            characterAnimation.AddClip(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip);
         }
         
         //Test

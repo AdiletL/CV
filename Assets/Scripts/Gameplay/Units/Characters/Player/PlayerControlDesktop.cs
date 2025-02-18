@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gameplay.Factory.Character.Player;
-using Gameplay.Skill;
+using Gameplay.Ability;
 using Gameplay.Units.Item.Loot;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
@@ -14,13 +14,14 @@ namespace Unit.Character.Player
     [Flags]
     public enum InputType
     {
-        nothing,
-        movement = 1 << 0,
-        jump = 1 << 1,
-        selectObject = 1 << 2,
-        attack = 1 << 3,
-        specialAction = 1 << 4,
+        Nothing,
+        Movement = 1 << 0,
+        Jump = 1 << 1,
+        SelectObject = 1 << 2,
+        Attack = 1 << 3,
+        SpecialAction = 1 << 4,
     }
+    
     public class PlayerControlDesktop : CharacterControlDesktop
     {
         [Inject] private DiContainer diContainer;
@@ -35,7 +36,7 @@ namespace Unit.Character.Player
         private PlayerController playerController;
         private PlayerStateFactory playerStateFactory;
         private PlayerKinematicControl playerKinematicControl;
-        private PlayerSkillInputHandler playerSkillInputHandler;
+        private PlayerAbilityInventory playerAbilityInventory;
         private PlayerMouseInputHandler playerMouseInputHandler;
         private DashConfig dashConfig;
 
@@ -67,7 +68,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
                     return true;
@@ -79,7 +80,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (!blockedInputs.ContainsKey(flag))
                     blockedInputs[flag] = 0;
@@ -92,7 +93,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (blockedInputs.ContainsKey(flag))
                 {
@@ -108,9 +109,9 @@ namespace Unit.Character.Player
         {
             base.Initialize();
 
+            playerAbilityInventory = gameObject.GetComponent<PlayerAbilityInventory>();
             InitializeHotkeys();
             InitializeInteractionHandler();
-            InitializeSkillInputHandler();
             InitializeMouseInputHandler();
             InitializeMediator();
         }
@@ -134,18 +135,10 @@ namespace Unit.Character.Player
             interactionHandlers.Add(handler);;
         }
 
-        private void InitializeSkillInputHandler()
-        {
-            playerSkillInputHandler = new PlayerSkillInputHandler(gameObject, stateMachine, 
-                this, playerKinematicControl, dashConfig, playerController.BaseCamera);
-            diContainer.Inject(playerSkillInputHandler);
-            playerSkillInputHandler.Initialize();
-        }
-
         private void InitializeMouseInputHandler()
         {
             playerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
-                playerSkillInputHandler, characterSwitchAttack, gameObject.GetComponent<PlayerInventory>(), 
+                playerAbilityInventory, characterSwitchAttack, gameObject.GetComponent<PlayerItemInventory>(), 
                 playerStateFactory);
             diContainer.Inject(playerMouseInputHandler);
             playerMouseInputHandler.Initialize();
@@ -164,7 +157,6 @@ namespace Unit.Character.Player
         private void InitializeMediator()
         {
             stateMachine.OnExitCategory += OnExitCategory;
-            OnHandleInput += playerSkillInputHandler.HandleInput;
             OnHandleInput += playerMouseInputHandler.HandleInput;
             foreach (var VARIABLE in interactionHandlers)
             {
@@ -177,7 +169,6 @@ namespace Unit.Character.Player
         private void UnInitializeMediator()
         {
             stateMachine.OnExitCategory -= OnExitCategory;
-            OnHandleInput -= playerSkillInputHandler.HandleInput;
             OnHandleInput -= playerMouseInputHandler.HandleInput;
             foreach (var VARIABLE in interactionHandlers)
             {
@@ -192,13 +183,13 @@ namespace Unit.Character.Player
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 isJumping = false;
-                UnblockInput(InputType.attack);
+                UnblockInput(InputType.Attack);
             }
 
             if (state.GetType().IsAssignableFrom(typeof(PlayerRunState)))
             {
                 isMoving = false;
-                UnblockInput(InputType.attack);
+                UnblockInput(InputType.Attack);
             }
         }
 
@@ -227,16 +218,15 @@ namespace Unit.Character.Player
                 Input.GetKey(KeyCode.D) || 
                 Input.GetKey(KeyCode.W) || 
                 Input.GetKey(KeyCode.S)) && 
-                !playerSkillInputHandler.IsInputBlocked(InputType.movement))
+                !playerAbilityInventory.IsInputBlocked(InputType.Movement))
             {
                 isMoving = true;
-               BlockInput(InputType.attack);
+               BlockInput(InputType.Attack);
                characterSwitchMove.ExitOtherStates();
-               //characterSwitchMove.SetState();
             }
             else if (!isJumping && Input.GetKeyDown(jumpKey) &&
-                     !playerMouseInputHandler.IsInputBlocked(InputType.jump) &&
-                     !playerSkillInputHandler.IsInputBlocked(InputType.jump))
+                     !playerMouseInputHandler.IsInputBlocked(InputType.Jump) &&
+                     !playerAbilityInventory.IsInputBlocked(InputType.Jump))
             {
                 TriggerJump();
             }
@@ -250,7 +240,7 @@ namespace Unit.Character.Player
             InitializeJumpState();
             stateMachine.ExitOtherStates(typeof(PlayerJumpState), true);
             isJumping = true;
-            BlockInput(InputType.attack);
+            BlockInput(InputType.Attack);
         }
 
     }
@@ -306,11 +296,5 @@ namespace Unit.Character.Player
             return this;
         }
         
-        public PlayerControlDesktopBuilder SetDashConfig(DashConfig dashConfig)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetDashConfig(dashConfig);
-            return this;
-        }
     }
 }

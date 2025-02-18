@@ -6,7 +6,7 @@ namespace Unit.Character
 {
     public class CharacterJumpState : State
     {
-        public override StateCategory Category { get; } = StateCategory.jump;
+        public override StateCategory Category { get; } = StateCategory.Jump;
 
         protected GameObject gameObject;
         protected AnimationClip jumpClip;

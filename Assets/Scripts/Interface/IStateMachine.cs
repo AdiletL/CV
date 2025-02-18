@@ -3,18 +3,18 @@
     public enum StateCategory
     {
         nothing,
-        idle,
-        attack,
-        move,
-        action,
-        jump,
+        Idle,
+        Attack,
+        Move,
+        Action,
+        Jump,
     }
 
     public interface IState
     {
         public StateCategory Category { get; }
-        public bool isActive { get; }
-        public bool isCanExit { get; }
+        public bool IsActive { get; }
+        public bool IsCanExit { get; }
 
         public void Initialize();
         public void Enter();

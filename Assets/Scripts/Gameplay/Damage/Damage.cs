@@ -1,6 +1,6 @@
 ﻿using Calculate;
 using Gameplay.Resistance;
-using Gameplay.Skill;
+using Gameplay.Ability;
 using Gameplay.Spawner;
 using Unit;
 using Unit.Character.Creep;
@@ -15,7 +15,7 @@ namespace Gameplay.Damage
         [Inject] private HealPopUpPopUpSpawner healPopUpPopUpSpawner;
         
         public GameObject Owner { get; }
-        public SkillHandler SkillHandler { get; }
+        public AbilityHandler AbilityHandler { get; }
         public int CurrentDamage { get; }
         public int AdditionalDamage { get; protected set; }
         
@@ -26,7 +26,7 @@ namespace Gameplay.Damage
         {
             this.CurrentDamage = amount;
             this.Owner = owner;
-            this.SkillHandler = owner.GetComponent<SkillHandler>();
+            this.AbilityHandler = owner.GetComponent<AbilityHandler>();
             ownerUnitCenter = owner.GetComponent<UnitCenter>();
             
             if (CurrentDamage < 0) CurrentDamage = 999999;
@@ -57,11 +57,11 @@ namespace Gameplay.Damage
 
         protected virtual void CheckSkill(int totalDamage, UnitCenter targetUnitCenter)
         {
-            if(!SkillHandler || totalDamage <= 0) return;
+            if(!AbilityHandler || totalDamage <= 0) return;
 
-            if (SkillHandler.IsSkillNotNull(SkillType.applyDamageHeal))
+            if (AbilityHandler.IsAbilityNotNull(AbilityType.ApplyDamageHeal))
             {
-                var skills = SkillHandler.GetSkills(SkillType.applyDamageHeal);
+                var skills = AbilityHandler.GetSkills(AbilityType.ApplyDamageHeal);
                 if (skills.Count > 0)
                 {
                     ApplyDamageHeal skill = null;

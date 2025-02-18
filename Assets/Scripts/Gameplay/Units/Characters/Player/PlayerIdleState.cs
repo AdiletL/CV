@@ -43,7 +43,7 @@ namespace Unit.Character.Player
         
         private void OnExitCategory(Machine.IState state)
         {
-            if(!isActive) return;
+            if(!IsActive) return;
             
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {

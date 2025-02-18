@@ -31,7 +31,7 @@ namespace Unit.Character.Player
         {
             base.TakeDamage(damageable);
             
-            playerController.StateMachine.ExitCategory(StateCategory.action, typeof(PlayerTakeDamageState));
+            playerController.StateMachine.ExitCategory(StateCategory.Action, typeof(PlayerTakeDamageState));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Gameplay.Skill;
+﻿using Gameplay.Ability;
 using UnityEngine;
 
 namespace Unit.Character.Player
@@ -19,10 +19,10 @@ namespace Unit.Character.Player
         {
             return (BlockPhysicalDamage)new BlockPhysicalDamageBuilder()
                 .SetNormalDamageResistanceConfig(blockPhysicalDamageConfig.NormalDamageResistanceConfig)
-                .SetIsCanSelect(blockPhysicalDamageConfig.IsCanSelect)
                 .SetBlockedInputType(blockPhysicalDamageConfig.BlockedInputType)
-                .SetBlockedSkillType(blockPhysicalDamageConfig.BlockedSkillType)
                 .SetGameObject(gameObject)
+                .SetAbilityBehaviour(blockPhysicalDamageConfig.AbilityBehaviour)
+                .SetCooldown(blockPhysicalDamageConfig.Cooldown)
                 .Build();
         }
 
@@ -36,8 +36,8 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            isCanExit = false;
-            blockPhysicalDamage.Execute();
+            IsCanExit = false;
+            blockPhysicalDamage.Activate();
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
         }
@@ -45,9 +45,9 @@ namespace Unit.Character.Player
         public override void Exit()
         {
             base.Exit();
-            blockPhysicalDamage.Exit();
+            blockPhysicalDamage.Finish();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
-            isCanExit = true;
+            IsCanExit = true;
         }
     }
 

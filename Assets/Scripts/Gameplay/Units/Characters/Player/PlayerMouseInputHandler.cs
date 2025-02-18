@@ -14,8 +14,8 @@ namespace Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         
-        private PlayerSkillInputHandler playerSkillInputHandler;
-        private PlayerInventory playerInventory;
+        private PlayerAbilityInventory playerAbilityInventory;
+        private PlayerItemInventory playerItemInventory;
         private PlayerStateFactory playerStateFactory;
         private CharacterControlDesktop characterControlDesktop;
         private CharacterSwitchAttackState characterSwitchAttack;
@@ -38,19 +38,18 @@ namespace Unit.Character.Player
         
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void CharacterControlDesktop(CharacterControlDesktop characterControlDesktop) => this.characterControlDesktop = characterControlDesktop;
-        public void SetPlayerSkillInputHandler(PlayerSkillInputHandler playerSkillInputHandler) => this.playerSkillInputHandler = playerSkillInputHandler;
         public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
             this.characterSwitchAttack = characterSwitchAttackState;
 
         public PlayerMouseInputHandler(StateMachine stateMachine, CharacterControlDesktop characterControlDesktop,
-            PlayerSkillInputHandler playerSkillInputHandler, CharacterSwitchAttackState characterSwitchAttackState,
-            PlayerInventory playerInventory, PlayerStateFactory playerStateFactory)
+            PlayerAbilityInventory playerAbilityInventory, CharacterSwitchAttackState characterSwitchAttackState,
+            PlayerItemInventory playerItemInventory, PlayerStateFactory playerStateFactory)
         {
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
-            this.playerSkillInputHandler = playerSkillInputHandler;
+            this.playerItemInventory = playerItemInventory;
+            this.playerAbilityInventory = playerAbilityInventory;
             this.characterSwitchAttack = characterSwitchAttackState;
-            this.playerInventory = playerInventory;
             this.playerStateFactory = playerStateFactory;
             
             stateMachine.OnExitCategory += OnExitCategory;
@@ -82,7 +81,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
                     return true;
@@ -94,7 +93,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (!blockedInputs.ContainsKey(flag))
                     blockedInputs[flag] = 0;
@@ -107,7 +106,7 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0) continue;
 
                 if (blockedInputs.ContainsKey(flag))
                 {
@@ -184,18 +183,18 @@ namespace Unit.Character.Player
             
             if (!isAttacking &&
                 Input.GetMouseButtonUp(attackMouseButton) && 
-                !characterControlDesktop.IsInputBlocked(InputType.attack) &&
-                !playerSkillInputHandler.IsInputBlocked(InputType.attack) && 
-                !playerInventory.IsInputBlocked(InputType.attack) && 
+                !characterControlDesktop.IsInputBlocked(InputType.Attack) &&
+                !playerAbilityInventory.IsInputBlocked(InputType.Attack) && 
+                !playerItemInventory.IsInputBlocked(InputType.Attack) && 
                 !IsPointerOverUIObject())
             {
                 TriggerAttack();
             }
             else if (!isAttacking &&
                      Input.GetMouseButtonDown(specialActionMouseButton) && 
-                     !characterControlDesktop.IsInputBlocked(InputType.specialAction) &&
-                     !playerSkillInputHandler.IsInputBlocked(InputType.specialAction) && 
-                     !playerInventory.IsInputBlocked(InputType.specialAction))
+                     !characterControlDesktop.IsInputBlocked(InputType.SpecialAction) &&
+                     !playerAbilityInventory.IsInputBlocked(InputType.SpecialAction) && 
+                     !playerItemInventory.IsInputBlocked(InputType.SpecialAction))
             {
                 TriggerSpecialAction();
             }
@@ -210,7 +209,7 @@ namespace Unit.Character.Player
             selectedObject?.HideInformation();
             selectedRenderer?.UnSelectedObject();
             selectedObject = null;
-            playerInventory.ClearSelectedItem();
+            playerItemInventory.ClearSelectedItem();
         }
         
         private void HandleHighlight()
@@ -279,15 +278,15 @@ namespace Unit.Character.Player
         private void TriggerSpecialAction()
         {
             InitializePlayerSpecialActionState();
-            BlockInput(InputType.attack);
+            BlockInput(InputType.Attack);
             stateMachine.ExitOtherStates(typeof(PlayerSpecialActionState));
             characterControlDesktop.ClearHotkeys();
         }
         
         private void ExitSpecialAction()
         {
-            stateMachine.ExitCategory(StateCategory.action, null, true);
-            UnblockInput(InputType.attack);
+            stateMachine.ExitCategory(StateCategory.Action, null, true);
+            UnblockInput(InputType.Attack);
             characterControlDesktop.ClearHotkeys();
         }
     }

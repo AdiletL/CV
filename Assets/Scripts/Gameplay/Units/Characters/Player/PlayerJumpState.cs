@@ -34,7 +34,7 @@ namespace Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
-            isCanExit = false;
+            IsCanExit = false;
             characterAnimation.SetBlock(true);
             ClearValues();
             StartJump();
@@ -60,7 +60,7 @@ namespace Unit.Character.Player
             {
                 if (playerKinematicControl.IsGrounded)
                 {
-                    isCanExit = true;
+                    IsCanExit = true;
                     characterAnimation.SetBlock(false);
                     this.stateMachine.ExitCategory(Category, null);
                 }
@@ -70,7 +70,7 @@ namespace Unit.Character.Player
         public override void Exit()
         {
             base.Exit();
-            isCanExit = true;
+            IsCanExit = true;
             characterAnimation.SetBlock(false);
         }
 

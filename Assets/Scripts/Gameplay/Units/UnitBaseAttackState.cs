@@ -5,7 +5,7 @@ namespace Unit
 {
     public abstract class UnitBaseAttackState : State, IAttack
     {
-        public override StateCategory Category { get; } = StateCategory.attack;
+        public override StateCategory Category { get; } = StateCategory.Attack;
         
         protected GameObject gameObject;
         protected Transform center;

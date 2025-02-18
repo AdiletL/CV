@@ -8,7 +8,7 @@ namespace Unit.Character
 {
     public class CharacterIdleState : UnitIdleState
     {
-        public override StateCategory Category { get; } = StateCategory.idle;
+        public override StateCategory Category { get; } = StateCategory.Idle;
 
         protected CharacterAnimation characterAnimation;
         protected AnimationClip[] IdleClips;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Gameplay.Skill;
+using Gameplay.Ability;
 using Sirenix.OdinInspector;
 using Unit.Item;
 using UnityEditor;
@@ -16,23 +16,22 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField] public ItemType ItemTypeID { get; private set; }
         [field: SerializeField] public Sprite Icon { get; private set; }
         [field: SerializeField] public int Amount { get; private set; } = 1;
-        [field: SerializeField] public bool IsCanSelect { get; private set; }
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
-        [field: SerializeField, Space(15)] public SkillConfigData SkillConfigData { get; private set; }
+        [field: SerializeField, Space(15)] public AbilityConfigData AbilityConfigData { get; private set; }
         
         
-        public List<SkillConfig> GetSkillConfigs()
+        public List<AbilityConfig> GetSkillConfigs()
         {
-            var skillConfigs = new List<SkillConfig>();
-            foreach (SkillType VARIABLE in Enum.GetValues(typeof(SkillType)))
+            var skillConfigs = new List<AbilityConfig>();
+            foreach (AbilityType VARIABLE in Enum.GetValues(typeof(AbilityType)))
             {
-                if (VARIABLE == SkillType.nothing || (SkillConfigData.SkillTypeID & VARIABLE) == 0) continue;
+                if (VARIABLE == AbilityType.Nothing || (AbilityConfigData.AbilityTypeID & VARIABLE) == 0) continue;
 
-                if (SkillConfigData.ApplyDamageHealConfig.SkillType == SkillConfigData.SkillTypeID)
-                    skillConfigs.Add(SkillConfigData.ApplyDamageHealConfig);
-                if(SkillConfigData.SpawnPortalConfig.SkillType == SkillConfigData.SkillTypeID)
-                    skillConfigs.Add(SkillConfigData.SpawnPortalConfig);
+                if (AbilityConfigData.ApplyDamageHealConfig.AbilityType == AbilityConfigData.AbilityTypeID)
+                    skillConfigs.Add(AbilityConfigData.ApplyDamageHealConfig);
+                if(AbilityConfigData.SpawnPortalConfig.AbilityType == AbilityConfigData.AbilityTypeID)
+                    skillConfigs.Add(AbilityConfigData.SpawnPortalConfig);
             }
 
             return skillConfigs;
