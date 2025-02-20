@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8f12196e58f421e9f9b163194a4ed0d, type: 3}
+  m_Name: SO_MadnessMask
+  m_EditorClassIdentifier: 
+  <Icon>k__BackingField: {fileID: 0}
+  <Prefab>k__BackingField:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  <ItemCategoryID>k__BackingField: 0
+  <ItemBehaviourID>k__BackingField: 0
+  <Cooldown>k__BackingField: 0
+  <IsBlockItems>k__BackingField: 0
+  <IsBlockAbilities>k__BackingField: 0
+  <JumpPower>k__BackingField: 1.5
+  <JumpDuration>k__BackingField: 0.5
+  <AbilityConfigData>k__BackingField:
+    AbilityTypeID: 
+    ApplyDamageHealConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      ValueType: 0
+      Value: 0
+    BlockPhysicalDamageConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      NormalDamageResistanceConfig:
+        Value: 0
+        ValueType: 0
+      BlockClip: {fileID: 0}
+  <ItemNameID>k__BackingField: 1

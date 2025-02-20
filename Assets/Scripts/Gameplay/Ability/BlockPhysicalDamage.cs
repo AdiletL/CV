@@ -23,17 +23,18 @@ namespace Gameplay.Ability
             resistanceHandler = GameObject.GetComponent<ResistanceHandler>();
         }
 
-        public override void Activate(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
-            base.Activate(finishedCallBack, target, point);
+            base.Enter(finishedCallBack, target, point);
             if(!isActivated) return;
             resistanceHandler.AddResistance(normalDamageResistance);
+            StartEffect();
         }
 
-        public override void Exit()
+        public override void FinishEffect()
         {
             resistanceHandler.RemoveResistance(normalDamageResistance);
-            base.Exit();
+            base.FinishEffect();
         }
     }
 

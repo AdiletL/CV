@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Gameplay.Ability
@@ -6,15 +7,12 @@ namespace Gameplay.Ability
     [System.Serializable]
     public class AbilityConfigData
     {
-        public AbilityType AbilityTypeID;
+        public List<AbilityType> AbilityTypeID;
         
-        [ShowIf("@AbilityTypeID.HasFlag(AbilityType.ApplyDamageHeal)"), Space]
+        [ShowIf("@AbilityTypeID.Contains(AbilityType.ApplyDamageHeal)"), Space]
         public ApplyDamageHealConfig ApplyDamageHealConfig;
         
-        [ShowIf("@AbilityTypeID.HasFlag(AbilityType.SpawnPortal)"), Space]
-        public SpawnPortalConfig SpawnPortalConfig;
-        
-        [ShowIf("@AbilityTypeID.HasFlag(AbilityType.BlockPhysicalDamage)"), Space]
+        [ShowIf("@AbilityTypeID.Contains(AbilityType.BlockPhysicalDamage)"), Space]
         public BlockPhysicalDamageConfig BlockPhysicalDamageConfig;
     }
 }

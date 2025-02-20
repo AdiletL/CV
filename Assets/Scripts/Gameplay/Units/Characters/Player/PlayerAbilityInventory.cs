@@ -26,7 +26,11 @@ namespace Unit.Character.Player
         private AbilityHandler abilityHandler;
         private UIAbilityInventory uiAbilityInventory;
         
+
+        private InputType baseBlockInputType;
         private KeyCode[] abilityInventoryKeys;
+
+        private IAbility currentSelectedAbility;
         
         private int maxSlot;
         
@@ -40,7 +44,8 @@ namespace Unit.Character.Player
 
         private AbilityFactory CreateAbilityFactory()
         {
-            return new SkillFactoryBuilder(new AbilityFactory())
+            return new AbilityFactoryBuilder()
+                .SetMoveControl(GetComponent<IMoveControl>())
                 .SetBaseCamera(playerController.BaseCamera)
                 .SetGameObject(gameObject)
                 .Build();
@@ -87,6 +92,7 @@ namespace Unit.Character.Player
         
         public void Initialize()
         {
+            baseBlockInputType = so_PlayerAbilityInventory.BaseBlockInputType;
             maxSlot = so_PlayerAbilityInventory.MaxSlot;
             abilityHandler = GetComponent<AbilityHandler>();
             
@@ -95,7 +101,17 @@ namespace Unit.Character.Player
             InitializeKeys();
             InitializeSlots();
         }
-        
+
+        private void OnEnable()
+        {
+            UIAbility.OnSlotSelected += OnSlotSelected;
+        }
+
+        private void OnDisable()
+        {
+            UIAbility.OnSlotSelected -= OnSlotSelected;
+        }
+
         private  void InitializeUIInventory()
         {
             var handle = Addressables.InstantiateAsync(uiAbilityInventoryPrefab).WaitForCompletion();
@@ -123,17 +139,20 @@ namespace Unit.Character.Player
 
         public void AddAbility(AbilityConfig abilityConfig)
         {
-            if (slots.Values.Any(a => a != null && a.AbilityType == abilityConfig.AbilityType)) return;
+            if (slots.Values.Any(a => a != null && a.AbilityType == abilityConfig.SO_BaseAbilityConfig.AbilityType)) return;
 
             int? slotID = slots.FirstOrDefault(pair => pair.Value == null).Key;
             if (slotID == null) return;
 
             var newAbility = abilityFactory.CreateAbility(abilityConfig);
-            newAbility.SetSlotID(slotID);
+            diContainer.Inject(newAbility);
+            newAbility.SetInventorySlotID(slotID);
+            newAbility.Initialize();
             newAbility.OnCountCooldown += OnCountCooldownAbility;
             abilityHandler.AddAbility(newAbility);
-            
-            var abilityData = new AbilityData(slotID, abilityConfig.AbilityType, abilityConfig.AbilityBehaviour, abilityConfig.Icon);
+
+            var baseAbilityConfig = abilityConfig.SO_BaseAbilityConfig;
+            var abilityData = new AbilityData(slotID, baseAbilityConfig.AbilityType, baseAbilityConfig.AbilityBehaviour, baseAbilityConfig.BlockedInputType, baseAbilityConfig.Icon);
             uiAbilityInventory.AddAbility(abilityData);
             slots[slotID.Value] = abilityData;
         }
@@ -156,12 +175,78 @@ namespace Unit.Character.Player
             uiAbilityInventory.ChangeReadiness(slotID, current <= 0);
         }
 
+        private void OnSlotSelected(int? slotID)
+        {
+            EnterAbility(slotID);
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
                 AddAbility(so_PlayerAbilities.DashConfig);
             }
+
+            for (int i = 0; i < abilityInventoryKeys.Length; i++)
+            {
+                if (Input.GetKeyDown(abilityInventoryKeys[i]))
+                {
+                    EnterAbility(i);
+                }
+            }
+        }
+
+        private void EnterAbility(int? slotID)
+        {
+            if(slotID == null || slots[slotID] == null) return;
+            ExitAbility(currentSelectedAbility);
+            currentSelectedAbility = null;
+            
+            currentSelectedAbility = abilityHandler.GetAbility(slots[slotID].AbilityType, slots[slotID].SlotID);
+            currentSelectedAbility.OnActivated += OnActivatedAbility;
+            currentSelectedAbility.Enter();
+        }
+
+        private void ExitAbility(IAbility ability)
+        {
+            if(ability == null) return;
+            ability.Exit();
+            ability.OnActivated -= OnActivatedAbility;
+            ability.OnStarted -= OnStartedAbility;
+            ability.OnFinished -= OnFinishedAbility;
+            ability.OnExit -= OnExitAbility;
+        }
+
+        private void OnActivatedAbility(int? slotID)
+        {
+            if(slotID == null) return;
+            BlockInput(baseBlockInputType);
+            var ability = abilityHandler.GetAbility(slots[slotID].AbilityType, slots[slotID].SlotID);
+            ability.OnActivated -= OnActivatedAbility;
+            ability.OnStarted += OnStartedAbility;
+            ability.OnFinished += OnFinishedAbility;
+            ability.OnExit += OnExitAbility;
+        }
+        private void OnStartedAbility(int? slotID)
+        {
+            if(slotID == null) return;
+            BlockInput(slots[slotID].BlockedInputType);
+            abilityHandler.GetAbility(slots[slotID].AbilityType, slots[slotID].SlotID).OnStarted -= OnStartedAbility;
+            currentSelectedAbility = null;
+        }
+        private void OnFinishedAbility(int? slotID)
+        {
+            if(slotID == null) return;
+            UnblockInput(slots[slotID].BlockedInputType);
+            abilityHandler.GetAbility(slots[slotID].AbilityType, slots[slotID].SlotID).OnFinished -= OnFinishedAbility;
+        }
+        private void OnExitAbility(int? slotID)
+        {
+            if(slotID == null) return;
+            UnblockInput(baseBlockInputType);
+            var ability = abilityHandler.GetAbility(slots[slotID].AbilityType, slots[slotID].SlotID);
+            ability.OnActivated -= OnActivatedAbility;
+            ability.OnExit -= OnExitAbility;
         }
     }
 }

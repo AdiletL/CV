@@ -1,0 +1,15 @@
+﻿using Sirenix.OdinInspector;
+using Unit.Character.Player;
+using UnityEngine;
+
+namespace ScriptableObjects.Unit
+{
+    [CreateAssetMenu(fileName = "SO_BaseAbility_", menuName = "SO/Gameplay/Ability", order = 51)]
+    public class SO_BaseAbilityConfig : ScriptableObject
+    {
+        [field: SerializeField, PreviewField] public Sprite Icon { get; private set; }
+        [field: SerializeField] public AbilityType AbilityType { get; private set; }
+        [field: SerializeField] public AbilityBehaviour AbilityBehaviour { get; private set; }
+        [field: SerializeField] public InputType BlockedInputType { get; private set; }
+    }
+}

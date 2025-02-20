@@ -9,9 +9,7 @@ namespace Unit.Container
 {
     public class ChestController : ContainerController
     {
-        [SerializeField] private AssetReferenceGameObject[] itemPrefabs;
-        
-        private SO_Chest so_chest;
+        private SO_Chest so_Chest;
         private HotkeyUI hotkeyUI;
         private ChestAnimation chestAnimation;
         
@@ -21,7 +19,7 @@ namespace Unit.Container
         {
             base.Initialize();
 
-            so_chest = (SO_Chest)so_Container;
+            so_Chest = (SO_Chest)so_Container;
             chestAnimation = (ChestAnimation)containerAnimation;
             hotkeyUI = GetComponentInUnit<HotkeyUI>();
             hotkeyUI.Hide();
@@ -68,11 +66,12 @@ namespace Unit.Container
         private async UniTask SpawnItems()
         {
             Vector3 point;
-            foreach (var VARIABLE in itemPrefabs)
+            foreach (var VARIABLE in so_Chest.so_Item)
             {
-                var item = await Addressables.InstantiateAsync(VARIABLE);
+                var item = await Addressables.InstantiateAsync(VARIABLE.SO_Item.Prefab);
                 var itemController = item.GetComponent<ItemController>();
                 diContainer.Inject(itemController);
+                itemController.SetAmount(VARIABLE.amount);
                 itemController.Initialize();
                 item.transform.position = transform.position;
                 Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(0.5f, 1f));

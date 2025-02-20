@@ -3,46 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using Gameplay.Ability;
 using Sirenix.OdinInspector;
-using Unit.Item;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace ScriptableObjects.Unit.Item
 {
     [CreateAssetMenu(fileName = "SO_Item_", menuName = "SO/Gameplay/Item", order = 51)]
-    public class SO_Item : ScriptableObject
+    public abstract class SO_Item : ScriptableObject
     {
-        [field: SerializeField] public string Name { get; private set; }
-        [field: SerializeField] public ItemType ItemTypeID { get; private set; }
-        [field: SerializeField] public Sprite Icon { get; private set; }
-        [field: SerializeField] public int Amount { get; private set; } = 1;
+        public abstract ItemName ItemNameID { get; protected set; }
+        [field: SerializeField, PreviewField] public Sprite Icon { get; private set; }
+        [field: SerializeField] public AssetReferenceT<GameObject> Prefab { get; private set; }
+        [field: SerializeField] public ItemCategory ItemCategoryID { get; private set; }
+        [field: SerializeField] public ItemBehaviour ItemBehaviourID { get; private set; }
+        [field: SerializeField] public float Cooldown { get; private set; }
+        [field: SerializeField] public bool IsBlockItems { get; private set; }
+        [field: SerializeField] public bool IsBlockAbilities { get; private set; }
+        
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
+        
         [field: SerializeField, Space(15)] public AbilityConfigData AbilityConfigData { get; private set; }
         
         
-        public List<AbilityConfig> GetSkillConfigs()
-        {
-            var skillConfigs = new List<AbilityConfig>();
-            foreach (AbilityType VARIABLE in Enum.GetValues(typeof(AbilityType)))
-            {
-                if (VARIABLE == AbilityType.Nothing || (AbilityConfigData.AbilityTypeID & VARIABLE) == 0) continue;
-
-                if (AbilityConfigData.ApplyDamageHealConfig.AbilityType == AbilityConfigData.AbilityTypeID)
-                    skillConfigs.Add(AbilityConfigData.ApplyDamageHealConfig);
-                if(AbilityConfigData.SpawnPortalConfig.AbilityType == AbilityConfigData.AbilityTypeID)
-                    skillConfigs.Add(AbilityConfigData.SpawnPortalConfig);
-            }
-
-            return skillConfigs;
-        }
-        
         #if UNITY_EDITOR
-        [Button]
+        //[Button]
         public void RenameFile()
         {
-            if (string.IsNullOrEmpty(Name)) return;
-
             string assetPath = AssetDatabase.GetAssetPath(this);
             if (string.IsNullOrEmpty(assetPath)) return;
 
@@ -50,7 +38,7 @@ namespace ScriptableObjects.Unit.Item
             if (string.IsNullOrEmpty(guid)) return; // На случай, если GUID не найден
 
             string newDirectory = Path.GetDirectoryName(assetPath);
-            string newPath = Path.Combine(newDirectory, $"SO_Item_{Name}.asset");
+            string newPath = Path.Combine(newDirectory, $"SO_Item_{ItemCategoryID}.asset");
 
             if (assetPath != newPath && !AssetDatabase.LoadAssetAtPath<SO_Item>(newPath))
             {
@@ -77,7 +65,12 @@ namespace ScriptableObjects.Unit.Item
             }
         }
         #endif
+    }
 
-        
+    [System.Serializable]
+    public class ItemConfigData
+    {
+        public SO_Item SO_Item;
+        public int amount;
     }
 }

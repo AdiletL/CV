@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using ScriptableObjects.Unit;
 using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
@@ -9,10 +10,14 @@ namespace Gameplay.Ability
     public abstract class Ability : IAbility
     {
         [Inject] protected DiContainer diContainer;
-        
+
         public event Action<int?, float, float> OnCountCooldown;
+        public event Action<int?> OnActivated;
+        public event Action<int?> OnStarted;
+        public event Action<int?> OnFinished;
+        public event Action<int?> OnExit;
         
-        public int? SlotID { get; protected set; }
+        public int? InventorySlotID { get; protected set; }
         public GameObject GameObject { get; protected set; }
         public abstract AbilityType AbilityType { get; protected set; }
         public AbilityBehaviour AbilityBehaviour { get; protected set; }
@@ -27,7 +32,7 @@ namespace Gameplay.Ability
         protected bool isActivated;
         
 
-        public void SetSlotID(int? slotID) => SlotID = slotID;
+        public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
         public void SetBlockedInputType(InputType inputType) => this.BlockedInputType = inputType;
         public void SetAbilityBehaviour(AbilityBehaviour abilityBehaviour) => this.AbilityBehaviour = abilityBehaviour;
@@ -39,7 +44,7 @@ namespace Gameplay.Ability
         {
         }
 
-        public virtual void Activate(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
             if (IsCooldown)
             {
@@ -64,13 +69,15 @@ namespace Gameplay.Ability
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
-            if (Cooldown > 0)
-            {
-                IsCooldown = true;
-                countCooldown = Cooldown;
-            }
+            OnActivated?.Invoke(InventorySlotID);
         }
 
+        protected void StartEffect()
+        {
+            OnStarted?.Invoke(InventorySlotID);
+            StartCooldown();
+        }
+        
         public virtual void Update()
         {
             if (IsCooldown)
@@ -78,7 +85,7 @@ namespace Gameplay.Ability
                 countCooldown -= Time.deltaTime;
                 if (countCooldown <= 0)
                     IsCooldown = false;
-                OnCountCooldown?.Invoke(SlotID, countCooldown, Cooldown);
+                OnCountCooldown?.Invoke(InventorySlotID, countCooldown, Cooldown);
             }
         }
 
@@ -86,25 +93,32 @@ namespace Gameplay.Ability
         {
             
         }
+
+        private void StartCooldown()
+        {
+            if (Cooldown > 0)
+            {
+                IsCooldown = true;
+                countCooldown = Cooldown;
+            }
+        }
         
-        public virtual void Finish()
+        public virtual void FinishEffect()
         {
             isActivated = false;
             FinishedCallBack?.Invoke();
+            OnFinished?.Invoke(InventorySlotID);
             Exit();
         }
         public virtual void Exit()
         {
-            
+            OnExit?.Invoke(InventorySlotID);
         }
     }
 
     public abstract class AbilityConfig
     {
-        public Sprite Icon;
-        public AbilityType AbilityType;
-        public AbilityBehaviour AbilityBehaviour;
-        public InputType BlockedInputType;
+        public SO_BaseAbilityConfig SO_BaseAbilityConfig;
         public float Cooldown;
     }
 
@@ -113,13 +127,15 @@ namespace Gameplay.Ability
         public int? SlotID { get; private set; }
         public AbilityType AbilityType { get; private set; }
         public AbilityBehaviour AbilityBehaviour { get; private set; }
+        public InputType BlockedInputType { get; private set; }
         public Sprite Icon { get; private set; }
 
-        public AbilityData(int? slotID, AbilityType abilityType, AbilityBehaviour abilityBehaviour, Sprite icon)
+        public AbilityData(int? slotID, AbilityType abilityType, AbilityBehaviour abilityBehaviour, InputType blockedInputType, Sprite icon)
         {
             SlotID = slotID;
             AbilityType = abilityType;
             AbilityBehaviour = abilityBehaviour;
+            BlockedInputType = blockedInputType;
             Icon = icon;
         }
     }

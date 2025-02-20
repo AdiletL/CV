@@ -22,7 +22,9 @@ namespace Gameplay.Damage
         {
             base.GetTotalDamage(gameObject);
             var targetUnitCenter = gameObject.GetComponent<UnitCenter>();
-            CheckSkill(result, targetUnitCenter);
+            
+            CheckAbility(result, targetUnitCenter);
+            CheckItem(result, targetUnitCenter);
 
             if (damagePopUpPopUpSpawner)
                 damagePopUpPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);

@@ -1,12 +1,37 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Gameplay.Ability;
+using Unit.Character.Player;
+using UnityEngine;
 
 public interface IItem
 {
-    public bool IsCanTake { get; }
-    public void Initialize();
-    public void TakeItem(GameObject gameObject);
-    public void Enable(KeyCode takeKey);
-    public void Disable();
+    public event Action<int?> OnActivated; 
+    public event Action<int?> OnStarted;
+    public event Action<int?> OnFinished;
+    public event Action<int?> OnExit;
+    public event Action<int?, float, float> OnCountCooldown;
     
-    public void JumpToPoint(Vector3 point);
+    public int? InventorySlotID { get; }
+    public GameObject GameObject { get; }
+    public AnimationClip CastClip { get; }
+    public ItemName ItemNameID { get; }
+    public ItemCategory ItemCategoryID { get; }
+    public ItemBehaviour ItemBehaviourID { get; }
+    public InputType BlockInputType { get; }
+    public Action FinishedCallBack { get; }
+    public int Amount { get; }
+    public float Cooldown { get; }
+    public bool IsCooldown { get; }
+    public bool IsBlockItems { get; }
+    public bool IsBlockAbilities { get; }
+    public List<Ability> Abilities { get; }
+    
+    public void Initialize();
+    public void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);
+    public void StartEffect();
+    public void Update();
+    public void LateUpdate();
+    public void FinishEffect();
+    public void Exit();
 }

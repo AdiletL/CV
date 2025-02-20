@@ -1,14 +1,13 @@
 ﻿using System;
 
-[Flags]
 public enum AbilityType
 {
-    Nothing = 0,
-    Dash = 1 << 0,
-    SpawnPortal = 1 << 1,
-    ApplyDamageHeal = 1 << 2,
-    BlockPhysicalDamage = 1 << 3,
-    BlockMagicDamage = 1 << 4,
+    Nothing,
+    Everything,
+    Dash,
+    ApplyDamageHeal,
+    BlockPhysicalDamage,
+    BlockMagicDamage,
 }
 
 [Flags]

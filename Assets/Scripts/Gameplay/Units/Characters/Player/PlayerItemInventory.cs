@@ -4,8 +4,10 @@ using System.Linq;
 using Gameplay.Factory;
 using Gameplay.Ability;
 using Gameplay.UI.ScreenSpace.Inventory;
+using Gameplay.Units.Item;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
+using ScriptableObjects.Unit.Item;
 using Unit.Item;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -14,50 +16,51 @@ using Zenject;
 
 namespace Unit.Character.Player
 {
+    [RequireComponent(typeof(ItemHandler))]
     public class PlayerItemInventory : MonoBehaviour, IInventory
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameConfig so_GameConfig;
         
         [SerializeField] private PlayerController playerController;
-        [SerializeField] private SO_PlayerItemInventory soPlayerItemInventory;
+        [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
         [SerializeField] private AssetReferenceGameObject uiItemInventoryPrefab;
-        
-        private UIItemInventory uiItemInventory;
-        private AbilityFactory abilityFactory;
-        private AbilityHandler abilityHandler;
-        
-        private ItemData currentSelectedItem;
-        private List<IAbility> currentAbilities = new();
 
+        private ItemFactory itemFactory;
+        private ItemHandler itemHandler;
+        private UIItemInventory uiItemInventory;
+
+        private Gameplay.Units.Item.Item currentSelectedItem;
+        private InputType baseBlockInput;
+        
         private Texture2D selectedItemCursor;
         private int maxSlot;
         
         private Dictionary<InputType, int> blockedInputs = new();
-        private Dictionary<int?, ItemData> slots = new();
+        private Dictionary<int?, Gameplay.Units.Item.Item> slots = new();
         
         public bool IsFullInventory()
         {
             return !slots.ContainsValue(null);
         }
         
-        public bool IsNotNullItem(string name)
+        public bool IsNotNullItem(ItemName itemNameID)
         {
             foreach (var VARIABLE in slots.Values)
             {
                 if(VARIABLE != null && 
-                   VARIABLE.Name == name)
+                   VARIABLE.ItemNameID == itemNameID)
                     return true;
             }
 
             return false;
         }
 
-        public ItemData GetItem(string name)
+        public Gameplay.Units.Item.Item GetItem(ItemName itemNameID)
         {
             foreach (var VARIABLE in slots.Values)
             {
-                if(VARIABLE.Name == name)
+                if(VARIABLE.ItemNameID == itemNameID)
                     return VARIABLE;
             }
             return null;
@@ -102,9 +105,17 @@ namespace Unit.Character.Player
             }
         }
 
-        private AbilityFactory CreateSkillFactory()
+        private ItemFactory CreateItemFactory()
         {
-            return new SkillFactoryBuilder(new AbilityFactory())
+            AbilityFactory abilityFactory = new AbilityFactoryBuilder()
+                .SetMoveControl(GetComponent<IMoveControl>())
+                .SetBaseCamera(playerController.BaseCamera)
+                .SetGameObject(gameObject)
+                .Build();
+            diContainer.Inject(abilityFactory);
+            
+            return new ItemFactoryBuilder()
+                .SetAbilityFactory(abilityFactory)
                 .SetBaseCamera(playerController.BaseCamera)
                 .SetGameObject(gameObject)
                 .Build();
@@ -121,11 +132,12 @@ namespace Unit.Character.Player
 
         public void Initialize()
         {
-            maxSlot = soPlayerItemInventory.MaxCountItem;
+            baseBlockInput = so_PlayerItemInventory.BaseBlockInputType;
+            maxSlot = so_PlayerItemInventory.MaxCountItem;
             selectedItemCursor = so_GameConfig.SelectedItemCursor;
-            abilityHandler = GetComponent<AbilityHandler>();
+            itemHandler = GetComponent<ItemHandler>();
             InitializeUIInventory();
-            InitializeSkillFactory();
+            InitializeItemFactory();
             InitializeSlots();
         }
 
@@ -137,10 +149,10 @@ namespace Unit.Character.Player
             uiItemInventory.SetMaxCountCells(maxSlot);
         }
 
-        private void InitializeSkillFactory()
+        private void InitializeItemFactory()
         {
-            abilityFactory = CreateSkillFactory();
-            diContainer.Inject(abilityFactory);
+            itemFactory = CreateItemFactory();
+            diContainer.Inject(itemFactory);
         }
 
         private void InitializeSlots()
@@ -149,125 +161,121 @@ namespace Unit.Character.Player
                 slots.Add(i, null);
         }
 
-        public void AddItem(ItemData data)
+        public void AddItem(SO_Item so_Item, int amount)
         {
-            int? slotID = slots.FirstOrDefault(pair => pair.Value == null || string.Equals(data.Name, pair.Value.Name)).Key;
-            if (slotID == null) return;
-
-            if (!IsNotNullItem(data.Name))
-            {
-                slots[slotID] = data;
-                data.SetSlotID(slotID);
-                AddAbilities(data.AbilityConfigs, slotID);
-                uiItemInventory.AddItem(slots[slotID]);
-            }
-            else
-            {
-                slots[slotID].Amount += data.Amount;
-                uiItemInventory.UpdateItem(slots[slotID]);
-            }
-        }
-
-        public void RemoveItem(ItemData data)
-        {
-            if(data.SlotID == null || data.Amount > slots[data.SlotID].Amount) return;
-            
-            slots[data.SlotID].Amount -= 1;
-            
-            if (slots[data.SlotID].Amount <= 0)
-            {
-                uiItemInventory.RemoveItem(data.SlotID);
-                slots.Remove(data.SlotID);
-                Debug.Log(data.AbilityConfigs.Count);
-                foreach (var VARIABLE in data.AbilityConfigs)
-                    RemoveAbilities(VARIABLE.AbilityType, data.SlotID);
-            }
-            else
-            {
-                uiItemInventory.UpdateItem(data);
-            }
-        }
-
-        private void AddAbilities(List<AbilityConfig> skillAbilities, int? id)
-        {
-            foreach (var VARIEBLE in skillAbilities)
-            {
-                var newAbility = abilityFactory.CreateAbility(VARIEBLE);
-                if (newAbility != null)
-                {
-                    diContainer.Inject(newAbility);
-                    newAbility.SetSlotID(id);
-                    newAbility.Initialize();
-                    newAbility.OnCountCooldown += OnCountCooldownAbility;
-                    abilityHandler.AddAbility(newAbility);
-                }
-            }
-        }
-
-        private void RemoveAbilities(AbilityType abilityTypes, int? id)
-        {
-            foreach (AbilityType abilityType in Enum.GetValues(typeof(AbilityType)))
-            {
-                if (abilityType == AbilityType.Nothing) continue;
-                
-                if (abilityTypes.HasFlag(abilityType))
-                {
-                    abilityHandler.GetAbility(abilityType, id).OnCountCooldown -= OnCountCooldownAbility;
-                    abilityHandler.RemoveAbilityByID(abilityType, id);
-                }
-            }
-        }
-
-        private void OnSlotSelected(int? slotID)
-        {
+            int? slotID = slots.FirstOrDefault(pair => pair.Value == null || string.Equals(so_Item.ItemNameID, pair.Value.ItemNameID)).Key;
             if(slotID == null) return;
             
-            currentSelectedItem = slots[slotID];
-            foreach (var VARIABLE in currentSelectedItem.AbilityConfigs)
+            if (!IsNotNullItem(so_Item.ItemNameID))
             {
-                var ability = abilityHandler.GetAbility(VARIABLE.AbilityType, currentSelectedItem.SlotID);
-                if (ability != null)
-                {
-                    currentAbilities.Add(ability);
-                    BlockInput(VARIABLE.BlockedInputType);
-                }
+                var newItem = itemFactory.CreateItem(so_Item);
+                if(newItem == null) return;
+                
+                diContainer.Inject(newItem);
+                newItem.SetInventorySlotID(slotID);
+                newItem.SetAmountItem(amount);
+                newItem.Initialize();
+                
+                slots[slotID] = newItem;
+                itemHandler.AddItem(newItem);
+                newItem.OnCountCooldown += OnCountCooldownItem;
+                
+                bool isReady = (so_Item.ItemBehaviourID & ItemBehaviour.Passive) == 0;
+                uiItemInventory.AddItem(slotID, so_Item.Icon, amount, isReady, 0, so_Item.Cooldown);
             }
-            
-            Cursor.SetCursor(selectedItemCursor, Vector2.zero, CursorMode.Auto);
+            else
+            {
+                slots[slotID].AddAmount(amount);
+                uiItemInventory.UpdateAmount(slotID, slots[slotID].Amount);
+            }
         }
 
+        public void RemoveItem(int? slotID, int amount)
+        {
+            if(slotID == null || amount > slots[slotID].Amount) return;
+            
+            slots[slotID].RemoveAmount(amount);
+            uiItemInventory.UpdateAmount(slotID, slots[slotID].Amount);
+            
+            if (slots[slotID].Amount <= 0)
+            {
+                slots[slotID].OnCountCooldown -= OnCountCooldownItem;
+                itemHandler.RemoveItemByID(slots[slotID].ItemNameID, slotID);
+                uiItemInventory.RemoveItem(slotID);
+                slots[slotID] = null;
+            }
+        }
+        
+        private void OnSlotSelected(int? slotID)
+        {
+            EnterItem(slotID);
+        }
+
+         private void EnterItem(int? slotID)
+        {
+            if(slotID == null || slots[slotID] == null) return;
+            ExitItem(currentSelectedItem);
+            currentSelectedItem = null;
+            
+            currentSelectedItem = itemHandler.GetItem(slots[slotID].ItemNameID, slots[slotID].InventorySlotID);
+            currentSelectedItem.OnActivated += OnActivatedItem;
+            currentSelectedItem.Enter();
+        }
+
+        private void ExitItem(Gameplay.Units.Item.Item item)
+        {
+            if(item == null) return;
+            item.Exit();
+            item.OnActivated -= OnActivatedItem;
+            item.OnStarted -= OnStartedItem;
+            item.OnFinished -= OnFinishedItem;
+            item.OnExit -= OnExitItem;
+        }
+
+        private void OnActivatedItem(int? slotID)
+        {
+            if(slotID == null) return;
+            BlockInput(baseBlockInput);
+            var item = itemHandler.GetItem(slots[slotID].ItemNameID, slots[slotID].InventorySlotID);
+            item.OnActivated -= OnActivatedItem;
+            item.OnStarted += OnStartedItem;
+            item.OnFinished += OnFinishedItem;
+            item.OnExit += OnExitItem;
+        }
+        private void OnStartedItem(int? slotID)
+        {
+            if(slotID == null) return;
+            BlockInput(slots[slotID].BlockInputType);
+            itemHandler.GetItem(slots[slotID].ItemNameID, slots[slotID].InventorySlotID).OnStarted -= OnStartedItem;
+            currentSelectedItem = null;
+        }
+        private void OnFinishedItem(int? slotID)
+        {
+            if(slotID == null) return;
+            UnblockInput(slots[slotID].BlockInputType);
+            itemHandler.GetItem(slots[slotID].ItemNameID, slots[slotID].InventorySlotID).OnFinished -= OnFinishedItem;
+        }
+        private void OnExitItem(int? slotID)
+        {
+            if(slotID == null) return;
+            UnblockInput(baseBlockInput);
+            var item = itemHandler.GetItem(slots[slotID].ItemNameID, slots[slotID].InventorySlotID);
+            item.OnActivated -= OnActivatedItem;
+            item.OnExit -= OnExitItem;
+            RemoveItem(slotID, 1);
+        }
+        
         public void ClearSelectedItem()
         {
-            if(currentSelectedItem == null) return;
-            foreach (var VARIABLE in currentSelectedItem.AbilityConfigs)
-                UnblockInput(VARIABLE.BlockedInputType);
-            
-            currentAbilities.Clear();
             currentSelectedItem = null;
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
-        private void OnCountCooldownAbility(int? slotID, float current, float max)
+        private void OnCountCooldownItem(int? slotID, float current, float max)
         {
             if(slotID == null) return;
             uiItemInventory.UpdateItemCooldown(slotID, current, max);
-            uiItemInventory.ChangeReadiness(slotID, current <= 0);
-        }
-        private void Update()
-        {
-            if (currentSelectedItem != null && 
-                Input.GetMouseButtonDown(0))
-            {
-                for (int i = currentAbilities.Count - 1; i >= 0; i--)
-                {
-                    abilityHandler.Activate(currentAbilities[i].AbilityType, currentSelectedItem.SlotID);
-                    if (i == 0)
-                    {
-                        RemoveItem(currentSelectedItem);
-                        ClearSelectedItem();
-                    }
-                }
-            }
+            uiItemInventory.UpdateReadiness(slotID, current <= 0);
         }
     }
 }

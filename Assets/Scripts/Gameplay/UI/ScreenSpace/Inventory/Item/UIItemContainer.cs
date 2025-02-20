@@ -27,45 +27,34 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             }
         }
 
-        public void AddItem(ItemData data)
+        public void AddItem(int? slotID, Sprite icon, int amount, bool isReady, float currentCooldown, float maxCooldown)
         {
-            if(data.SlotID == null) return;
+            if(slotID == null) return;
             
-            uiItems[data.SlotID].SetSlotID(data.SlotID);
-            uiItems[data.SlotID].SetIcon(data.Icon);
-            uiItems[data.SlotID].SetValue(data.Amount);
-            uiItems[data.SlotID].UpdateCooldownBar(0, 1);
-            uiItems[data.SlotID].ChangeReadiness(false);
-            foreach (var VARIABLE in data.AbilityConfigs)
-            {
-                if (VARIABLE.AbilityType != AbilityType.Nothing &&
-                    (VARIABLE.AbilityBehaviour & AbilityBehaviour.Passive) == 0)
-                {
-                     uiItems[data.SlotID].ChangeReadiness(true);
-                    return;
-                }
-            }
+            uiItems[slotID].SetSlotID(slotID);
+            uiItems[slotID].UpdateIcon(icon);
+            uiItems[slotID].UpdateAmount(amount);
+            uiItems[slotID].UpdateCooldownBar(currentCooldown, maxCooldown);
+            uiItems[slotID].UpdateReadiness(isReady);
         }
 
-        public void UpdateItem(ItemData data)
-        {
-            if(data.SlotID == null) return;
-            
-            uiItems[data.SlotID].SetSlotID(data.SlotID);
-            uiItems[data.SlotID].SetIcon(data.Icon);
-            uiItems[data.SlotID].SetValue(data.Amount);
-        }
-
+      
         public void UpdateItemCooldown(int? slotID, float current, float max)
         {
             if(slotID == null) return;
             uiItems[slotID].UpdateCooldownBar(current, max);
         }
 
-        public void ChangeReadiness(int? slotID, bool isReady)
+        public void UpdateAmount(int? slotID, int amount)
         {
             if(slotID == null) return;
-            uiItems[slotID].ChangeReadiness(isReady);
+            uiItems[slotID].UpdateAmount(amount);
+        }
+
+        public void UpdateReadiness(int? slotID, bool isReady)
+        {
+            if(slotID == null) return;
+            uiItems[slotID].UpdateReadiness(isReady);
         }
 
         public void RemoveItem(int? slotID)

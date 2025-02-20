@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Unit.Character.Player;
+using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
 {
     [CreateAssetMenu(fileName = "SO_PlayerItemInventory", menuName = "SO/Gameplay/Unit/Character/Player/Inventory/Item", order = 51)]
     public class SO_PlayerItemInventory : ScriptableObject
     {
+        [field: SerializeField] public InputType BaseBlockInputType { get; private set; } = InputType.Attack;
         [field: SerializeField] public int MaxCountItem { get; private set; } = 1;
     }
 }

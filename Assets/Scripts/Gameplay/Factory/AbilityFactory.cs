@@ -16,12 +16,11 @@ namespace Gameplay.Factory
         
         public Ability.Ability CreateAbility(AbilityConfig abilityConfig)
         {
-            Ability.Ability result = abilityConfig.AbilityType switch
+            Ability.Ability result = abilityConfig.SO_BaseAbilityConfig.AbilityType switch
             {
-                _ when abilityConfig.AbilityType == AbilityType.Dash => CreateDash(abilityConfig),
-                _ when abilityConfig.AbilityType == AbilityType.SpawnPortal => CreateSpawnPortal(abilityConfig),
-                _ when abilityConfig.AbilityType == AbilityType.ApplyDamageHeal => CreateApplyDamageHeal(abilityConfig),
-                _ when abilityConfig.AbilityType == AbilityType.Nothing => null,
+                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Dash => CreateDash(abilityConfig),
+                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.ApplyDamageHeal => CreateApplyDamageHeal(abilityConfig),
+                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Nothing => null,
             };
             
             return result;
@@ -34,24 +33,10 @@ namespace Gameplay.Factory
                 .SetMoveControl(moveControl)
                 .SetDuration(dashConfig.Duration)
                 .SetSpeed(dashConfig.Speed)
-                .SetBlockedInputType(dashConfig.BlockedInputType)
+                .SetBlockedInputType(dashConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
-                .SetAbilityBehaviour(dashConfig.AbilityBehaviour)
+                .SetAbilityBehaviour(dashConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetCooldown(dashConfig.Cooldown)
-                .Build();
-        }
-
-        private SpawnPortal CreateSpawnPortal(AbilityConfig abilityConfig)
-        {
-            var spawnPortalConfig = abilityConfig as SpawnPortalConfig;
-            return (SpawnPortal)new SpawnPortalBuilder()
-                .SetPortalObject(spawnPortalConfig.SpawnPortalPrefab)
-                .SetIDStartPortal(spawnPortalConfig.StartPortalID.ID)
-                .SetBaseCamera(baseCamera)
-                .SetGameObject(gameObject)
-                .SetBlockedInputType(spawnPortalConfig.BlockedInputType)
-                .SetAbilityBehaviour(spawnPortalConfig.AbilityBehaviour)
-                .SetCooldown(spawnPortalConfig.Cooldown)
                 .Build();
         }
 
@@ -61,44 +46,39 @@ namespace Gameplay.Factory
             return (ApplyDamageHeal)new ApplyDamageHealBuilder()
                 .SetValueType(applyDamageHealConfig.ValueType)
                 .SetValue(applyDamageHealConfig.Value)
-                .SetBlockedInputType(applyDamageHealConfig.BlockedInputType)
+                .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
-                .SetAbilityBehaviour(applyDamageHealConfig.AbilityBehaviour)
+                .SetAbilityBehaviour(applyDamageHealConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetCooldown(applyDamageHealConfig.Cooldown)
                 .Build();
         }
     }
 
-    public class SkillFactoryBuilder
+    public class AbilityFactoryBuilder
     {
-        private AbilityFactory _abilityFactory;
+        private AbilityFactory abilityFactory = new ();
 
-        public SkillFactoryBuilder(AbilityFactory abilityFactory)
+        public AbilityFactoryBuilder SetGameObject(GameObject gameObject)
         {
-            this._abilityFactory = abilityFactory;
-        }
-
-        public SkillFactoryBuilder SetGameObject(GameObject gameObject)
-        {
-            _abilityFactory.SetGameObject(gameObject);
+            abilityFactory.SetGameObject(gameObject);
             return this;
         }
 
-        public SkillFactoryBuilder SetMoveControl(IMoveControl moveControl)
+        public AbilityFactoryBuilder SetMoveControl(IMoveControl moveControl)
         {
-            _abilityFactory.SetMoveControl(moveControl);
+            abilityFactory.SetMoveControl(moveControl);
             return this;
         }
         
-        public SkillFactoryBuilder SetBaseCamera(Camera camera)
+        public AbilityFactoryBuilder SetBaseCamera(Camera camera)
         {
-            _abilityFactory.SetBaseCamera(camera);
+            abilityFactory.SetBaseCamera(camera);
             return this;
         }
 
         public AbilityFactory Build()
         {
-            return _abilityFactory;
+            return abilityFactory;
         }
     }
 }

@@ -19,9 +19,9 @@ namespace Unit.Character.Player
         {
             return (BlockPhysicalDamage)new BlockPhysicalDamageBuilder()
                 .SetNormalDamageResistanceConfig(blockPhysicalDamageConfig.NormalDamageResistanceConfig)
-                .SetBlockedInputType(blockPhysicalDamageConfig.BlockedInputType)
+                .SetBlockedInputType(blockPhysicalDamageConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
-                .SetAbilityBehaviour(blockPhysicalDamageConfig.AbilityBehaviour)
+                .SetAbilityBehaviour(blockPhysicalDamageConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetCooldown(blockPhysicalDamageConfig.Cooldown)
                 .Build();
         }
@@ -37,7 +37,7 @@ namespace Unit.Character.Player
         {
             base.Enter();
             IsCanExit = false;
-            blockPhysicalDamage.Activate();
+            blockPhysicalDamage.Enter();
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
         }
@@ -45,7 +45,7 @@ namespace Unit.Character.Player
         public override void Exit()
         {
             base.Exit();
-            blockPhysicalDamage.Finish();
+            blockPhysicalDamage.FinishEffect();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
         }

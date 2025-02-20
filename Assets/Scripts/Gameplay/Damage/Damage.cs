@@ -2,6 +2,7 @@
 using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Spawner;
+using Gameplay.Units.Item;
 using Unit;
 using Unit.Character.Creep;
 using Unit.Character.Player;
@@ -16,6 +17,7 @@ namespace Gameplay.Damage
         
         public GameObject Owner { get; }
         public AbilityHandler AbilityHandler { get; }
+        public ItemHandler ItemHandler { get; }
         public int CurrentDamage { get; }
         public int AdditionalDamage { get; protected set; }
         
@@ -27,6 +29,7 @@ namespace Gameplay.Damage
             this.CurrentDamage = amount;
             this.Owner = owner;
             this.AbilityHandler = owner.GetComponent<AbilityHandler>();
+            this.ItemHandler = owner.GetComponent<ItemHandler>();
             ownerUnitCenter = owner.GetComponent<UnitCenter>();
             
             if (CurrentDamage < 0) CurrentDamage = 999999;
@@ -55,22 +58,36 @@ namespace Gameplay.Damage
             return result;
         }
 
-        protected virtual void CheckSkill(int totalDamage, UnitCenter targetUnitCenter)
+        protected virtual void CheckAbility(int totalDamage, UnitCenter targetUnitCenter)
         {
             if(!AbilityHandler || totalDamage <= 0) return;
 
             if (AbilityHandler.IsAbilityNotNull(AbilityType.ApplyDamageHeal))
             {
-                var skills = AbilityHandler.GetSkills(AbilityType.ApplyDamageHeal);
-                if (skills.Count > 0)
+                var abilities = AbilityHandler.GetAbilities(AbilityType.ApplyDamageHeal);
+                if (abilities != null && abilities.Count > 0)
                 {
                     ApplyDamageHeal skill = null;
-                    for (int i = skills.Count - 1; i >= 0; i--)
+                    for (int i = abilities.Count - 1; i >= 0; i--)
                     {
-                        skill = skills[i] as ApplyDamageHeal;
+                        skill = abilities[i] as ApplyDamageHeal;
                         Heal(totalDamage, skill.ValueType, skill.Value);
                     }
                 }
+            }
+        }
+
+        protected virtual void CheckItem(int totalDamage, UnitCenter targetUnitCenter)
+        {
+            if(!ItemHandler || totalDamage <= 0) return;
+
+            var abilities = ItemHandler.GetAbilities(AbilityType.ApplyDamageHeal);
+            Debug.Log(abilities.Count);
+            if (abilities != null && abilities.Count > 0)
+            {
+                ApplyDamageHeal ability = null;
+                ability = abilities[0] as ApplyDamageHeal;
+                Heal(totalDamage, ability.ValueType, ability.Value);
             }
         }
 

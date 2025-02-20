@@ -9,7 +9,6 @@ namespace Gameplay.Ability
         public ValueType ValueType { get; private set; }
         public int Value { get; private set; }
         
-        
         public void SetValueType(ValueType value) => ValueType = value;
         public void SetValue(int value) => Value = value;
     }

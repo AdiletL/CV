@@ -48,7 +48,7 @@ namespace Unit.Character.Player
         private PlayerStateFactory playerStateFactory;
         private PlayerSwitchStateFactory playerSwitchStateFactory;
         private PlayerItemInventory playerItemInventory;
-        private PlayerAbilityInventory _playerAbilityInventory;
+        private PlayerAbilityInventory playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
         
         private CharacterControlDesktop playerControlDesktop;
@@ -149,9 +149,9 @@ namespace Unit.Character.Player
             diContainer.Inject(playerItemInventory);
             playerItemInventory.Initialize();
             
-            _playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
-            diContainer.Inject(_playerAbilityInventory);
-            _playerAbilityInventory.Initialize();
+            playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
+            diContainer.Inject(playerAbilityInventory);
+            playerAbilityInventory.Initialize();
             
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             diContainer.Inject(playerKinematicControl);
@@ -325,7 +325,7 @@ namespace Unit.Character.Player
             if(!photonView.IsMine) return;
             
             //Test
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            /*if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 if (isSword)
                 {
@@ -335,7 +335,7 @@ namespace Unit.Character.Player
                 {
                     InitializeSword();
                 }
-            }
+            }*/
 
             playerControlDesktop?.HandleHotkey();
             playerControlDesktop?.HandleInput();

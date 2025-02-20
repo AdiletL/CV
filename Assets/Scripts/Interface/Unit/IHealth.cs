@@ -1,4 +1,5 @@
 ﻿using Gameplay.Ability;
+using Gameplay.Units.Item;
 using Unit;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public interface IDamageable
 {
     public GameObject Owner { get; }
     public AbilityHandler AbilityHandler { get; }
+    public ItemHandler ItemHandler { get; }
     public int CurrentDamage { get; }
     public int AdditionalDamage { get; }
     public void AddAdditionalDamage(int value);

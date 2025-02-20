@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Gameplay.Factory.Character.Player;
 using Gameplay.Ability;
-using Gameplay.Units.Item.Loot;
+using Gameplay.Units.Item;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using Unit.Item.Container;

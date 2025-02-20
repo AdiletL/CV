@@ -5,8 +5,12 @@ using UnityEngine;
 public interface IAbility
 {
     public event Action<int?, float, float> OnCountCooldown;
+    public event Action<int?> OnActivated; 
+    public event Action<int?> OnStarted;
+    public event Action<int?> OnFinished;
+    public event Action<int?> OnExit;
     
-    public int? SlotID { get; }
+    public int? InventorySlotID { get; }
     public GameObject GameObject { get; }
     public AnimationClip CastClip { get; }
     public AbilityType AbilityType { get; }
@@ -18,7 +22,7 @@ public interface IAbility
     public bool IsCooldown { get; }
     
     public void Initialize();
-    public void Activate(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);
+    public void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);
 
     public void Update();
     public void LateUpdate();

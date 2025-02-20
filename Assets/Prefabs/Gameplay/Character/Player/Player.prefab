@@ -3840,7 +3840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 6200176588022165938}
-  soPlayerItemInventory: {fileID: 11400000, guid: 3c3cdc11d4faae948a1db14046bae835, type: 2}
+  so_PlayerItemInventory: {fileID: 11400000, guid: 3c3cdc11d4faae948a1db14046bae835, type: 2}
   uiItemInventoryPrefab:
     m_AssetGUID: 69c3b8dfa5cd73147bcfeac948d4cdbd
     m_SubObjectName: 

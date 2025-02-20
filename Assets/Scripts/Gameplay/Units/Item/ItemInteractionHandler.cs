@@ -7,13 +7,13 @@ using Unit.Item;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Units.Item.Loot
+namespace Gameplay.Units.Item
 {
     public class ItemInteractionHandler : IInteractionHandler
     {
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         
-        public IItem CurrentItem { get; private set; }
+        public ItemController CurrentItemController { get; private set; }
 
         private float countCooldownCheckItems;
         private readonly float countCooldownCheck = .5f;
@@ -22,7 +22,7 @@ namespace Gameplay.Units.Item.Loot
         private readonly GameObject gameObject;
         private readonly CharacterControlDesktop characterControlDesktop;
 
-        private List<IItem> currentItems = new(10);
+        private List<ItemController> currentItems = new(10);
         
         public ItemInteractionHandler(GameObject gameObject, CharacterControlDesktop characterControlDesktop)
         {
@@ -35,9 +35,9 @@ namespace Gameplay.Units.Item.Loot
             takeLootKey = so_GameHotkeys.TakeLootKey;
         }
 
-        public void SetItem(IItem iItem)
+        public void SetItem(ItemController itemController)
         {
-            CurrentItem = iItem;
+            CurrentItemController = itemController;
         }
 
         public void HandleInput()
@@ -47,11 +47,11 @@ namespace Gameplay.Units.Item.Loot
             else
                 return;
             
-            if(CurrentItem == null) return;
+            if(CurrentItemController == null) return;
             if(!Input.GetKeyDown(takeLootKey)) return;
             
-            CurrentItem.TakeItem(gameObject);
-            RemoveItem(CurrentItem);
+            CurrentItemController.TakeItem(gameObject);
+            RemoveItem(CurrentItemController);
 
             if (currentItems.Count != 0)
             {
@@ -67,14 +67,14 @@ namespace Gameplay.Units.Item.Loot
             countCooldownCheckItems += Time.deltaTime;
             if (countCooldownCheckItems >= countCooldownCheck)
             {
-                if (CurrentItem == null)
+                if (CurrentItemController == null)
                 {
                     for (int i = currentItems.Count - 1; i >= 0; i--)
                     {
                         var item = currentItems[i];
                         if (item.IsCanTake)
                         {
-                            CurrentItem = item;
+                            CurrentItemController = item;
                             item.Enable(takeLootKey);
                             SetItem(item);
                             break;
@@ -85,27 +85,27 @@ namespace Gameplay.Units.Item.Loot
             }
         }
 
-        private void AddItem(IItem item)
+        private void AddItem(ItemController itemController)
         {
-            if(currentItems.Contains(item)) return;
-            currentItems.Add(item);
+            if(currentItems.Contains(itemController)) return;
+            currentItems.Add(itemController);
         }
 
-        private void RemoveItem(IItem item)
+        private void RemoveItem(ItemController itemController)
         {
-            if(!currentItems.Contains(item)) return;
-            item.Disable();
-            currentItems.Remove(item);
+            if(!currentItems.Contains(itemController)) return;
+            itemController.Disable();
+            currentItems.Remove(itemController);
             if(currentItems.Count == 0)
                 SetItem(null);
         }
 
         public void CheckTriggerEnter(GameObject other)
         {
-            if (other.TryGetComponent(out IItem item))
+            if (other.TryGetComponent(out ItemController item))
             {
                 AddItem(item);
-                if (!item.IsCanTake || CurrentItem != null) return;
+                if (!item.IsCanTake || CurrentItemController != null) return;
                 item.Enable(takeLootKey);
                 SetItem(item);
             }
@@ -113,7 +113,7 @@ namespace Gameplay.Units.Item.Loot
 
         public void CheckTriggerExit(GameObject other)
         {
-            if (other.TryGetComponent(out IItem item))
+            if (other.TryGetComponent(out ItemController item))
             {
                 RemoveItem(item);
             }

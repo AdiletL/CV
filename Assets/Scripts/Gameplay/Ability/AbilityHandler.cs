@@ -10,7 +10,7 @@ namespace Gameplay.Ability
         public event Action OnLateUpdate;
 
 
-        private Dictionary<AbilityType, List<IAbility>> currentAbilities = new();
+        private Dictionary<AbilityType, List<IAbility>> currentAbilities;
 
 
         public bool IsSkillActive(AbilityType abilityType)
@@ -20,25 +20,25 @@ namespace Gameplay.Ability
 
         public bool IsAbilityNotNull(AbilityType abilityType)
         {
-            return currentAbilities.ContainsKey(abilityType);
+            return currentAbilities != null && currentAbilities.ContainsKey(abilityType);
         }
 
         public IAbility GetAbility(AbilityType abilityType, int? id)
         {
-            if (!currentAbilities.ContainsKey(abilityType)) return null;
+            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType)) return null;
             
             for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
             {
-                if (currentAbilities[abilityType][i].SlotID == id)
+                if (currentAbilities[abilityType][i].InventorySlotID == id)
                     return currentAbilities[abilityType][i];
             }
 
             return null;
         }
         
-        public List<IAbility> GetSkills(AbilityType abilityType)
+        public List<IAbility> GetAbilities(AbilityType abilityType)
         {
-            return currentAbilities[abilityType];
+            return currentAbilities?[abilityType];
         }
 
         public void Initialize()
@@ -49,23 +49,11 @@ namespace Gameplay.Ability
         private void Update() => OnUpdate?.Invoke();
         private void LateUpdate() => OnLateUpdate?.Invoke();
         
-
-        public void Activate(AbilityType abilityType, int? id, Action exitCallback = null)
-        {
-            if (IsAbilityNotNull(abilityType))
-            {
-                for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
-                {
-                    if(currentAbilities[abilityType][i].SlotID != id) continue;
-                    currentAbilities[abilityType][i].Activate(exitCallback);
-                    break;
-                }
-            }
-        }
         
-
         public void AddAbility(IAbility iAbility)
         {
+            currentAbilities ??= new();
+            
             if (!IsAbilityNotNull(iAbility.AbilityType))
                 currentAbilities.Add(iAbility.AbilityType, new List<IAbility>());
             
@@ -81,7 +69,7 @@ namespace Gameplay.Ability
             {
                 for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
                 {
-                    if (currentAbilities[abilityType][i].SlotID != id) continue;
+                    if (currentAbilities[abilityType][i].InventorySlotID != id) continue;
                     
                     OnUpdate -= currentAbilities[abilityType][i].Update;
                     OnLateUpdate -= currentAbilities[abilityType][i].LateUpdate;
@@ -99,7 +87,7 @@ namespace Gameplay.Ability
             {
                 for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
                 {
-                    if (currentAbilities[abilityType][i].SlotID != id) continue;
+                    if (currentAbilities[abilityType][i].InventorySlotID != id) continue;
                     currentAbilities[abilityType][i].Exit();
                     break;
                 }

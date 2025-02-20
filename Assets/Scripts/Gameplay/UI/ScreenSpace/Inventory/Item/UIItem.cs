@@ -22,45 +22,42 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             button.onClick.AddListener(Select);
         }
+        public void SetSlotID(int? slotID) => SlotID = slotID;
         
         public void Clear()
         {
             SlotID = null;
-            SetIcon(null);
-            text.enabled = false;
-            ChangeReadiness(false);
+            UpdateIcon(null);
+            UpdateAmount(0);
+            UpdateReadiness(false);
             UpdateCooldownBar(0, 1);
         }
 
-        public void SetIcon(Sprite sprite)
+        public void UpdateIcon(Sprite sprite)
         {
             icon.enabled = sprite != null;
             icon.sprite = sprite;
         }
 
-        public void SetValue(int value)
+        public void UpdateAmount(int amount)
         {
-            if (value == 0)
-            {
-                text.text = value.ToString();
-            }
-            else
-            {
-                text.enabled = true;
-                text.text = value.ToString();
-            }
+            if (amount <= 0) text.enabled = false;
+            else text.enabled = true;
+            
+            text.text = amount.ToString();
         }
-
-        public void ChangeReadiness(bool value) => button.interactable = value;
-        public void SetSlotID(int? slotID) => SlotID = slotID;
+        public void UpdateReadiness(bool value) => button.interactable = value;
 
         public void UpdateCooldownBar(float current, float max)
         {
+            if (max <= 0)
+            {
+                cooldownBar.fillAmount = 0;
+                return;
+            }
             resultCooldown = current/max;
             cooldownBar.fillAmount = resultCooldown;
         }
-        
-
 
         private void Select()
         {

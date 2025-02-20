@@ -17,11 +17,12 @@ namespace Gameplay.Ability
         public void SetSpeed(float speed) => this.speed = speed;
         
 
-        public override void Activate(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
-            base.Activate(finishedCallBack, target, point);
+            base.Enter(finishedCallBack, target, point);
             if(!isActivated) return;
             dashTimer = duration;
+            StartEffect();
         }
         
 
@@ -41,7 +42,7 @@ namespace Gameplay.Ability
             else
             {
                 moveControl.ClearVelocity();
-                Finish();
+                FinishEffect();
             }
         }
     }
