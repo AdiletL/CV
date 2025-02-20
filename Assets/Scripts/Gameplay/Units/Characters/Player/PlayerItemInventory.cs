@@ -245,8 +245,7 @@ namespace Unit.Character.Player
         {
             if(slotID == null || slots[slotID] == null) return;
             ExitItem(currentSelectedItem);
-            currentSelectedItem = null;
-            
+
             currentSelectedItem = slots[slotID];
             currentSelectedItem.OnActivated += OnActivatedItem;
             currentSelectedItem.Enter();
@@ -276,6 +275,7 @@ namespace Unit.Character.Player
             if(slotID == null) return;
             BlockInput(slots[slotID].BlockInputType);
             slots[slotID].OnStarted -= OnStartedItem;
+            currentSelectedItem = null;
         }
         private void OnFinishedItem(int? slotID)
         {

@@ -224,7 +224,6 @@ namespace Unit.Character.Player
         {
             if(slotID == null || slots[slotID] == null) return;
             ExitAbility(currentSelectedAbility);
-            currentSelectedAbility = null;
             
             currentSelectedAbility = slots[slotID];
             currentSelectedAbility.OnActivated += OnActivatedAbility;
@@ -255,6 +254,7 @@ namespace Unit.Character.Player
             if(slotID == null) return;
             BlockInput(slots[slotID].BlockedInputType);
             slots[slotID].OnStarted -= OnStartedAbility;
+            currentSelectedAbility = null;
         }
         private void OnFinishedAbility(int? slotID)
         {

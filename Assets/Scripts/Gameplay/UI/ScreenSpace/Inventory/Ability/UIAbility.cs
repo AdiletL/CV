@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownBar;
+        [SerializeField] private TextMeshProUGUI cooldownText;
         [SerializeField] private Button button;
 
         private float resultCooldown;
@@ -26,7 +28,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             SetIcon(null);
             SetSlotID(null);
-            UpdateCooldownBar(0, 1);
+            UpdateCooldownBar(0, 0);
             UpdateSelectable(false);
         }
 
@@ -39,13 +41,16 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
         public void UpdateCooldownBar(float current, float max)
         {
-            if (max <= 0)
+            if (max <= 0 || current <= 0)
             {
                 cooldownBar.fillAmount = 0;
+                cooldownText.enabled = false;
                 return;
             }
             resultCooldown = current/max;
             cooldownBar.fillAmount = resultCooldown;
+            cooldownText.enabled = true;
+            cooldownText.text = current.ToString("0");
         }
 
 
