@@ -14,5 +14,8 @@ namespace Gameplay.Ability
         
         [ShowIf("@AbilityTypeID.Contains(AbilityType.BlockPhysicalDamage)"), Space]
         public BlockPhysicalDamageConfig BlockPhysicalDamageConfig;
+        
+        [ShowIf("@AbilityTypeID.Contains(AbilityType.Dash)"), Space]
+        public DashConfig DashConfig;
     }
 }

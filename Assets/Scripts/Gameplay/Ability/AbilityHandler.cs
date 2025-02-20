@@ -80,18 +80,5 @@ namespace Gameplay.Ability
                 }
             }
         }
-
-        public void ExitSkillByID(AbilityType abilityType, int id)
-        {
-            if (IsAbilityNotNull(abilityType))
-            {
-                for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
-                {
-                    if (currentAbilities[abilityType][i].InventorySlotID != id) continue;
-                    currentAbilities[abilityType][i].Exit();
-                    break;
-                }
-            }
-        }
     }
 }

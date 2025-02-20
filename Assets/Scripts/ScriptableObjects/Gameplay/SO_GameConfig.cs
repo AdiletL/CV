@@ -12,8 +12,7 @@ namespace ScriptableObjects.Gameplay
         [field: SerializeField] public float AmountReductionEndurance { get; private set; } = .01f;
         [field: SerializeField] public float BaseWaitTimeTrap { get; private set; }
         [field: SerializeField, Space(20)] public Material HighlightedMaterial { get; private set; }
-        [field: SerializeField, Space(20)] public Texture2D SelectedItemCursor { get; private set; }
-        [field: SerializeField] public Texture2D BaseCursor { get; private set; }
+        [field: SerializeField, Space] public Texture2D BaseCursor { get; private set; }
         [field: SerializeField, Header("Scale cell / 3")] public float RadiusCell { get; private set; } = .3f;
     }
 }

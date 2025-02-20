@@ -82,7 +82,6 @@ namespace Gameplay.Damage
             if(!ItemHandler || totalDamage <= 0) return;
 
             var abilities = ItemHandler.GetAbilities(AbilityType.ApplyDamageHeal);
-            Debug.Log(abilities.Count);
             if (abilities != null && abilities.Count > 0)
             {
                 ApplyDamageHeal ability = null;

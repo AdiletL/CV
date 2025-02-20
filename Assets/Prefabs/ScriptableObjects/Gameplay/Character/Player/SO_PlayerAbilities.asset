@@ -12,9 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3623e5d25c2441209de0314150e09129, type: 3}
   m_Name: SO_PlayerAbilities
   m_EditorClassIdentifier: 
-  <AbilityTypeID>k__BackingField: 3
-  DashConfig:
-    SO_BaseAbilityConfig: {fileID: 11400000, guid: de4a739b37fe8f945b6d10311cf49361, type: 2}
-    Cooldown: 3
-    Speed: 15
-    Duration: 0.15
+  <AbilityConfigData>k__BackingField:
+    AbilityTypeID: 02000000
+    ApplyDamageHealConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      ValueType: 0
+      Value: 0
+    BlockPhysicalDamageConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      NormalDamageResistanceConfig:
+        Value: 0
+        ValueType: 0
+      BlockClip: {fileID: 0}
+    DashConfig:
+      SO_BaseAbilityConfig: {fileID: 11400000, guid: de4a739b37fe8f945b6d10311cf49361, type: 2}
+      Cooldown: 2
+      Speed: 15
+      Duration: 0.15

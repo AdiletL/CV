@@ -33,7 +33,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerMove so_PlayerMove;
         [SerializeField] private SO_PlayerAttack so_PlayerAttack;
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
-        [FormerlySerializedAs("soPlayerAbilities")] [FormerlySerializedAs("soPlayerAbilitys")] [FormerlySerializedAs("so_PlayerSkills")] [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
+        [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
         [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
         [Space]

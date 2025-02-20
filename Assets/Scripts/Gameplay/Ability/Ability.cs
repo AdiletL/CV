@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit;
 using Unit.Character.Player;
 using UnityEngine;
@@ -22,7 +23,6 @@ namespace Gameplay.Ability
         public abstract AbilityType AbilityType { get; protected set; }
         public AbilityBehaviour AbilityBehaviour { get; protected set; }
         public InputType BlockedInputType { get; protected set; }
-        public AbilityType BlockedAbilityType { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
         public AnimationClip CastClip { get; protected set; }
         public float Cooldown { get; protected set; }
@@ -103,6 +103,8 @@ namespace Gameplay.Ability
             }
         }
         
+        protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
+        
         public virtual void FinishEffect()
         {
             isActivated = false;
@@ -120,24 +122,6 @@ namespace Gameplay.Ability
     {
         public SO_BaseAbilityConfig SO_BaseAbilityConfig;
         public float Cooldown;
-    }
-
-    public class AbilityData
-    {
-        public int? SlotID { get; private set; }
-        public AbilityType AbilityType { get; private set; }
-        public AbilityBehaviour AbilityBehaviour { get; private set; }
-        public InputType BlockedInputType { get; private set; }
-        public Sprite Icon { get; private set; }
-
-        public AbilityData(int? slotID, AbilityType abilityType, AbilityBehaviour abilityBehaviour, InputType blockedInputType, Sprite icon)
-        {
-            SlotID = slotID;
-            AbilityType = abilityType;
-            AbilityBehaviour = abilityBehaviour;
-            BlockedInputType = blockedInputType;
-            Icon = icon;
-        }
     }
 
     public abstract class AbilityBuilder<T> where T : IAbility

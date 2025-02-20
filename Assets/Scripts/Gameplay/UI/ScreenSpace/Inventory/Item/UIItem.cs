@@ -29,7 +29,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             SlotID = null;
             UpdateIcon(null);
             UpdateAmount(0);
-            UpdateReadiness(false);
+            UpdateSelectable(false);
             UpdateCooldownBar(0, 1);
         }
 
@@ -46,7 +46,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             text.text = amount.ToString();
         }
-        public void UpdateReadiness(bool value) => button.interactable = value;
+        public void UpdateSelectable(bool value) => button.interactable = value;
 
         public void UpdateCooldownBar(float current, float max)
         {

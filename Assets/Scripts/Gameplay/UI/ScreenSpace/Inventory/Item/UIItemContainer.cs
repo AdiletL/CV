@@ -27,7 +27,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             }
         }
 
-        public void AddItem(int? slotID, Sprite icon, int amount, bool isReady, float currentCooldown, float maxCooldown)
+        public void AddItem(int? slotID, Sprite icon, int amount, bool isSelectable, float currentCooldown, float maxCooldown)
         {
             if(slotID == null) return;
             
@@ -35,7 +35,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             uiItems[slotID].UpdateIcon(icon);
             uiItems[slotID].UpdateAmount(amount);
             uiItems[slotID].UpdateCooldownBar(currentCooldown, maxCooldown);
-            uiItems[slotID].UpdateReadiness(isReady);
+            uiItems[slotID].UpdateSelectable(isSelectable);
         }
 
       
@@ -51,10 +51,10 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             uiItems[slotID].UpdateAmount(amount);
         }
 
-        public void UpdateReadiness(int? slotID, bool isReady)
+        public void UpdateSelectable(int? slotID, bool isSelectable)
         {
             if(slotID == null) return;
-            uiItems[slotID].UpdateReadiness(isReady);
+            uiItems[slotID].UpdateSelectable(isSelectable);
         }
 
         public void RemoveItem(int? slotID)

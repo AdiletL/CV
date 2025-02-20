@@ -24,8 +24,6 @@ namespace Gameplay.Units.Item
         public int Amount { get; protected set; }
         public float Cooldown { get; protected set; }
         public bool IsCooldown { get; protected set; }
-        public bool IsBlockItems { get; protected set; }
-        public bool IsBlockAbilities { get; protected set; }
         public List<Ability.Ability> Abilities { get; protected set; }
 
         private float countCooldown;
@@ -38,9 +36,8 @@ namespace Gameplay.Units.Item
         public void SetItemBehaviour(ItemBehaviour itemBehaviour) => ItemBehaviourID = itemBehaviour;
         public void SetCastClip(AnimationClip clip) => this.CastClip = clip;
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
-        public void SetIsBlockItems(bool isBlockItems) => this.IsBlockItems = isBlockItems;
-        public void SetIsBlockAbilities(bool isBlockAbilities) => this.IsBlockAbilities = isBlockAbilities;
         public void SetAmountItem(int amount) => Amount = amount;
+        public void SetBlockInputType(InputType inputType) => BlockInputType = inputType;
         
 
         public virtual void Initialize()
@@ -106,6 +103,8 @@ namespace Gameplay.Units.Item
             }
         }
         
+        protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
+        
         public virtual void FinishEffect()
         {
             FinishedCallBack?.Invoke();
@@ -114,6 +113,7 @@ namespace Gameplay.Units.Item
         }
         public virtual void Exit()
         {
+            SetCursor(null);
             isActivated = false;
             OnExit?.Invoke(InventorySlotID);
         }
@@ -160,24 +160,18 @@ namespace Gameplay.Units.Item
             return this;
         }
         
+        public ItemBuilder<T> SetBlockInput(InputType inputType)
+        {
+            item.SetBlockInputType(inputType);
+            return this;
+        }
+        
         public ItemBuilder<T> SetCooldown(float cooldown)
         {
             item.SetCooldown(cooldown);
             return this;
         }
-        
-        public ItemBuilder<T> SetBlockItems(bool isBlockItems)
-        {
-            item.SetIsBlockItems(isBlockItems);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetBlockAbilities(bool isBlockAbilities)
-        {
-            item.SetIsBlockAbilities(isBlockAbilities);
-            return this;
-        }
-        
+
         public Item Build()
         {
             return item;

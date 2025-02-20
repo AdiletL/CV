@@ -12,27 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8f12196e58f421e9f9b163194a4ed0d, type: 3}
   m_Name: SO_MadnessMask
   m_EditorClassIdentifier: 
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 6509adb73ba1de04d898264b898cdf2e, type: 3}
   <Prefab>k__BackingField:
-    m_AssetGUID: 
+    m_AssetGUID: 14da8fddce27ecd43bc0cdfa394d8e8b
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  <ItemCategoryID>k__BackingField: 0
-  <ItemBehaviourID>k__BackingField: 0
+  <ItemCategoryID>k__BackingField: 1
+  <ItemBehaviourID>k__BackingField: 32
+  <BlockInputTypeID>k__BackingField: 0
   <Cooldown>k__BackingField: 0
-  <IsBlockItems>k__BackingField: 0
-  <IsBlockAbilities>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
   <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 
+    AbilityTypeID: 03000000
     ApplyDamageHealConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
+      SO_BaseAbilityConfig: {fileID: 11400000, guid: c569a21ec3b80b544a6483ca4ad39dd7, type: 2}
       Cooldown: 0
-      ValueType: 0
-      Value: 0
+      ValueType: 1
+      Value: 200
     BlockPhysicalDamageConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
@@ -40,4 +39,8 @@ MonoBehaviour:
         Value: 0
         ValueType: 0
       BlockClip: {fileID: 0}
-  <ItemNameID>k__BackingField: 1
+    DashConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      Speed: 0
+      Duration: 0

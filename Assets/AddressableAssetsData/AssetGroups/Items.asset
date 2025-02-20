@@ -20,26 +20,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2b36b76108c58c547afc9054ec2053f5
-    m_Address: Test3 Variant
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 583d167a6f0539949a2fb248315b7d64
-    m_Address: Test2 Variant
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a76b44db1efe60f4f8940b970aba2e75
-    m_Address: AppleItem
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d6ca23b86a203be498c4c79217c4c0da
-    m_Address: Test1 Variant
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f9b6aaf698e42464e855462214230e39
     m_Address: SpawPortalItem
     m_ReadOnly: 0

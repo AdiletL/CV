@@ -43,8 +43,7 @@ namespace Gameplay.Factory
                 .SetApplyDamageHeal(applyDamageHeal)
                 .SetItemBehaviour(so_MadnessMask.ItemBehaviourID)
                 .SetItemCategory(so_MadnessMask.ItemCategoryID)
-                .SetBlockItems(so_MadnessMask.IsBlockItems)
-                .SetBlockAbilities(so_MadnessMask.IsBlockAbilities)
+                .SetBlockInput(so_MadnessMask.BlockInputTypeID)
                 .SetCooldown(so_MadnessMask.Cooldown)
                 .SetGameObject(gameObject)
                 .Build();
@@ -54,13 +53,13 @@ namespace Gameplay.Factory
         {
             var so_TeleportationScroll = so_Item as SO_TeleportationScroll;
             return (TeleportationScroll)new TeleportationScrollBuilder()
+                .SetSelectTargetCursor(so_TeleportationScroll.SelectTargetCursor)
                 .SetPortalObject(so_TeleportationScroll.PortalObject)
                 .SetEndPortalID(so_TeleportationScroll.EndPortalID.ID)
                 .SetBaseCamera(baseCamera)
                 .SetGameObject(gameObject)
                 .SetCooldown(so_TeleportationScroll.Cooldown)
-                .SetBlockAbilities(so_TeleportationScroll.IsBlockAbilities)
-                .SetBlockItems(so_TeleportationScroll.IsBlockItems)
+                .SetBlockInput(so_TeleportationScroll.BlockInputTypeID)
                 .SetItemBehaviour(so_TeleportationScroll.ItemBehaviourID)
                 .SetItemCategory(so_TeleportationScroll.ItemCategoryID)
                 .Build();

@@ -23,8 +23,6 @@ public interface IItem
     public int Amount { get; }
     public float Cooldown { get; }
     public bool IsCooldown { get; }
-    public bool IsBlockItems { get; }
-    public bool IsBlockAbilities { get; }
     public List<Ability> Abilities { get; }
     
     public void Initialize();

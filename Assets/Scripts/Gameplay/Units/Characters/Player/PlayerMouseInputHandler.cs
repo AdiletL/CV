@@ -209,7 +209,6 @@ namespace Unit.Character.Player
             selectedObject?.HideInformation();
             selectedRenderer?.UnSelectedObject();
             selectedObject = null;
-            playerItemInventory.ClearSelectedItem();
         }
         
         private void HandleHighlight()

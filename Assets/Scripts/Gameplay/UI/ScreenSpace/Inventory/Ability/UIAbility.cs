@@ -27,7 +27,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             SetIcon(null);
             SetSlotID(null);
             UpdateCooldownBar(0, 1);
-            ChangeReadiness(false);
+            UpdateSelectable(false);
         }
 
         public void SetSlotID(int? slotID) => SlotID = slotID;
@@ -39,12 +39,17 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
         public void UpdateCooldownBar(float current, float max)
         {
+            if (max <= 0)
+            {
+                cooldownBar.fillAmount = 0;
+                return;
+            }
             resultCooldown = current/max;
             cooldownBar.fillAmount = resultCooldown;
         }
 
 
-        public void ChangeReadiness(bool isReady)
+        public void UpdateSelectable(bool isReady)
         {
             button.interactable = isReady;
         }

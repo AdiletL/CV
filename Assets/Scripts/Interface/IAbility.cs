@@ -15,7 +15,6 @@ public interface IAbility
     public AnimationClip CastClip { get; }
     public AbilityType AbilityType { get; }
     public AbilityBehaviour AbilityBehaviour { get; }
-    public AbilityType BlockedAbilityType { get; }
     public InputType BlockedInputType { get; }
     public Action FinishedCallBack { get; }
     public float Cooldown { get; }

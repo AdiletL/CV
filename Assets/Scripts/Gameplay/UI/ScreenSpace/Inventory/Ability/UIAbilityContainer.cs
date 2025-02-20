@@ -26,17 +26,14 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             }
         }
 
-        public void AddAbility(AbilityData data)
+        public void AddAbility(int? slotID, Sprite icon, bool isSelectable, float currentCooldown, float maxCooldown)
         {
-            if(data.SlotID == null) return;
+            if(slotID == null) return;
             
-            uiAbilities[data.SlotID].SetSlotID(data.SlotID);
-            uiAbilities[data.SlotID].SetIcon(data.Icon);
-            uiAbilities[data.SlotID].UpdateCooldownBar(0, 1);
-            if ((data.AbilityBehaviour & AbilityBehaviour.Passive) == 0)
-                uiAbilities[data.SlotID].ChangeReadiness(true);
-            else
-                uiAbilities[data.SlotID].ChangeReadiness(false);
+            uiAbilities[slotID].SetSlotID(slotID);
+            uiAbilities[slotID].SetIcon(icon);
+            uiAbilities[slotID].UpdateCooldownBar(currentCooldown, maxCooldown);
+            uiAbilities[slotID].UpdateSelectable(isSelectable);
         }
 
         public void UpdateCooldown(int? slotID, float current, float max)
@@ -45,10 +42,10 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             uiAbilities[slotID].UpdateCooldownBar(current, max);
         }
 
-        public void ChangeReadiness(int? slotID, bool isReady)
+        public void ChangeSelectable(int? slotID, bool isSelectable)
         {
             if(slotID == null) return;
-            uiAbilities[slotID].ChangeReadiness(isReady);
+            uiAbilities[slotID].UpdateSelectable(isSelectable);
         }
 
         public void RemoveAbility(int? slotID)

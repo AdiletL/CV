@@ -1,5 +1,6 @@
 ﻿
 using System;
+using ScriptableObjects.Gameplay;
 using Unit.Cell;
 using Unit.Portal;
 using UnityEngine;
@@ -17,14 +18,21 @@ namespace Gameplay.Units.Item
         private AssetReferenceT<GameObject> portalObject;
         private Camera baseCamera;
         private Vector3 spawnPosition;
+        private Texture2D selectTargetCursor;
         private string endPortalID;
         
         
         public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
         public void SetEndPortalID(string id) => this.endPortalID = id;
-        
-        
+        public void SetTargetCursor(Texture2D texture) => this.selectTargetCursor = texture;
+
+        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        {
+            base.Enter(finishedCallBack, target, point);
+            if(isActivated) SetCursor(selectTargetCursor);
+        }
+
         public override void Update()
         {
             base.Update();
@@ -91,6 +99,13 @@ namespace Gameplay.Units.Item
         {
             if(item is TeleportationScroll teleportationScroll)
                 teleportationScroll.SetEndPortalID(id);
+            return this;
+        }
+        
+        public TeleportationScrollBuilder SetSelectTargetCursor(Texture2D texture)
+        {
+            if(item is TeleportationScroll teleportationScroll)
+                teleportationScroll.SetTargetCursor(texture);
             return this;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Gameplay.Ability;
 using Sirenix.OdinInspector;
+using Unit.Character.Player;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -17,9 +18,8 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField] public AssetReferenceT<GameObject> Prefab { get; private set; }
         [field: SerializeField] public ItemCategory ItemCategoryID { get; private set; }
         [field: SerializeField] public ItemBehaviour ItemBehaviourID { get; private set; }
+        [field: SerializeField] public InputType BlockInputTypeID { get; private set; }
         [field: SerializeField] public float Cooldown { get; private set; }
-        [field: SerializeField] public bool IsBlockItems { get; private set; }
-        [field: SerializeField] public bool IsBlockAbilities { get; private set; }
         
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;

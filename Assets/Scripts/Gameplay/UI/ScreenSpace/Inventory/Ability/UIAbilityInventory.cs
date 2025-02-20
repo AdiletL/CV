@@ -11,9 +11,9 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             abilityContainer.CreateCells(value);
         }
-        public void AddAbility(AbilityData data) => abilityContainer.AddAbility(data);
+        public void AddAbility(int? slotID, Sprite icon, bool isSelectable, float currentCooldown, float maxCooldown) => abilityContainer.AddAbility(slotID, icon, isSelectable, currentCooldown, maxCooldown);
         public void UpdateCooldown(int? slotID, float current, float max) => abilityContainer.UpdateCooldown(slotID, current, max);
-        public void ChangeReadiness(int? slotID, bool isReady) => abilityContainer.ChangeReadiness(slotID, isReady);
+        public void UpdateSelectable(int? slotID, bool isReady) => abilityContainer.ChangeSelectable(slotID, isReady);
         public void RemoveAbility(int? slotID) => abilityContainer.RemoveAbility(slotID);
     }
 }

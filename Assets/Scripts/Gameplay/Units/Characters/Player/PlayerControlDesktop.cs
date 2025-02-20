@@ -20,6 +20,8 @@ namespace Unit.Character.Player
         SelectObject = 1 << 2,
         Attack = 1 << 3,
         SpecialAction = 1 << 4,
+        Item = 1 << 5,
+        Ability = 1 << 6,
     }
     
     public class PlayerControlDesktop : CharacterControlDesktop
@@ -37,8 +39,8 @@ namespace Unit.Character.Player
         private PlayerStateFactory playerStateFactory;
         private PlayerKinematicControl playerKinematicControl;
         private PlayerAbilityInventory playerAbilityInventory;
+        private PlayerItemInventory playerItemInventory;
         private PlayerMouseInputHandler playerMouseInputHandler;
-        private DashConfig dashConfig;
 
         private KeyCode jumpKey;
 
@@ -61,7 +63,6 @@ namespace Unit.Character.Player
             this.characterSwitchAttack = characterSwitchAttackState;
         public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
         public void SetPlayerController(PlayerController playerController) => this.playerController = playerController;
-        public void SetDashConfig(DashConfig dashConfig) => this.dashConfig = dashConfig;
         
         
         public override bool IsInputBlocked(InputType input)
@@ -110,6 +111,7 @@ namespace Unit.Character.Player
             base.Initialize();
 
             playerAbilityInventory = gameObject.GetComponent<PlayerAbilityInventory>();
+            playerItemInventory = gameObject.GetComponent<PlayerItemInventory>();
             InitializeHotkeys();
             InitializeInteractionHandler();
             InitializeMouseInputHandler();
@@ -138,7 +140,7 @@ namespace Unit.Character.Player
         private void InitializeMouseInputHandler()
         {
             playerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
-                playerAbilityInventory, characterSwitchAttack, gameObject.GetComponent<PlayerItemInventory>(), 
+                playerAbilityInventory, characterSwitchAttack, playerItemInventory, 
                 playerStateFactory);
             diContainer.Inject(playerMouseInputHandler);
             playerMouseInputHandler.Initialize();
@@ -196,7 +198,6 @@ namespace Unit.Character.Player
         public override void ClearHotkeys()
         {
             base.ClearHotkeys();
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             playerMouseInputHandler.ClearSelectedObject();
         }
 
@@ -218,15 +219,17 @@ namespace Unit.Character.Player
                 Input.GetKey(KeyCode.D) || 
                 Input.GetKey(KeyCode.W) || 
                 Input.GetKey(KeyCode.S)) && 
-                !playerAbilityInventory.IsInputBlocked(InputType.Movement))
+                !playerAbilityInventory.IsInputBlocked(InputType.Movement) &&
+                !playerItemInventory.IsInputBlocked(InputType.Movement))
             {
                 isMoving = true;
-               BlockInput(InputType.Attack);
-               characterSwitchMove.ExitOtherStates();
+                BlockInput(InputType.Attack);
+                characterSwitchMove.ExitOtherStates();
             }
             else if (!isJumping && Input.GetKeyDown(jumpKey) &&
                      !playerMouseInputHandler.IsInputBlocked(InputType.Jump) &&
-                     !playerAbilityInventory.IsInputBlocked(InputType.Jump))
+                     !playerAbilityInventory.IsInputBlocked(InputType.Jump) &&
+                     !playerItemInventory.IsInputBlocked(InputType.Movement))
             {
                 TriggerJump();
             }
