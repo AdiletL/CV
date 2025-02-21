@@ -1,4 +1,5 @@
 using Movement;
+using Unit.Character.Player;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
@@ -13,6 +14,7 @@ namespace ScriptableObjects.Unit.Character.Player
         [field: SerializeField] public float BaseRunReductionEndurance { get; private set; }
         
         [field: SerializeField, Space(10), Header("Jump")] public JumpInfo JumpInfo { get; private set; }
-
+        
+        [field: SerializeField, Space] public InputType BlockInputType { get; private set; }
     }
 }

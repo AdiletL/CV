@@ -3,7 +3,6 @@
 public enum AbilityType
 {
     Nothing,
-    Everything,
     Dash,
     ApplyDamageHeal,
     BlockPhysicalDamage,

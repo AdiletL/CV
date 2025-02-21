@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SO_BaseAbility_BlockPhysicalDamage
   m_EditorClassIdentifier: 
   <Icon>k__BackingField: {fileID: 21300014, guid: 358b5d9f23bc9413e87c9948acc67ee1, type: 3}
-  <AbilityType>k__BackingField: 4
+  <AbilityType>k__BackingField: 3
   <AbilityBehaviour>k__BackingField: 1
   <BlockedInputType>k__BackingField: 8

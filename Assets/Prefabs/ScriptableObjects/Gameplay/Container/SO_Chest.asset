@@ -18,4 +18,4 @@ MonoBehaviour:
   - SO_Item: {fileID: 11400000, guid: f3f4fc1f5ca711a44a2eaeee469f1523, type: 2}
     amount: 1
   - SO_Item: {fileID: 11400000, guid: 7d08d173ec03f454fa5653d81d90de71, type: 2}
-    amount: 1
+    amount: 10

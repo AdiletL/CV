@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit.Character.Player;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Movement
@@ -6,6 +7,7 @@ namespace Movement
     [System.Serializable]
     public class JumpInfo
     {
+        public InputType BlockInputType;
         public AnimationClip Clip;
         public float Power = 1.5f;
         public int MaxCount = 1;

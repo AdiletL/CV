@@ -18,6 +18,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   <Range>k__BackingField: 2
+  <ApplyDamageMoment>k__BackingField: 0.55
   <BaseReductionEndurance>k__BackingField: 0.2
   <DefaultAttackClips>k__BackingField:
   - {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}
@@ -31,3 +32,4 @@ MonoBehaviour:
   - {fileID: 1827226128182048838, guid: 03bef14f938475e429e87b9e986bc32c, type: 3}
   <BowCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 7125eebf1200f4b4ba2f105c37668d1d, type: 3}
   <RotationSpeed>k__BackingField: 1500
+  <BlockInputType>k__BackingField: 115

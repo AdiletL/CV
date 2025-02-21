@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unit.Character.Player;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
@@ -21,5 +22,7 @@ namespace ScriptableObjects.Unit.Character.Player
         [field: SerializeField] public AnimationClip BowCooldownClip { get; private set; }
 
         [field: SerializeField, Space(10)] public float RotationSpeed { get; private set; } = 1000;
+        
+        [field: SerializeField, Space] public InputType BlockInputType { get; private set; }
     }
 }

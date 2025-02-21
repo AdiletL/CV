@@ -51,7 +51,6 @@ namespace Unit.Character.Player
         private PlayerAbilityInventory playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
         
-        private CharacterControlDesktop playerControlDesktop;
         private CharacterSwitchMoveState characterSwitchMoveState;
         private CharacterSwitchAttackState characterSwitchAttackState;
         private CharacterEndurance characterEndurance;
@@ -59,6 +58,7 @@ namespace Unit.Character.Player
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
         
+        public PlayerControlDesktop PlayerControlDesktop { get; private set; }
         public Camera BaseCamera { get; private set; }
         
         protected override UnitInformation CreateUnitInformation()
@@ -74,6 +74,9 @@ namespace Unit.Character.Player
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
+                .SetPlayerAttackConfig(so_PlayerAttack)
+                .SetPlayerMoveConfig(so_PlayerMove)
+                .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetCharacterSwitchAttack(characterSwitchAttackState)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
@@ -144,14 +147,6 @@ namespace Unit.Character.Player
                 BaseCamera = cameraController.GetComponent<Camera>();
                 cameraController.CurrentCinemachineCamera.Follow = transform;
             }
-
-            playerItemInventory = GetComponentInUnit<PlayerItemInventory>();
-            diContainer.Inject(playerItemInventory);
-            playerItemInventory.Initialize();
-            
-            playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
-            diContainer.Inject(playerAbilityInventory);
-            playerAbilityInventory.Initialize();
             
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             diContainer.Inject(playerKinematicControl);
@@ -199,9 +194,18 @@ namespace Unit.Character.Player
         {
             base.AfterCreateStates();
             
-            playerControlDesktop = CreatePlayerControlDesktop();
-            diContainer.Inject(playerControlDesktop);
-            playerControlDesktop.Initialize();
+            PlayerControlDesktop = CreatePlayerControlDesktop();
+            diContainer.Inject(PlayerControlDesktop);
+            PlayerControlDesktop.Initialize();
+            
+            playerItemInventory = GetComponentInUnit<PlayerItemInventory>();
+            diContainer.Inject(playerItemInventory);
+            playerItemInventory.Initialize();
+            
+            playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
+            diContainer.Inject(playerAbilityInventory);
+            playerAbilityInventory.Initialize();
+
         }
 
         protected override void AfterInitializeMediator()
@@ -337,8 +341,8 @@ namespace Unit.Character.Player
                 }
             }*/
 
-            playerControlDesktop?.HandleHotkey();
-            playerControlDesktop?.HandleInput();
+            PlayerControlDesktop?.HandleHotkey();
+            PlayerControlDesktop?.HandleInput();
             StateMachine?.Update();
         }
 

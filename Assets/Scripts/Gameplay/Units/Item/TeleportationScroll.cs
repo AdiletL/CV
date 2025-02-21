@@ -20,7 +20,10 @@ namespace Gameplay.Units.Item
         private Vector3 spawnPosition;
         private Texture2D selectTargetCursor;
         private string endPortalID;
-        
+
+        private float timerCast = 3;
+        private float countTimerCast;
+        private bool isCasting;
         
         public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
@@ -36,7 +39,7 @@ namespace Gameplay.Units.Item
         public override void Update()
         {
             base.Update();
-            if (isActivated && Input.GetMouseButtonDown(0))
+            if (isActivated && Input.GetMouseButtonDown(0) && !isCasting)
             {
                 Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -47,9 +50,18 @@ namespace Gameplay.Units.Item
                     {
                         StartEffect();
                         spawnPosition = hit.point;
-                        CreateTeleport();
-                        FinishEffect();
+                        isCasting = true;
                     }
+                }
+            }
+
+            if (isCasting)
+            {
+                countTimerCast += Time.deltaTime;
+                if (countTimerCast >= timerCast)
+                {
+                    CreateTeleport();
+                    FinishEffect();
                 }
             }
         }
@@ -71,6 +83,13 @@ namespace Gameplay.Units.Item
             }
             portal.Initialize();
             portal.Appear();
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            countTimerCast = 0;
+            isCasting = false;
         }
     }
     

@@ -26,7 +26,7 @@ MonoBehaviour:
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
   <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 03000000
+    AbilityTypeID: 02000000
     ApplyDamageHealConfig:
       SO_BaseAbilityConfig: {fileID: 11400000, guid: c569a21ec3b80b544a6483ca4ad39dd7, type: 2}
       Cooldown: 0

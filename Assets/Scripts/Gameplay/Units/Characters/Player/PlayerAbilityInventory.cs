@@ -12,6 +12,7 @@ using Zenject;
 
 namespace Unit.Character.Player
 {
+    [RequireComponent(typeof(AbilityHandler))]
     public class PlayerAbilityInventory : MonoBehaviour, IInventory
     {
         [Inject] private DiContainer diContainer;
@@ -26,11 +27,14 @@ namespace Unit.Character.Player
         private AbilityHandler abilityHandler;
         private UIAbilityInventory uiAbilityInventory;
         private PlayerItemInventory playerItemInventory;
+        private PlayerControlDesktop playerControlDesktop;
+        private PlayerMouseInputHandler playerMouseInputHandler;
 
         private InputType baseBlockInputType;
         private KeyCode[] abilityInventoryKeys;
 
         private Ability currentSelectedAbility;
+        private Ability currentUseAbility;
         private Texture2D selectedAbilityCursor;
         
         private int maxSlot;
@@ -57,7 +61,8 @@ namespace Unit.Character.Player
             if (blockedInputs == null) return false;
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
                     return true;
@@ -70,7 +75,8 @@ namespace Unit.Character.Player
             blockedInputs ??= new();
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 blockedInputs.TryAdd(flag, 0);
                 blockedInputs[flag]++;
@@ -82,7 +88,8 @@ namespace Unit.Character.Player
             if(blockedInputs == null) return;
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag))
                 {
@@ -100,6 +107,8 @@ namespace Unit.Character.Player
             maxSlot = so_PlayerAbilityInventory.MaxSlot;
             abilityHandler = GetComponent<AbilityHandler>();
             playerItemInventory = GetComponent<PlayerItemInventory>();
+            playerControlDesktop = playerController.PlayerControlDesktop;
+            playerMouseInputHandler = playerController.PlayerControlDesktop.PlayerMouseInputHandler;
             
             InitializeUIInventory();
             InitializeAbilityFactory();
@@ -110,11 +119,15 @@ namespace Unit.Character.Player
         private void OnEnable()
         {
             UIAbility.OnSlotSelected += OnSlotSelected;
+            PlayerControlDesktop.OnBlockInput += OnBlockInput;
+            PlayerMouseInputHandler.OnBlockInput += OnBlockInput;
         }
 
         private void OnDisable()
         {
             UIAbility.OnSlotSelected -= OnSlotSelected;
+            PlayerControlDesktop.OnBlockInput -= OnBlockInput;
+            PlayerMouseInputHandler.OnBlockInput -= OnBlockInput;
         }
 
         private  void InitializeUIInventory()
@@ -178,7 +191,13 @@ namespace Unit.Character.Player
             ExitAbility(currentSelectedAbility);
             currentSelectedAbility = null;
         }
-
+        
+        private void ClearUseAbility()
+        {
+            ExitAbility(currentUseAbility);
+            currentUseAbility = null;
+        }
+        
         private void OnCountCooldownAbility(int? slotID, float current, float max)
         {
             if(slotID == null) return;
@@ -188,11 +207,18 @@ namespace Unit.Character.Player
 
         private void OnSlotSelected(int? slotID)
         {
-            if (!IsInputBlocked(InputType.Ability) &&
+            if (!playerControlDesktop.IsInputBlocked(InputType.Ability) &&
+                !playerMouseInputHandler.IsInputBlocked(InputType.Ability) &&
+                !IsInputBlocked(InputType.Ability) &&
                 !playerItemInventory.IsInputBlocked(InputType.Ability))
             {
                 EnterAbility(slotID);
             }
+        }
+        
+        private void OnBlockInput(InputType input)
+        {
+            ClearUseAbility();
         }
 
         private void Update()
@@ -254,6 +280,7 @@ namespace Unit.Character.Player
             if(slotID == null) return;
             BlockInput(slots[slotID].BlockedInputType);
             slots[slotID].OnStarted -= OnStartedAbility;
+            currentUseAbility = slots[slotID];
             currentSelectedAbility = null;
         }
         private void OnFinishedAbility(int? slotID)
@@ -265,6 +292,8 @@ namespace Unit.Character.Player
         private void OnExitAbility(int? slotID)
         {
             if(slotID == null) return;
+            currentUseAbility = null;
+            
             UnblockInput(baseBlockInputType);
             slots[slotID].OnActivated -= OnActivatedAbility;
             slots[slotID].OnExit -= OnExitAbility;

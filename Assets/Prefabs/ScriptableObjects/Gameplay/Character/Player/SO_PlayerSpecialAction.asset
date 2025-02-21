@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_PlayerSpecialAction
   m_EditorClassIdentifier: 
   <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 04000000
+    AbilityTypeID: 03000000
     ApplyDamageHealConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
@@ -31,3 +31,4 @@ MonoBehaviour:
       Cooldown: 0
       Speed: 0
       Duration: 0
+  <BlockInputType>k__BackingField: 104

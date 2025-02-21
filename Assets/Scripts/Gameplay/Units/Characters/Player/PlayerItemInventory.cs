@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Factory;
-using Gameplay.Ability;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Units.Item;
-using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
-using Unit.Item;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Unit.Character.Player
@@ -29,8 +25,11 @@ namespace Unit.Character.Player
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
         private PlayerAbilityInventory playerAbilityInventory;
+        private PlayerControlDesktop playerControlDesktop;
+        private PlayerMouseInputHandler playerMouseInputHandler;
 
         private Gameplay.Units.Item.Item currentSelectedItem;
+        private Gameplay.Units.Item.Item currentUseItem;
         private InputType baseBlockInput;
         
         private int maxSlot;
@@ -72,7 +71,8 @@ namespace Unit.Character.Player
             if(blockedInputs == null) return false;
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
                     return true;
@@ -85,7 +85,8 @@ namespace Unit.Character.Player
             blockedInputs ??= new();
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 blockedInputs.TryAdd(flag, 0);
                 blockedInputs[flag]++;
@@ -97,7 +98,8 @@ namespace Unit.Character.Player
             if(blockedInputs == null) return;
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag))
                 {
@@ -128,10 +130,14 @@ namespace Unit.Character.Player
         public void OnEnable()
         {
             UIItem.OnSlotSelected += OnSlotSelected;
+            PlayerControlDesktop.OnBlockInput += OnBlockInput;
+            PlayerMouseInputHandler.OnBlockInput += OnBlockInput;
         }
         public void OnDisable()
         {
             UIItem.OnSlotSelected -= OnSlotSelected;
+            PlayerControlDesktop.OnBlockInput -= OnBlockInput;
+            PlayerMouseInputHandler.OnBlockInput -= OnBlockInput;
         }
 
         public void Initialize()
@@ -140,6 +146,8 @@ namespace Unit.Character.Player
             maxSlot = so_PlayerItemInventory.MaxCountItem;
             itemHandler = GetComponent<ItemHandler>();
             playerAbilityInventory = GetComponent<PlayerAbilityInventory>();
+            playerControlDesktop = playerController.PlayerControlDesktop;
+            playerMouseInputHandler = playerController.PlayerControlDesktop.PlayerMouseInputHandler;
             
             InitializeUIInventory();
             InitializeItemFactory();
@@ -218,21 +226,41 @@ namespace Unit.Character.Player
             }
         }
         
-        private void ClearSelectedItem()
-        {
-            ExitItem(currentSelectedItem);
-            currentSelectedItem = null;
-        }
-        
         private void OnSlotSelected(int? slotID)
         {
-            if (!IsInputBlocked(InputType.Item) &&
+            if (!playerControlDesktop.IsInputBlocked(InputType.Item) &&
+                !playerMouseInputHandler.IsInputBlocked(InputType.Item) &&
+                !IsInputBlocked(InputType.Item) &&
                 !playerAbilityInventory.IsInputBlocked(InputType.Item))
             {
                 EnterItem(slotID);
             }
         }
 
+        private void OnCountCooldownItem(int? slotID, float current, float max)
+        {
+            if(slotID == null) return;
+            uiItemInventory.UpdateItemCooldown(slotID, current, max);
+            uiItemInventory.UpdateSelectable(slotID, current <= 0);
+        }
+        
+        private void ClearSelectedItem()
+        {
+            ExitItem(currentSelectedItem);
+            currentSelectedItem = null;
+        }
+
+        private void ClearUseItem()
+        {
+            ExitItem(currentUseItem);
+            currentUseItem = null;
+        }
+
+        private void OnBlockInput(InputType input)
+        {
+            ClearUseItem();
+        }
+        
         private void Update()
         {
             if (Input.GetMouseButtonDown(1))
@@ -275,6 +303,7 @@ namespace Unit.Character.Player
             if(slotID == null) return;
             BlockInput(slots[slotID].BlockInputType);
             slots[slotID].OnStarted -= OnStartedItem;
+            currentUseItem = slots[slotID];
             currentSelectedItem = null;
         }
         private void OnFinishedItem(int? slotID)
@@ -288,17 +317,12 @@ namespace Unit.Character.Player
         {
             if(slotID == null) return;
             UnblockInput(baseBlockInput);
+            currentUseItem = null;
             
             if(slots[slotID] == null) return;
             slots[slotID].OnActivated -= OnActivatedItem;
             slots[slotID].OnExit -= OnExitItem;
         }
 
-        private void OnCountCooldownItem(int? slotID, float current, float max)
-        {
-            if(slotID == null) return;
-            uiItemInventory.UpdateItemCooldown(slotID, current, max);
-            uiItemInventory.UpdateSelectable(slotID, current <= 0);
-        }
     }
 }

@@ -13,6 +13,8 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
+
+        public static event Action<InputType> OnBlockInput;
         
         private PlayerAbilityInventory playerAbilityInventory;
         private PlayerItemInventory playerItemInventory;
@@ -25,6 +27,9 @@ namespace Unit.Character.Player
         private UnitRenderer selectedRenderer;
         private UnitRenderer highlightedRenderer;
         private RaycastHit[] hits = new RaycastHit[5];
+
+        private InputType attackBlockInputType;
+        private InputType specialBlockInputType;
         
         private int selectObjectMousButton, attackMouseButton, specialActionMouseButton;
         private int hitRayOnObjectCount, hitsCount;
@@ -43,7 +48,7 @@ namespace Unit.Character.Player
 
         public PlayerMouseInputHandler(StateMachine stateMachine, CharacterControlDesktop characterControlDesktop,
             PlayerAbilityInventory playerAbilityInventory, CharacterSwitchAttackState characterSwitchAttackState,
-            PlayerItemInventory playerItemInventory, PlayerStateFactory playerStateFactory)
+            PlayerItemInventory playerItemInventory, PlayerStateFactory playerStateFactory, InputType attackBlockInputType, InputType specialBlockInputType)
         {
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
@@ -51,6 +56,8 @@ namespace Unit.Character.Player
             this.playerAbilityInventory = playerAbilityInventory;
             this.characterSwitchAttack = characterSwitchAttackState;
             this.playerStateFactory = playerStateFactory;
+            this.attackBlockInputType = attackBlockInputType;
+            this.specialBlockInputType = specialBlockInputType;
             
             stateMachine.OnExitCategory += OnExitCategory;
         }
@@ -81,7 +88,8 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
                     return true;
@@ -93,20 +101,21 @@ namespace Unit.Character.Player
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
-                if (!blockedInputs.ContainsKey(flag))
-                    blockedInputs[flag] = 0;
-
+                blockedInputs.TryAdd(flag, 0);
                 blockedInputs[flag]++;
             }
+            OnBlockInput?.Invoke(input);
         }
         
         public void UnblockInput(InputType input)
         {
             foreach (InputType flag in Enum.GetValues(typeof(InputType)))
             {
-                if (flag == InputType.Nothing || (input & flag) == 0) continue;
+                if (flag == InputType.Nothing || (input & flag) == 0 || 
+                    flag == InputType.Everything) continue;
 
                 if (blockedInputs.ContainsKey(flag))
                 {
@@ -170,9 +179,10 @@ namespace Unit.Character.Player
         
         private void OnExitCategory(Machine.IState state)
         {
-            if (stateMachine.IsStateNotNull(typeof(PlayerWeaponAttackState)) || 
-                stateMachine.IsStateNotNull(typeof(PlayerDefaultAttackState)))
+            if (state.GetType().IsAssignableFrom(typeof(PlayerWeaponAttackState)) || 
+                state.GetType().IsAssignableFrom(typeof(PlayerDefaultAttackState)))
             {
+                UnblockInput(attackBlockInputType);
                 isAttacking = false;
             }
         }
@@ -183,6 +193,7 @@ namespace Unit.Character.Player
             
             if (!isAttacking &&
                 Input.GetMouseButtonUp(attackMouseButton) && 
+                !IsInputBlocked(InputType.Attack) &&
                 !characterControlDesktop.IsInputBlocked(InputType.Attack) &&
                 !playerAbilityInventory.IsInputBlocked(InputType.Attack) && 
                 !playerItemInventory.IsInputBlocked(InputType.Attack) && 
@@ -192,6 +203,7 @@ namespace Unit.Character.Player
             }
             else if (!isAttacking &&
                      Input.GetMouseButtonDown(specialActionMouseButton) && 
+                     !IsInputBlocked(InputType.Attack) &&
                      !characterControlDesktop.IsInputBlocked(InputType.SpecialAction) &&
                      !playerAbilityInventory.IsInputBlocked(InputType.SpecialAction) && 
                      !playerItemInventory.IsInputBlocked(InputType.SpecialAction))
@@ -247,6 +259,7 @@ namespace Unit.Character.Player
         private void TriggerAttack()
         {
             isAttacking = true;
+            BlockInput(attackBlockInputType);
             characterSwitchAttack.ExitOtherStates();
             //characterSwitchAttack.SetState();
             characterControlDesktop.ClearHotkeys();
@@ -277,7 +290,7 @@ namespace Unit.Character.Player
         private void TriggerSpecialAction()
         {
             InitializePlayerSpecialActionState();
-            BlockInput(InputType.Attack);
+            BlockInput(specialBlockInputType);
             stateMachine.ExitOtherStates(typeof(PlayerSpecialActionState));
             characterControlDesktop.ClearHotkeys();
         }
@@ -285,7 +298,7 @@ namespace Unit.Character.Player
         private void ExitSpecialAction()
         {
             stateMachine.ExitCategory(StateCategory.Action, null, true);
-            UnblockInput(InputType.Attack);
+            UnblockInput(specialBlockInputType);
             characterControlDesktop.ClearHotkeys();
         }
     }
