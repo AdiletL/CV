@@ -14,7 +14,6 @@ public interface IItem
     
     public int? InventorySlotID { get; }
     public GameObject GameObject { get; }
-    public AnimationClip CastClip { get; }
     public ItemName ItemNameID { get; }
     public ItemCategory ItemCategoryID { get; }
     public ItemBehaviour ItemBehaviourID { get; }

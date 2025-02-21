@@ -15,9 +15,8 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeys;
 
         public static event Action<InputType> OnBlockInput;
+        public static event Func<InputType, bool> OnIsInputBlocked;
         
-        private PlayerAbilityInventory playerAbilityInventory;
-        private PlayerItemInventory playerItemInventory;
         private PlayerStateFactory playerStateFactory;
         private CharacterControlDesktop characterControlDesktop;
         private CharacterSwitchAttackState characterSwitchAttack;
@@ -47,26 +46,35 @@ namespace Unit.Character.Player
             this.characterSwitchAttack = characterSwitchAttackState;
 
         public PlayerMouseInputHandler(StateMachine stateMachine, CharacterControlDesktop characterControlDesktop,
-            PlayerAbilityInventory playerAbilityInventory, CharacterSwitchAttackState characterSwitchAttackState,
-            PlayerItemInventory playerItemInventory, PlayerStateFactory playerStateFactory, InputType attackBlockInputType, InputType specialBlockInputType)
+            CharacterSwitchAttackState characterSwitchAttackState,
+            PlayerStateFactory playerStateFactory, InputType attackBlockInputType, InputType specialBlockInputType)
         {
             this.stateMachine = stateMachine;
             this.characterControlDesktop = characterControlDesktop;
-            this.playerItemInventory = playerItemInventory;
-            this.playerAbilityInventory = playerAbilityInventory;
             this.characterSwitchAttack = characterSwitchAttackState;
             this.playerStateFactory = playerStateFactory;
             this.attackBlockInputType = attackBlockInputType;
             this.specialBlockInputType = specialBlockInputType;
-            
-            stateMachine.OnExitCategory += OnExitCategory;
         }
 
         ~PlayerMouseInputHandler()
         {
-            stateMachine.OnExitCategory -= OnExitCategory;
+            UnInitializeMediator();
         }
 
+        private bool isCanUseControl(InputType input)
+        {
+            if (OnIsInputBlocked == null) return false;
+            
+            foreach (Func<InputType, bool> VARIABLE in OnIsInputBlocked.GetInvocationList())
+            {
+                if (VARIABLE.Invoke(input)) return false;
+            }
+
+            if (IsInputBlocked(InputType.Item)) return false;
+
+            return true;
+        }
                
         // Оптимизированный метод для проверки, был ли клик по UI
         private bool IsPointerOverUIObject()
@@ -161,11 +169,18 @@ namespace Unit.Character.Player
             return false;
         }
         
+        private bool OnInputBlockedFunc(InputType input)
+        {
+            return IsInputBlocked(input);
+        }
+        
         public void Initialize()
         {
             attackMouseButton = so_GameHotkeys.AttackMouseButton;
             selectObjectMousButton = so_GameHotkeys.SelectObjectMouseButton;
             specialActionMouseButton = so_GameHotkeys.SpecialActionMouseButton;
+            
+            InitializeMediator();
         }
 
         private void InitializePlayerSpecialActionState()
@@ -175,6 +190,22 @@ namespace Unit.Character.Player
             diContainer.Inject(state);
             state.Initialize();
             stateMachine.AddStates(state);
+        }
+
+        private void InitializeMediator()
+        {
+            stateMachine.OnExitCategory += OnExitCategory;
+            PlayerItemInventory.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerAbilityInventory.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerControlDesktop.OnIsInputBlocked += OnInputBlockedFunc;
+        }
+
+        private void UnInitializeMediator()
+        {
+            stateMachine.OnExitCategory -= OnExitCategory;
+            PlayerItemInventory.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerAbilityInventory.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerControlDesktop.OnIsInputBlocked -= OnInputBlockedFunc;
         }
         
         private void OnExitCategory(Machine.IState state)
@@ -193,20 +224,14 @@ namespace Unit.Character.Player
             
             if (!isAttacking &&
                 Input.GetMouseButtonUp(attackMouseButton) && 
-                !IsInputBlocked(InputType.Attack) &&
-                !characterControlDesktop.IsInputBlocked(InputType.Attack) &&
-                !playerAbilityInventory.IsInputBlocked(InputType.Attack) && 
-                !playerItemInventory.IsInputBlocked(InputType.Attack) && 
+                isCanUseControl(InputType.Attack) &&
                 !IsPointerOverUIObject())
             {
                 TriggerAttack();
             }
             else if (!isAttacking &&
                      Input.GetMouseButtonDown(specialActionMouseButton) && 
-                     !IsInputBlocked(InputType.Attack) &&
-                     !characterControlDesktop.IsInputBlocked(InputType.SpecialAction) &&
-                     !playerAbilityInventory.IsInputBlocked(InputType.SpecialAction) && 
-                     !playerItemInventory.IsInputBlocked(InputType.SpecialAction))
+                     isCanUseControl(InputType.SpecialAction))
             {
                 TriggerSpecialAction();
             }

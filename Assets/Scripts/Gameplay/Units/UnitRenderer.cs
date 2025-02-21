@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ScriptableObjects.Gameplay;
@@ -60,12 +61,22 @@ public class UnitRenderer : MonoBehaviour
     {
         foreach (var renderer in baseRenderers)
         {
-            var materials = renderer.sharedMaterials.ToList(); // Используем sharedMaterials
-            if (!materials.Contains(highlightedMaterial))
+            var materials = renderer.sharedMaterials;
+            int length = materials.Length;
+
+            // Проверяем, есть ли уже highlightedMaterial
+            for (int i = 0; i < length; i++)
             {
-                materials.Add(highlightedMaterial);
-                renderer.materials = materials.ToArray(); // Устанавливаем новые материалы
+                if (materials[i] == highlightedMaterial)
+                    return;
             }
+
+            // Создаем новый массив с дополнительным слотом
+            var newMaterials = new Material[length + 1];
+            Array.Copy(materials, newMaterials, length);
+            newMaterials[length] = highlightedMaterial;
+        
+            renderer.materials = newMaterials; // Устанавливаем новые материалы
         }
     }
 
@@ -73,14 +84,32 @@ public class UnitRenderer : MonoBehaviour
     {
         foreach (var renderer in baseRenderers)
         {
-            var materials = renderer.sharedMaterials.ToList();
-            if (materials.Remove(highlightedMaterial))
+            var materials = renderer.sharedMaterials;
+            int length = materials.Length;
+
+            int index = -1;
+            for (int i = 0; i < length; i++)
             {
-                renderer.materials = materials.ToArray();
+                if (materials[i] == highlightedMaterial)
+                {
+                    index = i;
+                    break;
+                }
             }
+
+            if (index == -1) return; // Если материала нет, выходим
+
+            // Создаем новый массив на один элемент меньше
+            var newMaterials = new Material[length - 1];
+            for (int i = 0, j = 0; i < length; i++)
+            {
+                if (i == index) continue;
+                newMaterials[j++] = materials[i];
+            }
+
+            renderer.materials = newMaterials;
         }
     }
-
     
     public void SelectedObject() => selectedObject.SetActive(true);
     public void UnSelectedObject() => selectedObject.SetActive(false);

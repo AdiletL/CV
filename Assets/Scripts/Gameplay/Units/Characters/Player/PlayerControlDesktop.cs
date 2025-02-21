@@ -18,6 +18,7 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeyse;
         private event Action OnHandleInput;
         public static event Action<InputType> OnBlockInput; 
+        public static event Func<InputType, bool> OnIsInputBlocked;
         
         private PhotonView photonView;
         private CharacterSwitchAttackState characterSwitchAttack;
@@ -27,8 +28,6 @@ namespace Unit.Character.Player
         private PlayerController playerController;
         private PlayerStateFactory playerStateFactory;
         private PlayerKinematicControl playerKinematicControl;
-        private PlayerAbilityInventory playerAbilityInventory;
-        private PlayerItemInventory playerItemInventory;
         
         private SO_PlayerAttack so_PlayerAttack;
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
@@ -64,6 +63,20 @@ namespace Unit.Character.Player
         public void SetPlayerSpecialActionConfig(SO_PlayerSpecialAction config) => this.so_PlayerSpecialAction = config;
         public void SetPlayerMoveConfig(SO_PlayerMove config) => this.so_PlayerMove = config;
         
+        
+        private bool isCanUseControl(InputType input)
+        {
+            if (OnIsInputBlocked == null) return false;
+            
+            foreach (Func<InputType, bool> VARIABLE in OnIsInputBlocked.GetInvocationList())
+            {
+                if (VARIABLE.Invoke(input)) return false;
+            }
+
+            if (IsInputBlocked(InputType.Item)) return false;
+
+            return true;
+        }
         
         public override bool IsInputBlocked(InputType input)
         {
@@ -108,12 +121,15 @@ namespace Unit.Character.Player
             }
         }
 
+        private bool OnInputBlockedFunc(InputType input)
+        {
+            return IsInputBlocked(input);
+        }
+
         public override void Initialize()
         {
             base.Initialize();
 
-            playerAbilityInventory = gameObject.GetComponent<PlayerAbilityInventory>();
-            playerItemInventory = gameObject.GetComponent<PlayerItemInventory>();
             movementBlockInputType = so_PlayerMove.BlockInputType;
             jumpBlockInputType = so_PlayerMove.JumpInfo.BlockInputType;
             
@@ -139,13 +155,12 @@ namespace Unit.Character.Player
         {
             diContainer.Inject(handler);
             handler.Initialize();
-            interactionHandlers.Add(handler);;
+            interactionHandlers.Add(handler);
         }
 
         private void InitializeMouseInputHandler()
         {
-            PlayerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this,
-                playerAbilityInventory, characterSwitchAttack, playerItemInventory, 
+            PlayerMouseInputHandler = new PlayerMouseInputHandler(stateMachine, this, characterSwitchAttack, 
                 playerStateFactory, so_PlayerAttack.BlockInputType, so_PlayerSpecialAction.BlockInputType);
             diContainer.Inject(PlayerMouseInputHandler);
             PlayerMouseInputHandler.Initialize();
@@ -165,6 +180,10 @@ namespace Unit.Character.Player
         {
             stateMachine.OnExitCategory += OnExitCategory;
             OnHandleInput += PlayerMouseInputHandler.HandleInput;
+            PlayerItemInventory.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerAbilityInventory.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerMouseInputHandler.OnIsInputBlocked += OnInputBlockedFunc;
+            
             foreach (var VARIABLE in interactionHandlers)
             {
                 OnHandleInput += VARIABLE.HandleInput;
@@ -177,6 +196,10 @@ namespace Unit.Character.Player
         {
             stateMachine.OnExitCategory -= OnExitCategory;
             OnHandleInput -= PlayerMouseInputHandler.HandleInput;
+            PlayerItemInventory.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerAbilityInventory.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerMouseInputHandler.OnIsInputBlocked -= OnInputBlockedFunc;
+            
             foreach (var VARIABLE in interactionHandlers)
             {
                 OnHandleInput -= VARIABLE.HandleInput;
@@ -224,20 +247,14 @@ namespace Unit.Character.Player
                 Input.GetKey(KeyCode.D) || 
                 Input.GetKey(KeyCode.W) || 
                 Input.GetKey(KeyCode.S)) && 
-                !IsInputBlocked(InputType.Movement) &&
-                !PlayerMouseInputHandler.IsInputBlocked(InputType.Movement) &&
-                !playerAbilityInventory.IsInputBlocked(InputType.Movement) &&
-                !playerItemInventory.IsInputBlocked(InputType.Movement))
+                isCanUseControl(InputType.Movement))
             {
                 isMoving = true;
                 BlockInput(movementBlockInputType);
                 characterSwitchMove.ExitOtherStates();
             }
             else if (!isJumping && Input.GetKeyDown(jumpKey) &&
-                     !IsInputBlocked(InputType.Jump) &&
-                     !PlayerMouseInputHandler.IsInputBlocked(InputType.Jump) &&
-                     !playerAbilityInventory.IsInputBlocked(InputType.Jump) &&
-                     !playerItemInventory.IsInputBlocked(InputType.Jump))
+                     isCanUseControl(InputType.Jump))
             {
                 TriggerJump();
             }

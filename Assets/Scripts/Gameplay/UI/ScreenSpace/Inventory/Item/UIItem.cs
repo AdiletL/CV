@@ -16,7 +16,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         [SerializeField] private TextMeshProUGUI cooldownText;
         [SerializeField] private Button button;
 
-        private float resultCooldown;
+        private float lastTime = -1f;
         
         public int? SlotID { get; private set; }
         
@@ -54,14 +54,21 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             if (max <= 0 || current <= 0)
             {
-                cooldownBar.fillAmount = 0;
-                cooldownText.enabled = false;
+                if (cooldownText.enabled)
+                {
+                    cooldownBar.fillAmount = 0;
+                    cooldownText.enabled = false;
+                }
                 return;
             }
-            resultCooldown = current/max;
-            cooldownBar.fillAmount = resultCooldown;
-            cooldownText.enabled = true;
+
+            if (Mathf.Approximately(lastTime, current)) return;
+            
+            lastTime = current;
+            cooldownBar.fillAmount = current/max;
             cooldownText.text = current.ToString("0");
+            
+            if(!cooldownText.enabled) cooldownText.enabled = true;
         }
 
         private void Select()

@@ -36,6 +36,7 @@ namespace Gameplay.Factory
                 .SetBlockedInputType(dashConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
                 .SetAbilityBehaviour(dashConfig.SO_BaseAbilityConfig.AbilityBehaviour)
+                .SetTimerCast(dashConfig.TimerCast)
                 .SetCooldown(dashConfig.Cooldown)
                 .Build();
         }
@@ -49,6 +50,7 @@ namespace Gameplay.Factory
                 .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
                 .SetAbilityBehaviour(applyDamageHealConfig.SO_BaseAbilityConfig.AbilityBehaviour)
+                .SetTimerCast(applyDamageHealConfig.TimerCast)
                 .SetCooldown(applyDamageHealConfig.Cooldown)
                 .Build();
         }

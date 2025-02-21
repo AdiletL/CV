@@ -1,6 +1,5 @@
-﻿
-using System;
-using ScriptableObjects.Gameplay;
+﻿using System;
+using Gameplay.UI.ScreenSpace;
 using Unit.Cell;
 using Unit.Portal;
 using UnityEngine;
@@ -21,10 +20,6 @@ namespace Gameplay.Units.Item
         private Texture2D selectTargetCursor;
         private string endPortalID;
 
-        private float timerCast = 3;
-        private float countTimerCast;
-        private bool isCasting;
-        
         public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
         public void SetEndPortalID(string id) => this.endPortalID = id;
@@ -50,22 +45,17 @@ namespace Gameplay.Units.Item
                     {
                         StartEffect();
                         spawnPosition = hit.point;
-                        isCasting = true;
                     }
-                }
-            }
-
-            if (isCasting)
-            {
-                countTimerCast += Time.deltaTime;
-                if (countTimerCast >= timerCast)
-                {
-                    CreateTeleport();
-                    FinishEffect();
                 }
             }
         }
 
+        protected override void AfterCast()
+        {
+            CreateTeleport();
+            FinishEffect();
+        }
+        
         private void CreateTeleport()
         {
             var newTeleportObject = Addressables.InstantiateAsync(portalObject).WaitForCompletion();
@@ -83,13 +73,6 @@ namespace Gameplay.Units.Item
             }
             portal.Initialize();
             portal.Appear();
-        }
-
-        public override void Exit()
-        {
-            base.Exit();
-            countTimerCast = 0;
-            isCasting = false;
         }
     }
     

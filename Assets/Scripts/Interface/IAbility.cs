@@ -12,7 +12,6 @@ public interface IAbility
     
     public int? InventorySlotID { get; }
     public GameObject GameObject { get; }
-    public AnimationClip CastClip { get; }
     public AbilityType AbilityType { get; }
     public AbilityBehaviour AbilityBehaviour { get; }
     public InputType BlockedInputType { get; }

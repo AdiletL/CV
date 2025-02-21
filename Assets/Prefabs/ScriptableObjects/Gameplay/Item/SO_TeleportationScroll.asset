@@ -23,6 +23,7 @@ MonoBehaviour:
   <ItemBehaviourID>k__BackingField: 4
   <BlockInputTypeID>k__BackingField: 0
   <Cooldown>k__BackingField: 1
+  <TimerCast>k__BackingField: 2
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
   <AbilityConfigData>k__BackingField:

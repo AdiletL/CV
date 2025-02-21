@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay.UI.ScreenSpace;
 using Unit.Character.Player;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Units.Item
 {
     public abstract class Item : IItem
     {
+        [Inject] private UICastTimer uiCastTimer;
+        
         public event Action<int?> OnActivated;
         public event Action<int?> OnStarted;
         public event Action<int?> OnFinished;
@@ -15,7 +19,6 @@ namespace Gameplay.Units.Item
         
         public int? InventorySlotID { get; protected set; }
         public GameObject GameObject { get; protected set; }
-        public AnimationClip CastClip { get; protected set; }
         public abstract ItemName ItemNameID { get; protected set; }
         public ItemCategory ItemCategoryID { get; protected set; }
         public ItemBehaviour ItemBehaviourID { get; protected set; }
@@ -23,19 +26,21 @@ namespace Gameplay.Units.Item
         public Action FinishedCallBack { get; protected set; }
         public int Amount { get; protected set; }
         public float Cooldown { get; protected set; }
+        public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
         public List<Ability.Ability> Abilities { get; protected set; }
 
         private float countCooldown;
+        private float countTimerCast;
         protected bool isActivated;
-        
+        protected bool isCasting;
 
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
         public void SetItemCategory(ItemCategory itemCategory) => ItemCategoryID = itemCategory;
         public void SetItemBehaviour(ItemBehaviour itemBehaviour) => ItemBehaviourID = itemBehaviour;
-        public void SetCastClip(AnimationClip clip) => this.CastClip = clip;
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
+        public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         public void SetAmountItem(int amount) => Amount = amount;
         public void SetBlockInputType(InputType inputType) => BlockInputType = inputType;
         
@@ -52,7 +57,7 @@ namespace Gameplay.Units.Item
                 Exit();
                 return;
             }
-
+            
             if ((ItemBehaviourID & ItemBehaviour.Passive) != 0)
             {
                 Debug.Log($"{ItemBehaviourID} — пассивное умение, его нельзя активировать.");
@@ -71,7 +76,15 @@ namespace Gameplay.Units.Item
             isActivated = true;
             OnActivated?.Invoke(InventorySlotID);
         }
-
+        
+        public void StartEffect()
+        {
+            SetCursor(null);
+            StartCooldown();
+            StartCasting();
+            OnStarted?.Invoke(InventorySlotID);
+        }
+        
         public virtual void Update()
         {
             if (IsCooldown)
@@ -81,17 +94,21 @@ namespace Gameplay.Units.Item
                     IsCooldown = false;
                 OnCountCooldown?.Invoke(InventorySlotID, countCooldown, Cooldown);
             }
+            
+            if (isCasting)
+            {
+                countTimerCast -= Time.deltaTime;
+                uiCastTimer.UpdateTime(countTimerCast, TimerCast);
+                if (countTimerCast <= 0)
+                {
+                    AfterCast();
+                }
+            }
         }
 
         public virtual void LateUpdate()
         {
             
-        }
-
-        public void StartEffect()
-        {
-            OnStarted?.Invoke(InventorySlotID);
-            StartCooldown();
         }
         
         private void StartCooldown()
@@ -102,7 +119,20 @@ namespace Gameplay.Units.Item
                 countCooldown = Cooldown;
             }
         }
+
+        private void StartCasting()
+        {
+            if (TimerCast > 0)
+            {
+                isCasting = true;
+                countTimerCast = TimerCast;
+            }
+        }
         
+        protected virtual void AfterCast()
+        {
+        }
+
         protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
         
         public virtual void FinishEffect()
@@ -115,6 +145,8 @@ namespace Gameplay.Units.Item
         {
             SetCursor(null);
             isActivated = false;
+            isCasting = false;
+            uiCastTimer.Hide();
             OnExit?.Invoke(InventorySlotID);
         }
 
@@ -169,6 +201,12 @@ namespace Gameplay.Units.Item
         public ItemBuilder<T> SetCooldown(float cooldown)
         {
             item.SetCooldown(cooldown);
+            return this;
+        }
+        
+        public ItemBuilder<T> SetTimerCast(float timerCast)
+        {
+            item.SetTimerCast(timerCast);
             return this;
         }
 

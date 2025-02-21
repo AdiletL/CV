@@ -20,6 +20,7 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField] public ItemBehaviour ItemBehaviourID { get; private set; }
         [field: SerializeField] public InputType BlockInputTypeID { get; private set; }
         [field: SerializeField] public float Cooldown { get; private set; }
+        [field: SerializeField] public float TimerCast { get; private set; }
         
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;

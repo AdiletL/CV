@@ -44,6 +44,7 @@ namespace Gameplay.Factory
                 .SetItemBehaviour(so_MadnessMask.ItemBehaviourID)
                 .SetItemCategory(so_MadnessMask.ItemCategoryID)
                 .SetBlockInput(so_MadnessMask.BlockInputTypeID)
+                .SetTimerCast(so_MadnessMask.TimerCast)
                 .SetCooldown(so_MadnessMask.Cooldown)
                 .SetGameObject(gameObject)
                 .Build();
@@ -58,6 +59,7 @@ namespace Gameplay.Factory
                 .SetEndPortalID(so_TeleportationScroll.EndPortalID.ID)
                 .SetBaseCamera(baseCamera)
                 .SetGameObject(gameObject)
+                .SetTimerCast(so_TeleportationScroll.TimerCast)
                 .SetCooldown(so_TeleportationScroll.Cooldown)
                 .SetBlockInput(so_TeleportationScroll.BlockInputTypeID)
                 .SetItemBehaviour(so_TeleportationScroll.ItemBehaviourID)

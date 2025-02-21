@@ -16,6 +16,8 @@ namespace Unit.Character.Player
     public class PlayerItemInventory : MonoBehaviour, IInventory
     {
         [Inject] private DiContainer diContainer;
+
+        public static event Func<InputType, bool> OnIsInputBlocked;
         
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
@@ -24,9 +26,6 @@ namespace Unit.Character.Player
         private ItemFactory itemFactory;
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
-        private PlayerAbilityInventory playerAbilityInventory;
-        private PlayerControlDesktop playerControlDesktop;
-        private PlayerMouseInputHandler playerMouseInputHandler;
 
         private Gameplay.Units.Item.Item currentSelectedItem;
         private Gameplay.Units.Item.Item currentUseItem;
@@ -36,6 +35,20 @@ namespace Unit.Character.Player
         
         private Dictionary<InputType, int> blockedInputs;
         private Dictionary<int?, Gameplay.Units.Item.Item> slots;
+        
+        private bool isCanSelectItem(InputType input)
+        {
+            if (OnIsInputBlocked == null) return false;
+            
+            foreach (Func<InputType, bool> VARIABLE in OnIsInputBlocked.GetInvocationList())
+            {
+                if (VARIABLE.Invoke(input)) return false;
+            }
+
+            if (IsInputBlocked(InputType.Item)) return false;
+
+            return true;
+        }
         
         public bool IsFullInventory()
         {
@@ -127,17 +140,28 @@ namespace Unit.Character.Player
                 .Build();
         }
         
+        private bool OnInputBlockedFunc(InputType input)
+        {
+            return IsInputBlocked(input);
+        }
+        
         public void OnEnable()
         {
             UIItem.OnSlotSelected += OnSlotSelected;
             PlayerControlDesktop.OnBlockInput += OnBlockInput;
             PlayerMouseInputHandler.OnBlockInput += OnBlockInput;
+            PlayerAbilityInventory.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerControlDesktop.OnIsInputBlocked += OnInputBlockedFunc;
+            PlayerMouseInputHandler.OnIsInputBlocked += OnInputBlockedFunc;
         }
         public void OnDisable()
         {
             UIItem.OnSlotSelected -= OnSlotSelected;
             PlayerControlDesktop.OnBlockInput -= OnBlockInput;
             PlayerMouseInputHandler.OnBlockInput -= OnBlockInput;
+            PlayerAbilityInventory.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerControlDesktop.OnIsInputBlocked -= OnInputBlockedFunc;
+            PlayerMouseInputHandler.OnIsInputBlocked -= OnInputBlockedFunc;
         }
 
         public void Initialize()
@@ -145,9 +169,6 @@ namespace Unit.Character.Player
             baseBlockInput = so_PlayerItemInventory.BaseBlockInputType;
             maxSlot = so_PlayerItemInventory.MaxCountItem;
             itemHandler = GetComponent<ItemHandler>();
-            playerAbilityInventory = GetComponent<PlayerAbilityInventory>();
-            playerControlDesktop = playerController.PlayerControlDesktop;
-            playerMouseInputHandler = playerController.PlayerControlDesktop.PlayerMouseInputHandler;
             
             InitializeUIInventory();
             InitializeItemFactory();
@@ -225,13 +246,11 @@ namespace Unit.Character.Player
                 slots[slotID] = null;
             }
         }
+
         
         private void OnSlotSelected(int? slotID)
         {
-            if (!playerControlDesktop.IsInputBlocked(InputType.Item) &&
-                !playerMouseInputHandler.IsInputBlocked(InputType.Item) &&
-                !IsInputBlocked(InputType.Item) &&
-                !playerAbilityInventory.IsInputBlocked(InputType.Item))
+            if (isCanSelectItem(InputType.Item))
             {
                 EnterItem(slotID);
             }
@@ -272,8 +291,9 @@ namespace Unit.Character.Player
         private void EnterItem(int? slotID)
         {
             if(slotID == null || slots[slotID] == null) return;
-            ExitItem(currentSelectedItem);
+            if(slots[slotID] == currentUseItem) return;
 
+            ExitItem(currentSelectedItem);
             currentSelectedItem = slots[slotID];
             currentSelectedItem.OnActivated += OnActivatedItem;
             currentSelectedItem.Enter();
@@ -302,7 +322,6 @@ namespace Unit.Character.Player
         {
             if(slotID == null) return;
             BlockInput(slots[slotID].BlockInputType);
-            slots[slotID].OnStarted -= OnStartedItem;
             currentUseItem = slots[slotID];
             currentSelectedItem = null;
         }
@@ -310,7 +329,6 @@ namespace Unit.Character.Player
         {
             if(slotID == null) return;
             UnblockInput(slots[slotID].BlockInputType);
-            slots[slotID].OnFinished -= OnFinishedItem;
             RemoveItem(slotID, 1);
         }
         private void OnExitItem(int? slotID)
@@ -320,7 +338,8 @@ namespace Unit.Character.Player
             currentUseItem = null;
             
             if(slots[slotID] == null) return;
-            slots[slotID].OnActivated -= OnActivatedItem;
+            slots[slotID].OnStarted -= OnStartedItem;
+            slots[slotID].OnFinished -= OnFinishedItem;
             slots[slotID].OnExit -= OnExitItem;
         }
 

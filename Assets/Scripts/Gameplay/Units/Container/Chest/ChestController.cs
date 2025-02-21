@@ -1,3 +1,4 @@
+using System.Collections;
 using Cysharp.Threading.Tasks;
 using Gameplay.UI;
 using ScriptableObjects.Unit.Item.Container;
@@ -35,13 +36,13 @@ namespace Unit.Container
             throw new System.NotImplementedException();
         }
 
-        public override void Open()
+        public override async void Open()
         {
             if(isOpened) return;
             isOpened = true;
             chestAnimation.ChangeAnimationWithSpeed(openClip);
             Disable();
-            SpawnItems();
+            await SpawnItems();
         }
 
         public override void Close()
@@ -68,6 +69,8 @@ namespace Unit.Container
             Vector3 point;
             foreach (var VARIABLE in so_Chest.so_Item)
             {
+                await UniTask.Yield();
+                
                 var item = await Addressables.InstantiateAsync(VARIABLE.SO_Item.Prefab);
                 var itemController = item.GetComponent<ItemController>();
                 diContainer.Inject(itemController);

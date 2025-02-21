@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Spawner;
+using Gameplay.UI.ScreenSpace;
 using Gameplay.UI.ScreenSpace.CreatureInformation;
 using Photon.Pun;
 using UnityEngine;
@@ -13,6 +14,9 @@ namespace Gameplay.Manager
         [Inject] private DiContainer diContainer;
         
         [SerializeField] private AssetReference uiCreatureInformationPrefab;
+        [SerializeField] private AssetReferenceGameObject uiCastTimerPrefab;
+        
+        [Space]
         [SerializeField] private AssetReferenceGameObject[] popUpSpawnerPrefabs;
         
         private UICreatureInformation uiCreatureInformation;
@@ -27,6 +31,8 @@ namespace Gameplay.Manager
 
             var newUICreature = PhotonNetwork.Instantiate(uiCreatureInformationPrefab.AssetGUID, Vector3.zero,
                 Quaternion.identity);
+            var newUICastTimer = PhotonNetwork.Instantiate(uiCastTimerPrefab.AssetGUID, Vector3.zero,
+                Quaternion.identity);
 
             foreach (var popUpSpawnerPrefab in popUpSpawnerPrefabs)
             {
@@ -36,6 +42,7 @@ namespace Gameplay.Manager
             }
             
             photonView.RPC(nameof(InitializeUICreatureInformation), RpcTarget.AllBuffered, newUICreature.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(InitializeUICastTimer), RpcTarget.AllBuffered, newUICastTimer.GetComponent<PhotonView>().ViewID);
         }
 
         
@@ -59,6 +66,16 @@ namespace Gameplay.Manager
             diContainer.Bind(popUpPopUpSpawner.GetType()).FromInstance(popUpPopUpSpawner).AsSingle();
             popUpPopUpSpawner.transform.SetParent(transform);
             popUpPopUpSpawner.Initialize();
+        }
+
+        [PunRPC]
+        private void InitializeUICastTimer(int viewID)
+        {
+            var result = PhotonView.Find(viewID).gameObject;
+            var uiCastTimer = result.GetComponent<UICastTimer>();
+            diContainer.Inject(uiCastTimer);
+            diContainer.Bind(uiCastTimer.GetType()).FromInstance(uiCastTimer).AsSingle();
+            uiCastTimer.Initialize();
         }
     }
 }
