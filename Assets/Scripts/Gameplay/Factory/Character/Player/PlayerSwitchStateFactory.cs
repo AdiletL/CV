@@ -26,8 +26,6 @@ namespace Gameplay.Factory.Character.Player
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetCharacterController(CharacterController characterController) => this.characterController = characterController;
-        public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMoveState = characterSwitchMoveState;
         public void SetCharacterEndurance(CharacterEndurance characterEndurance) => this.characterEndurance = characterEndurance;
         public void SetPhotonView(PhotonView view) => this.photonView = view;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
@@ -77,7 +75,6 @@ namespace Gameplay.Factory.Character.Player
             return (PlayerSwitchAttackState)new PlayerSwitchAttackStateBuilder()
                 .SetCharacterStateFactory(characterStateFactory)
                 .SetCharacterEndurance(characterEndurance)
-                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetConfig(so_PlayerAttack)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
@@ -92,13 +89,7 @@ namespace Gameplay.Factory.Character.Player
         {
             
         }
-
-        public PlayerSwitchStateFactoryBuilder SetCharacterController(CharacterController characterController)
-        {
-            if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)
-                playerSwitchStateFactory.SetCharacterController(characterController);
-            return this;
-        }
+        
         public PlayerSwitchStateFactoryBuilder SetCharacterState(CharacterStateFactory characterStateFactory)
         {
             if(factory is PlayerSwitchStateFactory playerSwitchStateFactory)

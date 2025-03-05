@@ -1,7 +1,6 @@
 ﻿using System;
 using KinematicCharacterController;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Unit.Character.Player
 {

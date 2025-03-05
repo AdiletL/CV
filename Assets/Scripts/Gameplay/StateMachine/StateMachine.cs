@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Machine;
 using UnityEngine;
-using IState = Machine.IState;
 
 public class StateMachine
 {
@@ -41,7 +40,7 @@ public class StateMachine
                 return desiredState;
             }
         }
-        throw new InvalidOperationException($"State of type {typeof(T)} not found.");
+        return default(T);
     }
 
     public List<T> GetStates<T>() where T : IState
@@ -61,7 +60,7 @@ public class StateMachine
     {
         foreach (var state in states.Values)
         {
-            state.Initialize();
+            if(!state.IsInitialized) state.Initialize();
             if (state.Category == StateCategory.Idle && defaultIdleState == null)
             {
                 defaultIdleState = FindMostDerivedState(state.GetType());

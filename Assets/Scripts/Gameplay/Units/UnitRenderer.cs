@@ -52,7 +52,6 @@ public class UnitRenderer : MonoBehaviour
         }
     }
     
-    
     public void SetRangeScale(float scale) => rangeVisual.transform.localScale = Vector3.one * (scale * 2);
     public void ShowRangeVisual() => rangeVisual.SetActive(true);
     public void HideRangeVisual() => rangeVisual.SetActive(false);

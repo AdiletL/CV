@@ -11,6 +11,7 @@ namespace Unit.Trap
         private SO_Push so_Push;
         private PushAnimation pushAnimation;
         private Coroutine startTimerCoroutine;
+        public Stat DamageStat { get; private set; } = new Stat();
 
         private float durationAttack;
         private float cooldownAttack;
@@ -27,7 +28,8 @@ namespace Unit.Trap
             durationAttack = Calculate.Attack.TotalDurationInSecond(so_Push.AttackSpeed);
             cooldownAttack = so_Push.CooldownAttack;
 
-            Damageable = new NormalDamage(so_Push.Damage, gameObject);
+            DamageStat.AddValue(so_Push.Damage);
+            Damageable = new NormalDamage(gameObject, DamageStat);
         }
 
         public override void Appear()

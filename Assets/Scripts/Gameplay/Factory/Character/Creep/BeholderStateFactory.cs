@@ -49,7 +49,7 @@ namespace Gameplay.Factory.Character.Creep
                 .SetCreepSwitchAttackState(creepSwitchAttackState)
                 .SetCreepSwitchMoveState(creepSwitchMoveState)
                 .SetCharacterAnimation(characterAnimation)
-                .SetIdleClips(so_BeholderMove.IdleClip)
+                .SetConfig(so_BeholderMove)
                 .SetCenter(unitCenter.Center)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
@@ -58,7 +58,7 @@ namespace Gameplay.Factory.Character.Creep
         
         private BeholderPatrolState CreatePatrolState()
         {
-            return (BeholderPatrolState)new BeholderPatrolStateBuilder()
+            var result = (BeholderPatrolState)new BeholderPatrolStateBuilder()
                 .SetCreepSwitchAttackState(creepSwitchAttackState)
                 .SetNavMeshAgent(navMeshAgent)
                 .SetCharacterAnimation(characterAnimation)
@@ -66,38 +66,40 @@ namespace Gameplay.Factory.Character.Creep
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetPatrolPoints(patrolPoints)
                 .SetCenter(unitCenter.Center)
-                .SetMovementSpeed(so_BeholderMove.WalkSpeed)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.MovementSpeedStat.AddValue(so_BeholderMove.RunSpeed);
+            return result;
         }
         
         private BeholderRunState CreateRunState()
         {
-            return (BeholderRunState)new BeholderRunStateBuilder()
+            var result = (BeholderRunState)new BeholderRunStateBuilder()
                 .SetCharacterSwitchAttack(creepSwitchAttackState)
                 .SetNavMesh(navMeshAgent)
                 .SetTimerRunToTarget(so_BeholderMove.TimerRunToTarget)
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetUnitAnimation(characterAnimation)
+                .SetConfig(so_BeholderMove)
                 .SetRunClips(so_BeholderMove.RunClips)
-                .SetMovementSpeed(so_BeholderMove.RunSpeed)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.MovementSpeedStat.AddValue(so_BeholderMove.RunSpeed);
+            return result;
         }
         
         private BeholderDefaultAttackState CreateDefaultAttack()
         {
-            return (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
+            var result = (BeholderDefaultAttackState)new BeholderDefaultAttackStateBuilder()
                 .SetNavMeshAgent(navMeshAgent)
                 .SetSwitchMoveState(creepSwitchMoveState)
                 .SetUnitAnimation(characterAnimation)
                 .SetAttackClips(so_BeholderAttack.AttackClips)
                 .SetCooldownClip(so_BeholderAttack.CooldownClip)
                 .SetApplyDamageMoment(so_BeholderAttack.ApplyDamageMoment)
-                .SetRange(so_BeholderAttack.Range)
                 .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetAttackSpeed(so_BeholderAttack.AttackSpeed)
                 .SetDamage(so_BeholderAttack.Damage)
@@ -105,6 +107,9 @@ namespace Gameplay.Factory.Character.Creep
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.RangeStat.AddValue(so_BeholderAttack.Range);
+            result.DamageStat.AddValue(so_BeholderAttack.Damage);
+            return result;
         }
 
         private BeholderTakeDamageState CreateTakeDamageState()

@@ -12,9 +12,8 @@ namespace Gameplay.Factory.Character.Player
 {
     public class PlayerStateFactory : CharacterStateFactory
     {
-        [Inject] private SO_GameHotkeys so_GameHotkeys;
-        
         private PlayerKinematicControl playerKinematicControl;
+        private UnitRenderer unitRenderer;
         private StateMachine stateMachine;
         private PhotonView photonView;
         private Transform weaponParent;
@@ -29,6 +28,7 @@ namespace Gameplay.Factory.Character.Player
         private SO_PlayerAttack so_PlayerAttack;
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
+        public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
@@ -69,7 +69,7 @@ namespace Gameplay.Factory.Character.Player
         {
             return (PlayerIdleState)new PlayerIdleStateBuilder()
                 .SetCharacterSwitchMove(characterSwitchMoveState)
-                .SetIdleClips(so_PlayerMove.IdleClip)
+                .SetConfig(so_PlayerMove)
                 .SetCharacterAnimation(characterAnimation)
                 .SetCenter(unitCenter.Center)
                 .SetGameObject(gameObject)
@@ -79,87 +79,88 @@ namespace Gameplay.Factory.Character.Player
         
         private PlayerDefaultAttackState CreateDefaultAttackState()
         {
-            return (PlayerDefaultAttackState)new PlayerDefaultAttackStateBuilder()
+            var result = (PlayerDefaultAttackState)new PlayerDefaultAttackStateBuilder()
                 .SetSwitchMoveState(characterSwitchMoveState)
                 .SetUnitAnimation(characterAnimation)
                 .SetAttackClips(so_PlayerAttack.DefaultAttackClips)
                 .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
                 .SetCooldownClip(so_PlayerAttack.DefaultCooldownClip)
                 .SetApplyDamageMoment(so_PlayerAttack.ApplyDamageMoment)
-                .SetRange(so_PlayerAttack.Range)
                 .SetDamage(so_PlayerAttack.Damage)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetAttackSpeed(so_PlayerAttack.AttackSpeed)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.RangeStat.AddValue(so_PlayerAttack.Range);
+            return result;
         }
         
         private PlayerWeaponAttackState CreateWeaponState()
         {
-            return (PlayerWeaponAttackState)new PlayerWeaponAttackStateStateBuilder()
+            var result = (PlayerWeaponAttackState)new PlayerWeaponAttackStateStateBuilder()
                 .SetPlayerKinematicControl(playerKinematicControl)
-                .SetRotationSpeed(so_PlayerAttack.RotationSpeed)
-                .SetSwordAttackClip(so_PlayerAttack.SwordAttackClip)
-                .SetBowAttackClip(so_PlayerAttack.BowAttackClip)
                 .SetBaseCamera(baseCamera)
                 .SetUnitAnimation(characterAnimation)
                 .SetWeaponParent(weaponParent)
                 .SetUnitEndurance(characterEndurance)
-                .SetBaseReductionEndurance(so_PlayerAttack.BaseReductionEndurance)
-                .SetApplyDamageMoment(so_PlayerAttack.ApplyDamageMoment)
-                .SetEnemyLayer(so_PlayerAttack.EnemyLayer)
+                .SetUnitRenderer(unitRenderer)
                 .SetCenter(unitCenter.Center)
-                .SetDamage(so_PlayerAttack.Damage)
+                .SetConfig(so_PlayerAttack)
                 .SetGameObject(gameObject)
-                .SetAttackSpeed(so_PlayerAttack.AttackSpeed)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.DamageStat.AddValue(so_PlayerAttack.Damage);
+            result.ReduceEnduranceStat.AddValue(so_PlayerAttack.BaseReductionEndurance);
+            result.AttackSpeedStat.AddValue(100);
+            result.RotationSpeed.AddValue(so_PlayerAttack.RotationSpeed);
+            result.RangeStat.AddValue(so_PlayerAttack.Range);
+            return result;
         }
         
         private PlayerRunToTargetState CreateRunState()
         {
-            return (PlayerRunToTargetState)new PlayerRunToTargetStateBuilder()
+            var result =(PlayerRunToTargetState)new PlayerRunToTargetStateBuilder()
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
+                .SetConfig(so_PlayerMove)
                 .SetRunClips(so_PlayerMove.RunClip)
                 .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
-                .SetMovementSpeed(so_PlayerMove.RunSpeed)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.MovementSpeedStat.AddValue(so_PlayerMove.RunSpeed);
+            return result;
         }
         
         private PlayerRunState CreateRunStateOrig()
         {
-            return (PlayerRunState)new PlayerRunStateBuilder()
+            var result = (PlayerRunState)new PlayerRunStateBuilder()
                 .SetPlayerKinematicControl(playerKinematicControl)
-                .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
                 .SetRunClips(so_PlayerMove.RunClip)
+                .SetConfig(so_PlayerMove)
                 .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
-                .SetMovementSpeed(so_PlayerMove.RunSpeed)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
+            result.MovementSpeedStat.AddValue(so_PlayerMove.RunSpeed);
+            result.RotationSpeedStat.AddValue(so_PlayerMove.RotateSpeed);
+            return result;
         }
         
         private PlayerJumpState CreateJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
                 .SetEndurance(characterEndurance)
-                .SetJumpKey(so_GameHotkeys.JumpKey)
-                .SetReductionEndurance(so_PlayerMove.JumpInfo.BaseReductionEndurance)
-                .SetMaxJumpCount(so_PlayerMove.JumpInfo.MaxCount)
-                .SetJumpClip(so_PlayerMove.JumpInfo.Clip)
-                .SetJumpPower(so_PlayerMove.JumpInfo.Power)
                 .SetGameObject(gameObject)
+                .SetConfig(so_PlayerMove)
                 .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
@@ -183,6 +184,12 @@ namespace Gameplay.Factory.Character.Player
         {
         }
 
+        public PlayerStateFactoryBuilder SetUnitRenderer(UnitRenderer unitRenderer)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetUnitRenderer(unitRenderer);
+            return this;
+        }
         public PlayerStateFactoryBuilder SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove)
         {
             if(factory is PlayerStateFactory playerStateFactory)

@@ -12,6 +12,8 @@ namespace Unit.Trap.Tower
         [Inject] private DiContainer diContainer;
         [Inject] private PoolManager pool;
         
+        public Stat DamageStat { get; private set; } = new Stat();
+        
         protected float durationAttack, countDurationAttack;
         protected float timerFire, countTimerFire;
         protected float cooldown, countCooldown;
@@ -25,11 +27,13 @@ namespace Unit.Trap.Tower
 
         public override IDamageable GetDamageable()
         {
-            return new NormalDamage(damage, gameObject);
+            return new NormalDamage(gameObject, DamageStat);
         }
 
         public override void Initialize()
         {
+            base.Initialize();
+            DamageStat.AddValue(damage);
             var duration = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             timerFire = duration * .55f;
             cooldown = duration;

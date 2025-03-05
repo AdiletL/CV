@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit;
+using UnityEngine;
 
 namespace Movement
 {
@@ -6,13 +7,13 @@ namespace Movement
     {
         private GameObject gameObject;
         private Vector3 direction;
-        public float BaseMovementSpeed { get; }
-        public float CurrentMovementSpeed { get; }
 
+        public Stat MovementSpeedStat { get; private set; } = new Stat();
+        
         public DirectionMovement(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.CurrentMovementSpeed = movementSpeed;
+            this.MovementSpeedStat.AddValue(movementSpeed);
         }
 
         public void Initialize()
@@ -24,7 +25,7 @@ namespace Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.Translate(direction * (CurrentMovementSpeed * Time.deltaTime), Space.World);
+            gameObject.transform.Translate(direction * (MovementSpeedStat.CurrentValue * Time.deltaTime), Space.World);
         }
     }
 }

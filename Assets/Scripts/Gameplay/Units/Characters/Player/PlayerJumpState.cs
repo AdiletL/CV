@@ -1,34 +1,41 @@
-﻿using UnityEngine;
+﻿using ScriptableObjects.Gameplay;
+using ScriptableObjects.Unit.Character.Player;
+using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Player
 {
     public class PlayerJumpState : CharacterJumpState
     {
+        [Inject] private SO_GameHotkeys so_GameHotkeys;
+        
+        private SO_PlayerMove so_PlayerMove;
         private PlayerKinematicControl playerKinematicControl;
         private IEndurance endurance;
 
+        private AnimationClip jumpClip;
         private KeyCode jumpKey;
         private int currentJumpCount;
         private int maxJumpCount;
 
         private readonly float cooldownCheckGround = .1f;
-        private float jumpReductionEndurance;
         private float countCooldownCheckGround;
-        private float currentGravity = -9;
+        private float jumpReductionEndurance;
+        private float jumpPower;
 
-        
-        public void SetPlayerKinematicControl(PlayerKinematicControl control) => playerKinematicControl = control;
         public void SetEndurance(IEndurance endurance) => this.endurance = endurance;
-        public void SetJumpKey(KeyCode jumpKey) => this.jumpKey = jumpKey;
-        public void SetJumpReductionEndurance(float jumpReductionEndurance) => this.jumpReductionEndurance = jumpReductionEndurance;
-        public void SetMaxJumpCount(int maxJumpCount) => this.maxJumpCount = maxJumpCount;
 
         
         public override void Initialize()
         {
             base.Initialize();
-            SetPlayerKinematicControl(gameObject.GetComponent<PlayerKinematicControl>());
-            characterAnimation.AddClip(jumpClip);
+            so_PlayerMove = (SO_PlayerMove)so_CharacterMove;
+            playerKinematicControl = gameObject.GetComponent<PlayerKinematicControl>();
+            jumpClip = so_PlayerMove.JumpConfig.Clip;
+            jumpPower = so_PlayerMove.JumpConfig.Power;
+            maxJumpCount = so_PlayerMove.JumpConfig.MaxCount;
+            jumpReductionEndurance = so_PlayerMove.JumpConfig.BaseReductionEndurance;
+            jumpKey = so_GameHotkeys.JumpKey;
         }
 
         public override void Enter()
@@ -96,7 +103,7 @@ namespace Unit.Character.Player
         
         private void ReductionEndurance()
         {
-            endurance.RemoveEndurance(jumpReductionEndurance);
+            endurance.EnduranceStat.RemoveValue(jumpReductionEndurance);
         }
     }
     
@@ -110,27 +117,6 @@ namespace Unit.Character.Player
         {
             if(state is PlayerJumpState playerJumpState)
                 playerJumpState.SetEndurance(endurance);
-            
-            return this;
-        }
-        public PlayerJumpStateBuilder SetJumpKey(KeyCode jumpKey)
-        {
-            if(state is PlayerJumpState playerJumpState)
-                playerJumpState.SetJumpKey(jumpKey);
-            
-            return this;
-        }
-        public PlayerJumpStateBuilder SetReductionEndurance(float jumpReductionEndurance)
-        {
-            if(state is PlayerJumpState playerJumpState)
-                playerJumpState.SetJumpReductionEndurance(jumpReductionEndurance);
-            
-            return this;
-        }
-        public PlayerJumpStateBuilder SetMaxJumpCount(int maxJumpCount)
-        {
-            if(state is PlayerJumpState playerJumpState)
-                playerJumpState.SetMaxJumpCount(maxJumpCount);
             
             return this;
         }

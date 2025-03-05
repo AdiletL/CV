@@ -9,15 +9,14 @@ namespace Unit.Character
         [Inject] protected DiContainer diContainer;
         
         protected GameObject currentTarget;
-        
+        public Stat DamageStat { get; protected set; } = new ();
         
         public override IDamageable GetDamageable()
         {
-            var damageable = new NormalDamage(damage, gameObject);
+            var damageable = new NormalDamage(gameObject, DamageStat);
             diContainer.Inject(damageable);
             return damageable;
         }
-        
         
         public override void Update()
         {

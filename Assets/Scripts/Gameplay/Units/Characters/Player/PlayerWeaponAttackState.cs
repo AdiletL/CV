@@ -1,41 +1,86 @@
-﻿using Gameplay.Weapon;
+﻿using Gameplay.Equipment.Weapon;
+using Gameplay.Weapon;
+using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character.Player
 {
     public class PlayerWeaponAttackState : CharacterWeaponAttackState
     {
-        private AnimationClip[] swordAttackClip;
-        private AnimationClip[] bowAttackClip;
-        private Camera baseCamera;
+        private SO_PlayerAttack so_PlayerAttack;
         private PlayerKinematicControl playerKinematicControl;
+        private AnimationClip[] swordAttackClips;
+        private AnimationClip[] bowAttackClips;
+        private AnimationClip currentClip;
+        private Camera baseCamera;
 
         private Vector3 direction;
-        private float rotationSpeed;
-        private const string SPEED_ATTACK_NAME = "SpeedAttack";
+        private Vector3 worldMousePosition;
+        private bool isFacingTarget;
+        
+        private const string ATTACK_SPEED_NAME = "SpeedAttack";
         private const int ANIMATION_LAYER = 1;
-
-        public void SetSwordAttackClip(AnimationClip[] clips) => swordAttackClip = clips;
-        public void SetBowAttackClip(AnimationClip[] clips) => bowAttackClip = clips;
+        
+        public Stat RotationSpeed { get; private set; } = new Stat();
+        
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
         public void SetPlayerKinematicControl(PlayerKinematicControl control) => playerKinematicControl = control;
-        public void SetRotationSpeed(float rotationSpeed) => this.rotationSpeed = rotationSpeed;
 
-        
+        public override void Initialize()
+        {
+            base.Initialize();
+            so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
+            swordAttackClips = so_PlayerAttack.SwordAttackClip;
+            bowAttackClips = so_PlayerAttack.BowAttackClip;
+        }
+
         public override void Enter()
         {
             base.Enter();
-            this.unitAnimation?.ChangeAnimationWithDuration(getRandomAnimationClip(), duration: durationAttack, SPEED_ATTACK_NAME, layer: ANIMATION_LAYER);
-            playerKinematicControl.SetRotationSpeed(rotationSpeed);
+            playerKinematicControl.SetRotationSpeed(RotationSpeed.CurrentValue);
             UpdateDirection();
-            CurrentWeapon.SetDirection(direction);
+            ClearValues();
+            SetRotateDirection();
+            currentClip = getRandomAnimationClip();
+        }
+
+        public override void Update()
+        {
+            countDurationAttack += Time.deltaTime;
+            if (durationAttack < countDurationAttack)
+            {
+                stateMachine.ExitCategory(Category, null);
+                countDurationAttack = 0;
+                return;
+            }
+            
+            if (Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
+                    gameObject.transform.forward, worldMousePosition, 50) && !isFacingTarget)
+            {
+                this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+                isFacingTarget = true;
+            }
+
+            if (isFacingTarget)
+            {
+                this.unitAnimation?.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
+                Attack();
+            }
         }
 
         public override void Exit()
         {
-            ClearColorAtTarget();
             base.Exit();
-            this.unitAnimation?.ExitAnimation(1);
+            this.unitAnimation?.ExitAnimation(ANIMATION_LAYER);
+        }
+
+        protected override void ClearValues()
+        {
+            base.ClearValues();
+            isFacingTarget = false;
+            countDurationAttack = 0;
+            isFacingTarget = false;
+            isAttacked = false;
         }
 
         private void ClearColorAtTarget()
@@ -52,45 +97,26 @@ namespace Unit.Character.Player
             // Получаем позицию мыши в мировых координатах
             Vector3 mousePosition = Input.mousePosition;
             mousePosition.z = baseCamera.transform.position.y - gameObject.transform.position.y; // Используем высоту камеры
-            Vector3 worldMousePosition = baseCamera.ScreenToWorldPoint(mousePosition);
-
+            worldMousePosition = baseCamera.ScreenToWorldPoint(mousePosition);
+            
             // Вычисляем направление
             direction = worldMousePosition - gameObject.transform.position;
             direction.y = 0; // Игнорируем высоту, вращаем только по Y
         }
 
-        public override void SetTarget(GameObject target)
-        {
-            if(target == null) return;
-            ClearColorAtTarget();
-            
-            base.SetTarget(target);
-        }
-        
-
         public override void SetWeapon(Weapon weapon)
         {
             base.SetWeapon(weapon);
-            
             switch (weapon)
             {
-                case Sword sword:
-                    SetAnimationClip(swordAttackClip);
-                    break;
-                case Bow bow:
-                    SetAnimationClip(bowAttackClip);
-                    break;
+                case Sword sword: SetAnimationClip(swordAttackClips); break;
+                case Bow bow: SetAnimationClip(bowAttackClips); break;
             }
         }
 
-        protected override void RotateToTarget()
+        protected void SetRotateDirection()
         {
             playerKinematicControl.SetDirectionRotate(direction);
-        }
-
-        protected override void Fire()
-        {
-            CurrentWeapon.FireAsync();
         }
     }
 
@@ -99,21 +125,7 @@ namespace Unit.Character.Player
         public PlayerWeaponAttackStateStateBuilder() : base(new PlayerWeaponAttackState())
         {
         }
-
-        public PlayerWeaponAttackStateStateBuilder SetSwordAttackClip(AnimationClip[] clips)
-        {
-            if(state is PlayerWeaponAttackState playerWeaponAttackState)
-                playerWeaponAttackState.SetSwordAttackClip(clips);
-
-            return this;
-        }
-        public PlayerWeaponAttackStateStateBuilder SetBowAttackClip(AnimationClip[] clips)
-        {
-            if(state is PlayerWeaponAttackState playerWeaponAttackState)
-                playerWeaponAttackState.SetBowAttackClip(clips);
-
-            return this;
-        }
+        
         public PlayerWeaponAttackStateStateBuilder SetBaseCamera(Camera camera)
         {
             if(state is PlayerWeaponAttackState playerWeaponAttackState)
@@ -125,13 +137,6 @@ namespace Unit.Character.Player
         {
             if(state is PlayerWeaponAttackState playerWeaponAttackState)
                 playerWeaponAttackState.SetPlayerKinematicControl(control);
-
-            return this;
-        }
-        public PlayerWeaponAttackStateStateBuilder SetRotationSpeed(float rotationSpeed)
-        {
-            if(state is PlayerWeaponAttackState playerWeaponAttackState)
-                playerWeaponAttackState.SetRotationSpeed(rotationSpeed);
 
             return this;
         }

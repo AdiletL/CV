@@ -76,7 +76,6 @@ namespace Unit.Character.Creep
         {
             base.Initialize();
             
-            this.StateMachine.Initialize();
         }
 
         protected override void BeforeCreateStates()

@@ -7,7 +7,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 {
     public class UIAbility : MonoBehaviour
     {
-        public static Action<int?> OnSlotSelected;
+        public event Action<int?> OnClickedLeftMouse;
         
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownBar;
@@ -68,7 +68,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
         private void Select()
         {
-            OnSlotSelected?.Invoke(SlotID);
+            OnClickedLeftMouse?.Invoke(SlotID);
         }
 
         private void OnDestroy()

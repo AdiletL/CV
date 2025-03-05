@@ -1,5 +1,8 @@
-﻿using Gameplay.Ability;
+﻿using System.Collections.Generic;
+using Gameplay.Ability;
 using Gameplay.Units.Item;
+using ScriptableObjects.Equipment.Weapon;
+using ScriptableObjects.Gameplay.Equipment;
 using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
@@ -17,7 +20,6 @@ namespace Gameplay.Factory
         public void SetAbilityFactory(AbilityFactory abilityFactory) => this.abilityFactory = abilityFactory;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
-        
 
         public void Initialize()
         {
@@ -30,17 +32,19 @@ namespace Gameplay.Factory
             {
                 _ when so_Item.GetType() == typeof(SO_MadnessMask) => CreateMadnessMask(so_Item),
                 _ when so_Item.GetType() == typeof(SO_TeleportationScroll) => CreateTeleportationScroll(so_Item),
+                _ when so_Item.GetType() == typeof(SO_NormalSword) => CreateNormalSword(so_Item),
             };
             return result;
         }
 
-        private MadnessMask CreateMadnessMask(SO_Item so_Item)
+        private MadnessMaskItem CreateMadnessMask(SO_Item so_Item)
         {
             var so_MadnessMask = so_Item as SO_MadnessMask;
-            var applyDamageHeal = (ApplyDamageHeal)abilityFactory.CreateAbility(so_MadnessMask.AbilityConfigData.ApplyDamageHealConfig);
-            diContainer.Inject(applyDamageHeal);
-            return (MadnessMask)new MadnessMaskBuilder()
-                .SetApplyDamageHeal(applyDamageHeal)
+            var vampirismAbility = (VampirismAbility)abilityFactory.CreateAbility(so_MadnessMask.AbilityConfigData.VampirismConfig);
+            diContainer.Inject(vampirismAbility);
+            
+            return (MadnessMaskItem)new MadnessMaskItemBuilder()
+                .SetVampirismAbility(vampirismAbility)
                 .SetItemBehaviour(so_MadnessMask.ItemBehaviourID)
                 .SetItemCategory(so_MadnessMask.ItemCategoryID)
                 .SetBlockInput(so_MadnessMask.BlockInputTypeID)
@@ -50,10 +54,10 @@ namespace Gameplay.Factory
                 .Build();
         }
 
-        private TeleportationScroll CreateTeleportationScroll(SO_Item so_Item)
+        private TeleportationScrollItem CreateTeleportationScroll(SO_Item so_Item)
         {
             var so_TeleportationScroll = so_Item as SO_TeleportationScroll;
-            return (TeleportationScroll)new TeleportationScrollBuilder()
+            return (TeleportationScrollItem)new TeleportationScrollItemBuilder()
                 .SetSelectTargetCursor(so_TeleportationScroll.SelectTargetCursor)
                 .SetPortalObject(so_TeleportationScroll.PortalObject)
                 .SetEndPortalID(so_TeleportationScroll.EndPortalID.ID)
@@ -64,6 +68,19 @@ namespace Gameplay.Factory
                 .SetBlockInput(so_TeleportationScroll.BlockInputTypeID)
                 .SetItemBehaviour(so_TeleportationScroll.ItemBehaviourID)
                 .SetItemCategory(so_TeleportationScroll.ItemCategoryID)
+                .Build();
+        }
+
+        private NormalSwordItem CreateNormalSword(SO_Item so_Item)
+        {
+            var so_NormalSword = so_Item as SO_NormalSword;
+            return (NormalSwordItem)new NormalSwordItemBuilder()
+                .SetEquipmentConfig(so_NormalSword.SO_Equipment)
+                .SetTimerCast(so_Item.TimerCast)
+                .SetItemBehaviour(so_Item.ItemBehaviourID)
+                .SetBlockInput(so_Item.BlockInputTypeID)
+                .SetCooldown(so_NormalSword.Cooldown)
+                .SetGameObject(gameObject)
                 .Build();
         }
     }
@@ -89,7 +106,7 @@ namespace Gameplay.Factory
             this.itemFactory.SetBaseCamera(baseCamera);
             return this;
         }
-
+        
         public ItemFactory Build()
         {
             return itemFactory;

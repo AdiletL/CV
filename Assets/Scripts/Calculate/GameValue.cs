@@ -19,10 +19,10 @@ namespace Calculate
             this.valueType = valueType;
         }
 
-        public int Calculate(float baseValue)
+        public float Calculate(float baseValue)
         {
             float result = valueType == ValueType.Percent ? (baseValue * value) / 100f : value;
-            return (int)(Math.Truncate(result * 10) / 10);
+            return (float)(Math.Truncate(result * 10) / 10);
         }
     }
 }

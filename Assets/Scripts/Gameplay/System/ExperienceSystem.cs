@@ -20,7 +20,7 @@ public class ExperienceSystem
 
     private void OnGiveAoeExperience(Unit.AoeExperienceInfo info)
     {
-        var experienceUnits = gameUnits.GetUnits<UnitExperience>();
+        var experienceUnits = gameUnits.GetUnits<Unit.UnitExperience>();
         float distanceSqr = 0;
         
         for (int i = experienceUnits.Count - 1; i >= 0; i--)
@@ -36,7 +36,7 @@ public class ExperienceSystem
             }
             
             distanceSqr = experienceUnits[i].RangeTakeExperience * experienceUnits[i].RangeTakeExperience;
-            if (!Calculate.Distance.IsNearUsingSqr(info.GameObject.transform.position,
+            if (!Calculate.Distance.IsNearUsingSqr(info.Owner.transform.position,
                     experienceUnits[i].transform.position, distanceSqr))
             {
                 experienceUnits.RemoveAt(i);

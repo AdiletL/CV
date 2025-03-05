@@ -10,9 +10,15 @@ namespace Unit.Character.Player
         private CharacterStateFactory characterStateFactory;
         
         public void SetCharacterStateFactory(CharacterStateFactory characterStateFactory) => this.characterStateFactory = characterStateFactory;
-        
 
-        public void InitializeRunStateOrig()
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            InitializeRunState();
+        }
+
+        public void InitializeRunState()
         {
             if (!this.stateMachine.IsStateNotNull(typeof(PlayerRunState)))
             {
@@ -25,7 +31,7 @@ namespace Unit.Character.Player
         public override void SetState()
         {
             base.SetState();
-            InitializeRunStateOrig();
+            InitializeRunState();
             if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
                 this.stateMachine.SetStates(desiredStates: characterRunState.GetType());
         }
@@ -33,7 +39,7 @@ namespace Unit.Character.Player
         public override void ExitCategory(StateCategory category)
         {
             base.ExitCategory(category);
-            InitializeRunStateOrig();
+            InitializeRunState();
             if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
                 this.stateMachine.ExitCategory(category, characterRunState.GetType());
         }
@@ -41,7 +47,7 @@ namespace Unit.Character.Player
         public override void ExitOtherStates()
         {
             base.ExitOtherStates();
-            InitializeRunStateOrig();
+            InitializeRunState();
             if(!this.stateMachine.IsActivateType(characterRunState.GetType()))
                 this.stateMachine.ExitOtherStates(characterRunState.GetType());
         }

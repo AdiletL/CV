@@ -14,11 +14,11 @@ namespace Gameplay.Spawner
             
         }
 
-        public override async void CreatePopUp(Vector3 center, int damage)
+        public override async void CreatePopUp(Vector3 center, float damage)
         {
             var popUpGameObject = await poolManager.GetObjectAsync<DamagePopUpUI>();
             popUpGameObject.transform.position = center;
-            popUpGameObject.GetComponent<DamagePopUpUI>().Play(damage);
+            popUpGameObject.GetComponent<DamagePopUpUI>().Play((int)damage);
         }
     }
 }

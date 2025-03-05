@@ -74,6 +74,8 @@ namespace Unit.Character.Creep
             this.StateMachine.OnChangedState += OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth += OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage += GetComponentInUnit<CreepUI>().OnTakeDamage;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
         }
 
         protected override void DeInitializeMediatorRPC()
@@ -82,6 +84,8 @@ namespace Unit.Character.Creep
             this.StateMachine.OnChangedState -= OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth -= OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage -= GetComponentInUnit<CreepUI>().OnTakeDamage;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
         }
 
         protected void Update()
@@ -94,7 +98,7 @@ namespace Unit.Character.Creep
             this.StateMachine?.LateUpdate();
         }
         
-        protected void OnChangedState(Machine.IState state)
+        protected void OnChangedState(IState state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
@@ -102,7 +106,9 @@ namespace Unit.Character.Creep
 
         private void OnZeroHealth()
         {
+            characterExperience.GiveExperience();
             OnDeath?.Invoke(this);
+            gameObject.SetActive(false);
         }
     }
 }

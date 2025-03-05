@@ -21,10 +21,10 @@ MonoBehaviour:
   - {fileID: 1827226128182048838, guid: 0791e523b7f1b2740a3b1cde42b6aeac, type: 3}
   <RunSpeed>k__BackingField: 3
   <BaseRunReductionEndurance>k__BackingField: 0.01
-  <JumpInfo>k__BackingField:
-    BlockInputType: 8
+  <JumpConfig>k__BackingField:
+    BlockInputType: 56
     Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
-    Power: 6
+    Power: 5
     MaxCount: 2
     BaseReductionEndurance: 0.1
   <BlockInputType>k__BackingField: 8

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: WeaponAndProjectile
   m_GUID: 5828f45b4aedcf244b074e9e3ae6626e
   m_SerializeEntries:
+  - m_GUID: 3497c4e51618c62488a2efea667beab7
+    m_Address: NormalSword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8d7390fc2ffd5ea4ab42dfe9617aeabb
     m_Address: Sphere
     m_ReadOnly: 0

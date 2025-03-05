@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38c932346ec1839439a29194adbd672f
+    m_Address: NormalSwordItem
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f9b6aaf698e42464e855462214230e39
     m_Address: SpawPortalItem
     m_ReadOnly: 0

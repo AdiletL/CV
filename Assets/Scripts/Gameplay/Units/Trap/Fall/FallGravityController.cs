@@ -18,7 +18,8 @@ namespace Unit.Trap.Fall
         private SO_FallGravity so_FallGravity;
         private Coroutine startTimerCoroutine;
         private Coroutine checkAndAddRigidBodyCoroutine;
-
+        public Stat DamageStat { get; private set; } = new Stat();
+        
         private float intervalFallObjects;
         private float radius;
         private bool isReady = true;
@@ -33,11 +34,12 @@ namespace Unit.Trap.Fall
         {
             base.Initialize();
 
+            DamageStat.AddValue(so_FallGravity.Damage);
             so_FallGravity = (SO_FallGravity)so_Trap;
             Mass = so_FallGravity.Mass + Physics.gravity.y;
             radius = so_FallGravity.Radius + gameConfig.RadiusCell;
             intervalFallObjects = so_FallGravity.IntervalFallObjets;
-            Damageable = new NormalDamage(so_FallGravity.Damage, gameObject);
+            Damageable = new NormalDamage(gameObject, DamageStat);
         }
         
         public override void Appear()

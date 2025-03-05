@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8950414e8e8480aa711de84d5177753, type: 3}
   m_Name: SO_Sword
   m_EditorClassIdentifier: 
-  <WeaponPrefab>k__BackingField: {fileID: 8218668140323578366, guid: f0aae4c8b38e02e48a4124483b105340, type: 3}
-  <Damage>k__BackingField: 1
-  <Range>k__BackingField: 1.5
+  <EquipmentPrefab>k__BackingField:
+    m_AssetGUID: 3497c4e51618c62488a2efea667beab7
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  <ReduceEndurance>k__BackingField: 0.01
   <AngleToTarget>k__BackingField: 100
-  <ReductionEndurance>k__BackingField:
-    Value: 50
-    ValueType: 1
-  <IncreaseAttackSpeed>k__BackingField:
-    Value: 250
-    ValueType: 1

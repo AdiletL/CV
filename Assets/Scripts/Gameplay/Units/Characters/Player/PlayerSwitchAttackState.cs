@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay.Equipment.Weapon;
 using Gameplay.Factory.Character;
 using Gameplay.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character.Player;
+using UnityEngine;
 using Zenject;
 
 namespace Unit.Character.Player
@@ -17,82 +19,10 @@ namespace Unit.Character.Player
         private CharacterDefaultAttackState characterDefaultAttackState;
         private SO_PlayerAttack so_PlayerAttack;
         
-        private List<Weapon> currentWeapons = new();
 
         public void SetCharacterSwitchStateFactory(CharacterStateFactory characterStateFactory) => this.characterStateFactory = characterStateFactory;
         
-
-        public override bool TryGetWeapon(Type weaponType)
-        {
-            foreach (var w in currentWeapons)
-            {
-                if (w.GetType() == weaponType)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public override bool TryGetWeapon<T>(Type weaponType, out T weapon)
-        {
-            foreach (var w in currentWeapons)
-            {
-                if (w.GetType() == weaponType)
-                {
-                    weapon = (T)w;
-                    return true;
-                }
-            }
-
-            weapon = null;
-            return false;
-        }
-
-
-        public override int TotalDamage()
-        {
-            if (currentWeapon == null && characterDefaultAttackState != null)
-            {
-                return characterDefaultAttackState.Damageable.CurrentDamage + 
-                       characterDefaultAttackState.Damageable.AdditionalDamage;
-            }
-            else if (currentWeapon != null && characterWeaponAttackState != null)
-            {
-                return characterWeaponAttackState.CurrentWeapon.Damageable.CurrentDamage +
-                       characterWeaponAttackState.CurrentWeapon.Damageable.AdditionalDamage;
-            }
-            return 0;
-        }
-
-        public override int TotalAttackSpeed()
-        {
-            if (currentWeapon == null && characterDefaultAttackState != null)
-            {
-                return characterDefaultAttackState.AttackSpeed;
-            }
-            else if (currentWeapon != null && characterWeaponAttackState != null)
-            {
-                return characterWeaponAttackState.AttackSpeed;
-            }
-            return 0;
-        }
-
-        public override float TotalAttackRange()
-        {
-            if (currentWeapon == null && characterDefaultAttackState != null)
-            {
-                return characterDefaultAttackState.Range;
-            }
-            else if (currentWeapon != null && characterWeaponAttackState != null)
-            {
-                return characterWeaponAttackState.Range;
-            }
-            return 0;
-        }
         
-
         public override bool IsFindUnitInRange()
         {
             return Calculate.Attack.IsFindUnitInRange<IPlayerAttackable>(center.position, RangeAttack, enemyLayer, ref findUnitColliders);
@@ -102,6 +32,7 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
+            InitializeWeaponAttackState();
         }
 
         private void InitializeWeaponAttackState()
@@ -135,14 +66,13 @@ namespace Unit.Character.Player
         public override void SetState()
         {
             base.SetState();
-            if (currentWeapon != null)
+            if (characterWeaponAttackState.CurrentWeapon != null)
             {
                 InitializeWeaponAttackState();
 
                 characterWeaponAttackState.SetTarget(currentTarget);
                 if (!this.stateMachine.IsActivateType(characterWeaponAttackState.GetType()))
                 {
-                    SetRangeAttack(currentWeapon.Range);
                     this.stateMachine.SetStates(desiredStates: characterWeaponAttackState.GetType());
                 }
             }
@@ -153,7 +83,6 @@ namespace Unit.Character.Player
                 characterDefaultAttackState.SetTarget(currentTarget);
                 if (!this.stateMachine.IsActivateType(characterDefaultAttackState.GetType()))
                 {
-                    SetRangeAttack(so_PlayerAttack.Range);
                     this.stateMachine.SetStates(desiredStates: characterDefaultAttackState.GetType());
                 }
             }
@@ -162,14 +91,13 @@ namespace Unit.Character.Player
         public override void ExitCategory(StateCategory category)
         {
             base.ExitCategory(category);
-            if (currentWeapon != null)
+            if (characterWeaponAttackState.CurrentWeapon != null)
             {
                 InitializeWeaponAttackState();
 
                 characterWeaponAttackState.SetTarget(currentTarget);
                 if (!this.stateMachine.IsActivateType(characterWeaponAttackState.GetType()))
                 {
-                    SetRangeAttack(currentWeapon.Range);
                     this.stateMachine.ExitCategory(category, characterWeaponAttackState.GetType());
                 }
             }
@@ -189,14 +117,13 @@ namespace Unit.Character.Player
         public override void ExitOtherStates()
         {
             base.ExitOtherStates();
-            if (currentWeapon != null)
+            if (characterWeaponAttackState.CurrentWeapon != null)
             {
                 InitializeWeaponAttackState();
 
                 characterWeaponAttackState.SetTarget(currentTarget);
                 if (!this.stateMachine.IsActivateType(characterWeaponAttackState.GetType()))
                 {
-                    SetRangeAttack(currentWeapon.Range);
                     this.stateMachine.ExitOtherStates(characterWeaponAttackState.GetType());
                 }
             }
@@ -211,25 +138,6 @@ namespace Unit.Character.Player
                     this.stateMachine.ExitOtherStates(characterDefaultAttackState.GetType());
                 }
             }
-        }
-
-
-        public override void SetWeapon(Weapon weapon)
-        {
-            if (!TryGetWeapon(weapon.GetType()))
-                currentWeapons.Add(weapon);
-                
-            currentWeapon = weapon;
-            SetRangeAttack(currentWeapon.Range);
-
-            InitializeWeaponAttackState();
-
-            characterWeaponAttackState.SetWeapon(currentWeapon);
-        }
-
-        public override void RemoveWeapon()
-        {
-            characterWeaponAttackState?.RemoveWeapon();
         }
     }
 

@@ -6,10 +6,14 @@
         public StateMachine stateMachine { get; protected set; }
         public bool IsActive { get; private set; }
         public bool IsCanExit { get; protected set; } = true;
+        public bool IsInitialized { get; protected set; }
         
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
-        
-        public abstract void Initialize();
+
+        public virtual void Initialize()
+        {
+            IsInitialized = true;
+        }
         public virtual void Enter()
         {
             IsActive = true;

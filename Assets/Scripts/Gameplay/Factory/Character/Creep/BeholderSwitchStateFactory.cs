@@ -63,7 +63,6 @@ namespace Gameplay.Factory.Character.Creep
             return (BeholderSwitchAttackState)new BeholderSwitchAttackStateBuilder()
                 .SetCreepStateFactory(creepStateFactory)
                 .SetNavMeshAgent(navMeshAgent)
-                .SetEnemyLayer(so_BeholderAttack.EnemyLayer)
                 .SetConfig(so_BeholderAttack)
                 .SetCharacterEndurance(characterEndurance)
                 .SetUnitAnimation(characterAnimation)

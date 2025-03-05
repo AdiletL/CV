@@ -6,70 +6,42 @@ namespace Unit
 {
     public abstract class UnitEndurance : MonoBehaviour, IEndurance
     {
-        public event Action<EnduranceInfo> OnChangedEndurance;
+        public event Action<float, float> OnChangedEndurance;
         
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitEndurance so_UnitEndurance;
         
-        private EnduranceInfo enduranceInfo;
+        public Stat EnduranceStat { get; protected set; } = new Stat();
+        public Stat RegenerationStat { get; protected set; } = new Stat();
         
-        public int MaxEndurance { get; protected set; }
-        
-        private float currentEndurance;
-        public float CurrentEndurance
-        {
-            get => currentEndurance;
-            set
-            {
-                if (value <= 0)
-                {
-                    currentEndurance = 0;
-                    gameObject.SetActive(false);
-                }
-                else
-                {
-                    currentEndurance = value;
-                }
 
-                //Debug.Log(gameObject.name + " Current Endurance: " + currentEndurance);
-                ExecuteEventChangedEndurance();
-            }
-        }
-        
-        
-        protected virtual void ExecuteEventChangedEndurance()
+        protected virtual void OnEnable()
         {
-            enduranceInfo.CurrentEndurance = CurrentEndurance;
-            enduranceInfo.MaxEndurance = MaxEndurance;
-            OnChangedEndurance?.Invoke(enduranceInfo);
+            EnduranceStat.OnAddCurrentValue += OnAddHealthStatCurrentValue;
+            EnduranceStat.OnRemoveCurrentValue += OnRemoveHealthStatCurrentValue;
         }
-        
+
+        protected virtual void OnDisable()
+        {
+            EnduranceStat.OnAddCurrentValue -= OnAddHealthStatCurrentValue;
+            EnduranceStat.OnRemoveCurrentValue -= OnRemoveHealthStatCurrentValue;
+        }
+
         public virtual void Initialize()
         {
-            enduranceInfo = new EnduranceInfo();
-            MaxEndurance = so_UnitEndurance.MaxEndurance;
-            CurrentEndurance = MaxEndurance;
+            EnduranceStat.AddMaxValue(so_UnitEndurance.MaxEndurance);
+            EnduranceStat.AddValue(so_UnitEndurance.MaxEndurance);
         }
-
-        public virtual void AddEndurance(float value)
+        
+        
+        protected virtual void OnAddHealthStatCurrentValue(float value)
         {
-            CurrentEndurance += value;
+            OnChangedEndurance?.Invoke(EnduranceStat.CurrentValue, EnduranceStat.MaximumValue);
         }
 
-        public virtual void RemoveEndurance(float value)
+        protected virtual void OnRemoveHealthStatCurrentValue(float value)
         {
-            CurrentEndurance -= value;
+            OnChangedEndurance?.Invoke(EnduranceStat.CurrentValue, EnduranceStat.MaximumValue);
         }
-
-        public virtual void IncreaseMaxEndurance(int value)
-        {
-            MaxEndurance += value;
-        }
-    }
-
-    public class EnduranceInfo
-    {
-        public float MaxEndurance { get; set; }
-        public float CurrentEndurance { get; set; }
     }
 }

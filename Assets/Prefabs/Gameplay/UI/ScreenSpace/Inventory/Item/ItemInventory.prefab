@@ -29,13 +29,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5711997682246049260}
+  m_Children:
+  - {fileID: 3943078946137752141}
+  m_Father: {fileID: 1540949172656540702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.016845703, y: 0.0010986328}
-  m_SizeDelta: {x: 378.0336, y: 282.1621}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -189.01685, y: 141.08109}
+  m_SizeDelta: {x: 378.03357, y: 282.1621}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1008240752335127151
 CanvasRenderer:
@@ -104,12 +105,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5711997682246049260}
+  m_Father: {fileID: 1563483367681783938}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.016845703, y: 0.0010986328}
-  m_SizeDelta: {x: 0.033599854, y: 0.0021362305}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_SizeDelta: {x: 0, y: -0.000061035156}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5488388868260172884
 MonoBehaviour:
@@ -135,63 +136,6 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 0
   m_ConstraintCount: 2
---- !u!1 &7947821143532371021
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5711997682246049260}
-  - component: {fileID: 7262107472942255877}
-  m_Layer: 5
-  m_Name: ItemContainer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &5711997682246049260
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7947821143532371021}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1563483367681783938}
-  - {fileID: 3943078946137752141}
-  m_Father: {fileID: 1540949172656540702}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -189, y: 141.07999}
-  m_SizeDelta: {x: 378, y: 282.15997}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7262107472942255877
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7947821143532371021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f29393dafd91429ba572d954adec3837, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiItemPrefab:
-    m_AssetGUID: 5b4fd2d332c670f43a1b8c38ea9e962b
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  container: {fileID: 3943078946137752141}
 --- !u!1001 &2457651408295568459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -289,7 +233,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3997465790290995285, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5711997682246049260}
+      addedObject: {fileID: 1563483367681783938}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2092175183012456784, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
       insertIndex: -1
@@ -337,4 +281,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93e88275f1ba4cdbb6c1f216ca7fd2ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemContainer: {fileID: 7262107472942255877}
+  uiItemPrefab:
+    m_AssetGUID: 5b4fd2d332c670f43a1b8c38ea9e962b
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  container: {fileID: 3943078946137752141}

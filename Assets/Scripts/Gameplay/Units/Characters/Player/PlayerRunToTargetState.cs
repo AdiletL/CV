@@ -117,7 +117,7 @@ namespace Unit.Character.Player
         finalTarget = null;
     }
 
-    private void OnExitCategory(Machine.IState state)
+    private void OnExitCategory(IState state)
     {
         if(!IsActive) return;
         
@@ -259,14 +259,14 @@ namespace Unit.Character.Player
         }
         else
         {
-            if (!Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTargetPosition))
+            if (!Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTargetPosition))
             {
                 rotation.RotateToTarget();
                 return;
             }
 
             movementDirection = (currentTargetPosition - gameObject.transform.position).normalized;
-            characterController.Move(movementDirection * (CurrentMovementSpeed * Time.deltaTime));
+            characterController.Move(movementDirection * (MovementSpeedStat.CurrentValue * Time.deltaTime));
 
             ReduceEndurance();
         }
@@ -286,7 +286,7 @@ namespace Unit.Character.Player
 
     private void ReduceEndurance()
     {
-        unitEndurance.RemoveEndurance(runReductionEndurance);
+        unitEndurance.EnduranceStat.RemoveValue(runReductionEndurance);
     }
 }
 

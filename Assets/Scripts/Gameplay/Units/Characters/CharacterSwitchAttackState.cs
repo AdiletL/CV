@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Gameplay.Equipment.Weapon;
 using Gameplay.Factory.Character;
 using Gameplay.Weapon;
 using Machine;
@@ -10,12 +12,11 @@ namespace Unit.Character
     public class CharacterSwitchAttackState : CharacterSwitchState
     {
         protected GameObject currentTarget;
-        protected Weapon currentWeapon;
         protected SO_CharacterAttack so_CharacterAttack;
         
         protected Collider[] findUnitColliders = new Collider[1];
 
-        protected CharacterSwitchMoveState characterSwitchState;
+        protected CharacterSwitchMoveState characterSwitchMoveState;
         protected UnitEndurance unitEndurance;
         protected LayerMask enemyLayer;
         
@@ -24,27 +25,14 @@ namespace Unit.Character
         
         
         public void SetConfig(SO_CharacterAttack config) => so_CharacterAttack = config;
-        public void SetSwitchMoveState(CharacterSwitchMoveState characterSwitchState) => this.characterSwitchState = characterSwitchState;
+        public void SetSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMoveState = characterSwitchMoveState;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
-        public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
         
 
         public virtual bool IsFindUnitInRange()
         {
             return Calculate.Attack.IsFindUnitInRange<IAttackable>(center.position, RangeAttack, enemyLayer, ref findUnitColliders);
         }
-
-        public virtual bool TryGetWeapon(Type weaponType)
-        {
-            return false;
-        }
-        
-        public virtual bool TryGetWeapon<T>(Type weaponType, out T weapon) where T : Weapon
-        {
-            weapon = null;
-            return false;
-        }
-
 
         public virtual int TotalDamage()
         {
@@ -64,7 +52,7 @@ namespace Unit.Character
 
         public override void Initialize()
         {
-           
+            enemyLayer = so_CharacterAttack.EnemyLayer;
         }
 
         public override void SetState()
@@ -86,16 +74,6 @@ namespace Unit.Character
         {
             currentTarget = target;
         }
-
-        public virtual void SetWeapon(Weapon weapon)
-        {
-            currentWeapon = weapon;
-        }
-
-        public virtual void RemoveWeapon()
-        {
-            
-        }
     }
 
     public class CharacterSwitchAttackStateBuilder : CharacterSwitchStateBuilder
@@ -108,12 +86,6 @@ namespace Unit.Character
         {
             if(switchState is CharacterSwitchAttackState characterSwitchAttackState)
                 characterSwitchAttackState.SetConfig(config);
-            return this;
-        }
-        public CharacterSwitchAttackStateBuilder SetEnemyLayer(LayerMask layer)
-        {
-            if(switchState is CharacterSwitchAttackState characterSwitchAttackState)
-                characterSwitchAttackState.SetEnemyLayer(layer);
             return this;
         }
         public CharacterSwitchAttackStateBuilder SetCharacterEndurance(UnitEndurance unitEndurance)

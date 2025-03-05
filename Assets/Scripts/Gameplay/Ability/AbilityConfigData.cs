@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Ability
 {
@@ -9,8 +10,8 @@ namespace Gameplay.Ability
     {
         public List<AbilityType> AbilityTypeID;
         
-        [ShowIf("@AbilityTypeID.Contains(AbilityType.ApplyDamageHeal)"), Space]
-        public ApplyDamageHealConfig ApplyDamageHealConfig;
+        [ShowIf("@AbilityTypeID.Contains(AbilityType.Vampirism)"), Space]
+        public VampirismConfig VampirismConfig;
         
         [ShowIf("@AbilityTypeID.Contains(AbilityType.BlockPhysicalDamage)"), Space]
         public BlockPhysicalDamageConfig BlockPhysicalDamageConfig;

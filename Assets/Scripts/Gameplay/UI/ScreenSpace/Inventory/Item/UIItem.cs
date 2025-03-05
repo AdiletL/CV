@@ -1,28 +1,28 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Gameplay.UI.ScreenSpace.Inventory
 {
-    public class UIItem : MonoBehaviour
+    public class UIItem : MonoBehaviour, IPointerClickHandler
     {
-        public static Action<int?> OnSlotSelected;
+        public event Action<int?> OnClickedLeftMouse;
+        public event Action<int?> OnClickedRightMouse;
         
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownBar;
         [SerializeField] private TextMeshProUGUI amountTxt;
         [SerializeField] private TextMeshProUGUI cooldownText;
-        [SerializeField] private Button button;
 
         private float lastTime = -1f;
+        private bool isInteractable;
         
         public int? SlotID { get; private set; }
         
         public void Initialize()
         {
-            button.onClick.AddListener(Select);
         }
         public void SetSlotID(int? slotID) => SlotID = slotID;
         
@@ -48,7 +48,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             amountTxt.text = amount.ToString();
         }
-        public void UpdateSelectable(bool value) => button.interactable = value;
+        public void UpdateSelectable(bool value) => isInteractable = value;
 
         public void UpdateCooldownBar(float current, float max)
         {
@@ -70,15 +70,19 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             if(!cooldownText.enabled) cooldownText.enabled = true;
         }
-
-        private void Select()
+        
+        public void OnPointerClick(PointerEventData eventData)
         {
-            OnSlotSelected?.Invoke(SlotID);
-        }
-
-        private void OnDestroy()
-        {
-            button.onClick.RemoveAllListeners();
+            if(!isInteractable) return;
+            
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                OnClickedRightMouse?.Invoke(SlotID);
+            }
+            else if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                OnClickedLeftMouse?.Invoke(SlotID);
+            }
         }
     }
 }

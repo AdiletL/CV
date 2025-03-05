@@ -13,7 +13,7 @@ namespace ScriptableObjects.Unit.Character.Player
         [field: SerializeField] public float RunSpeed { get; private set; }
         [field: SerializeField] public float BaseRunReductionEndurance { get; private set; }
         
-        [field: SerializeField, Space(10), Header("Jump")] public JumpInfo JumpInfo { get; private set; }
+        [field: SerializeField, Space(10), Header("Jump")] public JumpConfig JumpConfig { get; private set; }
         
         [field: SerializeField, Space] public InputType BlockInputType { get; private set; }
     }

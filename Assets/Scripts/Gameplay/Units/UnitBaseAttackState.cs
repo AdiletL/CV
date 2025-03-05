@@ -1,10 +1,12 @@
 ﻿using Machine;
 using UnityEngine;
+using Zenject;
 
 namespace Unit
 {
     public abstract class UnitBaseAttackState : State, IAttack
     {
+        [Inject] protected DiContainer diContainer;
         public override StateCategory Category { get; } = StateCategory.Attack;
         
         protected GameObject gameObject;
@@ -25,7 +27,9 @@ namespace Unit
 
         public override void Initialize()
         {
+            base.Initialize();
             Damageable = GetDamageable();
+            diContainer.Inject(Damageable);
         }
 
         public abstract void Attack();

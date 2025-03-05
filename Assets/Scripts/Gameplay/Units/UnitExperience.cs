@@ -2,13 +2,11 @@
 using UnityEngine;
 using Gameplay.Experience;
 using ScriptableObjects.Unit;
-using Unit.Character.Player;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace Unit
 {
-    public abstract class UnitExperience : MonoBehaviour, IUnitExperience, IUnitLevel
+    public abstract class UnitExperience : MonoBehaviour, IExperience, ILevel
     {
         [Inject] protected DiContainer diContainer;
         
@@ -19,12 +17,11 @@ namespace Unit
         
         private AoeExperienceInfo aoeExperienceInfo;
         
-        public IExperience ExperienceCalculate { get; protected set; }
-        
-        public float RangeTakeExperience { get; protected set; }
-        public int CurrentLevel { get; protected set; }
-        public int CurrentExperience { get; protected set; }
+        public ICountExperience ICountExperienceCalculate { get; protected set; }
+        public Stat ExperienceStat { get; protected set; } = new Stat();
+        public Stat LevelStat { get; protected set; } = new Stat();
 
+        public float RangeTakeExperience { get; protected set; }
         public bool IsTakeLevel { get; protected set; }
         public bool IsTakeExperience { get; protected set; }
         public bool IsGiveExperience { get; protected set; }
@@ -32,71 +29,62 @@ namespace Unit
 
         public virtual void Initialize()
         {
-            CurrentLevel = so_UnitExperience.StartLevel;
-            CurrentExperience = 0;
-            CurrentExperience = so_UnitExperience.Experience;
+            LevelStat.AddValue(so_UnitExperience.StartLevel);
+            ExperienceStat.AddValue(so_UnitExperience.Experience);
             RangeTakeExperience = so_UnitExperience.RangeTakeExperience;
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
             IsTakeExperience = so_UnitExperience.IsTakeExperience;
             IsGiveExperience = so_UnitExperience.IsGiveExperience;
             
-            aoeExperienceInfo = new AoeExperienceInfo(
-                CurrentExperience, RangeTakeExperience, gameObject);
-            ExperienceCalculate = new ExponentialExperience();
-            diContainer.Inject(ExperienceCalculate);
+            aoeExperienceInfo = new AoeExperienceInfo((int)ExperienceStat.CurrentValue, RangeTakeExperience, gameObject);
+            ICountExperienceCalculate = new ExponentialICountExperience();
+            diContainer.Inject(ICountExperienceCalculate);
         }
         
         public virtual void AddExperience(int experience)
         {
             if(!IsTakeExperience) return;
-            
-            CurrentExperience += experience;
+            ExperienceStat.AddValue(experience);
             CheckLevelUp();
-            Debug.Log(gameObject.name + " Added Experience " + CurrentExperience);
+            Debug.Log(gameObject.name + " Added Experience " + ExperienceStat.CurrentValue);
         }
 
         protected virtual void CheckLevelUp()
         {
-            int experienceToNextLevel = ExperienceCalculate.CalculateExperienceForNextLevel(CurrentLevel, CurrentExperience);
+            int experienceToNextLevel = ICountExperienceCalculate.CalculateExperienceForNextLevel((int)LevelStat.CurrentValue, (int)ExperienceStat.CurrentValue);
         
-            while (CurrentExperience >= experienceToNextLevel)
+            while (ExperienceStat.CurrentValue >= experienceToNextLevel)
             {
                 LevelUp(1);
-                experienceToNextLevel = ExperienceCalculate.CalculateExperienceForNextLevel(CurrentLevel, CurrentExperience);
+                experienceToNextLevel = ICountExperienceCalculate.CalculateExperienceForNextLevel((int)LevelStat.CurrentValue, (int)ExperienceStat.CurrentValue);
             }
         }
         public virtual void LevelUp(int amount)
         {
             if(!IsTakeLevel) return;
-            
-            CurrentLevel += amount;
-            Debug.Log(gameObject.name + " Level Up! New Level: " + CurrentLevel);
+            LevelStat.AddValue(amount);
+            Debug.Log(gameObject.name + " Level Up! New Level: " + LevelStat.CurrentValue);
         }
+        
 
-        public virtual void IncreaseLevel(int value)
-        {
-            LevelUp(value);
-        }
-
-        public virtual void OnZeroHealth()
+        public virtual void GiveExperience()
         {
             if(!IsGiveExperience) return;
-
             OnGiveAoeExperience?.Invoke(aoeExperienceInfo);
         }
     }
 
     public class AoeExperienceInfo
     {
-        public int TotalExperience { get; }
-        public float RangeTakeExperience { get; }
-        public GameObject GameObject { get; }
+        public int TotalExperience { get; private set; }
+        public float RangeTakeExperience { get; private set; }
+        public GameObject Owner { get; private set; }
 
-        public AoeExperienceInfo(int totalExperience, float rangeTakeExperience, GameObject gameObject)
+        public AoeExperienceInfo(int totalExperience, float rangeTakeExperience, GameObject owner)
         {
             TotalExperience = totalExperience;
             RangeTakeExperience = rangeTakeExperience;
-            GameObject = gameObject;
+            Owner = owner;
         }
     }
 }

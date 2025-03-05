@@ -25,14 +25,13 @@ namespace Unit.Character
         protected bool isApplyDamage;
         protected bool isCooldown;
 
-        public float Range { get; protected set; }
-        
+        public Stat RangeStat { get; private set; } = new();
+
         public void SetSwitchMoveState(CharacterSwitchMoveState characterSwitchState) => this.characterSwitchMoveState = characterSwitchState;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetCooldownClip(AnimationClip cooldownClip) => this.cooldownClip = cooldownClip;
         public void SetAttackClips(AnimationClip[] attackClips) => this.attackClips = attackClips;
         public void SetEnemyLayer(LayerMask enemyLayer) => this.enemyLayer = enemyLayer;
-        public void SetRange(float range) => this.Range = range;
         public void SetApplyDamageMoment(float applyDamageMoment) => this.applyDamageMoment = applyDamageMoment;
         
         
@@ -48,7 +47,7 @@ namespace Unit.Character
             durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
             cooldown = durationAttack * .5f;
             cooldownApplyDamage = durationAttack * applyDamageMoment;
-            rangeSqr = Range * Range;
+            rangeSqr = RangeStat.CurrentValue * RangeStat.CurrentValue;
         }
 
         public override void Enter()
@@ -69,7 +68,7 @@ namespace Unit.Character
                 return;
             }
 
-            if (!isCooldown && !Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position,
+            if (!isCooldown && !Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
                     gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
             {
                 RotateToTarget();
@@ -104,7 +103,7 @@ namespace Unit.Character
 
         protected virtual void FindUnit()
         {
-            currentTarget = Calculate.Attack.FindUnitInRange(center.position, Range, enemyLayer, ref findUnitColliders);
+            currentTarget = Calculate.Attack.FindUnitInRange(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
             rotation.SetTarget(currentTarget?.transform);
         }
 
@@ -158,7 +157,7 @@ namespace Unit.Character
                 currentTarget.TryGetComponent(out IAttackable attackable) &&
                 currentTarget.TryGetComponent(out IHealth health) &&
                 Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, this.currentTarget.transform.position, this.rangeSqr) &&
-                Calculate.Move.IsFacingTargetUsingAngle(gameObject.transform.position,
+                Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
                     gameObject.transform.forward, currentTarget.transform.position, angleToTarget))
             {
                 if (health.IsLive)
@@ -207,12 +206,6 @@ namespace Unit.Character
         {
             if(state is CharacterDefaultAttackState defaultState)
                 defaultState.SetEnemyLayer(enemyLayer);
-            return this;
-        }
-        public CharacterDefaultAttackStateBuilder SetRange(float range)
-        {
-            if(state is CharacterDefaultAttackState defaultState)
-                defaultState.SetRange(range);
             return this;
         }
         public CharacterDefaultAttackStateBuilder SetApplyDamageMoment(float applyDamageMoment)

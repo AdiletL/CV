@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unit;
+using UnityEngine;
 
 namespace Movement
 {
@@ -7,20 +8,20 @@ namespace Movement
         private GameObject gameObject;
         private Vector3 point;
 
-        public float BaseMovementSpeed { get; }
-        public float CurrentMovementSpeed { get; }
-
+        public Stat MovementSpeedStat { get; private set; } = new Stat();
+        
         public MovementToPoint(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.CurrentMovementSpeed = movementSpeed;
+            this.MovementSpeedStat.AddValue(movementSpeed);
         }
 
         public bool IsInPlace()
         {
             return Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, point);
         }
-        
+
+
         public void Initialize()
         {
             
@@ -33,7 +34,7 @@ namespace Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, CurrentMovementSpeed * Time.deltaTime);
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, MovementSpeedStat.CurrentValue * Time.deltaTime);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Unit.Character.Creep
             countTimeAnimation += Time.deltaTime;
             if (countTimeAnimation > durationAnimation)
             {
-                if (creepHealth.Damaging.TryGetComponent(out ICharacter character))
+                if (creepHealth.Damaging.TryGetComponent(out CharacterMainController character))
                 {
                     creepSwitchAttackState.SetTarget(creepHealth.Damaging);
                     creepSwitchAttackState.ExitOtherStates();

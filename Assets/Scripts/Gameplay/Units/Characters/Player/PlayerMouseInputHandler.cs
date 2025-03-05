@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay.Common;
 using Gameplay.Factory.Character.Player;
 using Machine;
 using ScriptableObjects.Gameplay;
@@ -15,10 +16,10 @@ namespace Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeys;
 
         public static event Action<InputType> OnBlockInput;
-        public static event Func<InputType, bool> OnIsInputBlocked;
         
         private PlayerStateFactory playerStateFactory;
-        private CharacterControlDesktop characterControlDesktop;
+        private PlayerBlockInput playerBlockInput;
+        private CharacterControlDesktop playerControlDesktop;
         private CharacterSwitchAttackState characterSwitchAttack;
         private StateMachine stateMachine;
         
@@ -33,108 +34,25 @@ namespace Unit.Character.Player
         private int selectObjectMousButton, attackMouseButton, specialActionMouseButton;
         private int hitRayOnObjectCount, hitsCount;
         
-        private const float cooldownHighlighObject = .2f;
+        private const float COOLDOWN_HIGHLIGHT_OBJECT = .2f;
         private float countCooldownHighlighObject;
         
         private bool isAttacking;
+        private bool isSpecialAction;
         
-        private Dictionary<InputType, int> blockedInputs = new();
-        
-        public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
-        public void CharacterControlDesktop(CharacterControlDesktop characterControlDesktop) => this.characterControlDesktop = characterControlDesktop;
-        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
-            this.characterSwitchAttack = characterSwitchAttackState;
-
-        public PlayerMouseInputHandler(StateMachine stateMachine, CharacterControlDesktop characterControlDesktop,
-            CharacterSwitchAttackState characterSwitchAttackState,
-            PlayerStateFactory playerStateFactory, InputType attackBlockInputType, InputType specialBlockInputType)
-        {
-            this.stateMachine = stateMachine;
-            this.characterControlDesktop = characterControlDesktop;
-            this.characterSwitchAttack = characterSwitchAttackState;
-            this.playerStateFactory = playerStateFactory;
-            this.attackBlockInputType = attackBlockInputType;
-            this.specialBlockInputType = specialBlockInputType;
-        }
-
         ~PlayerMouseInputHandler()
         {
-            UnInitializeMediator();
-        }
-
-        private bool isCanUseControl(InputType input)
-        {
-            if (OnIsInputBlocked == null) return false;
-            
-            foreach (Func<InputType, bool> VARIABLE in OnIsInputBlocked.GetInvocationList())
-            {
-                if (VARIABLE.Invoke(input)) return false;
-            }
-
-            if (IsInputBlocked(InputType.Item)) return false;
-
-            return true;
-        }
-               
-        // Оптимизированный метод для проверки, был ли клик по UI
-        private bool IsPointerOverUIObject()
-        {
-            // Используем заранее созданные объекты
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
-            {
-                position = Input.mousePosition
-            };
-
-            // Список результатов Raycast
-            List<RaycastResult> raycastResults = new List<RaycastResult>();
-            // Получаем все результаты Raycast
-            EventSystem.current.RaycastAll(pointerData, raycastResults);
-            // Проверяем, есть ли хотя бы один объект в UI
-            return raycastResults.Count > 0;
-        }
-        public bool IsInputBlocked(InputType input)
-        {
-            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
-            {
-                if (flag == InputType.Nothing || (input & flag) == 0 || 
-                    flag == InputType.Everything) continue;
-
-                if (blockedInputs.ContainsKey(flag) && blockedInputs[flag] > 0)
-                    return true;
-            }
-            return false;
+            UnSubscribeEvent();
         }
         
-        public void BlockInput(InputType input)
-        {
-            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
-            {
-                if (flag == InputType.Nothing || (input & flag) == 0 || 
-                    flag == InputType.Everything) continue;
-
-                blockedInputs.TryAdd(flag, 0);
-                blockedInputs[flag]++;
-            }
-            OnBlockInput?.Invoke(input);
-        }
-        
-        public void UnblockInput(InputType input)
-        {
-            foreach (InputType flag in Enum.GetValues(typeof(InputType)))
-            {
-                if (flag == InputType.Nothing || (input & flag) == 0 || 
-                    flag == InputType.Everything) continue;
-
-                if (blockedInputs.ContainsKey(flag))
-                {
-                    blockedInputs[flag]--;
-
-                    if (blockedInputs[flag] <= 0) 
-                        blockedInputs.Remove(flag);
-                }
-            }
-        }
-
+        public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
+        public void SetCharacterControlDesktop(CharacterControlDesktop characterControlDesktop) => this.playerControlDesktop = characterControlDesktop;
+        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
+            this.characterSwitchAttack = characterSwitchAttackState;
+        public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
+        public void SetPlayerBlockInput(PlayerBlockInput playerBlockInput) => this.playerBlockInput = playerBlockInput;
+        public void SetAttackBlockInput(InputType inputType) => attackBlockInputType = inputType;
+        public void SetSpecialBlockInput(InputType inputType) => specialBlockInputType = inputType;
         
         private bool tryGetHitPosition<T>(out GameObject hitObject, LayerMask layerMask)
         {
@@ -169,18 +87,13 @@ namespace Unit.Character.Player
             return false;
         }
         
-        private bool OnInputBlockedFunc(InputType input)
-        {
-            return IsInputBlocked(input);
-        }
-        
         public void Initialize()
         {
             attackMouseButton = so_GameHotkeys.AttackMouseButton;
             selectObjectMousButton = so_GameHotkeys.SelectObjectMouseButton;
             specialActionMouseButton = so_GameHotkeys.SpecialActionMouseButton;
             
-            InitializeMediator();
+            SubscribeEvent();
         }
 
         private void InitializePlayerSpecialActionState()
@@ -192,30 +105,30 @@ namespace Unit.Character.Player
             stateMachine.AddStates(state);
         }
 
-        private void InitializeMediator()
+        private void SubscribeEvent()
         {
             stateMachine.OnExitCategory += OnExitCategory;
-            PlayerItemInventory.OnIsInputBlocked += OnInputBlockedFunc;
-            PlayerAbilityInventory.OnIsInputBlocked += OnInputBlockedFunc;
-            PlayerControlDesktop.OnIsInputBlocked += OnInputBlockedFunc;
         }
 
-        private void UnInitializeMediator()
+        private void UnSubscribeEvent()
         {
             stateMachine.OnExitCategory -= OnExitCategory;
-            PlayerItemInventory.OnIsInputBlocked -= OnInputBlockedFunc;
-            PlayerAbilityInventory.OnIsInputBlocked -= OnInputBlockedFunc;
-            PlayerControlDesktop.OnIsInputBlocked -= OnInputBlockedFunc;
         }
         
-        private void OnExitCategory(Machine.IState state)
+        private void OnExitCategory(IState state)
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerWeaponAttackState)) || 
                 state.GetType().IsAssignableFrom(typeof(PlayerDefaultAttackState)))
             {
-                UnblockInput(attackBlockInputType);
+                playerBlockInput.UnblockInput(attackBlockInputType);
                 isAttacking = false;
             }
+        }
+        public void ClearSelectedObject()
+        {
+            selectedObject?.HideInformation();
+            selectedRenderer?.UnSelectedObject();
+            selectedObject = null;
         }
         
         public void HandleInput()
@@ -224,35 +137,29 @@ namespace Unit.Character.Player
             
             if (!isAttacking &&
                 Input.GetMouseButtonUp(attackMouseButton) && 
-                isCanUseControl(InputType.Attack) &&
-                !IsPointerOverUIObject())
+                !playerBlockInput.IsInputBlocked(InputType.Attack) &&
+                !CheckInputOnUI.IsPointerOverUIObject())
             {
                 TriggerAttack();
             }
-            else if (!isAttacking &&
-                     Input.GetMouseButtonDown(specialActionMouseButton) && 
-                     isCanUseControl(InputType.SpecialAction))
+            else if (!isSpecialAction && Input.GetMouseButtonDown(specialActionMouseButton) && 
+                     !playerBlockInput.IsInputBlocked(InputType.SpecialAction) && 
+                     !CheckInputOnUI.IsPointerOverUIObject())
             {
                 TriggerSpecialAction();
             }
-            else if (Input.GetMouseButtonUp(specialActionMouseButton))
+            else if (isSpecialAction && (Input.GetMouseButtonUp(specialActionMouseButton) || 
+                     playerBlockInput.IsInputBlocked(InputType.SpecialAction)))
             {
                 ExitSpecialAction();
             }
-        }
-        
-        public void ClearSelectedObject()
-        {
-            selectedObject?.HideInformation();
-            selectedRenderer?.UnSelectedObject();
-            selectedObject = null;
         }
         
         private void HandleHighlight()
         {
             countCooldownHighlighObject += Time.deltaTime;
             
-            if(countCooldownHighlighObject < cooldownHighlighObject) return;
+            if(countCooldownHighlighObject < COOLDOWN_HIGHLIGHT_OBJECT) return;
             countCooldownHighlighObject = 0;
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -284,10 +191,10 @@ namespace Unit.Character.Player
         private void TriggerAttack()
         {
             isAttacking = true;
-            BlockInput(attackBlockInputType);
+            playerBlockInput.BlockInput(attackBlockInputType);
             characterSwitchAttack.ExitOtherStates();
             //characterSwitchAttack.SetState();
-            characterControlDesktop.ClearHotkeys();
+            playerControlDesktop.ClearHotkeys();
         }
         
         private void TriggerSelectObject()
@@ -307,7 +214,7 @@ namespace Unit.Character.Player
                 }
                 else
                 {
-                    characterControlDesktop.ClearHotkeys();
+                    playerControlDesktop.ClearHotkeys();
                 }
             }
         }
@@ -315,16 +222,65 @@ namespace Unit.Character.Player
         private void TriggerSpecialAction()
         {
             InitializePlayerSpecialActionState();
-            BlockInput(specialBlockInputType);
+            playerBlockInput.BlockInput(specialBlockInputType);
             stateMachine.ExitOtherStates(typeof(PlayerSpecialActionState));
-            characterControlDesktop.ClearHotkeys();
+            playerControlDesktop.ClearHotkeys();
+            isSpecialAction = true;
         }
         
         private void ExitSpecialAction()
         {
             stateMachine.ExitCategory(StateCategory.Action, null, true);
-            UnblockInput(specialBlockInputType);
-            characterControlDesktop.ClearHotkeys();
+            playerBlockInput.UnblockInput(specialBlockInputType);
+            playerControlDesktop.ClearHotkeys();
+            isSpecialAction = false;
+        }
+    }
+
+    public class PlayerMouseInputHandlerBuilder
+    {
+        private PlayerMouseInputHandler handler = new ();
+
+        public PlayerMouseInputHandlerBuilder SetStateMachine(StateMachine stateMachine)
+        {
+            handler.SetStateMachine(stateMachine);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetCharacterControlDesktop(
+            CharacterControlDesktop characterControlDesktop)
+        {
+            handler.SetCharacterControlDesktop(characterControlDesktop);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetCharacterSwitchAttackState(CharacterSwitchAttackState switchAttackState)
+        {
+            handler.SetCharacterSwitchAttack(switchAttackState);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
+        {
+            handler.SetPlayerStateFactory(playerStateFactory);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetPlayerBlockInput(PlayerBlockInput playerBlockInput)
+        {
+            handler.SetPlayerBlockInput(playerBlockInput);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetAttackBlockInput(InputType inputType)
+        {
+            handler.SetAttackBlockInput(inputType);
+            return this;
+        }
+        public PlayerMouseInputHandlerBuilder SetSpecialBlockInput(InputType inputType)
+        {
+            handler.SetSpecialBlockInput(inputType);
+            return this;
+        }
+
+        public PlayerMouseInputHandler Build()
+        {
+            return handler;
         }
     }
 }

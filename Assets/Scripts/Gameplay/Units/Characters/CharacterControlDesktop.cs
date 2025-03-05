@@ -8,11 +8,6 @@ namespace Unit.Character
         protected GameObject gameObject;
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
-
-        public virtual bool IsInputBlocked(InputType input)
-        {
-            return false;
-        }
         
         public override void Initialize()
         {

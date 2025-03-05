@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Gameplay.Equipment;
+using Gameplay.Weapon;
 using Photon.Pun;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
 namespace Unit.Character
 {
-    public abstract class CharacterMainController : UnitController, ICharacter, IClickableObject
+    public abstract class CharacterMainController : UnitController, IClickableObject
     {
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
 
@@ -14,11 +16,6 @@ namespace Unit.Character
         
         public StateMachine StateMachine { get; protected set; }
         public UnitInformation UnitInformation { get; protected set; }
-        
-        public List<T> GetStates<T>() where T : Machine.IState
-        {
-            return StateMachine.GetStates<T>();
-        }
 
         public abstract int TotalDamage();
         public abstract int TotalAttackSpeed();
@@ -48,25 +45,21 @@ namespace Unit.Character
             BeforeCreateStates();
             CreateSwitchState();
             CreateStates();
+            StateMachine.Initialize();
+            
             AfterCreateStates();
-            
             AfterInitializeMediator();
-            
             InitializeAllAnimations();
         }
 
 
         protected virtual void InitializeMediator()
         {
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
-            GetComponentInUnit<CharacterHealth>().OnZeroHealth += GetComponentInUnit<CharacterExperience>().OnZeroHealth;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+            
         }
         protected virtual void DeInitializeMediatorRPC()
         {
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
-            GetComponentInUnit<CharacterHealth>().OnZeroHealth -= GetComponentInUnit<CharacterExperience>().OnZeroHealth;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+           
         }
 
         protected virtual void BeforeCreateStates()
@@ -90,13 +83,23 @@ namespace Unit.Character
 
         protected abstract void InitializeAllAnimations();
 
-        protected virtual void OnDestroy()
+        public virtual void PutOnEquipment(Equipment equipment)
         {
-            DeInitializeMediatorRPC();
+            
+        }
+
+        public virtual void TakeOffEquipment(Equipment equipment)
+        {
+            
         }
 
         public void ShowInformation() => UnitInformation.Show();
         public void UpdateInformation() => UnitInformation.UpdateData();
         public void HideInformation() => UnitInformation.Hide();
+        
+        protected virtual void OnDestroy()
+        {
+            DeInitializeMediatorRPC();
+        }
     }
 }

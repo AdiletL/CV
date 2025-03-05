@@ -13,11 +13,6 @@ namespace Unit
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
-        
-        public override void Initialize()
-        {
-        }
-
 
         public override void Update()
         {

@@ -43,8 +43,8 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
         }
         
         public void SetIcon(Sprite sprite) => creatureStats.SetIcon(sprite);
-        public void SetHealth(int current, int max) => creatureStats.SetHealth(current, max);
-        public void SetEndurance(float current, int max) => creatureStats.SetEndurance(current, max);
+        public void SetHealth(float current, float max) => creatureStats.SetHealth(current, max);
+        public void SetEndurance(float current, float max) => creatureStats.SetEndurance(current, max);
         public void AddText(string name) => creatureStats.AddText(name);
         public void SetDescription(string description) => descriptionTxt.text = description;
         public void Build()

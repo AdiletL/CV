@@ -24,16 +24,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 380614496968481203}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 882013364982303506}
+  m_Father: {fileID: 2064303157257571006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.649, y: -6}
+  m_AnchoredPosition: {x: 0.89759636, y: -1.0050659}
   m_SizeDelta: {x: 818.9692, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2040361679245162011
@@ -91,12 +91,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 882013364982303506}
+  m_Children:
+  - {fileID: 3919899917478981942}
+  m_Father: {fileID: 2585103725935162209}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.75144005, y: -4.9949036}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -17.2875, y: 57.031097}
   m_SizeDelta: {x: 836.0041, y: 114.0101}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &973343970244977101
@@ -137,63 +138,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &5368451829156047847
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 882013364982303506}
-  - component: {fileID: 3798704182448429937}
-  m_Layer: 5
-  m_Name: SkillContainer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &882013364982303506
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5368451829156047847}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2064303157257571006}
-  - {fileID: 3919899917478981942}
-  m_Father: {fileID: 2585103725935162209}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -18.0389, y: 62.02603}
-  m_SizeDelta: {x: 857.6365, y: 124.0521}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3798704182448429937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5368451829156047847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cce8e564e64048a0b6f99564d4526888, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiAbilityPrefab:
-    m_AssetGUID: 9d70789ff7b54df418704c2c1c80db2f
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  container: {fileID: 3919899917478981942}
 --- !u!1001 &1484494425583606580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -295,7 +239,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3997465790290995285, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 882013364982303506}
+      addedObject: {fileID: 2064303157257571006}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2092175183012456784, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}
       insertIndex: -1
@@ -338,7 +282,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69432d1172634b65b3d1c0defa361f2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityContainer: {fileID: 3798704182448429937}
+  uiAbilityPrefab:
+    m_AssetGUID: 9d70789ff7b54df418704c2c1c80db2f
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  container: {fileID: 3919899917478981942}
 --- !u!224 &2585103725935162209 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3997465790290995285, guid: 20a2a63f670d0704d81c4c3ef8ce288c, type: 3}

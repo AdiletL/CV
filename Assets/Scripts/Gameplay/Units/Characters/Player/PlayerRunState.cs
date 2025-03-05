@@ -10,42 +10,25 @@ namespace Unit.Character.Player
         private PlayerKinematicControl playerKinematicControl;
         
         private Vector3 directionMovement;
-        private float runReductionEndurance;
-        private float currentRotationSpeed;
-        private float baseRotationSpeed;
+        private float reductionEndurance;
+        
+        public Stat RotationSpeedStat { get; private set; } = new Stat();
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
-        public void SetBaseRotationSpeed(float speed) => this.baseRotationSpeed = speed;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
-        public void SetRunReductionEndurance(float runReductionEndurance) => this.runReductionEndurance = runReductionEndurance;
-
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            currentRotationSpeed = baseRotationSpeed;
-        }
-
-        public override void Enter()
-        {
-            base.Enter();
-            ResetValue();
-            if (stateMachine.IsActivateType(typeof(PlayerSpecialActionState)))
-                ChangedStateOnPlayerSpecialActionState();
-        }
+        public void SetRunReductionEndurance(float runReductionEndurance) => this.reductionEndurance = runReductionEndurance;
+        
 
         public override void Subscribe()
         {
             base.Subscribe();
             stateMachine.OnExitCategory += OnExitCategory;
-            stateMachine.OnChangedState += OnChangedState;
         }
 
         public override void Unsubscribe()
         {
             base.Unsubscribe();
             stateMachine.OnExitCategory -= OnExitCategory;
-            stateMachine.OnChangedState -= OnChangedState;
         }
 
         public override void Update()
@@ -60,34 +43,12 @@ namespace Unit.Character.Player
                 stateMachine.ExitCategory(Category, typeof(PlayerIdleState));
         }
 
-        private void OnExitCategory(Machine.IState state)
+        private void OnExitCategory(IState state)
         {
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
                 PlayAnimation();
-            
-            if (state.GetType().IsAssignableFrom(typeof(PlayerSpecialActionState)))
-                ResetValue();
         }
-
-        private void OnChangedState(Machine.IState state)
-        {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerSpecialActionState)))
-                ChangedStateOnPlayerSpecialActionState();
-        }
-
-        private void ChangedStateOnPlayerSpecialActionState()
-        {
-            CurrentMovementSpeed /= 2;
-            currentRotationSpeed = 0;
-            playerKinematicControl.SetRotationSpeed(currentRotationSpeed);
-        }
-
-        private void ResetValue()
-        {
-            CurrentMovementSpeed = BaseMovementSpeed;
-            currentRotationSpeed = baseRotationSpeed;
-            playerKinematicControl.SetRotationSpeed(currentRotationSpeed);
-        }
+        
 
         private void CheckDirectionMovement()
         {
@@ -105,8 +66,9 @@ namespace Unit.Character.Player
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            playerKinematicControl.SetVelocity(directionMovement * (CurrentMovementSpeed));
-            unitEndurance.RemoveEndurance(runReductionEndurance);
+            playerKinematicControl.SetVelocity(directionMovement * (MovementSpeedStat.CurrentValue));
+            playerKinematicControl.SetRotationSpeed(RotationSpeedStat.CurrentValue);
+            unitEndurance.EnduranceStat.RemoveValue(reductionEndurance);
         }
 
         private void Rotate()
@@ -119,13 +81,6 @@ namespace Unit.Character.Player
     {
         public PlayerRunStateBuilder() : base(new PlayerRunState())
         {
-        }
-        
-        public PlayerRunStateBuilder SetRotationSpeed(float speed)
-        {
-            if(state is PlayerRunState playerRunStateOrig)
-                playerRunStateOrig.SetBaseRotationSpeed(speed);
-            return this;
         }
         
         public PlayerRunStateBuilder SetPhotonView(PhotonView photonView)

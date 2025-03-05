@@ -19,17 +19,17 @@ namespace Gameplay.Factory
             Ability.Ability result = abilityConfig.SO_BaseAbilityConfig.AbilityType switch
             {
                 _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Dash => CreateDash(abilityConfig),
-                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.ApplyDamageHeal => CreateApplyDamageHeal(abilityConfig),
+                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Vampirism => CreateApplyDamageHeal(abilityConfig),
                 _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Nothing => null,
             };
             
             return result;
         }
 
-        private Dash CreateDash(AbilityConfig abilityConfig)
+        private DashAbility CreateDash(AbilityConfig abilityConfig)
         {
             var dashConfig = abilityConfig as DashConfig;
-            return (Dash)new DashBuilder()
+            return (DashAbility)new DashBuilder()
                 .SetMoveControl(moveControl)
                 .SetDuration(dashConfig.Duration)
                 .SetSpeed(dashConfig.Speed)
@@ -41,10 +41,11 @@ namespace Gameplay.Factory
                 .Build();
         }
 
-        private ApplyDamageHeal CreateApplyDamageHeal(AbilityConfig abilityConfig)
+        private VampirismAbility CreateApplyDamageHeal(AbilityConfig abilityConfig)
         {
-            var applyDamageHealConfig = abilityConfig as ApplyDamageHealConfig;
-            return (ApplyDamageHeal)new ApplyDamageHealBuilder()
+            var applyDamageHealConfig = abilityConfig as VampirismConfig;
+            return (VampirismAbility)new ApplyDamageHealBuilder()
+                .SetOwner(gameObject)
                 .SetValueType(applyDamageHealConfig.ValueType)
                 .SetValue(applyDamageHealConfig.Value)
                 .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)

@@ -48,7 +48,7 @@ namespace Unit.Trap.Tower
             this.stateMachine?.LateUpdate();
         }
         
-        private void OnChangedState(Machine.IState state)
+        private void OnChangedState(IState state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;

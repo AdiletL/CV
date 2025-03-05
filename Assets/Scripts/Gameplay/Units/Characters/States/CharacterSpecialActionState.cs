@@ -12,10 +12,6 @@ namespace Unit.Character
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         
-        public override void Initialize()
-        {
-        }
-
         public override void Update()
         {
             

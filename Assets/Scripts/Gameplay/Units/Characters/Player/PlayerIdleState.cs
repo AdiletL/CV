@@ -8,7 +8,6 @@ namespace Unit.Character.Player
         private CharacterSwitchMoveState characterSwitchMove;
         private CharacterSwitchAttackState characterSwitchAttack;
 
-        private GameObject targetForMove;
         private Vector3 targetPosition;
 
         
@@ -23,53 +22,19 @@ namespace Unit.Character.Player
             this.stateMachine.OnExitCategory += OnExitCategory;
         }
 
-        public override void Update()
-        {
-            base.Update();
-            CheckMove();
-        }
-
         public override void Unsubscribe()
         {
             base.Unsubscribe();
             this.stateMachine.OnExitCategory -= OnExitCategory;
         }
 
-        public override void Exit()
-        {
-            base.Exit();
-            targetForMove = null;
-        }
-        
-        private void OnExitCategory(Machine.IState state)
+        private void OnExitCategory(IState state)
         {
             if(!IsActive) return;
             
             if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
             {
                 PlayAnimation();
-            }
-        }
-        
-        public void SetTarget(GameObject target)
-        {
-            this.targetForMove = target;
-            characterSwitchMove.SetTarget(target);
-        }
-        
-        private void CheckMove()
-        {
-            if(!targetForMove) return;
-
-            targetPosition = new Vector3(targetForMove.transform.position.x, gameObject.transform.position.y, targetForMove.transform.position.z);
-            
-            if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, targetPosition))
-            {
-                targetForMove = null;
-            }
-            else
-            {
-                characterSwitchMove.ExitCategory(Category);
             }
         }
     }

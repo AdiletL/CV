@@ -15,6 +15,7 @@ namespace Unit.Trap.Hammer
         private HammerAnimation hammerAnimation;
         private Coroutine startTimerCoroutine;
         private Collider[] checkUnitColliders = new Collider[1];
+        public Stat DamageStat { get; private set; } = new Stat();
 
         private float durationAttack;
         private float cooldownAttack;
@@ -28,7 +29,8 @@ namespace Unit.Trap.Hammer
             base.Initialize();
             hammerAnimation = components.GetComponentFromArray<HammerAnimation>();
             so_Hammer = (SO_Hammer)so_Trap;
-            Damageable = new NormalDamage(so_Hammer.Damage, gameObject);
+            DamageStat.AddValue(so_Hammer.Damage);
+            Damageable = new NormalDamage(gameObject, DamageStat);
             durationAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.AttackSpeed);
             cooldownAttack = so_Hammer.CooldownAttack;
             

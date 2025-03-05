@@ -10,6 +10,6 @@ namespace Gameplay.Spawner
 
         public abstract void Initialize();
 
-        public abstract void CreatePopUp(Vector3 center, int damage);
+        public abstract void CreatePopUp(Vector3 center, float value);
     }
 }

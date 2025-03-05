@@ -44,6 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b730d07dcc3645d8b013c9e10e22a426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCanvasPrefab:
+    m_AssetGUID: e2360d97b7e484c4096d7f4cfca8a6e6
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   uiCreatureInformationPrefab:
     m_AssetGUID: 045c8d912fa65524cac47fa93085383a
     m_SubObjectName: 
@@ -52,6 +58,12 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   uiCastTimerPrefab:
     m_AssetGUID: e32418020bb4a4543bed6d11166f1668
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  uiContextMenuPrefab:
+    m_AssetGUID: 575897c4baaf1f345b8928b7103805d6
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

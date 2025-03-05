@@ -12,6 +12,7 @@ namespace Unit.Trap
     {
         private SO_Thorn so_Thorn;
         private SphereCollider sphereCollider;
+        public Stat DamageStat { get; private set; } = new Stat();
 
         private Coroutine startTimerCoroutine;
         private Coroutine applyDamageCoroutine;
@@ -38,7 +39,8 @@ namespace Unit.Trap
             radius = so_Thorn.Radius;
             EnemyLayer = so_Thorn.EnemyLayer;
             
-            Damageable = new NormalDamage(so_Thorn.Damage, gameObject);
+            DamageStat.AddValue(so_Thorn.Damage);
+            Damageable = new NormalDamage(gameObject, DamageStat);
 
             sphereCollider = GetComponent<SphereCollider>();
             sphereCollider.isTrigger = true;

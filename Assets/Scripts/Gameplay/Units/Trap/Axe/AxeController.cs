@@ -13,12 +13,14 @@ namespace Unit.Trap
         private float speedPlayClip;
         
         public IDamageable Damageable { get; private set; }
+        public Stat DamageStat { get; private set; } = new Stat();
         
 
         public override void Initialize()
         {
             base.Initialize();
-            Damageable = new NormalDamage(so_Trap.Damage, gameObject);
+            DamageStat.AddValue(so_Trap.Damage);
+            Damageable = new NormalDamage(gameObject, DamageStat);
             axeAnimation = components.GetComponentFromArray<AxeAnimation>();
             so_Axe = (SO_Axe)so_Trap;
             speedPlayClip = so_Axe.SpeedPlayClip;

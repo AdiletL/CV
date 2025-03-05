@@ -20,21 +20,25 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   <ItemCategoryID>k__BackingField: 1
-  <ItemBehaviourID>k__BackingField: 32
+  <ItemBehaviourID>k__BackingField: 1
   <BlockInputTypeID>k__BackingField: 0
   <Cooldown>k__BackingField: 0
+  <TimerCast>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
+  <UnitStatsConfigs>k__BackingField: []
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 02000000
-    ApplyDamageHealConfig:
+    VampirismConfig:
       SO_BaseAbilityConfig: {fileID: 11400000, guid: c569a21ec3b80b544a6483ca4ad39dd7, type: 2}
       Cooldown: 0
+      TimerCast: 0
       ValueType: 1
       Value: 200
     BlockPhysicalDamageConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
+      TimerCast: 0
       NormalDamageResistanceConfig:
         Value: 0
         ValueType: 0
@@ -42,5 +46,6 @@ MonoBehaviour:
     DashConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
+      TimerCast: 0
       Speed: 0
       Duration: 0

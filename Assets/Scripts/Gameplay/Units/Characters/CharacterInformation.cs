@@ -21,16 +21,16 @@ namespace Unit.Character
             uiCreatureInformation.AddText($"{StatsNames.TYPE}: {StatsNames.GetTypesString(characterMainController.SO_CharacterInformation.EntityType)}");
             
             var characterHealth = characterMainController.GetComponentInUnit<IHealth>();
-            uiCreatureInformation.SetHealth(characterHealth.CurrentHealth, characterHealth.MaxHealth);
+            uiCreatureInformation.SetHealth(characterHealth.HealthStat.CurrentValue, characterHealth.HealthStat.MaximumValue);
             
             var characterEndurance = characterMainController.GetComponentInUnit<IEndurance>();
-            uiCreatureInformation.SetEndurance(characterEndurance.CurrentEndurance, characterEndurance.MaxEndurance);
+            uiCreatureInformation.SetEndurance(characterEndurance.EnduranceStat.CurrentValue, characterEndurance.EnduranceStat.MaximumValue);
             
-            var characterLevel = characterMainController.GetComponentInUnit<IUnitLevel>();
-            uiCreatureInformation.AddText($"{StatsNames.LEVEL}: {characterLevel.CurrentLevel}");
+            var characterLevel = characterMainController.GetComponentInUnit<ILevel>();
+            uiCreatureInformation.AddText($"{StatsNames.LEVEL}: {characterLevel.LevelStat.CurrentValue}");
             
-            var characterExperience = characterMainController.GetComponentInUnit<IUnitExperience>();
-            uiCreatureInformation.AddText($"{StatsNames.EXPERIENCE}: {characterExperience.CurrentExperience}");
+            var characterExperience = characterMainController.GetComponentInUnit<UnitExperience>();
+            uiCreatureInformation.AddText($"{StatsNames.EXPERIENCE}: {characterExperience.ExperienceStat.CurrentValue}");
             
             uiCreatureInformation.AddText($"{StatsNames.DAMAGE}: {characterMainController.TotalDamage()}");
             uiCreatureInformation.AddText($"{StatsNames.ATTACK_SPEED}: {characterMainController.TotalAttackSpeed()}");

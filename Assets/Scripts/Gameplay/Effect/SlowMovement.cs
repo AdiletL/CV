@@ -61,14 +61,14 @@ namespace Gameplay.Effect
             var character = target.GetComponent<CharacterMainController>();
             if(character == null) return;
             
-            var movementStates = character.GetStates<CharacterBaseMovementState>();
+            var movementStates = character.StateMachine.GetStates<CharacterBaseMovementState>();
             var gameValue = new GameValue(value, valueType);
-            var result = 0;
+            float result = 0;
             
             foreach (var VARIABLE in movementStates)
             {
-                result = gameValue.Calculate(VARIABLE.CurrentMovementSpeed);
-                VARIABLE.RemoveMovementSpeed(result);
+                result = gameValue.Calculate(VARIABLE.MovementSpeedStat.CurrentValue);
+                VARIABLE.MovementSpeedStat.RemoveValue(result);
                 var movementInfo = new MovementInfo(VARIABLE, result);
                 this.movementStates.Add(movementInfo);
             }
@@ -79,7 +79,7 @@ namespace Gameplay.Effect
             base.DestroyEffect();
             foreach (var VARIABLE in movementStates)
             {
-                VARIABLE.MovementState.AddMovementSpeed(VARIABLE.Speed);
+                VARIABLE.MovementState.MovementSpeedStat.AddValue(VARIABLE.Speed);
             }
             ClearValues();
         }

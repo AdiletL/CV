@@ -13,21 +13,6 @@ namespace Unit.Character.Creep
         
         public void SetCreepStateFactory(CreepStateFactory creepStateFactory) => this.creepStateFactory = creepStateFactory;
 
-        public override int TotalDamage()
-        {
-            return beholderDefaultAttackState.Damageable.CurrentDamage +
-                   beholderDefaultAttackState.Damageable.AdditionalDamage;
-        }
-
-        public override int TotalAttackSpeed()
-        {
-            return beholderDefaultAttackState.AttackSpeed;
-        }
-
-        public override float TotalAttackRange()
-        {
-            return beholderDefaultAttackState.Range;
-        }
 
         public override void Initialize()
         {

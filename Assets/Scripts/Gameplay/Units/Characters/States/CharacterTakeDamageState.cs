@@ -10,13 +10,7 @@ namespace Unit.Character
         protected GameObject gameObject;
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
-
-        public override void Initialize()
-        {
-            
-        }
-
-
+        
         public override void LateUpdate()
         {
             

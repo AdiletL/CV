@@ -3519,6 +3519,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7816595593769935627}
+    - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1799113198584482480}
+    - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -1044719356054737009}
   m_SourcePrefab: {fileID: 100100000, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
 --- !u!1 &1290455938804012064 stripped
 GameObject:
@@ -3559,8 +3565,7 @@ MonoBehaviour:
   so_PlayerControlDesktop: {fileID: 11400000, guid: 0bed9273856cd0a47b9da97da2cae779, type: 2}
   so_PlayerAbilities: {fileID: 11400000, guid: 0d0ed737da3608143aa9bbd2b6af9b75, type: 2}
   so_PlayerSpecialAction: {fileID: 11400000, guid: b5a7c1b2d9d6ca1438ac0ca4dba990c9, type: 2}
-  so_Sword: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}
-  so_Bow: {fileID: 11400000, guid: 0529271f169c5f34385e5629b95f7f14, type: 2}
+  so_NormalSword: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
   weaponParent: {fileID: 2888781842470922690}
   currentStateCategory: 0
   currentStateName: 
@@ -3868,6 +3873,31 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+--- !u!114 &1799113198584482480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3905064192937531579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df6cb1f11f8480481619a6a900b3465, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-1044719356054737009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3905064192937531579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 253a329e07e0421eafd66bbde5b031b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitController: {fileID: 6200176588022165938}
 --- !u!4 &5590145490901760701 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2201950844900472443, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}

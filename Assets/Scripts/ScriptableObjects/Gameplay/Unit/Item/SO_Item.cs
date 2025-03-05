@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Gameplay.Ability;
 using Sirenix.OdinInspector;
+using Unit;
 using Unit.Character.Player;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,6 @@ using UnityEngine.AddressableAssets;
 
 namespace ScriptableObjects.Unit.Item
 {
-    [CreateAssetMenu(fileName = "SO_Item_", menuName = "SO/Gameplay/Item", order = 51)]
     public abstract class SO_Item : ScriptableObject
     {
         public abstract ItemName ItemNameID { get; protected set; }
@@ -25,8 +25,8 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
         
+        [field: SerializeField, Space(15)] public StatConfig[] UnitStatsConfigs { get; private set; }
         [field: SerializeField, Space(15)] public AbilityConfigData AbilityConfigData { get; private set; }
-        
         
         #if UNITY_EDITOR
         //[Button]

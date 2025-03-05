@@ -1,18 +1,17 @@
 using System;
 using Gameplay;
-using Gameplay.Damage;
 using Gameplay.Effect;
 using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Ability;
-using Gameplay.Weapon;
-using Machine;
-using Movement;
+using Gameplay.Equipment;
+using Gameplay.Equipment.Weapon;
+using Gameplay.Factory.Weapon;
+using ScriptableObjects.Equipment.Weapon;
 using ScriptableObjects.Unit.Character.Player;
-using ScriptableObjects.Weapon;
+using ScriptableObjects.Unit.Item;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ValueType = Calculate.ValueType;
 
 namespace Unit.Character.Player
@@ -37,8 +36,7 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
         
         [Space]
-        [SerializeField] private SO_Sword so_Sword;
-        [SerializeField] private SO_Bow so_Bow;
+        [SerializeField] private SO_NormalSword so_NormalSword;
         [SerializeField] private Transform weaponParent;
         
         [Space]
@@ -50,6 +48,8 @@ namespace Unit.Character.Player
         private PlayerItemInventory playerItemInventory;
         private PlayerAbilityInventory playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
+        private PlayerControlDesktop playerControlDesktop;
+        private PlayerStatsController playerStatsController;
         
         private CharacterSwitchMoveState characterSwitchMoveState;
         private CharacterSwitchAttackState characterSwitchAttackState;
@@ -57,8 +57,8 @@ namespace Unit.Character.Player
         private CharacterExperience characterExperience;
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
-        
-        public PlayerControlDesktop PlayerControlDesktop { get; private set; }
+
+        public PlayerBlockInput PlayerBlockInput { get; private set; }
         public Camera BaseCamera { get; private set; }
         
         protected override UnitInformation CreateUnitInformation()
@@ -78,6 +78,7 @@ namespace Unit.Character.Player
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
+                .SetConfig(so_PlayerControlDesktop)
                 .SetCharacterSwitchAttack(characterSwitchAttackState)
                 .SetCharacterSwitchMove(characterSwitchMoveState)
                 .SetPhotonView(photonView)
@@ -91,6 +92,7 @@ namespace Unit.Character.Player
         private PlayerStateFactory CreatePlayerStateFactory()
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
+                .SetUnitRenderer(unitRenderer)
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(BaseCamera)
@@ -124,16 +126,13 @@ namespace Unit.Character.Player
 
         public override void Initialize()
         {
+            //Test
+            InitializeNormalResistance();
             base.Initialize();
             
             //Test
-            InitializeNormalResistance();
-            //Test
             InitializeSword();
 
-            InitializeAllAnimations();
-            
-            StateMachine.Initialize();
             StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
         }
 
@@ -147,6 +146,9 @@ namespace Unit.Character.Player
                 BaseCamera = cameraController.GetComponent<Camera>();
                 cameraController.CurrentCinemachineCamera.Follow = transform;
             }
+
+            PlayerBlockInput = new PlayerBlockInput();
+            PlayerBlockInput.Initialize();
             
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             diContainer.Inject(playerKinematicControl);
@@ -186,17 +188,17 @@ namespace Unit.Character.Player
             characterSwitchMoveState.SetSwitchAttackState(characterSwitchAttackState);
             characterSwitchAttackState.SetSwitchMoveState(characterSwitchMoveState);
             
-            characterSwitchAttackState.Initialize();
             characterSwitchMoveState.Initialize();
+            characterSwitchAttackState.Initialize();
         }
 
         protected override void AfterCreateStates()
         {
             base.AfterCreateStates();
             
-            PlayerControlDesktop = CreatePlayerControlDesktop();
-            diContainer.Inject(PlayerControlDesktop);
-            PlayerControlDesktop.Initialize();
+            playerControlDesktop = CreatePlayerControlDesktop();
+            diContainer.Inject(playerControlDesktop);
+            playerControlDesktop.Initialize();
             
             playerItemInventory = GetComponentInUnit<PlayerItemInventory>();
             diContainer.Inject(playerItemInventory);
@@ -205,7 +207,9 @@ namespace Unit.Character.Player
             playerAbilityInventory = GetComponentInUnit<PlayerAbilityInventory>();
             diContainer.Inject(playerAbilityInventory);
             playerAbilityInventory.Initialize();
-
+            
+            playerStatsController = GetComponentInUnit<PlayerStatsController>();
+            playerStatsController.Initialize();
         }
 
         protected override void AfterInitializeMediator()
@@ -224,12 +228,16 @@ namespace Unit.Character.Player
         {
             base.InitializeMediator();
             StateMachine.OnChangedState += OnChangedState;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
         }
 
         protected override void DeInitializeMediatorRPC()
         {
             base.DeInitializeMediatorRPC();
             StateMachine.OnChangedState -= OnChangedState;
+            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
+            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
         }
 
         public override void Appear()
@@ -245,60 +253,7 @@ namespace Unit.Character.Player
         private void InitializeSword()
         {
             if (!photonView.IsMine) return;
-            //TEST
-            if (characterSwitchAttackState.TryGetWeapon(typeof(Sword), out Sword component))
-            {
-                SetWeapon(component);
-            }
-            else
-            {
-                var swordDamageable = new NormalDamage(so_Sword.Damage, gameObject);
-                diContainer.Inject(swordDamageable);
-                var sword = (Sword)new SwordBuilder()
-                    .SetOwnerCenter(unitCenter.Center)
-                    .SetIncreaseAttackSpeed(so_Sword.IncreaseAttackSpeed.ValueType, so_Sword.IncreaseAttackSpeed.Value)
-                    .SetReductionEndurance(so_Sword.ReductionEndurance.ValueType, so_Sword.ReductionEndurance.Value)
-                    .SetAngleToTarget(so_Sword.AngleToTarget)
-                    .SetGameObject(gameObject)
-                    .SetRange(so_Sword.Range)
-                    .SetWeaponPrefab(so_Sword.WeaponPrefab)
-                    .SetDamageable(swordDamageable)
-                    .Build();
-                diContainer.Inject(sword);
-                sword.Initialize();
-                SetWeapon(sword);
-            }
-            isSword = true;
-            Debug.Log("Sword");
-        }
-
-        private void InitializeBow()
-        {
-            if (!photonView.IsMine) return;
-            
-            if (characterSwitchAttackState.TryGetWeapon(typeof(Bow), out Bow component))
-            {
-                SetWeapon(component);
-            }
-            else
-            {
-                var projectile = new NormalDamage(so_Bow.Damage, gameObject);
-                diContainer.Inject(projectile);
-                var bow = (Bow)new BowBuilder()
-                    .SetDamageable(projectile)
-                    .SetRange(so_Bow.Range)
-                    .SetGameObject(gameObject)
-                    .SetWeaponPrefab(so_Bow.WeaponPrefab)
-                    .SetAngleToTarget(so_Bow.AngleToTarget)
-                    .SetReductionEndurance(so_Bow.ReductionEndurance.ValueType, so_Bow.ReductionEndurance.Value)
-                    .SetIncreaseAttackSpeed(so_Bow.IncreaseAttackSpeed.ValueType, so_Bow.IncreaseAttackSpeed.Value)
-                    .Build();
-                diContainer.Inject(bow);
-                bow.Initialize();
-                SetWeapon(bow);
-            }
-            isSword = false;
-            Debug.Log("Bow");
+            playerItemInventory.AddItem(so_NormalSword, 1);
         }
 
         //Test
@@ -318,31 +273,16 @@ namespace Unit.Character.Player
             characterAnimation.AddClip(so_PlayerAttack.DefaultCooldownClip);
             characterAnimation.AddClips(so_PlayerAttack.SwordAttackClip);
             characterAnimation.AddClip(so_PlayerAttack.SwordCooldownClip);
-            characterAnimation.AddClip(so_PlayerMove.JumpInfo.Clip);
+            characterAnimation.AddClip(so_PlayerMove.JumpConfig.Clip);
             characterAnimation.AddClip(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip);
         }
         
-        //Test
-        private bool isSword;
         private void Update()
         {
             if(!photonView.IsMine) return;
             
-            //Test
-            /*if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                if (isSword)
-                {
-                    InitializeBow();
-                }
-                else
-                {
-                    InitializeSword();
-                }
-            }*/
-
-            PlayerControlDesktop?.HandleHotkey();
-            PlayerControlDesktop?.HandleInput();
+            playerControlDesktop?.HandleHotkey();
+            playerControlDesktop?.HandleInput();
             StateMachine?.Update();
         }
 
@@ -352,15 +292,23 @@ namespace Unit.Character.Player
             StateMachine?.LateUpdate();
         }
         
-        public void SetWeapon(Weapon weapon)
+        public override void PutOnEquipment(Equipment equipment)
         {
-            characterSwitchAttackState.RemoveWeapon();
-            characterSwitchAttackState.SetWeapon(weapon);
-            unitRenderer.SetRangeScale(weapon.Range);
-            unitRenderer.ShowRangeVisual();
+            if (equipment is Weapon weapon)
+            {
+                StateMachine.GetState<PlayerWeaponAttackState>()?.SetWeapon(weapon);
+            }
         }
 
-        private void OnChangedState(Machine.IState state)
+        public override void TakeOffEquipment(Equipment equipment)
+        {
+            if (equipment is Weapon weapon)
+            {
+                StateMachine.GetState<PlayerWeaponAttackState>()?.RemoveWeapon();
+            }
+        }
+
+        private void OnChangedState(IState state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;

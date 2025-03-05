@@ -68,23 +68,23 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
         
         public void SetIcon(Sprite sprite) => icon.sprite = sprite;
         
-        public void SetHealth(int current, int max)
+        public void SetHealth(float current, float max)
         {
-            healthTxt.text = StatsNames.HEALTH + current;
+            healthTxt.text = StatsNames.HEALTH + current.ToString("0");
             
             if (current == 0 || max == 0) this.resultHealth = 0;
-            else resultHealth = (float)current/max;
+            else resultHealth = current/max;
             
             healthBar.fillAmount = resultHealth;
             healthBar.color = healthBarGradient.Evaluate(resultHealth);
         }
         
-        public void SetEndurance(float current, int max)
+        public void SetEndurance(float current, float max)
         {
-            enduranceTxt.text = StatsNames.ENDURANCE + current;
+            enduranceTxt.text = StatsNames.ENDURANCE + current.ToString("0");
             
             if (current == 0 || max == 0) this.resultEndurance = 0;
-            else resultEndurance = (float)current/max;
+            else resultEndurance = current/max;
             
             enduranceBar.fillAmount = resultEndurance;
             enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
@@ -122,7 +122,7 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
         
         public static string GetTypesString(EntityType type)
         {
-            if (type == EntityType.nothing)
+            if (type == EntityType.Nothing)
                 return "";
 
             // Создаем список для хранения названий типов
@@ -132,7 +132,7 @@ namespace Gameplay.UI.ScreenSpace.CreatureInformation
             foreach (EntityType flag in System.Enum.GetValues(typeof(EntityType)))
             {
                 // Пропускаем None
-                if (flag == EntityType.nothing)
+                if (flag == EntityType.Nothing)
                     continue;
 
                 // Если флаг установлен, добавляем его название в список

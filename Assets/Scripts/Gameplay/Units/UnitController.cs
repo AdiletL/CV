@@ -29,7 +29,7 @@ namespace Unit
         {
             return components.TryGetComponentFromArray(out component);
         }
-        
+
         public virtual void Initialize()
         {
             components.Initialize();

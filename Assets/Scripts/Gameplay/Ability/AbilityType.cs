@@ -4,7 +4,7 @@ public enum AbilityType
 {
     Nothing,
     Dash,
-    ApplyDamageHeal,
+    Vampirism,
     BlockPhysicalDamage,
     BlockMagicDamage,
 }

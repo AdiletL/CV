@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Unit.Item
 {
-    public class ItemController : UnitController, IItemController
+    public class ItemController : UnitController
     {
         [SerializeField] private SO_Item so_Item;
         

@@ -1,16 +1,20 @@
 ﻿using System;
 using Gameplay.Damage;
+using Unit;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
     public class DeathPlane : MonoBehaviour
     {
         private IDamageable damageable;
+        private Stat damageStat = new Stat();
 
         private void Start()
         {
-            damageable = new NormalDamage(-1, gameObject);
+            damageStat.AddValue(999999);
+            damageable = new NormalDamage(gameObject, damageStat);
         }
 
         private void OnTriggerEnter(Collider other)

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Calculate;
 using Gameplay.UI.ScreenSpace;
-using Unit.Character.Player;
+using Unit;
 using UnityEngine;
 using Zenject;
+using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Units.Item
 {
@@ -12,13 +14,13 @@ namespace Gameplay.Units.Item
         [Inject] private UICastTimer uiCastTimer;
         
         public event Action<int?> OnActivated;
-        public event Action<int?> OnStarted;
-        public event Action<int?> OnFinished;
+        public event Action<int?> OnStartedCast;
+        public event Action<int?> OnFinishedCast;
         public event Action<int?> OnExit;
         public event Action<int?, float, float> OnCountCooldown;
         
         public int? InventorySlotID { get; protected set; }
-        public GameObject GameObject { get; protected set; }
+        public GameObject OwnerGameObject { get; protected set; }
         public abstract ItemName ItemNameID { get; protected set; }
         public ItemCategory ItemCategoryID { get; protected set; }
         public ItemBehaviour ItemBehaviourID { get; protected set; }
@@ -28,6 +30,7 @@ namespace Gameplay.Units.Item
         public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
+        public StatConfig[] Stats { get; protected set; }
         public List<Ability.Ability> Abilities { get; protected set; }
 
         private float countCooldown;
@@ -35,14 +38,25 @@ namespace Gameplay.Units.Item
         protected bool isActivated;
         protected bool isCasting;
 
+        private List<float> additionalPercentStatsToUnit;
+        
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
-        public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
+        public void SetOwnerGameObject(GameObject gameObject) => this.OwnerGameObject = gameObject;
         public void SetItemCategory(ItemCategory itemCategory) => ItemCategoryID = itemCategory;
         public void SetItemBehaviour(ItemBehaviour itemBehaviour) => ItemBehaviourID = itemBehaviour;
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
         public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         public void SetAmountItem(int amount) => Amount = amount;
         public void SetBlockInputType(InputType inputType) => BlockInputType = inputType;
+
+        public void SetStats(StatConfig[] stats)
+        {
+            Stats = new StatConfig[stats.Length];
+            for (int i = 0; i < stats.Length; i++)
+            {
+                Stats[i] = stats[i];
+            }
+        }
         
 
         public virtual void Initialize()
@@ -64,13 +78,6 @@ namespace Gameplay.Units.Item
                 Exit();
                 return;
             }
-
-            if ((ItemBehaviourID & ItemBehaviour.Hidden) != 0)
-            {
-                Debug.Log($"{ItemBehaviourID} скрыто и не может быть использовано.");
-                Exit();
-                return;
-            }
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
@@ -82,7 +89,6 @@ namespace Gameplay.Units.Item
             SetCursor(null);
             StartCooldown();
             StartCasting();
-            OnStarted?.Invoke(InventorySlotID);
         }
         
         public virtual void Update()
@@ -102,6 +108,7 @@ namespace Gameplay.Units.Item
                 if (countTimerCast <= 0)
                 {
                     AfterCast();
+                    isCasting = false;
                 }
             }
         }
@@ -126,27 +133,110 @@ namespace Gameplay.Units.Item
             {
                 isCasting = true;
                 countTimerCast = TimerCast;
+                OnStartedCast?.Invoke(InventorySlotID);
             }
         }
         
         protected virtual void AfterCast()
         {
+            FinishedCallBack?.Invoke();
+            OnFinishedCast?.Invoke(InventorySlotID);
+            Exit();
         }
 
         protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
-        
-        public virtual void FinishEffect()
+
+        public virtual void AddStatsFromUnit()
         {
-            FinishedCallBack?.Invoke();
-            OnFinished?.Invoke(InventorySlotID);
-            Exit();
+            additionalPercentStatsToUnit ??= new List<float>();
+            additionalPercentStatsToUnit.Clear();
+            
+            var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
+            foreach (var config in Stats)
+            {
+                foreach (var statValues in config.StatValuesConfig)
+                {
+                    var unitStats = unitStatController.GetStat(config.StatTypeID);
+                    foreach (var unitStat in unitStats)
+                    {
+                        var gameValue = new GameValue(statValues.Value, statValues.ValueTypeID);
+                        var result = gameValue.Calculate(unitStat.CurrentValue);
+                        if (statValues.ValueTypeID == ValueType.Percent)
+                            additionalPercentStatsToUnit.Add(result);
+                        
+                        switch (statValues.StatValueTypeID)
+                        {
+                            case StatValueType.Nothing: break;
+                            case StatValueType.Current: unitStat.AddValue(result); break;
+                            case StatValueType.Minimum: unitStat.AddMinValue(result); break;
+                            case StatValueType.Maximum: unitStat.AddMaxValue(result); break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+            }
         }
+
+        public virtual void RemoveStatsFromUnit()
+        {
+            var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
+            
+            foreach (var config in Stats)
+            {
+                foreach (var VARIABLE in config.StatValuesConfig)
+                {
+                    var unitStats = unitStatController.GetStat(config.StatTypeID);
+                    for (int i = 0; i < unitStats.Count; i++)
+                    {
+                        switch (VARIABLE.StatValueTypeID)
+                        {
+                            case StatValueType.Nothing: break;
+
+                            case StatValueType.Current:
+                                if (VARIABLE.ValueTypeID == ValueType.Percent)
+                                    unitStats[i].RemoveValue(additionalPercentStatsToUnit[i]);
+                                else
+                                    unitStats[i].RemoveValue(VARIABLE.Value);
+                                break;
+
+                            case StatValueType.Minimum:
+                                if (VARIABLE.ValueTypeID == ValueType.Percent)
+                                    unitStats[i].RemoveMinValue(additionalPercentStatsToUnit[i]);
+                                else
+                                    unitStats[i].RemoveMinValue(VARIABLE.Value);
+                                break;
+
+                            case StatValueType.Maximum:
+                                if (VARIABLE.ValueTypeID == ValueType.Percent)
+                                    unitStats[i].RemoveMaxValue(additionalPercentStatsToUnit[i]);
+                                else
+                                    unitStats[i].RemoveMaxValue(VARIABLE.Value);
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+            }
+        }
+
+        public virtual void PutOn()
+        {
+            
+        }
+
+        public virtual void TakeOff()
+        {
+        }
+        
         public virtual void Exit()
         {
             SetCursor(null);
             isActivated = false;
             isCasting = false;
             uiCastTimer.Hide();
+            countTimerCast = TimerCast;
             OnExit?.Invoke(InventorySlotID);
         }
 
@@ -163,6 +253,16 @@ namespace Gameplay.Units.Item
         
         public void AddAmount(int amount) => Amount += amount;
         public void RemoveAmount(int amount) => Amount -= amount;
+
+        public virtual void ShowContextMenu()
+        {
+            
+        }
+
+        public virtual void HideContextMenu()
+        {
+            
+        }
     }
     
     public abstract class ItemBuilder<T> where T : IItem
@@ -176,7 +276,7 @@ namespace Gameplay.Units.Item
 
         public ItemBuilder<T> SetGameObject(GameObject gameObject)
         {
-            item.SetGameObject(gameObject);
+            item.SetOwnerGameObject(gameObject);
             return this;
         }
         

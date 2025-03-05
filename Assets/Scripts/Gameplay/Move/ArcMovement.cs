@@ -1,4 +1,5 @@
 ﻿using System;
+using Unit;
 using UnityEngine;
 
 namespace  Movement
@@ -22,14 +23,13 @@ namespace  Movement
 
         private bool isMoveable;
 
-        public float BaseMovementSpeed { get; }
-        public float CurrentMovementSpeed { get; private set; }
+        public Stat MovementSpeedStat { get; private set; } = new Stat();
         
 
         public ArcMovement(GameObject gameObject, float movementSpeed, float height, AnimationCurve moveCurve)
         {
             this.gameObject = gameObject;
-            this.CurrentMovementSpeed = movementSpeed;
+            this.MovementSpeedStat.AddValue(movementSpeed);
             this.height = height;
             this.moveCurve = moveCurve;
         }
@@ -79,7 +79,7 @@ namespace  Movement
             startPosition = gameObject.transform.position;
             var distance = Vector3.Distance(startPosition, targetPosition);
             totalHeight = (distance * .1f) * height;
-            totalDuration = distance / CurrentMovementSpeed;
+            totalDuration = distance / MovementSpeedStat.CurrentValue;
             timerHeight = 0;
             isMoveable = true;
 

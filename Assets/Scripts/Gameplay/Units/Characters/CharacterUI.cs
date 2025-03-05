@@ -26,21 +26,21 @@ namespace Unit.Character
             enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
         }
 
-        public virtual void OnChangedHealth(HealthInfo healthInfo)
+        public virtual void OnChangedHealth(float current, float max)
         {
-            UpdateHealthBar(healthInfo.CurrentHealth, healthInfo.MaxHealth);
+            UpdateHealthBar(current, max);
         }
 
-        protected virtual void UpdateHealthBar(int current, int max)
+        protected virtual void UpdateHealthBar(float current, float max)
         {
-            resultHealth = (float)current/max;
+            resultHealth = current/max;
             healthBar.fillAmount = resultHealth;
             healthBar.color = healthBarGradient.Evaluate(resultHealth);
         }
 
-        public virtual void OnChangedEndurance(EnduranceInfo enduranceInfo)
+        public virtual void OnChangedEndurance(float current, float max)
         {
-            UpdateEnduranceBar(enduranceInfo.CurrentEndurance, enduranceInfo.MaxEndurance);
+            UpdateEnduranceBar(current, current);
         }
         protected virtual void UpdateEnduranceBar(float current, float max)
         {

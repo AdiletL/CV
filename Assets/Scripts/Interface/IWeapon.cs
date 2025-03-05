@@ -1,14 +1,12 @@
 ﻿using Cysharp.Threading.Tasks;
+using Unit;
 using UnityEngine;
 
 public interface IWeapon : IApplyDamage
 {
-    GameObject WeaponPrefab { get; }
-    GameObject CurrentTarget { get; }
+    public Stat DamageStat { get; }
     
     public void Initialize();
 
-    public UniTask FireAsync();
-    public void SetTarget(GameObject target);
-    public void IncreaseStates(Unit.IState state);
+    public void SetInParent(Transform parent);
 }

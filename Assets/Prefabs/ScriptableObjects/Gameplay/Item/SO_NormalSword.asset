@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a112e7312b043ec8832b391ba5441ee, type: 3}
+  m_Name: SO_NormalSword
+  m_EditorClassIdentifier: 
+  <Icon>k__BackingField: {fileID: 21300000, guid: 6a08ec4b334ea1c46b8171679417a74f, type: 3}
+  <Prefab>k__BackingField:
+    m_AssetGUID: 38c932346ec1839439a29194adbd672f
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  <ItemCategoryID>k__BackingField: 1
+  <ItemBehaviourID>k__BackingField: 3
+  <BlockInputTypeID>k__BackingField: 0
+  <Cooldown>k__BackingField: 1
+  <TimerCast>k__BackingField: 0.5
+  <JumpPower>k__BackingField: 1.5
+  <JumpDuration>k__BackingField: 0.5
+  <UnitStatsConfigs>k__BackingField:
+  - StatTypeID: 2
+    StatValuesConfig:
+    - StatValueTypeID: 1
+      ValueTypeID: 0
+      Value: 300
+  - StatTypeID: 3
+    StatValuesConfig:
+    - StatValueTypeID: 1
+      ValueTypeID: 0
+      Value: 2
+  - StatTypeID: 1
+    StatValuesConfig:
+    - StatValueTypeID: 1
+      ValueTypeID: 0
+      Value: 3
+  <AbilityConfigData>k__BackingField:
+    AbilityTypeID: 
+    VampirismConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      TimerCast: 0
+      ValueType: 0
+      Value: 0
+    BlockPhysicalDamageConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      TimerCast: 0
+      NormalDamageResistanceConfig:
+        Value: 0
+        ValueType: 0
+      BlockClip: {fileID: 0}
+    DashConfig:
+      SO_BaseAbilityConfig: {fileID: 0}
+      Cooldown: 0
+      TimerCast: 0
+      Speed: 0
+      Duration: 0
+  <SO_Equipment>k__BackingField: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}

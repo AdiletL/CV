@@ -1,9 +1,12 @@
 ﻿using ScriptableObjects.Unit.Character.Creep;
+using Zenject;
 
 namespace Unit.Character.Creep
 {
     public class BeholderHealth : CreepHealth, IPlayerAttackable, ITrapAttackable
     {
+        [Inject] private DiContainer diContainer;
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -14,6 +17,8 @@ namespace Unit.Character.Creep
             beholderController.BeholderStateFactory.SetBeholderHealthConfig(so_BeholderHealth);
             
             var takeDamageState = (BeholderTakeDamageState)beholderController.CreepStateFactory.CreateState(typeof(BeholderTakeDamageState));
+            diContainer.Inject(takeDamageState);
+            takeDamageState.Initialize();
             beholderController.StateMachine.AddStates(takeDamageState);
             
             beholderController.GetComponentInUnit<BeholderAnimation>().AddClip(so_BeholderHealth.takeDamageClip);

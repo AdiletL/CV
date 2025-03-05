@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using ScriptableObjects.Unit.Character;
+using UnityEngine;
 
 namespace Unit.Character
 {
     public class CharacterRunState : CharacterBaseMovementState
     {
+        protected SO_CharacterMove so_CharacterMove;
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
         protected AnimationClip[] runClips;
@@ -11,6 +13,7 @@ namespace Unit.Character
         protected float durationAnimation;
         protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
         
+        public void SetConfig(SO_CharacterMove so_CharacterMove) => this.so_CharacterMove = so_CharacterMove;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
         public void SetRunClips(AnimationClip[] runClips) => this.runClips = runClips;
@@ -35,25 +38,13 @@ namespace Unit.Character
 
         protected void UpdateDurationAnimation()
         {
-            durationAnimation = 1.5f / CurrentMovementSpeed;
+            durationAnimation = 1.5f / MovementSpeedStat.CurrentValue;
             unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         public override void ExecuteMovement()
         {
             
-        }
-
-        public override void AddMovementSpeed(float value)
-        {
-            base.AddMovementSpeed(value);
-            UpdateDurationAnimation();
-        }
-
-        public override void RemoveMovementSpeed(float value)
-        {
-            base.RemoveMovementSpeed(value);
-            UpdateDurationAnimation();
         }
     }
 
@@ -63,6 +54,12 @@ namespace Unit.Character
         {
         }
 
+        public CharacterRunStateBuilder SetConfig(SO_CharacterMove config)
+        {
+            if(state is CharacterRunState characterRunState)
+                characterRunState.SetConfig(config);
+            return this;
+        }
         public CharacterRunStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
             if(state is CharacterRunState characterRunState)

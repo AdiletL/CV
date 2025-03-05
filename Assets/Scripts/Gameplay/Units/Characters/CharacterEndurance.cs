@@ -35,7 +35,7 @@ namespace Unit.Character
 
             if (countCooldownReductionEndurance >= cooldownReductionEndurance)
             {
-                RemoveEndurance(amountReductionEndurance);
+                EnduranceStat.RemoveValue(amountReductionEndurance);
                 countCooldownReductionEndurance = 0;
             }
         }

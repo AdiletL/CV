@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Machine;
+using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
 namespace Unit.Character
@@ -8,22 +9,14 @@ namespace Unit.Character
     {
         public override StateCategory Category { get; } = StateCategory.Jump;
 
+        protected SO_CharacterMove so_CharacterMove;
         protected GameObject gameObject;
-        protected AnimationClip jumpClip;
         protected CharacterAnimation characterAnimation;
-        protected float jumpPower;
-        
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
-        public void SetJumpClip(AnimationClip animationClip) => jumpClip = animationClip;
-        public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetJumpPower(float jumpPower) => this.jumpPower = jumpPower;
-        
-        
-        public override void Initialize()
-        {
-            
-        }
 
+        public void SetConfig(SO_CharacterMove config) => so_CharacterMove = config;
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
+        
         public override void Update()
         {
         }
@@ -39,27 +32,19 @@ namespace Unit.Character
         {
         }
         
+        public CharacterJumpStateBuilder SetConfig(SO_CharacterMove config)
+        {
+            state.SetConfig(config);
+            return this;
+        }
         public CharacterJumpStateBuilder SetGameObject(GameObject gameObject)
         {
             state.SetGameObject(gameObject);
             return this;
         }
-        
-        public CharacterJumpStateBuilder SetJumpClip(AnimationClip clip)
-        {
-            state.SetJumpClip(clip);
-            return this;
-        }
-        
         public CharacterJumpStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             state.SetCharacterAnimation(characterAnimation);
-            return this;
-        }
-
-        public CharacterJumpStateBuilder SetJumpPower(float value)
-        {
-            state.SetJumpPower(value);
             return this;
         }
     }
