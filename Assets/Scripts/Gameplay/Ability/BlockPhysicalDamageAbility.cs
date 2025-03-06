@@ -27,14 +27,20 @@ namespace Gameplay.Ability
         {
             base.Enter(finishedCallBack, target, point);
             if(!isActivated) return;
-            resistanceHandler.AddResistance(normalDamageResistance);
             StartEffect();
         }
 
-        public override void FinishEffect()
+        protected override void AfterCast()
         {
+            base.AfterCast();
+            resistanceHandler.AddResistance(normalDamageResistance);
+        }
+
+        public override void Exit()
+        {
+            if(!isActivated) return;
             resistanceHandler.RemoveResistance(normalDamageResistance);
-            base.FinishEffect();
+            base.Exit();
         }
     }
 

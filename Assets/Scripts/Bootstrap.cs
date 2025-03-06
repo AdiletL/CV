@@ -20,15 +20,13 @@ public class Bootstrap : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
-        var newGameObject = PhotonNetwork.Instantiate(gameInstallerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
-        GetComponent<PhotonView>().RPC(nameof(Initialize), RpcTarget.AllBuffered, newGameObject.GetComponent<PhotonView>().ViewID);
+        GetComponent<PhotonView>().RPC(nameof(Initialize), RpcTarget.AllBuffered);
     }
 
     [PunRPC]
-    private void Initialize(int viewID)
+    private void Initialize()
     {
-        var newGameObject = PhotonView.Find(viewID).gameObject;
-        newGameObject.GetComponent<GameInstaller>().nextScene = nextScene;
+        Scenes.TransitionToScene(nextScene);
     }
 }
 

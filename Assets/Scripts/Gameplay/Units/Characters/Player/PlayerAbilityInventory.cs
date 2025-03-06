@@ -117,8 +117,8 @@ namespace Unit.Character.Player
             newAbility.SetInventorySlotID(slotID);
             newAbility.Initialize();
             newAbility.OnCountCooldown += OnCountCooldownAbility;
-            newAbility.OnStarted += OnStartedAbility;
-            newAbility.OnFinished += OnFinishedAbility;
+            newAbility.OnStartedCast += OnStartedCastAbility;
+            newAbility.OnFinishedCast += OnFinishedCastAbility;
             newAbility.OnExit += OnExitAbility;
             abilityHandler.AddAbility(newAbility);
             slots[slotID.Value] = newAbility;
@@ -133,8 +133,8 @@ namespace Unit.Character.Player
             if (slotID == null) return;
 
             slots[slotID].OnCountCooldown -= OnCountCooldownAbility;
-            slots[slotID].OnStarted -= OnStartedAbility;
-            slots[slotID].OnFinished -= OnFinishedAbility;
+            slots[slotID].OnStartedCast -= OnStartedCastAbility;
+            slots[slotID].OnFinishedCast -= OnFinishedCastAbility;
             slots[slotID].OnExit -= OnExitAbility;
             
             abilityHandler.RemoveAbilityByID(slots[slotID].AbilityType, slotID);
@@ -222,7 +222,7 @@ namespace Unit.Character.Player
             playerBlockInput.BlockInput(baseBlockInputType);
             slots[slotID].OnActivated -= OnActivatedAbility;
         }
-        private void OnStartedAbility(int? slotID)
+        private void OnStartedCastAbility(int? slotID)
         {
             if(slotID == null) return;
             playerBlockInput.BlockInput(slots[slotID].BlockedInputType);
@@ -230,7 +230,7 @@ namespace Unit.Character.Player
             currentUseAbility = slots[slotID];
             currentSelectedAbility = null;
         }
-        private void OnFinishedAbility(int? slotID)
+        private void OnFinishedCastAbility(int? slotID)
         {
             if(slotID == null) return;
             playerBlockInput.UnblockInput(slots[slotID].BlockedInputType);

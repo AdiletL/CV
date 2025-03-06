@@ -6,8 +6,8 @@ public interface IAbility
 {
     public event Action<int?, float, float> OnCountCooldown;
     public event Action<int?> OnActivated; 
-    public event Action<int?> OnStarted;
-    public event Action<int?> OnFinished;
+    public event Action<int?> OnStartedCast;
+    public event Action<int?> OnFinishedCast;
     public event Action<int?> OnExit;
     
     public int? InventorySlotID { get; }

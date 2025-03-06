@@ -40,7 +40,7 @@ namespace Unit.Character
             diContainer.Inject(ui);
             ui?.Initialize();
             
-            InitializeMediator();
+            SubscribeEvent();
             
             BeforeCreateStates();
             CreateSwitchState();
@@ -53,11 +53,11 @@ namespace Unit.Character
         }
 
 
-        protected virtual void InitializeMediator()
+        protected virtual void SubscribeEvent()
         {
             
         }
-        protected virtual void DeInitializeMediatorRPC()
+        protected virtual void UnSubscribeEvent()
         {
            
         }
@@ -99,7 +99,7 @@ namespace Unit.Character
         
         protected virtual void OnDestroy()
         {
-            DeInitializeMediatorRPC();
+            UnSubscribeEvent();
         }
     }
 }

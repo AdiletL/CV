@@ -42,7 +42,7 @@ namespace Gameplay.Ability
             else
             {
                 moveControl.ClearVelocity();
-                FinishEffect();
+                Exit();
             }
         }
     }

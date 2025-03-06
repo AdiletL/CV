@@ -1,33 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Gameplay.Resistance
 {
     public class ResistanceHandler : MonoBehaviour, IHandler
     {
-        private Dictionary<Type, IResistance> resistances = new();
+        private Dictionary<Type, List<IResistance>> resistances;
 
-        public IResistance GetResistance(Type resistanceType)
+
+        public bool IsResistanceNull(Type type)
         {
-            if (resistanceType == null)
-                throw new ArgumentNullException(nameof(resistanceType));
-
-            if (resistances.TryGetValue(resistanceType, out var resistance))
-                return resistance;
-
-            return null;
-        }
-        
-        public bool TryGetResistance<T>(out IResistance resistance) where T : IResistance
-        {
-            var resistanceType = typeof(T);
-
-            if (resistances.TryGetValue(resistanceType, out resistance))
-                return true;
-
-            resistance = null;
+            if (!resistances.ContainsKey(type)) return true;
+            if(resistances[type].Count == 0) return true;
             return false;
+        }
+        public List<IResistance> GetResistances(Type type)
+        {
+            return resistances[type];
         }
             
         public void Initialize()
@@ -37,14 +28,36 @@ namespace Gameplay.Resistance
 
         public void AddResistance(IResistance resistance)
         {
-            if(resistances.ContainsKey(resistance.GetType())) return;
-            resistances[resistance.GetType()] = resistance;
+            resistances ??= new Dictionary<Type, List<IResistance>>();
+
+            var type = resistance.GetType();
+            if (!IsResistanceNull(type))
+            {
+                for (int i = resistances[type].Count - 1; i >= 0; i--)
+                {
+                    if (Object.ReferenceEquals(resistance, resistances[type][i]))
+                        return;
+                }
+            }
+            else
+            {
+                resistances.Add(type, new List<IResistance>());
+            }
+            resistances[type].Add(resistance);
         }
 
         public void RemoveResistance(IResistance resistance)
         {
-            if(!resistances.ContainsKey(resistance.GetType())) return;
-            resistances.Remove(resistance.GetType());
+            var type = resistance.GetType();
+            if(IsResistanceNull(type)) return;
+            for (int i = resistances[type].Count - 1; i >= 0; i--)
+            {
+                if (Object.ReferenceEquals(resistance, resistances[type][i]))
+                {
+                    resistances[type].RemoveAt(i);
+                    return;
+                }
+            }
         }
     }
 }

@@ -5669,11 +5669,11 @@ PrefabInstance:
     - target: {fileID: 6747612888831129332, guid: 2a4bb12fa92a9aa4088eca2c5262316c, type: 3}
       propertyPath: 'patrolPoints.Array.data[0]'
       value: 
-      objectReference: {fileID: 2815388238067962762}
+      objectReference: {fileID: 2215545790863421025}
     - target: {fileID: 6747612888831129332, guid: 2a4bb12fa92a9aa4088eca2c5262316c, type: 3}
       propertyPath: 'patrolPoints.Array.data[1]'
       value: 
-      objectReference: {fileID: 1787501804073905452}
+      objectReference: {fileID: 2815388238067962762}
     - target: {fileID: 7401387025314344710, guid: 2a4bb12fa92a9aa4088eca2c5262316c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.77

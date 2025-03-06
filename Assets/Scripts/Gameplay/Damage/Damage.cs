@@ -1,5 +1,4 @@
-﻿using Calculate;
-using Gameplay.Resistance;
+﻿using System.Collections.Generic;
 using Gameplay.Ability;
 using Gameplay.Spawner;
 using Gameplay.Units.Item;
@@ -11,7 +10,7 @@ namespace Gameplay.Damage
 {
     public abstract class Damage : IDamageable
     {
-        [Inject] private DamagePopUpPopUpSpawner damagePopUpPopUpSpawner;
+        [Inject] protected DamagePopUpPopUpSpawner damagePopUpPopUpSpawner;
         
         public GameObject Owner { get; }
         public Stat DamageStat { get; }
@@ -31,15 +30,6 @@ namespace Gameplay.Damage
         public virtual int GetTotalDamage(GameObject gameObject)
         {
             result = DamageStat.CurrentValue;
-            
-            var resistanceHandler = gameObject.GetComponent<ResistanceHandler>();
-            if (resistanceHandler && resistanceHandler.TryGetResistance<NormalDamageResistance>(out var normalResistance))
-            {
-                var resistanceValue = new GameValue(normalResistance.Value, normalResistance.ValueType);
-                result -= (int)resistanceValue.Calculate(result);
-                if (result < 0) result = 0;
-            }
-            
             var targetUnitCenter = gameObject.GetComponent<UnitCenter>();
             
             CheckAbility(result, targetUnitCenter);
@@ -53,18 +43,10 @@ namespace Gameplay.Damage
         {
             if(!AbilityHandler || totalDamage <= 0) return;
 
-            if (AbilityHandler.IsAbilityNotNull(AbilityType.Vampirism))
+            if (!AbilityHandler.IsAbilityNull(AbilityType.Vampirism))
             {
                 var abilities = AbilityHandler.GetAbilities(AbilityType.Vampirism);
-                if (abilities != null && abilities.Count > 0)
-                {
-                    VampirismAbility ability = null;
-                    for (int i = abilities.Count - 1; i >= 0; i--)
-                    {
-                        ability = abilities[i] as VampirismAbility;
-                        ability?.Heal(totalDamage);
-                    }
-                }
+                VampirismAbility(abilities, totalDamage);
             }
         }
 
@@ -72,15 +54,20 @@ namespace Gameplay.Damage
         {
             if(!ItemHandler || totalDamage <= 0) return;
 
-            var abilities = ItemHandler.GetAbilities(AbilityType.Vampirism);
-            if (abilities != null && abilities.Count > 0)
+            if (!ItemHandler.IsAbilityNull(AbilityType.Vampirism))
             {
-                VampirismAbility ability = null;
-                for (int i = abilities.Count - 1; i >= 0; i--)
-                {
-                    ability = abilities[i] as VampirismAbility;
-                    ability?.Heal(totalDamage);
-                }
+                var abilities = ItemHandler.GetAbilities(AbilityType.Vampirism);
+                VampirismAbility(abilities, totalDamage);
+            }
+        }
+
+        private void VampirismAbility(List<Ability.Ability> abilities, float totalDamage)
+        {
+            VampirismAbility ability = null;
+            for (int i = abilities.Count - 1; i >= 0; i--)
+            {
+                ability = abilities[i] as VampirismAbility;
+                ability?.Heal(totalDamage);
             }
         }
     }

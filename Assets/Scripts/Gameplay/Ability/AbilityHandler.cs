@@ -10,7 +10,7 @@ namespace Gameplay.Ability
         public event Action OnLateUpdate;
 
 
-        private Dictionary<AbilityType, List<IAbility>> currentAbilities;
+        private Dictionary<AbilityType, List<Ability>> currentAbilities;
 
 
         public bool IsSkillActive(AbilityType abilityType)
@@ -18,9 +18,9 @@ namespace Gameplay.Ability
             return currentAbilities.ContainsKey(abilityType);
         }
 
-        public bool IsAbilityNotNull(AbilityType abilityType)
+        public bool IsAbilityNull(AbilityType abilityType)
         {
-            return currentAbilities != null && currentAbilities.ContainsKey(abilityType);
+            return currentAbilities == null || !currentAbilities.ContainsKey(abilityType);
         }
 
         public IAbility GetAbility(AbilityType abilityType, int? id)
@@ -36,7 +36,7 @@ namespace Gameplay.Ability
             return null;
         }
         
-        public List<IAbility> GetAbilities(AbilityType abilityType)
+        public List<Ability> GetAbilities(AbilityType abilityType)
         {
             return currentAbilities?[abilityType];
         }
@@ -50,22 +50,22 @@ namespace Gameplay.Ability
         private void LateUpdate() => OnLateUpdate?.Invoke();
         
         
-        public void AddAbility(IAbility iAbility)
+        public void AddAbility(Ability ability)
         {
             currentAbilities ??= new();
             
-            if (!IsAbilityNotNull(iAbility.AbilityType))
-                currentAbilities.Add(iAbility.AbilityType, new List<IAbility>());
+            if (IsAbilityNull(ability.AbilityType))
+                currentAbilities.Add(ability.AbilityType, new List<Ability>());
             
-            OnUpdate += iAbility.Update;
-            OnLateUpdate += iAbility.LateUpdate;
+            OnUpdate += ability.Update;
+            OnLateUpdate += ability.LateUpdate;
             
-            currentAbilities[iAbility.AbilityType].Add(iAbility);
+            currentAbilities[ability.AbilityType].Add(ability);
         }
 
         public void RemoveAbilityByID(AbilityType abilityType, int? id)
         {
-            if (IsAbilityNotNull(abilityType))
+            if (!IsAbilityNull(abilityType))
             {
                 for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
                 {

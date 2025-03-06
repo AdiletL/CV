@@ -22,11 +22,19 @@ namespace Gameplay.Units.Item
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
             base.Enter(finishedCallBack, target, point);
+            if(!isActivated) return;
+            StartEffect();
+        }
+
+        protected override void AfterCast()
+        {
+            base.AfterCast();
             vampirismAbility.Enter();
         }
 
         public override void Exit()
         {
+            if(!isActivated) return;
             vampirismAbility.Exit();
             base.Exit();
         }

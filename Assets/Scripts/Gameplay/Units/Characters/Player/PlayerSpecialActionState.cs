@@ -1,10 +1,13 @@
 ﻿using Gameplay.Ability;
 using UnityEngine;
+using Zenject;
 
 namespace Unit.Character.Player
 {
     public class PlayerSpecialActionState : CharacterSpecialActionState
     {
+        [Inject] private DiContainer diContainer;
+        
         private PlayerRunState playerRunState;
         private BlockPhysicalDamageConfig blockPhysicalDamageConfig;
         private BlockPhysicalDamageAbility blockPhysicalDamageAbility;
@@ -36,6 +39,7 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             blockPhysicalDamageAbility = CreateBlockPhysicalDamage();
+            diContainer.Inject(blockPhysicalDamageAbility);
             blockPhysicalDamageAbility.Initialize();
         }
 
@@ -58,10 +62,21 @@ namespace Unit.Character.Player
             playerRunState.RotationSpeedStat.RemoveValue(changedRotateSpeedValue);
         }
 
+        public override void Update()
+        {
+            base.Update();
+            blockPhysicalDamageAbility.Update();
+        }
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
+            blockPhysicalDamageAbility.LateUpdate();
+        }
+
         public override void Exit()
         {
             base.Exit();
-            blockPhysicalDamageAbility.FinishEffect();
+            blockPhysicalDamageAbility.Exit();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             

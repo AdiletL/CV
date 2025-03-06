@@ -16,8 +16,8 @@ namespace Gameplay.Ability
 
         public event Action<int?, float, float> OnCountCooldown;
         public event Action<int?> OnActivated;
-        public event Action<int?> OnStarted;
-        public event Action<int?> OnFinished;
+        public event Action<int?> OnStartedCast;
+        public event Action<int?> OnFinishedCast;
         public event Action<int?> OnExit;
         
         public int? InventorySlotID { get; protected set; }
@@ -82,7 +82,6 @@ namespace Gameplay.Ability
             SetCursor(null);
             StartCooldown();
             StartCasting();
-            OnStarted?.Invoke(InventorySlotID);
         }
         
         public virtual void Update()
@@ -113,37 +112,32 @@ namespace Gameplay.Ability
 
         private void StartCooldown()
         {
-            if (Cooldown > 0)
-            {
-                IsCooldown = true;
-                countCooldown = Cooldown;
-            }
+            IsCooldown = true;
+            countCooldown = Cooldown;
         }
         
         private void StartCasting()
         {
-            if (TimerCast > 0)
-            {
-                isCasting = true;
-                countTimerCast = TimerCast;
-            }
+            isCasting = true;
+            countTimerCast = TimerCast;
+            OnStartedCast?.Invoke(InventorySlotID);
         }
         
         protected virtual void AfterCast()
         {
+            isCasting = false;
+            uiCastTimer.Hide();
+            FinishedCallBack?.Invoke();
+            OnFinishedCast?.Invoke(InventorySlotID);
         }
         
         protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
         
-        public virtual void FinishEffect()
-        {
-            isActivated = false;
-            FinishedCallBack?.Invoke();
-            OnFinished?.Invoke(InventorySlotID);
-            Exit();
-        }
         public virtual void Exit()
         {
+            isActivated = false;
+            isCasting = false;
+            uiCastTimer.Hide();
             OnExit?.Invoke(InventorySlotID);
         }
     }

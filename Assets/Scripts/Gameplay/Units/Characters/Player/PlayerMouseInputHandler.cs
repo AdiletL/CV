@@ -148,8 +148,7 @@ namespace Unit.Character.Player
             {
                 TriggerSpecialAction();
             }
-            else if (isSpecialAction && (Input.GetMouseButtonUp(specialActionMouseButton) || 
-                     playerBlockInput.IsInputBlocked(InputType.SpecialAction)))
+            else if (isSpecialAction && Input.GetMouseButtonUp(specialActionMouseButton))
             {
                 ExitSpecialAction();
             }

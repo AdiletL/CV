@@ -18,11 +18,16 @@ namespace Gameplay.Units.Item
             return currentItems.ContainsKey(itemNameID);
         }
 
-        public bool IsNotNullItem(ItemName abilityType)
+        public bool IsNullItem(ItemName abilityType)
         {
-            return currentItems != null && currentItems.ContainsKey(abilityType);
+            return currentItems == null || !currentItems.ContainsKey(abilityType);
         }
 
+        public bool IsAbilityNull(AbilityType abilityType)
+        {
+            return currentAbilities == null || !currentAbilities.ContainsKey(abilityType);
+        }
+        
         public Item GetItem(ItemName itemNameID, int? inventorySlotID)
         {
             if (currentItems == null || !currentItems.ContainsKey(itemNameID)) return null;
@@ -59,7 +64,7 @@ namespace Gameplay.Units.Item
         {
             currentItems ??= new();
             
-            if (!IsNotNullItem(item.ItemNameID))
+            if (IsNullItem(item.ItemNameID))
                 currentItems.Add(item.ItemNameID, new List<Item>());
             
             OnUpdate += item.Update;
@@ -71,7 +76,7 @@ namespace Gameplay.Units.Item
 
         public void RemoveItemByID(ItemName itemNameID, int? inventorySlotID)
         {
-            if (IsNotNullItem(itemNameID))
+            if (!IsNullItem(itemNameID))
             {
                 for (int i = currentItems[itemNameID].Count - 1; i >= 0; i--)
                 {

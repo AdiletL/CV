@@ -11,13 +11,9 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private AssetReference gameManagerPrefab;
     [SerializeField] private AssetReference laboratoryManagerPrefab;
 
-    private PhotonView photonView;
-    
-    public string nextScene;
 
     public override void InstallBindings()
     {
-        DontDestroyOnLoad(gameObject);
         Container = new DiContainer();
     }
 
@@ -29,35 +25,26 @@ public class GameInstaller : MonoInstaller
 
     private void Initialize()
     {
-        if (!PhotonNetwork.IsMasterClient)  return;
-        photonView = GetComponent<PhotonView>();
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        Scenes.TransitionToScene(nextScene);
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "Bootstrap") return;
-
-        if (!PhotonNetwork.IsMasterClient)  return;
-        
-        switch (scene.name)
+        switch (SceneManager.GetActiveScene().name)
         {
             case Scenes.GAMEPLAY_NAME:
                 var gameManagerObject = PhotonNetwork.Instantiate(gameManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
-                photonView.RPC(nameof(GameManagerInjectComponents), RpcTarget.AllBuffered, gameManagerObject.GetComponent<PhotonView>().ViewID);
+                var gameManager = gameManagerObject.GetComponent<Gameplay.Manager.GameManager>();
+                Container.Inject(gameManager);
+                gameManager.Initialize();
+                //GameManagerInjectComponents();
                 break;
             case Scenes.LABORATORY_NAME:
                 var laboratoryManagerObject = PhotonNetwork.Instantiate(laboratoryManagerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
-                photonView.RPC(nameof(LaboratoryManagerInjectComponents), RpcTarget.AllBuffered, laboratoryManagerObject.GetComponent<PhotonView>().ViewID);
+                var laboratoryManager = laboratoryManagerObject.GetComponent<LaboratoryManager>();
+                Container.Inject(laboratoryManager);
+                laboratoryManager.Initialize();
+                //photonView.RPC(nameof(LaboratoryManagerInjectComponents), RpcTarget.AllBuffered, laboratoryManagerObject.GetComponent<PhotonView>().ViewID);
                 break;
             default:
-                Debug.LogError($"Unknown scene name: {scene.name}");
+                
                 break;
         }
-
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     [PunRPC]

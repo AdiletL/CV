@@ -54,6 +54,7 @@ namespace Gameplay.Units.Item
         {
             CreateTeleport();
             base.AfterCast();
+            Exit();
         }
         
         private void CreateTeleport()

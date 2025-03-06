@@ -120,28 +120,23 @@ namespace Gameplay.Units.Item
         
         private void StartCooldown()
         {
-            if (Cooldown > 0)
-            {
-                IsCooldown = true;
-                countCooldown = Cooldown;
-            }
+            IsCooldown = true;
+            countCooldown = Cooldown;
         }
 
         private void StartCasting()
         {
-            if (TimerCast > 0)
-            {
-                isCasting = true;
-                countTimerCast = TimerCast;
-                OnStartedCast?.Invoke(InventorySlotID);
-            }
+            isCasting = true;
+            countTimerCast = TimerCast;
+            OnStartedCast?.Invoke(InventorySlotID);
         }
         
         protected virtual void AfterCast()
         {
+            isCasting = false;
+            uiCastTimer.Hide();
             FinishedCallBack?.Invoke();
             OnFinishedCast?.Invoke(InventorySlotID);
-            Exit();
         }
 
         protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
@@ -236,7 +231,6 @@ namespace Gameplay.Units.Item
             isActivated = false;
             isCasting = false;
             uiCastTimer.Hide();
-            countTimerCast = TimerCast;
             OnExit?.Invoke(InventorySlotID);
         }
 

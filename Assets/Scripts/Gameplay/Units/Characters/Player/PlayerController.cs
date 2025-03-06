@@ -224,20 +224,22 @@ namespace Unit.Character.Player
             characterEndurance.Initialize();
         }
 
-        protected override void InitializeMediator()
+        protected override void SubscribeEvent()
         {
-            base.InitializeMediator();
+            base.SubscribeEvent();
             StateMachine.OnChangedState += OnChangedState;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().OnZeroHealth += OnZeroHealth;
         }
 
-        protected override void DeInitializeMediatorRPC()
+        protected override void UnSubscribeEvent()
         {
-            base.DeInitializeMediatorRPC();
+            base.UnSubscribeEvent();
             StateMachine.OnChangedState -= OnChangedState;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().OnZeroHealth -= OnZeroHealth;
         }
 
         public override void Appear()
@@ -312,6 +314,11 @@ namespace Unit.Character.Player
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;
+        }
+
+        private void OnZeroHealth()
+        {
+            gameObject.SetActive(false);
         }
         
         private void OnTriggerEnter(Collider other)
