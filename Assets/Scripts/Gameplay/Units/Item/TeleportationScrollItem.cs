@@ -16,25 +16,24 @@ namespace Gameplay.Units.Item
         
         private AssetReferenceT<GameObject> portalObject;
         private Camera baseCamera;
-        private Vector3 spawnPosition;
-        private Texture2D selectTargetCursor;
+        private Vector3? spawnPosition;
         private string endPortalID;
 
-        public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
         public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
         public void SetEndPortalID(string id) => this.endPortalID = id;
-        public void SetTargetCursor(Texture2D texture) => this.selectTargetCursor = texture;
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
             base.Enter(finishedCallBack, target, point);
-            if(isActivated) SetCursor(selectTargetCursor);
+            if (!isActivated || point == null) return;
+            spawnPosition = point;
+            StartEffect();
         }
 
         public override void Update()
         {
             base.Update();
-            if (isActivated && Input.GetMouseButtonDown(0) && !isCasting)
+            /*if (isActivated && Input.GetMouseButtonDown(0) && !isCasting)
             {
                 Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -47,7 +46,7 @@ namespace Gameplay.Units.Item
                         spawnPosition = hit.point;
                     }
                 }
-            }
+            }*/
         }
 
         protected override void AfterCast()
@@ -60,7 +59,7 @@ namespace Gameplay.Units.Item
         private void CreateTeleport()
         {
             var newTeleportObject = Addressables.InstantiateAsync(portalObject).WaitForCompletion();
-            newTeleportObject.transform.position = spawnPosition;
+            newTeleportObject.transform.position = spawnPosition.Value;
             
             var portal = newTeleportObject.GetComponent<PortalController>();
             foreach (var VARIABLE in startPortals)
@@ -91,24 +90,10 @@ namespace Gameplay.Units.Item
             return this;
         }
         
-        public TeleportationScrollItemBuilder SetBaseCamera(Camera baseCamera)
-        {
-            if(item is TeleportationScrollItem teleportationScroll)
-                teleportationScroll.SetBaseCamera(baseCamera);
-            return this;
-        }
-        
         public TeleportationScrollItemBuilder SetEndPortalID(string id)
         {
             if(item is TeleportationScrollItem teleportationScroll)
                 teleportationScroll.SetEndPortalID(id);
-            return this;
-        }
-        
-        public TeleportationScrollItemBuilder SetSelectTargetCursor(Texture2D texture)
-        {
-            if(item is TeleportationScrollItem teleportationScroll)
-                teleportationScroll.SetTargetCursor(texture);
             return this;
         }
     }

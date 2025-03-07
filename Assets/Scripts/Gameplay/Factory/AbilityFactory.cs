@@ -5,13 +5,9 @@ namespace Gameplay.Factory
 {
     public class AbilityFactory : Factory
     {
-        private GameObject gameObject;
-        private IMoveControl moveControl;
-        private Camera baseCamera;
+        private GameObject owner;
         
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
-        public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
-        public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
+        public void SetOwner(GameObject gameObject) => this.owner = gameObject;
         
         
         public Ability.Ability CreateAbility(AbilityConfig abilityConfig)
@@ -30,11 +26,10 @@ namespace Gameplay.Factory
         {
             var dashConfig = abilityConfig as DashConfig;
             return (DashAbility)new DashBuilder()
-                .SetMoveControl(moveControl)
                 .SetDuration(dashConfig.Duration)
                 .SetSpeed(dashConfig.Speed)
                 .SetBlockedInputType(dashConfig.SO_BaseAbilityConfig.BlockedInputType)
-                .SetGameObject(gameObject)
+                .SetGameObject(owner)
                 .SetAbilityBehaviour(dashConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetTimerCast(dashConfig.TimerCast)
                 .SetCooldown(dashConfig.Cooldown)
@@ -45,11 +40,11 @@ namespace Gameplay.Factory
         {
             var applyDamageHealConfig = abilityConfig as VampirismConfig;
             return (VampirismAbility)new ApplyDamageHealBuilder()
-                .SetOwner(gameObject)
+                .SetOwner(owner)
                 .SetValueType(applyDamageHealConfig.ValueType)
                 .SetValue(applyDamageHealConfig.Value)
                 .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)
-                .SetGameObject(gameObject)
+                .SetGameObject(owner)
                 .SetAbilityBehaviour(applyDamageHealConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetTimerCast(applyDamageHealConfig.TimerCast)
                 .SetCooldown(applyDamageHealConfig.Cooldown)
@@ -61,24 +56,11 @@ namespace Gameplay.Factory
     {
         private AbilityFactory abilityFactory = new ();
 
-        public AbilityFactoryBuilder SetGameObject(GameObject gameObject)
+        public AbilityFactoryBuilder SetOwner(GameObject owner)
         {
-            abilityFactory.SetGameObject(gameObject);
+            abilityFactory.SetOwner(owner);
             return this;
         }
-
-        public AbilityFactoryBuilder SetMoveControl(IMoveControl moveControl)
-        {
-            abilityFactory.SetMoveControl(moveControl);
-            return this;
-        }
-        
-        public AbilityFactoryBuilder SetBaseCamera(Camera camera)
-        {
-            abilityFactory.SetBaseCamera(camera);
-            return this;
-        }
-
         public AbilityFactory Build()
         {
             return abilityFactory;

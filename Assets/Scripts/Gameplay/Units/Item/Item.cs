@@ -13,10 +13,8 @@ namespace Gameplay.Units.Item
     {
         [Inject] private UICastTimer uiCastTimer;
         
-        public event Action<int?> OnActivated;
         public event Action<int?> OnStartedCast;
         public event Action<int?> OnFinishedCast;
-        public event Action<int?> OnExit;
         public event Action<int?, float, float> OnCountCooldown;
         
         public int? InventorySlotID { get; protected set; }
@@ -24,7 +22,7 @@ namespace Gameplay.Units.Item
         public abstract ItemName ItemNameID { get; protected set; }
         public ItemCategory ItemCategoryID { get; protected set; }
         public ItemBehaviour ItemBehaviourID { get; protected set; }
-        public InputType BlockInputType { get; protected set; }
+        public InputType BlockInputTypeID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
         public int Amount { get; protected set; }
         public float Cooldown { get; protected set; }
@@ -47,7 +45,7 @@ namespace Gameplay.Units.Item
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
         public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         public void SetAmountItem(int amount) => Amount = amount;
-        public void SetBlockInputType(InputType inputType) => BlockInputType = inputType;
+        public void SetBlockInputType(InputType inputType) => BlockInputTypeID = inputType;
 
         public void SetStats(StatConfig[] stats)
         {
@@ -81,12 +79,10 @@ namespace Gameplay.Units.Item
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
-            OnActivated?.Invoke(InventorySlotID);
         }
         
         public void StartEffect()
         {
-            SetCursor(null);
             StartCooldown();
             StartCasting();
         }
@@ -128,6 +124,7 @@ namespace Gameplay.Units.Item
         {
             isCasting = true;
             countTimerCast = TimerCast;
+            uiCastTimer.Show();
             OnStartedCast?.Invoke(InventorySlotID);
         }
         
@@ -139,7 +136,6 @@ namespace Gameplay.Units.Item
             OnFinishedCast?.Invoke(InventorySlotID);
         }
 
-        protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
 
         public virtual void AddStatsFromUnit()
         {
@@ -227,11 +223,9 @@ namespace Gameplay.Units.Item
         
         public virtual void Exit()
         {
-            SetCursor(null);
             isActivated = false;
             isCasting = false;
             uiCastTimer.Hide();
-            OnExit?.Invoke(InventorySlotID);
         }
 
         protected void AddAbility(Ability.Ability ability)

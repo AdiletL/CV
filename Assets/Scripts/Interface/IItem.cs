@@ -6,10 +6,8 @@ using UnityEngine;
 
 public interface IItem
 {
-    public event Action<int?> OnActivated; 
     public event Action<int?> OnStartedCast;
     public event Action<int?> OnFinishedCast;
-    public event Action<int?> OnExit;
     public event Action<int?, float, float> OnCountCooldown;
     
     public int? InventorySlotID { get; }
@@ -17,7 +15,7 @@ public interface IItem
     public ItemName ItemNameID { get; }
     public ItemCategory ItemCategoryID { get; }
     public ItemBehaviour ItemBehaviourID { get; }
-    public InputType BlockInputType { get; }
+    public InputType BlockInputTypeID { get; }
     public Action FinishedCallBack { get; }
     public int Amount { get; }
     public float Cooldown { get; }

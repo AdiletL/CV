@@ -6,6 +6,7 @@ using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Equipment;
 using Gameplay.Equipment.Weapon;
+using Gameplay.Factory;
 using Gameplay.Factory.Weapon;
 using ScriptableObjects.Equipment.Weapon;
 using ScriptableObjects.Unit.Character.Player;
@@ -252,10 +253,21 @@ namespace Unit.Character.Player
             throw new NotImplementedException();
         }
 
+        //Test
         private void InitializeSword()
         {
             if (!photonView.IsMine) return;
-            playerItemInventory.AddItem(so_NormalSword, 1);
+            var inventoryItemFactory = new ItemInventoryFactoryBuilder()
+                .Build();
+            diContainer.Inject(inventoryItemFactory);
+            inventoryItemFactory.Initialize();
+            inventoryItemFactory.SetOwner(gameObject);
+            var item = inventoryItemFactory.CreateItem(so_NormalSword);
+            diContainer.Inject(item);
+            item.SetAmountItem(1);
+            item.SetStats(so_NormalSword.UnitStatsConfigs);
+            item.Initialize();
+            playerItemInventory.AddItem(item, so_NormalSword.Icon);
         }
 
         //Test
@@ -296,6 +308,7 @@ namespace Unit.Character.Player
         
         public override void PutOnEquipment(Equipment equipment)
         {
+            base.PutOnEquipment(equipment);
             if (equipment is Weapon weapon)
             {
                 StateMachine.GetState<PlayerWeaponAttackState>()?.SetWeapon(weapon);
@@ -304,6 +317,7 @@ namespace Unit.Character.Player
 
         public override void TakeOffEquipment(Equipment equipment)
         {
+            base.TakeOffEquipment(equipment);
             if (equipment is Weapon weapon)
             {
                 StateMachine.GetState<PlayerWeaponAttackState>()?.RemoveWeapon();

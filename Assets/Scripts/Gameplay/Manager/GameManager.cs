@@ -29,12 +29,7 @@ namespace Gameplay.Manager
         private ExperienceSystem experienceSystem;
         
         private PhotonView photonView;
-
-        private void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-            // Подписываемся на событие загрузки сцены
-        }
+        
         
         public void Initialize()
         {

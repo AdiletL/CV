@@ -16,13 +16,14 @@ namespace Gameplay.Units.Item
         private SO_Equipment so_Equipment; 
         private Equipment.Equipment equipment;
         private EquipmentContextMenu equipmentContextMenu;
-        private bool isUse;
+        private CharacterMainController currentCharacter;
         
         public void SetEquipmentConfig(SO_Equipment config) => so_Equipment = config;
         
         public override void Initialize()
         {
             base.Initialize();
+            currentCharacter = OwnerGameObject.GetComponent<CharacterMainController>();
             EquipmentFactory equipmentFactory = new EquipmentFactoryBuilder()
                 .Build();
             equipment = (Equipment.Weapon.Sword)equipmentFactory.CreateEquipment(so_Equipment);
@@ -34,40 +35,36 @@ namespace Gameplay.Units.Item
 
         public override void PutOn()
         {
-            if(isUse) return;
+            if (IsCooldown)
+            {
+                Debug.Log($"{ItemBehaviourID} на перезарядке!");
+                return;
+            }
+            
+            if(!currentCharacter.IsNullEquipment(equipment)) return;
             StartEffect();
         }
 
         public override void TakeOff()
         {
-            if(!isUse) return;
+            if(currentCharacter.IsNullEquipment(equipment)) return;
             RemoveStatsFromUnit();
-            var characterMainController = OwnerGameObject.GetComponent<CharacterMainController>();
-            characterMainController.TakeOffEquipment(equipment);
-            isUse = false;
+            currentCharacter.TakeOffEquipment(equipment);
             Exit();
         }
-
-        public override void AddStatsFromUnit()
-        {
-            if(!isUse) return;
-            base.AddStatsFromUnit();
-        }
-
-        public override void RemoveStatsFromUnit()
-        {
-            if(!isUse) return;
-            base.RemoveStatsFromUnit();
-        }
-
+        
         protected override void AfterCast()
         {
             base.AfterCast();
-            isUse = true;
-            var characterMainController = OwnerGameObject.GetComponent<CharacterMainController>();
-            characterMainController.PutOnEquipment(equipment);
+            currentCharacter.PutOnEquipment(equipment);
             AddStatsFromUnit();
             Exit();
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            HideContextMenu();
         }
 
         private void CreateContextMenu()

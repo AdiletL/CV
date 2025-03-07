@@ -11,20 +11,17 @@ namespace Gameplay.Ability
 {
     public abstract class Ability : IAbility
     {
-        [Inject] protected DiContainer diContainer;
         [Inject] protected UICastTimer uiCastTimer;
 
         public event Action<int?, float, float> OnCountCooldown;
-        public event Action<int?> OnActivated;
         public event Action<int?> OnStartedCast;
         public event Action<int?> OnFinishedCast;
-        public event Action<int?> OnExit;
         
         public int? InventorySlotID { get; protected set; }
         public GameObject GameObject { get; protected set; }
         public abstract AbilityType AbilityType { get; protected set; }
-        public AbilityBehaviour AbilityBehaviour { get; protected set; }
-        public InputType BlockedInputType { get; protected set; }
+        public AbilityBehaviour AbilityBehaviourID { get; protected set; }
+        public InputType BlockedInputTypeID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
         public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
@@ -38,8 +35,8 @@ namespace Gameplay.Ability
 
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
-        public void SetBlockedInputType(InputType inputType) => this.BlockedInputType = inputType;
-        public void SetAbilityBehaviour(AbilityBehaviour abilityBehaviour) => this.AbilityBehaviour = abilityBehaviour;
+        public void SetBlockedInputType(InputType inputType) => this.BlockedInputTypeID = inputType;
+        public void SetAbilityBehaviour(AbilityBehaviour abilityBehaviour) => this.AbilityBehaviourID = abilityBehaviour;
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
         public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         
@@ -52,34 +49,32 @@ namespace Gameplay.Ability
         {
             if (IsCooldown)
             {
-                Debug.Log($"{AbilityBehaviour} на перезарядке!");
+                Debug.Log($"{AbilityBehaviourID} на перезарядке!");
                 Exit();
                 return;
             }
 
-            if ((AbilityBehaviour & AbilityBehaviour.Passive) != 0)
+            if ((AbilityBehaviourID & AbilityBehaviour.Passive) != 0)
             {
-                Debug.Log($"{AbilityBehaviour} — пассивное умение, его нельзя активировать.");
+                Debug.Log($"{AbilityBehaviourID} — пассивное умение, его нельзя активировать.");
                 Exit();
                 return;
             }
 
-            if ((AbilityBehaviour & AbilityBehaviour.Hidden) != 0)
+            if ((AbilityBehaviourID & AbilityBehaviour.Hidden) != 0)
             {
-                Debug.Log($"{AbilityBehaviour} скрыто и не может быть использовано.");
+                Debug.Log($"{AbilityBehaviourID} скрыто и не может быть использовано.");
                 Exit();
                 return;
             }
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
-            OnActivated?.Invoke(InventorySlotID);
         }
 
         protected void StartEffect()
         {
             if (isCasting) Exit();
-            SetCursor(null);
             StartCooldown();
             StartCasting();
         }
@@ -131,14 +126,11 @@ namespace Gameplay.Ability
             OnFinishedCast?.Invoke(InventorySlotID);
         }
         
-        protected void SetCursor(Texture2D texture2D) => Cursor.SetCursor(texture2D, Vector2.zero, CursorMode.Auto);
-        
         public virtual void Exit()
         {
             isActivated = false;
             isCasting = false;
             uiCastTimer.Hide();
-            OnExit?.Invoke(InventorySlotID);
         }
     }
 

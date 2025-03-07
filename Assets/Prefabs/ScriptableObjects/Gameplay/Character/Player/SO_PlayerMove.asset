@@ -22,7 +22,7 @@ MonoBehaviour:
   <RunSpeed>k__BackingField: 3
   <BaseRunReductionEndurance>k__BackingField: 0.01
   <JumpConfig>k__BackingField:
-    BlockInputType: 56
+    BlockInputType: 24
     Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
     Power: 5
     MaxCount: 2

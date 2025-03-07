@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
 using Gameplay.Ability;
+using Gameplay.Factory;
 using Gameplay.UI;
 using ScriptableObjects.Unit.Item;
 using Unit.Character.Player;
@@ -12,6 +13,7 @@ namespace Unit.Item
     {
         [SerializeField] private SO_Item so_Item;
         
+        private InventoryItemFactory inventoryItemFactory;
         private HotkeyUI hotkeyUI;
         private int amountItem;
         
@@ -27,6 +29,11 @@ namespace Unit.Item
             base.Initialize();
             jumpPower = so_Item.JumpPower;
             jumpDuration = so_Item.JumpDuration;
+            
+            inventoryItemFactory = new ItemInventoryFactoryBuilder()
+                .Build();
+            diContainer.Inject(inventoryItemFactory);
+            inventoryItemFactory.Initialize();
             
             hotkeyUI = GetComponentInUnit<PressHotkeyUI>();
             Disable();
@@ -51,7 +58,13 @@ namespace Unit.Item
                 if (!playerInventory.IsFullInventory() || 
                     playerInventory.IsNotNullItem(so_Item.ItemNameID))
                 {
-                    playerInventory.AddItem(so_Item, amountItem);
+                    inventoryItemFactory.SetOwner(playerInventory.gameObject);
+                    var item = inventoryItemFactory.CreateItem(so_Item);
+                    diContainer.Inject(item);
+                    item.SetAmountItem(amountItem);
+                    item.SetStats(so_Item.UnitStatsConfigs);
+                    item.Initialize();
+                    playerInventory.AddItem(item, so_Item.Icon);
                     Destroy(this.gameObject);
                 }
             }

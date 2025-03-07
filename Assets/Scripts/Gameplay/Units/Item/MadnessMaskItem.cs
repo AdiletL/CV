@@ -1,20 +1,32 @@
 ﻿using System;
 using Gameplay.Ability;
+using Gameplay.Factory;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Units.Item
 {
     public class MadnessMaskItem : Item
     {
+        [Inject] private DiContainer diContainer;
+        
         public override ItemName ItemNameID { get; protected set; } = ItemName.MadnessMask;
 
         private VampirismAbility vampirismAbility;
+        private VampirismConfig vampirismConfig;
         
-        public void SetApplyDamageHeal(VampirismAbility vampirismAbility) => this.vampirismAbility = vampirismAbility;
+        public void SetVampirismConfig(VampirismConfig vampirismConfig) => this.vampirismConfig = vampirismConfig;
 
         public override void Initialize()
         {
             base.Initialize();
+            var abilityFactory = new AbilityFactoryBuilder()
+                .SetOwner(OwnerGameObject)
+                .Build();
+            diContainer.Inject(abilityFactory);
+            
+            vampirismAbility = (VampirismAbility)abilityFactory.CreateAbility(vampirismConfig);
+            diContainer.Inject(vampirismAbility);
             vampirismAbility.Initialize();
             AddAbility(vampirismAbility);
         }
@@ -46,10 +58,10 @@ namespace Gameplay.Units.Item
         {
         }
 
-        public MadnessMaskItemBuilder SetVampirismAbility(VampirismAbility vampirismAbility)
+        public MadnessMaskItemBuilder SetVampirisimConfig(VampirismConfig config)
         {
             if(item is MadnessMaskItem madnessMask)
-                madnessMask.SetApplyDamageHeal(vampirismAbility);
+                madnessMask.SetVampirismConfig(config);
             return this;
         }
     }

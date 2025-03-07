@@ -60,13 +60,6 @@ namespace Gameplay.Ability
         {
         }
         
-        public DashBuilder SetMoveControl(IMoveControl iMoveControl)
-        {
-            if(ability is DashAbility dash)
-                dash.SetMoveControl(iMoveControl);
-            return this;
-        }
-
         public DashBuilder SetDuration(float duration)
         {
             if(ability is DashAbility dash)

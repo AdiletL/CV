@@ -13,6 +13,8 @@ namespace Unit.Character
         [field: SerializeField] public SO_CharacterInformation SO_CharacterInformation { get; private set; }
 
         protected PhotonView photonView;
+
+        protected List<Equipment> currentEquipments;
         
         public StateMachine StateMachine { get; protected set; }
         public UnitInformation UnitInformation { get; protected set; }
@@ -20,6 +22,9 @@ namespace Unit.Character
         public abstract int TotalDamage();
         public abstract int TotalAttackSpeed();
         public abstract float TotalAttackRange();
+        
+        public bool IsNullEquipment(Equipment equipment) => 
+            currentEquipments == null || !currentEquipments.Contains(equipment);
 
         protected virtual UnitInformation CreateUnitInformation()
         {
@@ -85,12 +90,13 @@ namespace Unit.Character
 
         public virtual void PutOnEquipment(Equipment equipment)
         {
-            
+            currentEquipments ??= new List<Equipment>();
+            currentEquipments.Add(equipment);
         }
 
         public virtual void TakeOffEquipment(Equipment equipment)
         {
-            
+            currentEquipments?.Remove(equipment);
         }
 
         public void ShowInformation() => UnitInformation.Show();

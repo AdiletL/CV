@@ -7,6 +7,7 @@ using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Units.Item;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
+using Unit.Cell;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -22,13 +23,13 @@ namespace Unit.Character.Player
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
         [SerializeField] private AssetReferenceGameObject uiItemInventoryPrefab;
 
-        private ItemFactory itemFactory;
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
         private PlayerBlockInput playerBlockInput;
 
         private Gameplay.Units.Item.Item currentSelectedItem;
         private Gameplay.Units.Item.Item currentUseItem;
+        private Camera baseCamera;
         private InputType baseBlockInput;
         
         private int maxSlot;
@@ -65,31 +66,15 @@ namespace Unit.Character.Player
             return null;
         }
 
-        private ItemFactory CreateItemFactory()
-        {
-            AbilityFactory abilityFactory = new AbilityFactoryBuilder()
-                .SetMoveControl(GetComponent<IMoveControl>())
-                .SetBaseCamera(playerController.BaseCamera)
-                .SetGameObject(gameObject)
-                .Build();
-            diContainer.Inject(abilityFactory);
-            
-            return new ItemFactoryBuilder()
-                .SetAbilityFactory(abilityFactory)
-                .SetBaseCamera(playerController.BaseCamera)
-                .SetGameObject(gameObject)
-                .Build();
-        }
-
         public void Initialize()
         {
             baseBlockInput = so_PlayerItemInventory.BaseBlockInputType;
             maxSlot = so_PlayerItemInventory.MaxCountItem;
             itemHandler = GetComponent<ItemHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
+            baseCamera = playerController.BaseCamera;
             
             InitializeUIInventory();
-            InitializeItemFactory();
             InitializeSlots();
         }
 
@@ -103,12 +88,6 @@ namespace Unit.Character.Player
             uiItemInventory.CreateCells(maxSlot);
         }
 
-        private void InitializeItemFactory()
-        {
-            itemFactory = CreateItemFactory();
-            diContainer.Inject(itemFactory);
-        }
-
         private void InitializeSlots()
         {
             slots ??= new();
@@ -116,41 +95,33 @@ namespace Unit.Character.Player
                 slots.Add(i, null);
         }
 
-        public void AddItem(SO_Item so_Item, int amount)
+        public void AddItem(Gameplay.Units.Item.Item item, Sprite icon)
         {
             int? slotID = null;
             
-            if (!IsNotNullItem(so_Item.ItemNameID))
+            if (!IsNotNullItem(item.ItemNameID))
             {
                 slotID = slots.FirstOrDefault(pair => pair.Value == null).Key;
                 if(slotID == null) return;
                 
-                var newItem = itemFactory.CreateItem(so_Item);
-                if(newItem == null) return;
+                item.SetInventorySlotID(slotID);
+                item.AddStatsFromUnit();
                 
-                diContainer.Inject(newItem);
-                newItem.SetInventorySlotID(slotID);
-                newItem.SetAmountItem(amount);
-                newItem.SetStats(so_Item.UnitStatsConfigs);
-                newItem.Initialize();
-                newItem.AddStatsFromUnit();
+                slots[slotID] = item;
+                itemHandler.AddItem(item);
+                item.OnCountCooldown += OnCountCooldownItem;
+                item.OnStartedCast += OnStartedCastItem;
+                item.OnFinishedCast += OnFinishedCastItem;
                 
-                slots[slotID] = newItem;
-                itemHandler.AddItem(newItem);
-                newItem.OnCountCooldown += OnCountCooldownItem;
-                newItem.OnExit  += OnExitItem;
-                newItem.OnStartedCast += OnStartedCastItem;
-                newItem.OnFinishedCast += OnFinishedCastItem;
-                
-                bool isSelectable = so_Item.ItemBehaviourID != ItemBehaviour.Passive;
-                uiItemInventory.AddItem(slotID, so_Item.Icon, amount, isSelectable, 0, so_Item.Cooldown);
+                bool isSelectable = item.ItemBehaviourID != ItemBehaviour.Passive;
+                uiItemInventory.AddItem(slotID, icon, item.Amount, isSelectable, 0, 0);
             }
             else
             {
-                slotID = slots.FirstOrDefault(pair => Equals(so_Item.ItemNameID, pair.Value.ItemNameID)).Key;
+                slotID = slots.FirstOrDefault(pair => Equals(item.ItemNameID, pair.Value.ItemNameID)).Key;
                 if(slotID == null) return;
                 
-                slots[slotID].AddAmount(amount);
+                slots[slotID].AddAmount(item.Amount);
                 uiItemInventory.UpdateAmount(slotID, slots[slotID].Amount);
             }
         }
@@ -167,9 +138,7 @@ namespace Unit.Character.Player
                 slots[slotID].OnCountCooldown -= OnCountCooldownItem;
                 slots[slotID].OnStartedCast -= OnStartedCastItem;
                 slots[slotID].OnFinishedCast -= OnFinishedCastItem;
-                slots[slotID].OnExit -= OnExitItem;
                 
-                OnExitItem(slotID);
                 itemHandler.RemoveItemByID(slots[slotID].ItemNameID, slotID);
                 uiItemInventory.RemoveItem(slotID);
                 slots[slotID].RemoveStatsFromUnit();
@@ -181,7 +150,15 @@ namespace Unit.Character.Player
         {
             if (!playerBlockInput.IsInputBlocked(InputType.Item))
             {
-                EnterItem(slotID);
+                switch (slots[slotID].ItemBehaviourID)
+                {
+                    case ItemBehaviour.NoTarget: slots[slotID].Enter(); break;
+                    case ItemBehaviour.PointTarget: 
+                    case ItemBehaviour.UnitTarget:
+                        currentSelectedItem = slots[slotID]; 
+                        playerBlockInput.IsInputBlocked(baseBlockInput);
+                        break;
+                }
             }
         }
 
@@ -206,18 +183,14 @@ namespace Unit.Character.Player
 
         private void ClearUseItem()
         {
+            if(currentUseItem == null) return;
+            playerBlockInput.UnblockInput(slots[currentUseItem.InventorySlotID].BlockInputTypeID);
             ExitItem(currentUseItem);
             currentUseItem = null;
         }
         
         private void Update()
         {
-            if (currentSelectedItem != null && Input.anyKeyDown &&
-                playerBlockInput.IsInputBlocked(InputType.Item))
-            {
-                ClearSelectedItem();
-            }
-
             if (currentUseItem != null)
             {
                 if (Input.anyKeyDown && !CheckInputOnUI.IsPointerOverUIObject())
@@ -225,52 +198,73 @@ namespace Unit.Character.Player
                     ClearUseItem();
                 }
             }
+            
+            if (currentSelectedItem != null)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    switch (currentSelectedItem.ItemBehaviourID)
+                    {
+                        case ItemBehaviour.PointTarget: PointTarget(); break;
+                        case ItemBehaviour.UnitTarget: UnitTarget(); break;
+                    }
+                }
+                else if(Input.GetMouseButtonDown(1))
+                {
+                    ClearSelectedItem();
+                }
+            }
         }
 
-        private void EnterItem(int? slotID)
+        private void PointTarget()
         {
-            if(slotID == null || slots[slotID] == null) return;
-            if(slots[slotID] == currentUseItem) return;
+            Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
 
-            ExitItem(currentSelectedItem);
-            currentSelectedItem = slots[slotID];
-            currentSelectedItem.OnActivated += OnActivatedItem;
-            currentSelectedItem.Enter();
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CELL_LAYER))
+            {
+                if (hit.collider.TryGetComponent(out CellController cellController) &&
+                    !cellController.IsBlocked())
+                {
+                    currentSelectedItem.Enter(point: hit.point);
+                    currentSelectedItem = null;
+                    playerBlockInput.UnblockInput(baseBlockInput);
+                }
+            }
         }
 
-        private void ExitItem(Gameplay.Units.Item.Item item)
+        private void UnitTarget()
         {
-            if(item == null) return;
-            item.Exit();
-            item.OnActivated -= OnActivatedItem;
-        }
+            Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
 
-        private void OnActivatedItem(int? slotID)
-        {
-            if(slotID == null) return;
-            playerBlockInput.BlockInput(baseBlockInput);
-            slots[slotID].OnActivated -= OnActivatedItem;
+            if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CREEP_LAYER | Layers.PLAYER_LAYER))
+            {
+                if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
+                {
+                    currentSelectedItem.Enter(target: characterMainController.gameObject);
+                    currentSelectedItem = null;
+                    playerBlockInput.UnblockInput(baseBlockInput);
+                }
+            }
         }
+        
         private void OnStartedCastItem(int? slotID)
         {
             if(slotID == null) return;
-            playerBlockInput.BlockInput(slots[slotID].BlockInputType);
             ExitItem(currentUseItem);
+            playerBlockInput.BlockInput(slots[slotID].BlockInputTypeID);
             currentUseItem = slots[slotID];
-            currentSelectedItem = null;
         }
         private void OnFinishedCastItem(int? slotID)
         {
             if(slotID == null) return;
-            playerBlockInput.UnblockInput(slots[slotID].BlockInputType);
+            playerBlockInput.UnblockInput(slots[slotID].BlockInputTypeID);
+            currentUseItem = null;
             if(!(slots[slotID] is EquipmentItem))
                 RemoveItem(slotID, 1);
         }
-        private void OnExitItem(int? slotID)
+        private void ExitItem(Gameplay.Units.Item.Item item)
         {
-            if(slotID == null) return;
-            playerBlockInput.UnblockInput(baseBlockInput);
-            currentUseItem = null;
+            item?.Exit();
         }
     }
 }

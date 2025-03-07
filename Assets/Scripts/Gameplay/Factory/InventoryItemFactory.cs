@@ -1,24 +1,20 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Ability;
 using Gameplay.Units.Item;
-using ScriptableObjects.Equipment.Weapon;
-using ScriptableObjects.Gameplay.Equipment;
 using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
 
 namespace Gameplay.Factory
 {
-    public class ItemFactory : Factory
+    public class InventoryItemFactory : Factory
     {
         [Inject] private DiContainer diContainer;
         
-        private AbilityFactory abilityFactory;
-        private GameObject gameObject;
+        private GameObject owner;
         private Camera baseCamera;
 
-        public void SetAbilityFactory(AbilityFactory abilityFactory) => this.abilityFactory = abilityFactory;
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetOwner(GameObject gameObject) => this.owner = gameObject;
         public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
 
         public void Initialize()
@@ -40,17 +36,14 @@ namespace Gameplay.Factory
         private MadnessMaskItem CreateMadnessMask(SO_Item so_Item)
         {
             var so_MadnessMask = so_Item as SO_MadnessMask;
-            var vampirismAbility = (VampirismAbility)abilityFactory.CreateAbility(so_MadnessMask.AbilityConfigData.VampirismConfig);
-            diContainer.Inject(vampirismAbility);
-            
             return (MadnessMaskItem)new MadnessMaskItemBuilder()
-                .SetVampirismAbility(vampirismAbility)
+                .SetVampirisimConfig(so_MadnessMask.AbilityConfigData.VampirismConfig)
                 .SetItemBehaviour(so_MadnessMask.ItemBehaviourID)
                 .SetItemCategory(so_MadnessMask.ItemCategoryID)
                 .SetBlockInput(so_MadnessMask.BlockInputTypeID)
                 .SetTimerCast(so_MadnessMask.TimerCast)
                 .SetCooldown(so_MadnessMask.Cooldown)
-                .SetGameObject(gameObject)
+                .SetGameObject(owner)
                 .Build();
         }
 
@@ -58,11 +51,9 @@ namespace Gameplay.Factory
         {
             var so_TeleportationScroll = so_Item as SO_TeleportationScroll;
             return (TeleportationScrollItem)new TeleportationScrollItemBuilder()
-                .SetSelectTargetCursor(so_TeleportationScroll.SelectTargetCursor)
                 .SetPortalObject(so_TeleportationScroll.PortalObject)
                 .SetEndPortalID(so_TeleportationScroll.EndPortalID.ID)
-                .SetBaseCamera(baseCamera)
-                .SetGameObject(gameObject)
+                .SetGameObject(owner)
                 .SetTimerCast(so_TeleportationScroll.TimerCast)
                 .SetCooldown(so_TeleportationScroll.Cooldown)
                 .SetBlockInput(so_TeleportationScroll.BlockInputTypeID)
@@ -80,36 +71,18 @@ namespace Gameplay.Factory
                 .SetItemBehaviour(so_Item.ItemBehaviourID)
                 .SetBlockInput(so_Item.BlockInputTypeID)
                 .SetCooldown(so_NormalSword.Cooldown)
-                .SetGameObject(gameObject)
+                .SetGameObject(owner)
                 .Build();
         }
     }
 
-    public class ItemFactoryBuilder
+    public class ItemInventoryFactoryBuilder
     {
-        private ItemFactory itemFactory = new ();
-
-        public ItemFactoryBuilder SetAbilityFactory(AbilityFactory abilityFactory)
-        {
-            this.itemFactory.SetAbilityFactory(abilityFactory);
-            return this;
-        }
+        private InventoryItemFactory inventoryItemFactory = new ();
         
-        public ItemFactoryBuilder SetGameObject(GameObject gameObject)
+        public InventoryItemFactory Build()
         {
-            this.itemFactory.SetGameObject(gameObject);
-            return this;
-        }
-        
-        public ItemFactoryBuilder SetBaseCamera(Camera baseCamera)
-        {
-            this.itemFactory.SetBaseCamera(baseCamera);
-            return this;
-        }
-        
-        public ItemFactory Build()
-        {
-            return itemFactory;
+            return inventoryItemFactory;
         }
     }
 }

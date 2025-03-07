@@ -44,14 +44,8 @@ public static class PlayModeCleanup
         if (state == PlayModeStateChange.ExitingPlayMode)
         {
             var bootstrap = GameObject.FindObjectOfType<Bootstrap>();
-            var gameInstaller = GameObject.FindObjectOfType<GameInstaller>();
-            var gameManager = GameObject.FindObjectOfType<GameManager>();
             if (bootstrap != null)
                 GameObject.DestroyImmediate(bootstrap.gameObject);
-            if (gameInstaller != null)
-                GameObject.DestroyImmediate(gameInstaller.gameObject);
-            if (gameManager != null)
-                GameObject.DestroyImmediate(gameManager.gameObject);
         }
     }
 }
