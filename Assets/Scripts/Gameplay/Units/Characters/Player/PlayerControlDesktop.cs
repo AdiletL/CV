@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Gameplay.Factory.Character.Player;
-using Gameplay.Units.Item;
+using Gameplay.Unit.Item.Container;
+using Gameplay.Unit.Item;
 using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Item.Container;
+using Unit;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerControlDesktop : CharacterControlDesktop
     {

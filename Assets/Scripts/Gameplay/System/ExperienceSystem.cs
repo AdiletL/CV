@@ -1,7 +1,4 @@
 ﻿using System;
-using Unit;
-using Unit.Character.Player;
-using UnityEngine;
 using Zenject;
 
 public class ExperienceSystem
@@ -10,17 +7,17 @@ public class ExperienceSystem
 
     public ExperienceSystem()
     {
-        Unit.UnitExperience.OnGiveAoeExperience += OnGiveAoeExperience;
+        Gameplay.Unit.UnitExperience.OnGiveAoeExperience += OnGiveAoeExperience;
     }
 
     ~ExperienceSystem()
     {
-        Unit.UnitExperience.OnGiveAoeExperience -= OnGiveAoeExperience;
+        Gameplay.Unit.UnitExperience.OnGiveAoeExperience -= OnGiveAoeExperience;
     }
 
-    private void OnGiveAoeExperience(Unit.AoeExperienceInfo info)
+    private void OnGiveAoeExperience(Gameplay.Unit.AoeExperienceInfo info)
     {
-        var experienceUnits = gameUnits.GetUnits<Unit.UnitExperience>();
+        var experienceUnits = gameUnits.GetUnits<Gameplay.Unit.UnitExperience>();
         float distanceSqr = 0;
         
         for (int i = experienceUnits.Count - 1; i >= 0; i--)

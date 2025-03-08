@@ -1,4 +1,5 @@
 ﻿using Gameplay.Effect;
+using Gameplay.Movement;
 using Movement;
 using ScriptableObjects.Weapon.Projectile;
 using UnityEngine;

@@ -1,9 +1,7 @@
 ﻿using Calculate;
 using Gameplay.Resistance;
-using Gameplay.Spawner;
-using Unit;
+using Gameplay.Unit;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Damage
 {

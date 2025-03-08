@@ -1,7 +1,7 @@
 ﻿using ScriptableObjects.Unit.Character.Creep;
 using Zenject;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     public class BeholderHealth : CreepHealth, IPlayerAttackable, ITrapAttackable
     {

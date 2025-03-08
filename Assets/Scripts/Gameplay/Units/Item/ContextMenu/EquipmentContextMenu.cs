@@ -3,7 +3,7 @@ using Gameplay.UI.ScreenSpace.ContextMenu;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Units.Item.ContextMenu
+namespace Gameplay.Unit.Item.ContextMenu
 {
     public class EquipmentContextMenu
     {

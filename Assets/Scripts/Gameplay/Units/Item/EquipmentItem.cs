@@ -1,13 +1,11 @@
-﻿using Gameplay.Common;
-using Gameplay.Factory.Weapon;
-using Gameplay.Units.Item.ContextMenu;
+﻿using Gameplay.Factory.Weapon;
+using Gameplay.Unit.Character;
+using Gameplay.Unit.Item.ContextMenu;
 using ScriptableObjects.Gameplay.Equipment;
-using Unit;
-using Unit.Character;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public abstract class EquipmentItem : Item
     {

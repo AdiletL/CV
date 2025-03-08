@@ -3,7 +3,7 @@ using Machine;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     public abstract class CreepHealth : CharacterHealth
     {

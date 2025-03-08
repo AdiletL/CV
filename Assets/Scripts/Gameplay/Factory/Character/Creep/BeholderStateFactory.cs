@@ -1,9 +1,8 @@
 ﻿using System;
+using Gameplay.Unit;
+using Gameplay.Unit.Character.Creep;
 using Machine;
 using ScriptableObjects.Unit.Character.Creep;
-using Unit;
-using Unit.Character.Creep;
-using UnityEngine;
 
 namespace Gameplay.Factory.Character.Creep
 {
@@ -62,7 +61,6 @@ namespace Gameplay.Factory.Character.Creep
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
-            result.MovementSpeedStat.AddValue(so_BeholderMove.RunSpeed);
             return result;
         }
         
@@ -74,12 +72,10 @@ namespace Gameplay.Factory.Character.Creep
                 .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetUnitAnimation(characterAnimation)
                 .SetConfig(so_BeholderMove)
-                .SetRunClips(so_BeholderMove.RunClips)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
-            result.MovementSpeedStat.AddValue(so_BeholderMove.RunSpeed);
             return result;
         }
         
@@ -95,8 +91,6 @@ namespace Gameplay.Factory.Character.Creep
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
-            result.RangeStat.AddValue(so_BeholderAttack.Range);
-            result.DamageStat.AddValue(so_BeholderAttack.Damage);
             return result;
         }
 

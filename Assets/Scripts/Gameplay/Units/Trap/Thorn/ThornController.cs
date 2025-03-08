@@ -5,7 +5,7 @@ using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     [RequireComponent(typeof(SphereCollider))]
     public class ThornController : TrapController, IApplyDamage

@@ -3,7 +3,7 @@ using Machine;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterJumpState : State
     {

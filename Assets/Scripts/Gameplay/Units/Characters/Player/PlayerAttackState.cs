@@ -2,7 +2,7 @@
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerAttackState : CharacterAttackState
     {
@@ -77,7 +77,7 @@ namespace Unit.Character.Player
             direction.y = 0; // Игнорируем высоту, вращаем только по Y
         }
 
-        public override void SetWeapon(Weapon weapon)
+        public override void SetWeapon(Equipment.Weapon.Weapon weapon)
         {
             base.SetWeapon(weapon);
             switch (weapon)

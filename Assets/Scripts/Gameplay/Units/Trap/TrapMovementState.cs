@@ -1,7 +1,7 @@
 ﻿using Machine;
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     public abstract class TrapMovementState : State, IMovement
     {

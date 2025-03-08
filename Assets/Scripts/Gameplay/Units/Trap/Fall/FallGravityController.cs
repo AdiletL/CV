@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Gameplay;
 using Gameplay.Damage;
+using Gameplay.Unit.Cell;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Trap;
-using Unit.Cell;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Trap.Fall
+namespace Gameplay.Unit.Trap.Fall
 {
     public class FallGravityController : TrapController, IFallGravity
     {

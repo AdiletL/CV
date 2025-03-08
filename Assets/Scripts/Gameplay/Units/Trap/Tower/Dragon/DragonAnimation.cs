@@ -1,4 +1,4 @@
-﻿namespace Unit.Trap.Tower
+﻿namespace Gameplay.Unit.Trap.Tower
 {
     public class DragonAnimation : TowerAnimation
     {

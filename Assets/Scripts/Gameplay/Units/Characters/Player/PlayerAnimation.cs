@@ -1,5 +1,5 @@
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerAnimation : CharacterAnimation
     {

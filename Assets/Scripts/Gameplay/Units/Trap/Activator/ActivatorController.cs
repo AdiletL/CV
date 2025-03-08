@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     public abstract class ActivatorController : TrapController
     {

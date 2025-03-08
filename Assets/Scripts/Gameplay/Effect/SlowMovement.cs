@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
-using Unit.Character;
+using Gameplay.Unit.Character;
 using UnityEngine;
 using ValueType = Calculate.ValueType;
 

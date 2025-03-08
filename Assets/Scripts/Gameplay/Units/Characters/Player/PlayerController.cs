@@ -1,21 +1,16 @@
 using System;
-using Gameplay;
 using Gameplay.Effect;
 using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Ability;
-using Gameplay.Equipment;
-using Gameplay.Equipment.Weapon;
 using Gameplay.Factory;
-using Gameplay.Factory.Weapon;
-using ScriptableObjects.Equipment.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
 using Unity.Collections;
 using UnityEngine;
 using ValueType = Calculate.ValueType;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     [RequireComponent(typeof(PlayerHealth))]
     [RequireComponent(typeof(PlayerEndurance))]
@@ -269,19 +264,19 @@ namespace Unit.Character.Player
             StateMachine?.LateUpdate();
         }
         
-        public override void PutOnEquipment(Equipment equipment)
+        public override void PutOnEquipment(Equipment.Equipment equipment)
         {
             base.PutOnEquipment(equipment);
-            if (equipment is Weapon weapon)
+            if (equipment is Equipment.Weapon.Weapon weapon)
             {
                 StateMachine.GetState<PlayerAttackState>()?.SetWeapon(weapon);
             }
         }
 
-        public override void TakeOffEquipment(Equipment equipment)
+        public override void TakeOffEquipment(Equipment.Equipment equipment)
         {
             base.TakeOffEquipment(equipment);
-            if (equipment is Weapon weapon)
+            if (equipment is Equipment.Weapon.Weapon weapon)
             {
                 StateMachine.GetState<PlayerAttackState>()?.RemoveWeapon();
             }

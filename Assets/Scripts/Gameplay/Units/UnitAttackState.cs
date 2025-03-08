@@ -2,7 +2,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitAttackState : State, IAttack
     {

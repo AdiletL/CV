@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {

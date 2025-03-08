@@ -3,7 +3,7 @@ using Gameplay.Factory.Character.Creep;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     public class BeholderController : CreepController
     {
@@ -64,7 +64,7 @@ namespace Unit.Character.Creep
         {
             characterAnimation.AddClips(so_BeholderMove.IdleClip);
             characterAnimation.AddClips(so_BeholderMove.WalkClips);
-            characterAnimation.AddClips(so_BeholderMove.RunClips);
+            characterAnimation.AddClips(so_BeholderMove.RunClip);
             characterAnimation.AddClips(so_BeholderAttack.AttackClips);
             characterAnimation.AddClip(so_BeholderAttack.CooldownClip);
         }

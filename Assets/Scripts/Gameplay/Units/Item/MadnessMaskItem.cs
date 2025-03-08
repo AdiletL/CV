@@ -4,7 +4,7 @@ using Gameplay.Factory;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public class MadnessMaskItem : Item
     {

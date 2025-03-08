@@ -1,5 +1,4 @@
-﻿using Unit.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ScriptableObjects.Unit.Character.Player
 {

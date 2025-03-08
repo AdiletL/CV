@@ -2,7 +2,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public class UnitTransformSync : MonoBehaviour, IPunObservable
     {

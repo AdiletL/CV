@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     public class PushAnimation : TrapAnimation
     {

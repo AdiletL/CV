@@ -1,10 +1,11 @@
 ﻿using System;
+using Gameplay.Unit.Character;
 using ScriptableObjects.Gameplay;
-using Unit.Character;
+using Unit;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Item.Container
+namespace Gameplay.Unit.Item.Container
 {
     public class ContainerInteractionHandler : IInteractionHandler
     {

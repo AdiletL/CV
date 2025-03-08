@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
-using Unit.Cell;
+using Gameplay.Unit.Cell;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
-namespace Unit.Trap.Activator
+namespace Gameplay.Unit.Trap.Activator
 {
     [RequireComponent(typeof(SphereCollider))]
     public class ButtonController : ActivatorController

@@ -1,4 +1,5 @@
-﻿using Movement;
+﻿using Gameplay.Movement;
+using Movement;
 using UnityEngine;
 
 namespace Gameplay.Weapon.Projectile

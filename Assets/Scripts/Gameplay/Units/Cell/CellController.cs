@@ -6,7 +6,7 @@ using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEngine;
 
-namespace Unit.Cell
+namespace Gameplay.Unit.Cell
 {
     [SelectionBase]
     public class CellController : UnitController

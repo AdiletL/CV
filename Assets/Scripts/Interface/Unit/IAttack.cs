@@ -1,5 +1,4 @@
-﻿
-using Unit;
+﻿using Gameplay;
 
 public interface IAttack : IApplyDamage
 {

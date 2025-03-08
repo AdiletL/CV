@@ -1,4 +1,4 @@
-﻿namespace Unit.Trap.Activator
+﻿namespace Gameplay.Unit.Trap.Activator
 {
     public class ActivatorAnimation : TrapAnimation
     {

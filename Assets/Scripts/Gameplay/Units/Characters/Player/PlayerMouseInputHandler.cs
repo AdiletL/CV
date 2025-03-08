@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Gameplay.Common;
 using Gameplay.Factory.Character.Player;
-using Machine;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Zenject;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerMouseInputHandler : IInputHandler
     {

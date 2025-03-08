@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitStatsController : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     public class CreepUI : CharacterUI
     {

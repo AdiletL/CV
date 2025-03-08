@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using Calculate;
 using Gameplay.UI.ScreenSpace;
-using Unit;
 using UnityEngine;
 using Zenject;
 using ValueType = Calculate.ValueType;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public abstract class Item : IItem
     {

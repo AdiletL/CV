@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     public class BeholderTakeDamageState : CreepTakeDamageState
     {

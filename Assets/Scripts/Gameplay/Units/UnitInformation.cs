@@ -1,7 +1,7 @@
 ﻿using Gameplay.UI.ScreenSpace.CreatureInformation;
 using Zenject;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitInformation
     {

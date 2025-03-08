@@ -1,5 +1,4 @@
 ﻿using Unit;
-using Unit.Character;
 using UnityEngine;
 using Zenject;
 

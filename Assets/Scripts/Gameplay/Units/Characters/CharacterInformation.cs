@@ -1,7 +1,7 @@
 ﻿
 using Gameplay.UI.ScreenSpace.CreatureInformation;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterInformation : UnitInformation
     {

@@ -2,7 +2,7 @@
 using Unit;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public abstract class CharacterHealth : UnitHealth
     {

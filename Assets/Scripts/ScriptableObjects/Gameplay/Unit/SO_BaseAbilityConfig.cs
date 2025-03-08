@@ -1,5 +1,4 @@
 ﻿using Sirenix.OdinInspector;
-using Unit.Character.Player;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit

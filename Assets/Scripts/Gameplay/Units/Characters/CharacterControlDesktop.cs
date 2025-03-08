@@ -1,7 +1,6 @@
-﻿using Unit.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterControlDesktop : UnitControlDesktop
     {

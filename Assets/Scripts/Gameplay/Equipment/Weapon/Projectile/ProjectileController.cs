@@ -1,8 +1,6 @@
 ﻿using System;
-using Gameplay.Damage;
 using Gameplay.Manager;
 using ScriptableObjects.Weapon.Projectile;
-using Unit;
 using UnityEngine;
 using Zenject;
 

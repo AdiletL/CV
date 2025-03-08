@@ -1,4 +1,4 @@
-﻿using Unit;
+﻿using Gameplay.Unit;
 using UnityEngine;
 
 public interface IClickableObject : IInteractable

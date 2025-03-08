@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Unit.Character.Player;
 using Photon.Pun;
-using Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;

@@ -3,7 +3,7 @@ using ScriptableObjects.Gameplay.Trap.Tower;
 using Unity.Collections;
 using UnityEngine;
 
-namespace Unit.Trap.Tower
+namespace Gameplay.Unit.Trap.Tower
 {
     public abstract class TowerController : TrapController, ITower, IClickableObject
     {

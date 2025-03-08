@@ -1,6 +1,6 @@
 ﻿using Machine;
 
-namespace Unit.Trap.Tower
+namespace Gameplay.Unit.Trap.Tower
 {
     public class TowerDeactivateState : State
     {

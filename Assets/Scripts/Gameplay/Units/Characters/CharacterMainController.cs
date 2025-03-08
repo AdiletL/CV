@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Gameplay.Equipment;
-using Gameplay.Weapon;
 using Photon.Pun;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public abstract class CharacterMainController : UnitController, IClickableObject
     {
@@ -14,12 +12,12 @@ namespace Unit.Character
 
         protected PhotonView photonView;
 
-        protected List<Equipment> currentEquipments;
+        protected List<Equipment.Equipment> currentEquipments;
         
         public StateMachine StateMachine { get; protected set; }
         public UnitInformation UnitInformation { get; protected set; }
         
-        public bool IsNullEquipment(Equipment equipment) => 
+        public bool IsNullEquipment(Equipment.Equipment equipment) => 
             currentEquipments == null || !currentEquipments.Contains(equipment);
 
         protected virtual UnitInformation CreateUnitInformation()
@@ -82,13 +80,13 @@ namespace Unit.Character
 
         protected abstract void InitializeAllAnimations();
 
-        public virtual void PutOnEquipment(Equipment equipment)
+        public virtual void PutOnEquipment(Equipment.Equipment equipment)
         {
-            currentEquipments ??= new List<Equipment>();
+            currentEquipments ??= new List<Equipment.Equipment>();
             currentEquipments.Add(equipment);
         }
 
-        public virtual void TakeOffEquipment(Equipment equipment)
+        public virtual void TakeOffEquipment(Equipment.Equipment equipment)
         {
             currentEquipments?.Remove(equipment);
         }

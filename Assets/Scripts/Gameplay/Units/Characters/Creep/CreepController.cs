@@ -5,7 +5,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     [RequireComponent(typeof(NavMeshAgent))]
     public abstract class CreepController : CharacterMainController

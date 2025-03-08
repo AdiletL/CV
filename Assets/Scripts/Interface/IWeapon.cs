@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-using Unit;
+﻿using Gameplay;
 using UnityEngine;
 
 public interface IWeapon : IApplyDamage

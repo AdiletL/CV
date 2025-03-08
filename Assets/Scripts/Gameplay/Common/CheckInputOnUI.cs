@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Gameplay.Common
+namespace Gameplay
 {
     public static class CheckInputOnUI
     {

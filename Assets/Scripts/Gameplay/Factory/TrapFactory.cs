@@ -1,11 +1,10 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using Gameplay.Manager;
-using Unit.Trap;
-using Unit.Trap.Activator;
-using Unit.Trap.Fall;
-using Unit.Trap.Hammer;
-using Unit.Trap.Tower;
+using Gameplay.Unit.Trap;
+using Gameplay.Unit.Trap.Activator;
+using Gameplay.Unit.Trap.Hammer;
+using Gameplay.Unit.Trap.Tower;
 using UnityEngine;
 using Zenject;
 

@@ -4,7 +4,7 @@ using Machine;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public abstract class CharacterStateSync : UnitStateSync
     {

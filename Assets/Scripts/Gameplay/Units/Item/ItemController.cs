@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using DG.Tweening;
-using Gameplay.Ability;
+﻿using DG.Tweening;
 using Gameplay.Factory;
 using Gameplay.UI;
+using Gameplay.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
-using Unit.Character.Player;
 using UnityEngine;
 
-namespace Unit.Item
+namespace Gameplay.Unit.Item
 {
     public class ItemController : UnitController
     {

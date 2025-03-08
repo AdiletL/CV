@@ -4,7 +4,7 @@ using Gameplay.Experience;
 using ScriptableObjects.Unit;
 using Zenject;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitExperience : MonoBehaviour, IExperience, ILevel
     {

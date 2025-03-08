@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public class ItemHandler : MonoBehaviour, IHandler
     {

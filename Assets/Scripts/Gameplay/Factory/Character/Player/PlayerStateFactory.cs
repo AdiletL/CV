@@ -1,10 +1,9 @@
 ﻿using System;
+using Gameplay.Unit.Character;
+using Gameplay.Unit.Character.Player;
 using Machine;
 using Photon.Pun;
-using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Character;
-using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -90,13 +89,12 @@ namespace Gameplay.Factory.Character.Player
         
         private PlayerMoveToTargetState CreateRunState()
         {
-            var result =(PlayerMoveToTargetState)new PlayerMoveToTargetStateBuilder()
+            var result = (PlayerMoveToTargetState)new PlayerMoveToTargetStateBuilder()
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
                 .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
-                .SetRunClips(so_PlayerMove.RunClip)
                 .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
@@ -113,15 +111,12 @@ namespace Gameplay.Factory.Character.Player
                 .SetReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
-                .SetRunClips(so_PlayerMove.RunClip)
                 .SetConfig(so_PlayerMove)
                 .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
-            result.MovementSpeedStat.AddValue(so_PlayerMove.RunSpeed);
-            result.RotationSpeedStat.AddValue(so_PlayerMove.RotateSpeed);
             return result;
         }
         

@@ -2,7 +2,7 @@
 using UnityEngine.Serialization;
 using ValueType = Calculate.ValueType;
 
-namespace Unit
+namespace Gameplay
 {
     public enum StatValueType
     {

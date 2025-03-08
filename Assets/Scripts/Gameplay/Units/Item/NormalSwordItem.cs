@@ -1,5 +1,5 @@
 ﻿
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public class NormalSwordItem : EquipmentItem
     {

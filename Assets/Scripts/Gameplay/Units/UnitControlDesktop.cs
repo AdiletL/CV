@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitControlDesktop : IControl
     {

@@ -4,7 +4,7 @@ using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     public class PushController : TrapController, IApplyDamage
     {

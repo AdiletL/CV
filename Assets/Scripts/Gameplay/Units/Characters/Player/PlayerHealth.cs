@@ -2,7 +2,7 @@
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerHealth : CharacterHealth, ICreepAttackable, ITrapAttackable
     {

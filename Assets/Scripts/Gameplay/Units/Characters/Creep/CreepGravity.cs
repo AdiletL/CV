@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Unit.Character.Creep
+namespace Gameplay.Unit.Character.Creep
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(NavMeshAgent))]

@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Factory;
 using Gameplay.Ability;
-using Gameplay.Common;
 using Gameplay.UI.ScreenSpace.Inventory;
+using Gameplay.Unit.Cell;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Cell;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     [RequireComponent(typeof(AbilityHandler))]
     public class PlayerAbilityInventory : MonoBehaviour, IInventory
@@ -33,14 +32,14 @@ namespace Unit.Character.Player
         private KeyCode[] abilityInventoryKeys;
         private Camera baseCamera;
 
-        private Ability currentSelectedAbility;
-        private Ability currentUseAbility;
+        private Ability.Ability currentSelectedAbility;
+        private Ability.Ability currentUseAbility;
         private Texture2D selectedAbilityCursor;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
         
-        private Dictionary<int?, Ability> slots;
+        private Dictionary<int?, Ability.Ability> slots;
         
         public bool IsFullInventory()
         {
@@ -83,7 +82,7 @@ namespace Unit.Character.Player
                 slots.Add(i, null);
         }
 
-        public void AddAbility(Ability ability, Sprite icon)
+        public void AddAbility(Ability.Ability ability, Sprite icon)
         {
             if (slots.Values.Any(a => a != null && a.AbilityType == ability.AbilityType)) return;
 
@@ -254,7 +253,7 @@ namespace Unit.Character.Player
             }
         }
 
-        private void ExitAbility(Ability ability)
+        private void ExitAbility(Ability.Ability ability)
         {
             ability?.Exit();
         }

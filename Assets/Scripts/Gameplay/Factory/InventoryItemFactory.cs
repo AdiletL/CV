@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Ability;
-using Gameplay.Units.Item;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;

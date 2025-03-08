@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Ability;
 using Gameplay.Spawner;
-using Gameplay.Units.Item;
+using Gameplay.Unit;
+using Gameplay.Unit.Item;
 using Unit;
 using UnityEngine;
 using Zenject;

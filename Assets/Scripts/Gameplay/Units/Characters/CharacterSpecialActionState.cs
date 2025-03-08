@@ -2,7 +2,7 @@
 using Machine;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterSpecialActionState : State, ISpecialAction
     {

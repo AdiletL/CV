@@ -3,7 +3,6 @@ using System.Collections;
 using Gameplay.UI.ScreenSpace;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit;
-using Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 

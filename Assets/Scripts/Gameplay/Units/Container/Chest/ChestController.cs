@@ -1,12 +1,12 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
 using Gameplay.UI;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Item.Container;
-using Unit.Item;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Unit.Container
+namespace Gameplay.Unit.Container
 {
     public class ChestController : ContainerController
     {

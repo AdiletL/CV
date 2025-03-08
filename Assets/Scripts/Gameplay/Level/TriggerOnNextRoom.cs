@@ -1,5 +1,5 @@
 ﻿using System;
-using Unit.Character.Player;
+using Gameplay.Unit.Character.Player;
 using UnityEngine;
 
 namespace Gameplay

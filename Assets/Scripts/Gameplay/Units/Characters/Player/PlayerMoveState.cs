@@ -1,23 +1,30 @@
-﻿using Movement;
-using Photon.Pun;
+﻿using Photon.Pun;
+using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerMoveState : CharacterMoveState
     {
+        private SO_PlayerMove so_PlayerMove;
         private PhotonView photonView;
         private PlayerKinematicControl playerKinematicControl;
         
         private Vector3 directionMovement;
         private float reductionEndurance;
         
-        public Stat RotationSpeedStat { get; private set; } = new Stat();
+        public Stat RotationSpeedStat { get; } = new Stat();
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetRunReductionEndurance(float runReductionEndurance) => this.reductionEndurance = runReductionEndurance;
-        
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            so_PlayerMove = (SO_PlayerMove)so_CharacterMove;
+            RotationSpeedStat.AddValue(so_PlayerMove.RotateSpeed);
+        }
 
         public override void Subscribe()
         {

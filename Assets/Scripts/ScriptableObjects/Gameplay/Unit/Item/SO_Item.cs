@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using Gameplay;
 using Gameplay.Ability;
 using Sirenix.OdinInspector;
-using Unit;
-using Unit.Character.Player;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;

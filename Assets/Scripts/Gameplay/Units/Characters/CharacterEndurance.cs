@@ -3,7 +3,7 @@ using ScriptableObjects.Gameplay;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public abstract class CharacterEndurance : UnitEndurance
     {

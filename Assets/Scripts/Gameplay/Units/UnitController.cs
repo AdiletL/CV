@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     [SelectionBase]
     [RequireComponent(typeof(UnitCenter))]

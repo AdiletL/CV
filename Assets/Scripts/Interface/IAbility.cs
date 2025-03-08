@@ -1,5 +1,4 @@
 ﻿using System;
-using Unit.Character.Player;
 using UnityEngine;
 
 public interface IAbility

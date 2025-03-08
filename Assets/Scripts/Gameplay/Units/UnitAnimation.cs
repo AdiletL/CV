@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     [RequireComponent(typeof(PhotonView))]
     public abstract class UnitAnimation : MonoBehaviour

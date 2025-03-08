@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gameplay.Common;
 using Gameplay.UI.ScreenSpace.Inventory;
-using Gameplay.Units.Item;
+using Gameplay.Unit.Cell;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Character.Player;
-using Unit.Cell;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     [RequireComponent(typeof(ItemHandler))]
     public class PlayerItemInventory : MonoBehaviour, IInventory
@@ -25,15 +24,15 @@ namespace Unit.Character.Player
         private UIItemInventory uiItemInventory;
         private PlayerBlockInput playerBlockInput;
 
-        private Gameplay.Units.Item.Item currentSelectedItem;
-        private Gameplay.Units.Item.Item currentUseItem;
+        private Item.Item currentSelectedItem;
+        private Item.Item currentUseItem;
         private Camera baseCamera;
         private InputType baseBlockInput;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
         
-        private Dictionary<int?, Gameplay.Units.Item.Item> slots;
+        private Dictionary<int?, Item.Item> slots;
         
         
         public bool IsFullInventory()
@@ -54,7 +53,7 @@ namespace Unit.Character.Player
             return false;
         }
 
-        public Gameplay.Units.Item.Item GetItem(ItemName itemNameID)
+        public Item.Item GetItem(ItemName itemNameID)
         {
             if (slots == null) return null;
             foreach (var VARIABLE in slots.Values)
@@ -94,7 +93,7 @@ namespace Unit.Character.Player
                 slots.Add(i, null);
         }
 
-        public void AddItem(Gameplay.Units.Item.Item item, Sprite icon)
+        public void AddItem(Item.Item item, Sprite icon)
         {
             int? slotID = null;
             
@@ -267,7 +266,7 @@ namespace Unit.Character.Player
             if(!(slots[slotID] is EquipmentItem))
                 RemoveItem(slotID, 1);
         }
-        private void ExitItem(Gameplay.Units.Item.Item item)
+        private void ExitItem(Item.Item item)
         {
             item?.Exit();
         }

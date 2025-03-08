@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay.Unit.Character;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Gameplay;
 using Unit;
-using Unit.Character;
-using Unit.Item;
 using UnityEngine;
 using Zenject;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public class ItemInteractionHandler : IInteractionHandler
     {

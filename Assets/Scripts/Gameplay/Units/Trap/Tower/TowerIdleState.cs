@@ -3,7 +3,7 @@ using ScriptableObjects.Gameplay.Trap.Tower;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Trap.Tower
+namespace Gameplay.Unit.Trap.Tower
 {
     public class TowerIdleState : UnitIdleState
     {

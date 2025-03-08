@@ -2,7 +2,7 @@
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterMoveState : State, IMovement
     {
@@ -18,7 +18,7 @@ namespace Unit.Character
         protected float durationAnimation;
         protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
         
-        public Stat MovementSpeedStat { get; protected set; } = new Stat();
+        public Stat MovementSpeedStat { get; } = new Stat();
 
 
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
@@ -26,12 +26,18 @@ namespace Unit.Character
         public void SetConfig(SO_CharacterMove so_CharacterMove) => this.so_CharacterMove = so_CharacterMove;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
-        public void SetRunClips(AnimationClip[] runClips) => this.runClips = runClips;
         
 
         protected AnimationClip getRandomRunClip()
         {
             return  runClips[Random.Range(0, runClips.Length)];
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            MovementSpeedStat.AddValue(so_CharacterMove.RunSpeed);
+            runClips = so_CharacterMove.RunClip;
         }
 
         public override void Enter()
@@ -94,13 +100,6 @@ namespace Unit.Character
             state.SetUnitAnimation(unitAnimation);
             return this;
         }
-
-        public CharacterMoveStateBuilder SetRunClips(AnimationClip[] animationClips)
-        {
-            state.SetRunClips(animationClips);
-            return this;
-        }
-
         public CharacterMoveStateBuilder SetUnitEndurance(UnitEndurance unitEndurance)
         {
             state.SetUnitEndurance(unitEndurance);

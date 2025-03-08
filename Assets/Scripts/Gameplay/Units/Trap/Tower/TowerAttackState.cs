@@ -5,7 +5,7 @@ using Gameplay.Weapon.Projectile;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Trap.Tower
+namespace Gameplay.Unit.Trap.Tower
 {
     public class TowerAttackState : UnitAttackState
     {

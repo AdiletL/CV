@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unit.Portal;
+using Gameplay.Unit.Portal;
 using UnityEngine;
 using Zenject;
 

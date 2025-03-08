@@ -2,7 +2,7 @@
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
-namespace Unit.Trap
+namespace Gameplay.Unit.Trap
 {
     public abstract class TrapController : UnitController, ITrap
     {

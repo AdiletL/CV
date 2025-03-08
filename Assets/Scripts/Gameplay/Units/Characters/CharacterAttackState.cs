@@ -7,7 +7,7 @@ using ScriptableObjects.Unit.Character;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Unit.Character
+namespace Gameplay.Unit.Character
 {
     public class CharacterAttackState : UnitAttackState
     {
@@ -33,7 +33,7 @@ namespace Unit.Character
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
         protected const int ANIMATION_LAYER = 1;
         
-        public Weapon CurrentWeapon { get; protected set; }
+        public Equipment.Weapon.Weapon CurrentWeapon { get; protected set; }
         public Stat ReduceEnduranceStat { get; } = new();
         public Stat RangeStat { get; } = new();
 
@@ -154,7 +154,7 @@ namespace Unit.Character
             cooldownApplyDamage = durationAttack * applyDamageMoment;
         }
         
-        public virtual void SetWeapon(Weapon weapon)
+        public virtual void SetWeapon(Equipment.Weapon.Weapon weapon)
         {
             if(weapon == CurrentWeapon) return;
             RemoveWeapon();

@@ -3,7 +3,7 @@ using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
     public class PlayerJumpState : CharacterJumpState
     {

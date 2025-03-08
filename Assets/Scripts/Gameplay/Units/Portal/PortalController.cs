@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using Gameplay.Unit.Character.Player;
 using KinematicCharacterController;
 using ScriptableObjects.Unit.Portal;
-using Unit.Character.Player;
 using UnityEngine;
 
-namespace Unit.Portal
+namespace Gameplay.Unit.Portal
 {
     public class PortalController : UnitController
     {

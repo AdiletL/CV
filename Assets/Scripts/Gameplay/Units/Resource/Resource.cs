@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Unit.Resource
+namespace Gameplay.Unit.Resource
 {
     public abstract class Resource : MonoBehaviour
     {

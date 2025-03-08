@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unit.Cell;
+using Gameplay.Unit.Cell;
 using UnityEngine;
 
 namespace Calculate

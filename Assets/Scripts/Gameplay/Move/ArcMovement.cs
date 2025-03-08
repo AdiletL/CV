@@ -2,7 +2,7 @@
 using Unit;
 using UnityEngine;
 
-namespace  Movement
+namespace Gameplay.Movement
 {
     public class ArcMovement : IMovement
     {

@@ -1,8 +1,5 @@
 ﻿using System;
-using Machine;
-using ScriptableObjects.Unit.Character.Creep;
-using Unit.Character;
-using Unit.Character.Creep;
+using Gameplay.Unit.Character;
 using UnityEngine;
 using UnityEngine.AI;
 

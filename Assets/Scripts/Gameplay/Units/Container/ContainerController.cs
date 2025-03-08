@@ -1,7 +1,8 @@
 ﻿using ScriptableObjects.Unit.Item.Container;
+using Unit;
 using UnityEngine;
 
-namespace Unit.Container
+namespace Gameplay.Unit.Container
 {
     public abstract class ContainerController : UnitController, IContainer
     {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Calculate;
+using Gameplay.Unit.Cell;
 using Movement;
 using Photon.Pun;
-using Unit.Cell;
 using UnityEngine;
 
-namespace Unit.Character.Player
+namespace Gameplay.Unit.Character.Player
 {
   public class PlayerMoveToTargetState : CharacterMoveState
 {

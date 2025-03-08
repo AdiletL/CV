@@ -1,8 +1,7 @@
-﻿using Unit.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Movement
+namespace Gameplay.Movement
 {
     [System.Serializable]
     public class JumpConfig

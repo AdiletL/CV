@@ -2,7 +2,7 @@
 using ScriptableObjects.Unit;
 using UnityEngine;
 
-namespace Unit
+namespace Gameplay.Unit
 {
     public abstract class UnitEndurance : MonoBehaviour, IEndurance
     {

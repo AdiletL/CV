@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Unit.Trap.Hammer
+namespace Gameplay.Unit.Trap.Hammer
 {
     public class HammerCollision : TrapCollision
     {

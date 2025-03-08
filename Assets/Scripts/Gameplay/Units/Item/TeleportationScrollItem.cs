@@ -1,12 +1,10 @@
 ﻿using System;
-using Gameplay.Common;
-using Unit.Cell;
-using Unit.Portal;
+using Gameplay.Unit.Portal;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
 
-namespace Gameplay.Units.Item
+namespace Gameplay.Unit.Item
 {
     public class TeleportationScrollItem : Item
     {
@@ -28,25 +26,6 @@ namespace Gameplay.Units.Item
             if (!isActivated || point == null) return;
             spawnPosition = point;
             StartEffect();
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            /*if (isActivated && Input.GetMouseButtonDown(0) && !isCasting)
-            {
-                Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CELL_LAYER))
-                {
-                    if (hit.collider.TryGetComponent(out CellController cellController) &&
-                        !cellController.IsBlocked())
-                    {
-                        StartEffect();
-                        spawnPosition = hit.point;
-                    }
-                }
-            }*/
         }
 
         protected override void AfterCast()

@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
 
-namespace Unit.Trap.Hammer
+namespace Gameplay.Unit.Trap.Hammer
 {
     public class HammerController : TrapController, IApplyDamage
     {

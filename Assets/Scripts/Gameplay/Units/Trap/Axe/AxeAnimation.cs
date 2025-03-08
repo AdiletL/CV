@@ -1,4 +1,4 @@
-﻿namespace Unit.Trap
+﻿namespace Gameplay.Unit.Trap
 {
     public class AxeAnimation : TrapAnimation
     {
