@@ -39,7 +39,7 @@ namespace Unit.Trap.Fall
             Mass = so_FallGravity.Mass + Physics.gravity.y;
             radius = so_FallGravity.Radius + gameConfig.RadiusCell;
             intervalFallObjects = so_FallGravity.IntervalFallObjets;
-            Damageable = new NormalDamage(gameObject, DamageStat);
+            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
         }
         
         public override void Appear()

@@ -17,7 +17,6 @@ namespace Unit.Character.Creep
         [ReadOnly] public string currentStateName;
         
         protected NavMeshAgent navMeshAgent;
-        protected CreepSwitchStateFactory creepSwitchStateFactory;
         protected CharacterAnimation characterAnimation;
         protected CharacterEndurance characterEndurance;
         protected CharacterExperience characterExperience;
@@ -26,7 +25,6 @@ namespace Unit.Character.Creep
         public CreepStateFactory CreepStateFactory { get; private set; }
         
         protected abstract CreepStateFactory CreateCreepStateFactory();
-        protected abstract CreepSwitchStateFactory CreateCreepSwitchStateFactory();
 
 
         public override void Initialize()
@@ -46,8 +44,6 @@ namespace Unit.Character.Creep
             
             CreepStateFactory = CreateCreepStateFactory();
             CreepStateFactory.Initialize();
-            creepSwitchStateFactory = CreateCreepSwitchStateFactory();
-            creepSwitchStateFactory.Initialize();
         }
 
         protected override void AfterInitializeMediator()

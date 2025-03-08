@@ -4,11 +4,8 @@ namespace Unit.Character.Creep
 {
     public class BeholderTakeDamageState : CreepTakeDamageState
     {
-        private CreepSwitchAttackState creepSwitchAttackState;
         private CreepHealth creepHealth;
         
-        public void SetCreepSwitchAttack(CreepSwitchAttackState creepSwitchAttackState) =>
-            this.creepSwitchAttackState = creepSwitchAttackState;
 
         public override void Initialize()
         {
@@ -23,8 +20,8 @@ namespace Unit.Character.Creep
             {
                 if (creepHealth.Damaging.TryGetComponent(out CharacterMainController character))
                 {
-                    creepSwitchAttackState.SetTarget(creepHealth.Damaging);
-                    creepSwitchAttackState.ExitOtherStates();
+                    stateMachine.GetState<CreepAttackState>().SetTarget(creepHealth.Damaging);
+                    stateMachine.ExitOtherStates(typeof(CreepAttackState));
                 }
                 else
                 {
@@ -39,14 +36,6 @@ namespace Unit.Character.Creep
     {
         public BeholderTakeDamageStateBuilder() : base(new BeholderTakeDamageState())
         {
-        }
-        
-        public CreepTakeDamageStateBuilder SetCharacterSwitchAttack(CreepSwitchAttackState creepSwitchAttackState)
-        {
-            if (state is BeholderTakeDamageState beholderTakeDamageState)
-                beholderTakeDamageState.SetCreepSwitchAttack(creepSwitchAttackState);
-
-            return this;
         }
     }
 }

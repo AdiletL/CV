@@ -2,7 +2,7 @@
 
 namespace Unit.Character.Creep
 {
-    public class BeholderDefaultAttackState : CreepDefaultAttackState
+    public class BeholderAttackState : CreepAttackState
     {
         public override void Update()
         {
@@ -11,19 +11,19 @@ namespace Unit.Character.Creep
             
             if (currentTarget && 
                 !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
-                    rangeSqr))
+                    RangeStat.CurrentValue * RangeStat.CurrentValue))
             {
-                characterSwitchMoveState.SetTarget(currentTarget);
-                characterSwitchMoveState.ExitCategory(Category);
+                stateMachine.GetState<CreepMoveState>().SetTarget(currentTarget);
+                stateMachine.ExitCategory(Category, typeof(CreepMoveState));
             }
             
             base.Update();
         }
     }
     
-    public class BeholderDefaultAttackStateBuilder : CreepDefaultAttackStateBuilder
+    public class BeholderAttackStateBuilder : CreepAttackStateBuilder
     {
-        public BeholderDefaultAttackStateBuilder() : base(new BeholderDefaultAttackState())
+        public BeholderAttackStateBuilder() : base(new BeholderAttackState())
         {
         }
     }

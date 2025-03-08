@@ -17,6 +17,8 @@ namespace Gameplay.Units.Item
         private Equipment.Equipment equipment;
         private EquipmentContextMenu equipmentContextMenu;
         private CharacterMainController currentCharacter;
+
+        private bool isUse;
         
         public void SetEquipmentConfig(SO_Equipment config) => so_Equipment = config;
         
@@ -50,15 +52,29 @@ namespace Gameplay.Units.Item
             if(currentCharacter.IsNullEquipment(equipment)) return;
             RemoveStatsFromUnit();
             currentCharacter.TakeOffEquipment(equipment);
+            isUse = false;
             Exit();
         }
         
         protected override void AfterCast()
         {
             base.AfterCast();
+            isUse = true;
             currentCharacter.PutOnEquipment(equipment);
             AddStatsFromUnit();
             Exit();
+        }
+
+        public override void AddStatsFromUnit()
+        {
+            if(!isUse) return;
+            base.AddStatsFromUnit();
+        }
+
+        public override void RemoveStatsFromUnit()
+        {
+            if(!isUse) return;
+            base.RemoveStatsFromUnit();
         }
 
         public override void Exit()

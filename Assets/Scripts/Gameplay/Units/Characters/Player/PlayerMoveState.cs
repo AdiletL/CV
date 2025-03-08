@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unit.Character.Player
 {
-    public class PlayerRunState : CharacterRunState
+    public class PlayerMoveState : CharacterMoveState
     {
         private PhotonView photonView;
         private PlayerKinematicControl playerKinematicControl;
@@ -38,14 +38,14 @@ namespace Unit.Character.Player
             CheckDirectionMovement();
             Rotate();
             ExecuteMovement();
-
+            
             if (directionMovement.magnitude == 0)
-                stateMachine.ExitCategory(Category, typeof(PlayerIdleState));
+                stateMachine.ExitCategory(Category, typeof(CharacterIdleState));
         }
 
         private void OnExitCategory(IState state)
         {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
                 PlayAnimation();
         }
         
@@ -77,29 +77,29 @@ namespace Unit.Character.Player
         }
     }
 
-    public class PlayerRunStateBuilder : CharacterRunStateBuilder
+    public class PlayerMoveStateBuilder : CharacterMoveStateBuilder
     {
-        public PlayerRunStateBuilder() : base(new PlayerRunState())
+        public PlayerMoveStateBuilder() : base(new PlayerMoveState())
         {
         }
         
-        public PlayerRunStateBuilder SetPhotonView(PhotonView photonView)
+        public PlayerMoveStateBuilder SetPhotonView(PhotonView photonView)
         {
-            if(state is PlayerRunState playerRunStateOrig)
+            if(state is PlayerMoveState playerRunStateOrig)
                 playerRunStateOrig.SetPhotonView(photonView);
             return this;
         }
         
-        public PlayerRunStateBuilder SetReductionEndurance(float reductionEndurance)
+        public PlayerMoveStateBuilder SetReductionEndurance(float reductionEndurance)
         {
-            if(state is PlayerRunState playerRunStateOrig)
+            if(state is PlayerMoveState playerRunStateOrig)
                 playerRunStateOrig.SetRunReductionEndurance(reductionEndurance);
             return this;
         }
         
-        public PlayerRunStateBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
+        public PlayerMoveStateBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
         {
-            if(state is PlayerRunState playerRunStateOrig)
+            if(state is PlayerMoveState playerRunStateOrig)
                 playerRunStateOrig.SetPlayerKinematicControl(playerKinematicControl);
             return this;
         }

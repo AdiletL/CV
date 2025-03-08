@@ -15,12 +15,10 @@ namespace Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
 
-        public static event Action<InputType> OnBlockInput;
         
         private PlayerStateFactory playerStateFactory;
         private PlayerBlockInput playerBlockInput;
         private CharacterControlDesktop playerControlDesktop;
-        private CharacterSwitchAttackState characterSwitchAttack;
         private StateMachine stateMachine;
         
         private IClickableObject selectedObject;
@@ -47,8 +45,6 @@ namespace Unit.Character.Player
         
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterControlDesktop(CharacterControlDesktop characterControlDesktop) => this.playerControlDesktop = characterControlDesktop;
-        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
-            this.characterSwitchAttack = characterSwitchAttackState;
         public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
         public void SetPlayerBlockInput(PlayerBlockInput playerBlockInput) => this.playerBlockInput = playerBlockInput;
         public void SetAttackBlockInput(InputType inputType) => attackBlockInputType = inputType;
@@ -117,8 +113,7 @@ namespace Unit.Character.Player
         
         private void OnExitCategory(IState state)
         {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerWeaponAttackState)) || 
-                state.GetType().IsAssignableFrom(typeof(PlayerDefaultAttackState)))
+            if (typeof(CharacterAttackState).IsAssignableFrom(state.GetType()))
             {
                 playerBlockInput.UnblockInput(attackBlockInputType);
                 isAttacking = false;
@@ -134,9 +129,9 @@ namespace Unit.Character.Player
         public void HandleInput()
         {
             HandleHighlight();
-            
+
             if (!isAttacking &&
-                Input.GetMouseButtonUp(attackMouseButton) && 
+                Input.GetMouseButtonDown(attackMouseButton) && 
                 !playerBlockInput.IsInputBlocked(InputType.Attack) &&
                 !CheckInputOnUI.IsPointerOverUIObject())
             {
@@ -191,8 +186,7 @@ namespace Unit.Character.Player
         {
             isAttacking = true;
             playerBlockInput.BlockInput(attackBlockInputType);
-            characterSwitchAttack.ExitOtherStates();
-            //characterSwitchAttack.SetState();
+            stateMachine.ExitOtherStates(typeof(CharacterAttackState));
             playerControlDesktop.ClearHotkeys();
         }
         
@@ -249,11 +243,6 @@ namespace Unit.Character.Player
             CharacterControlDesktop characterControlDesktop)
         {
             handler.SetCharacterControlDesktop(characterControlDesktop);
-            return this;
-        }
-        public PlayerMouseInputHandlerBuilder SetCharacterSwitchAttackState(CharacterSwitchAttackState switchAttackState)
-        {
-            handler.SetCharacterSwitchAttack(switchAttackState);
             return this;
         }
         public PlayerMouseInputHandlerBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)

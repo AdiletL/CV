@@ -29,7 +29,7 @@ namespace Unit.Trap
             cooldownAttack = so_Push.CooldownAttack;
 
             DamageStat.AddValue(so_Push.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat);
+            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
         }
 
         public override void Appear()

@@ -31,10 +31,7 @@ namespace Unit.Character
             
             var characterExperience = characterMainController.GetComponentInUnit<UnitExperience>();
             uiCreatureInformation.AddText($"{StatsNames.EXPERIENCE}: {characterExperience.ExperienceStat.CurrentValue}");
-            
-            uiCreatureInformation.AddText($"{StatsNames.DAMAGE}: {characterMainController.TotalDamage()}");
-            uiCreatureInformation.AddText($"{StatsNames.ATTACK_SPEED}: {characterMainController.TotalAttackSpeed()}");
-            uiCreatureInformation.AddText($"{StatsNames.ATTACK_RANGE}: {(int)characterMainController.TotalAttackRange()}");
+
             uiCreatureInformation.SetDescription(characterMainController.SO_CharacterInformation.Description.ToString());
             
             uiCreatureInformation.Build();

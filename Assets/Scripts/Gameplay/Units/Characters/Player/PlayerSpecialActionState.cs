@@ -8,7 +8,7 @@ namespace Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         
-        private PlayerRunState playerRunState;
+        private PlayerMoveState playerMoveState;
         private BlockPhysicalDamageConfig blockPhysicalDamageConfig;
         private BlockPhysicalDamageAbility blockPhysicalDamageAbility;
         private CharacterAnimation characterAnimation;
@@ -52,14 +52,14 @@ namespace Unit.Character.Player
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
             
-            playerRunState ??= stateMachine.GetState<PlayerRunState>();
-            if(playerRunState == null) return;
+            playerMoveState ??= stateMachine.GetState<PlayerMoveState>();
+            if(playerMoveState == null) return;
             
-            changedMovementSpeedValue = playerRunState.MovementSpeedStat.CurrentValue * MULTIPLY_MOVEMENT_SPEED;
-            playerRunState.MovementSpeedStat.RemoveValue(changedMovementSpeedValue);
+            changedMovementSpeedValue = playerMoveState.MovementSpeedStat.CurrentValue * MULTIPLY_MOVEMENT_SPEED;
+            playerMoveState.MovementSpeedStat.RemoveValue(changedMovementSpeedValue);
             
-            changedRotateSpeedValue = playerRunState.RotationSpeedStat.CurrentValue;
-            playerRunState.RotationSpeedStat.RemoveValue(changedRotateSpeedValue);
+            changedRotateSpeedValue = playerMoveState.RotationSpeedStat.CurrentValue;
+            playerMoveState.RotationSpeedStat.RemoveValue(changedRotateSpeedValue);
         }
 
         public override void Update()
@@ -80,8 +80,8 @@ namespace Unit.Character.Player
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             
-            playerRunState?.MovementSpeedStat.AddValue(changedMovementSpeedValue);
-            playerRunState?.RotationSpeedStat.AddValue(changedRotateSpeedValue);
+            playerMoveState?.MovementSpeedStat.AddValue(changedMovementSpeedValue);
+            playerMoveState?.RotationSpeedStat.AddValue(changedRotateSpeedValue);
         }
     }
 

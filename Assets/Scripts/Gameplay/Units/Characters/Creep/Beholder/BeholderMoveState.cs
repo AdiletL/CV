@@ -2,14 +2,15 @@
 
 namespace Unit.Character.Creep
 {
-    public class BeholderPatrolState : CreepAgentPatrolState
+    public class BeholderMoveState : CreepMoveState
     {
         private float countCooldownCheckEnemy;
         private const float COOLDOWN_CHECK_ENEMY = .3f;
         
-        public override void LateUpdate()
+
+        public override void Update()
         {
-            base.LateUpdate();
+            base.Update();
             CheckEnemy();
         }
 
@@ -20,15 +21,15 @@ namespace Unit.Character.Creep
             {
                 if (stateMachine.GetState<CreepAttackState>().IsFindUnitInRange())
                     stateMachine.ExitCategory(Category, typeof(CreepAttackState));
-
+                
                 countCooldownCheckEnemy = 0;
             }
         }
     }
     
-    public class BeholderPatrolStateBuilder : CreepAgentPatrolStateBuilder
+    public class BeholderMoveStateBuilder : CreepMoveStateBuilder
     {
-        public BeholderPatrolStateBuilder() : base(new BeholderPatrolState())
+        public BeholderMoveStateBuilder() : base(new BeholderMoveState())
         {
         }
     }

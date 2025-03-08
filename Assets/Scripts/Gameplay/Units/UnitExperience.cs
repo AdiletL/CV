@@ -18,8 +18,8 @@ namespace Unit
         private AoeExperienceInfo aoeExperienceInfo;
         
         public ICountExperience ICountExperienceCalculate { get; protected set; }
-        public Stat ExperienceStat { get; protected set; } = new Stat();
-        public Stat LevelStat { get; protected set; } = new Stat();
+        public Stat ExperienceStat { get; } = new Stat();
+        public Stat LevelStat { get; } = new Stat();
 
         public float RangeTakeExperience { get; protected set; }
         public bool IsTakeLevel { get; protected set; }

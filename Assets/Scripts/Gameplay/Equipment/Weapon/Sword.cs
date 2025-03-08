@@ -11,25 +11,26 @@ namespace Gameplay.Equipment.Weapon
         
         protected override IDamageable CreateDamageable()
         {
-            return new NormalDamage(owner, DamageStat);
+            return new NormalDamage(Owner, DamageStat.CurrentValue);
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            ownerLayer = owner.layer;
+            ownerLayer = Owner.layer;
         }
 
         private void FindUnitInRange()
         {
-            var target = Calculate.Attack.FindUnitInRange(ownerCenter.position, RangeStat.CurrentValue,
+            var totalRange = RangeStat.CurrentValue + OwnerRangeStat.CurrentValue;
+            var target = Calculate.Attack.FindUnitInRange(ownerCenter.position, totalRange,
                 enemyLayer, ref findColliders);
             if(target == null) return;
             
             var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - ownerCenter.position).normalized;
             
             //Debug.DrawRay(origin, directionToTarget * 100, Color.green, 2);
-            if (Physics.Raycast(ownerCenter.position, directionToTarget, out var hit, RangeStat.CurrentValue, ~ownerLayer))
+            if (Physics.Raycast(ownerCenter.position, directionToTarget, out var hit, totalRange, ~ownerLayer))
             {
                 if(hit.collider.gameObject.layer == target.gameObject.layer)
                     currentTarget = target;
@@ -40,11 +41,12 @@ namespace Gameplay.Equipment.Weapon
         {
             FindUnitInRange();
             if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetUsingAngle(owner.transform.position,
-                   owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
+               Calculate.Rotate.IsFacingTargetUsingAngle(Owner.transform.position,
+                   Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {
+                Damageable.Value = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
                 attackable.TakeDamage(Damageable);
             }
         }

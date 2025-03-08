@@ -23,7 +23,6 @@ namespace Unit.Trap.Tower
                 .SetTowerAnimation(TowerAnimation)
                 .SetAttackClip(SO_Tower.AttackClip)
                 .SetPointSpawnProjectile(PointSpawnProjectile)
-                .SetAttackSpeed(SO_Tower.AttackSpeed)
                 .SetStateMachine(this.stateMachine)
                 .Build();
         }

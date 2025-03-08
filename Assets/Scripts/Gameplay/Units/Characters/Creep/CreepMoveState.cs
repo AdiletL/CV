@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace Unit.Character.Creep
 {
-    public class CreepRunState : CharacterRunState
+    public class CreepMoveState : CharacterMoveState
     {
         protected NavMeshAgent navMeshAgent;
         protected GameObject currentTarget;
@@ -113,30 +113,30 @@ namespace Unit.Character.Creep
         }
     }
 
-public class CreepRunStateBuilder : CharacterRunStateBuilder
+public class CreepMoveStateBuilder : CharacterMoveStateBuilder
     {
-        public CreepRunStateBuilder(CreepRunState instance) : base(instance)
+        public CreepMoveStateBuilder(CreepMoveState instance) : base(instance)
         {
         }
 
 
-        public CreepRunStateBuilder SetNavMesh(NavMeshAgent navMeshAgent)
+        public CreepMoveStateBuilder SetNavMesh(NavMeshAgent navMeshAgent)
         {
-            if (state is CreepRunState creepRunState)
+            if (state is CreepMoveState creepRunState)
                 creepRunState.SetNavMeshAgent(navMeshAgent);
             return this;
         }
         
-        public CreepRunStateBuilder SetRotationSpeed(float rotationSpeed)
+        public CreepMoveStateBuilder SetRotationSpeed(float rotationSpeed)
         {
-            if (state is CreepRunState creepRunState)
+            if (state is CreepMoveState creepRunState)
                 creepRunState.SetRotationSpeed(rotationSpeed);
             return this;
         }
         
-        public CreepRunStateBuilder SetTimerRunToTarget(float value)
+        public CreepMoveStateBuilder SetTimerRunToTarget(float value)
         {
-            if (state is CreepRunState creepRunState)
+            if (state is CreepMoveState creepRunState)
                 creepRunState.SetTimerRunToTarget(value);
             return this;
         }

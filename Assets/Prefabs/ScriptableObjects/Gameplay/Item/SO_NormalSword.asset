@@ -31,7 +31,7 @@ MonoBehaviour:
     StatValuesConfig:
     - StatValueTypeID: 1
       ValueTypeID: 0
-      Value: 300
+      Value: 100
   - StatTypeID: 3
     StatValuesConfig:
     - StatValueTypeID: 1

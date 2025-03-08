@@ -9,14 +9,14 @@ namespace Gameplay.Damage
 {
     public class NormalDamage : Damage
     {
-        public NormalDamage(GameObject gameObject, Stat damageStat) : base(gameObject, damageStat)
+        public NormalDamage(GameObject owner, float damage) : base(owner, damage)
         {
 
         }
 
         public override int GetTotalDamage(GameObject gameObject)
         {
-            result = DamageStat.CurrentValue;
+            result = Value;
             
             var resistanceHandler = gameObject.GetComponent<ResistanceHandler>();
             if (resistanceHandler && !resistanceHandler.IsResistanceNull(typeof(NormalDamageResistance)))

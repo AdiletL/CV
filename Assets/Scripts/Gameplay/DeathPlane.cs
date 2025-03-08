@@ -14,7 +14,7 @@ namespace Gameplay
         private void Start()
         {
             damageStat.AddValue(999999);
-            damageable = new NormalDamage(gameObject, damageStat);
+            damageable = new NormalDamage(gameObject, damageStat.CurrentValue);
         }
 
         private void OnTriggerEnter(Collider other)

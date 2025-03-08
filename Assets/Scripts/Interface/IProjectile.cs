@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using Gameplay.Equipment.Weapon;
+using Unit;
+using UnityEngine;
 
 public interface IProjectile : IMovement, IApplyDamage
 {
-    public AnimationCurve moveCurve { get; }
-
+    public AnimationCurve MoveCurve { get; }
 }

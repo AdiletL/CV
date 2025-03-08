@@ -19,8 +19,6 @@ namespace Unit.Character.Player
         public static event Action<InputType> OnBlockInput; 
         
         private PhotonView photonView;
-        private CharacterSwitchAttackState characterSwitchAttack;
-        private CharacterSwitchMoveState characterSwitchMove;
         private StateMachine stateMachine;
 
         private SO_PlayerControlDesktop so_PlayerControlerDesktop;
@@ -54,9 +52,6 @@ namespace Unit.Character.Player
         public void SetPlayerStateFactory(PlayerStateFactory playerStateFactory) => this.playerStateFactory = playerStateFactory;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
-        public void SetCharacterSwitchAttack(CharacterSwitchAttackState characterSwitchAttackState) =>
-            this.characterSwitchAttack = characterSwitchAttackState;
-        public void SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMoveState) => this.characterSwitchMove = characterSwitchMoveState;
         public void SetPlayerController(PlayerController playerController) => this.playerController = playerController;
         public void SetPlayerAttackConfig(SO_PlayerAttack config) => this.so_PlayerAttack = config;
         public void SetPlayerSpecialActionConfig(SO_PlayerSpecialAction config) => this.so_PlayerSpecialAction = config;
@@ -106,7 +101,6 @@ namespace Unit.Character.Player
                 .SetSpecialBlockInput(so_PlayerSpecialAction.BlockInputType)
                 .SetPlayerBlockInput(playerBlockInput)
                 .SetCharacterControlDesktop(this)
-                .SetCharacterSwitchAttackState(characterSwitchAttack)
                 .Build();
             diContainer.Inject(playerMouseInputHandler);
             playerMouseInputHandler.Initialize();
@@ -151,16 +145,15 @@ namespace Unit.Character.Player
 
         private void OnExitCategory(IState state)
         {
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
-            {
-                isJumping = false;
-                playerBlockInput.UnblockInput(jumpBlockInputType);
-            }
-
-            if (state.GetType().IsAssignableFrom(typeof(PlayerRunState)))
+            if (typeof(CharacterMoveState).IsAssignableFrom(state.GetType()))
             {
                 isMoving = false;
                 playerBlockInput.UnblockInput(movementBlockInputType);
+            }
+            else if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
+            {
+                isJumping = false;
+                playerBlockInput.UnblockInput(jumpBlockInputType);
             }
         }
 
@@ -192,7 +185,7 @@ namespace Unit.Character.Player
             {
                 isMoving = true;
                 playerBlockInput.BlockInput(movementBlockInputType);
-                characterSwitchMove.ExitOtherStates();
+                stateMachine.ExitOtherStates(typeof(CharacterMoveState));
             }
             else if (!isJumping && Input.GetKeyDown(jumpKey) &&
                      !playerBlockInput.IsInputBlocked(InputType.Jump))
@@ -207,7 +200,7 @@ namespace Unit.Character.Player
         {
             ClearHotkeys();
             InitializeJumpState();
-            stateMachine.ExitOtherStates(typeof(PlayerJumpState), true);
+            stateMachine.ExitOtherStates(typeof(CharacterJumpState), true);
             isJumping = true;
             playerBlockInput.BlockInput(jumpBlockInputType);
         }
@@ -255,21 +248,6 @@ namespace Unit.Character.Player
                 playerControlDesktop.SetStateMachine(stateMachine);
             return this;
         }
-
-        public PlayerControlDesktopBuilder SetCharacterSwitchAttack(CharacterSwitchAttackState playerSwitchAttack)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetCharacterSwitchAttack(playerSwitchAttack);
-            return this;
-        }
-
-        public PlayerControlDesktopBuilder SetCharacterSwitchMove(CharacterSwitchMoveState playerSwitchMove)
-        {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
-                playerControlDesktop.SetCharacterSwitchMove(playerSwitchMove);
-            return this;
-        }
-        
         public PlayerControlDesktopBuilder SetPlayerAttackConfig(SO_PlayerAttack config)
         {
             if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)

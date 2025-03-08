@@ -5,17 +5,8 @@ namespace Unit.Character.Player
 {
     public class PlayerIdleState : CharacterIdleState
     {
-        private CharacterSwitchMoveState characterSwitchMove;
-        private CharacterSwitchAttackState characterSwitchAttack;
-
         private Vector3 targetPosition;
-
         
-        public void SetCharacterSwitchMoveState(CharacterSwitchMoveState characterSwitchMoveState) => characterSwitchMove = characterSwitchMoveState;
-        public void SetCharacterSwitchAttackState(CharacterSwitchAttackState characterSwitchAttackState) =>
-            characterSwitchAttack = characterSwitchAttackState;
-        
-
         public override void Subscribe()
         {
             base.Subscribe();
@@ -32,7 +23,7 @@ namespace Unit.Character.Player
         {
             if(!IsActive) return;
             
-            if (state.GetType().IsAssignableFrom(typeof(PlayerJumpState)))
+            if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
             {
                 PlayAnimation();
             }
@@ -45,14 +36,6 @@ namespace Unit.Character.Player
         public PlayerIdleStateBuilder() : base(new PlayerIdleState())
         {
             
-        }
-
-        public PlayerIdleStateBuilder SetCharacterSwitchMove(CharacterSwitchMoveState characterSwitchMove)
-        {
-            if(state is PlayerIdleState playerIdleState)
-                playerIdleState.SetCharacterSwitchMoveState(characterSwitchMove);
-
-            return this;
         }
     }
 }

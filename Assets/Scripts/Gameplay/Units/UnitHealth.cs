@@ -14,8 +14,8 @@ namespace Unit
         
         
         public GameObject Damaging { get; private set; }
-        public Stat HealthStat { get; protected set; } = new Stat();
-        public Stat RegenerationStat { get; protected set; } = new Stat();
+        public Stat HealthStat { get; } = new Stat();
+        public Stat RegenerationStat { get; } = new Stat();
         public bool IsLive { get; protected set; }
         
         

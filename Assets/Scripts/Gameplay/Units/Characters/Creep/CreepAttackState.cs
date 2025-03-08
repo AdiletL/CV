@@ -3,12 +3,14 @@ using UnityEngine.AI;
 
 namespace Unit.Character.Creep
 {
-    public class CreepDefaultAttackState : CharacterDefaultAttackState
+    public class CreepAttackState : CharacterAttackState
     {
         protected NavMeshAgent navMeshAgent;
         protected CreepIdleState creepIdleState;
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
+        
+        
         
         public override void Enter()
         {
@@ -23,22 +25,21 @@ namespace Unit.Character.Creep
             navMeshAgent.updateRotation = true;
         }
 
-        protected override void FindUnit()
+        protected virtual void FindUnit()
         {
-            base.FindUnit();
             creepIdleState.SetTarget(currentTarget);
         }
     }
     
-    public class CreepDefaultAttackStateBuilder : CharacterDefaultAttackStateBuilder
+    public class CreepAttackStateBuilder : CharacterAttackStateBuilder
     {
-        public CreepDefaultAttackStateBuilder(CharacterBaseAttackState instance) : base(instance)
+        public CreepAttackStateBuilder(CreepAttackState instance) : base(instance)
         {
         }
 
-        public CreepDefaultAttackStateBuilder SetNavMeshAgent(NavMeshAgent navMeshAgent)
+        public CreepAttackStateBuilder SetNavMeshAgent(NavMeshAgent navMeshAgent)
         {
-            if(state is CreepDefaultAttackState creepDefaultAttackState)
+            if(state is CreepAttackState creepDefaultAttackState)
                 creepDefaultAttackState.SetNavMeshAgent(navMeshAgent);
             return this;
         }

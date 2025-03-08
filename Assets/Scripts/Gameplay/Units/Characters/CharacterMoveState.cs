@@ -1,18 +1,28 @@
-﻿using ScriptableObjects.Unit.Character;
+﻿using Machine;
+using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
 namespace Unit.Character
 {
-    public class CharacterRunState : CharacterBaseMovementState
+    public class CharacterMoveState : State, IMovement
     {
+        public override StateCategory Category { get; } = StateCategory.Move;
+        
         protected SO_CharacterMove so_CharacterMove;
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
         protected AnimationClip[] runClips;
+        protected GameObject gameObject;
+        protected Transform center;
 
         protected float durationAnimation;
         protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
         
+        public Stat MovementSpeedStat { get; protected set; } = new Stat();
+
+
+        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
+        public void SetCenter(Transform center) => this.center = center;
         public void SetConfig(SO_CharacterMove so_CharacterMove) => this.so_CharacterMove = so_CharacterMove;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
@@ -30,6 +40,16 @@ namespace Unit.Character
             PlayAnimation();
         }
 
+        public override void Update()
+        {
+            
+        }
+
+        public override void LateUpdate()
+        {
+            
+        }
+
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
@@ -41,43 +61,49 @@ namespace Unit.Character
             durationAnimation = 1.5f / MovementSpeedStat.CurrentValue;
             unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
-
-        public override void ExecuteMovement()
+        
+        public virtual void ExecuteMovement()
         {
             
         }
     }
 
-    public class CharacterRunStateBuilder : CharacterBaseMovementStateBuilder
+    public class CharacterMoveStateBuilder : StateBuilder<CharacterMoveState>
     {
-        public CharacterRunStateBuilder(CharacterBaseMovementState instance) : base(instance)
+        public CharacterMoveStateBuilder(CharacterMoveState instance) : base(instance)
         {
         }
 
-        public CharacterRunStateBuilder SetConfig(SO_CharacterMove config)
+        public CharacterMoveStateBuilder SetGameObject(GameObject gameObject)
         {
-            if(state is CharacterRunState characterRunState)
-                characterRunState.SetConfig(config);
+            state.SetGameObject(gameObject);
             return this;
         }
-        public CharacterRunStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
+        public CharacterMoveStateBuilder SetCenter(Transform center)
         {
-            if(state is CharacterRunState characterRunState)
-                characterRunState.SetUnitAnimation(unitAnimation);
+            state.SetCenter(center);
+            return this;
+        }
+        public CharacterMoveStateBuilder SetConfig(SO_CharacterMove config)
+        {
+            state.SetConfig(config);
+            return this;
+        }
+        public CharacterMoveStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
+        {
+            state.SetUnitAnimation(unitAnimation);
             return this;
         }
 
-        public CharacterRunStateBuilder SetRunClips(AnimationClip[] animationClips)
+        public CharacterMoveStateBuilder SetRunClips(AnimationClip[] animationClips)
         {
-            if(state is CharacterRunState characterRunState)
-                characterRunState.SetRunClips(animationClips);
+            state.SetRunClips(animationClips);
             return this;
         }
 
-        public CharacterRunStateBuilder SetUnitEndurance(UnitEndurance unitEndurance)
+        public CharacterMoveStateBuilder SetUnitEndurance(UnitEndurance unitEndurance)
         {
-            if(state is CharacterRunState characterRunState)
-                characterRunState.SetUnitEndurance(unitEndurance);
+            state.SetUnitEndurance(unitEndurance);
             return this;
         }
     }

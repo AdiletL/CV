@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.Damage;
 using Gameplay.Manager;
 using ScriptableObjects.Weapon.Projectile;
 using Unit;
@@ -16,20 +17,21 @@ namespace Gameplay.Weapon.Projectile
         protected GameObject target;
         protected LayerMask enemyLayer;
         
-        public IDamageable Damageable { get; private set; }
-        public AnimationCurve moveCurve { get; protected set; }
+
+        public IDamageable Damageable { get; protected set; }
+        public AnimationCurve MoveCurve { get; protected set; }
         public Stat MovementSpeedStat { get; protected set; } = new Stat();
 
         protected float height;
         protected bool isInitialized;
-
-
+        
+        public void SetDamageable(IDamageable damageable) => Damageable = damageable;
 
         public virtual void Initialize()
         {
             if(isInitialized) return;
             
-            moveCurve = so_Projectile.Curve;
+            MoveCurve = so_Projectile.Curve;
             MovementSpeedStat.AddValue(so_Projectile.Speed);
             height = so_Projectile.Height;
             enemyLayer = so_Projectile.EnemyLayer;
@@ -42,14 +44,17 @@ namespace Gameplay.Weapon.Projectile
         }
         public abstract void ExecuteMovement();
 
+
         public virtual void ApplyDamage()
         {
             if (target &&
                 target.TryGetComponent(out IAttackable attackable) &&
                 target.TryGetComponent(out IHealth health))
             {
-                if(health.IsLive)
+                if (health.IsLive)
+                {
                     attackable.TakeDamage(Damageable);
+                }
             }
 
             ReturnToPool();
@@ -59,12 +64,7 @@ namespace Gameplay.Weapon.Projectile
         {
             this.target = target;
         }
-
-        public void SetDamageable(IDamageable damageable)
-        {
-            this.Damageable = damageable;
-        }
-
+        
         protected void ReturnToPool()
         {
             poolManager.ReturnToPool(gameObject);

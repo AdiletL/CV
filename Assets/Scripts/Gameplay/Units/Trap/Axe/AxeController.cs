@@ -20,7 +20,7 @@ namespace Unit.Trap
         {
             base.Initialize();
             DamageStat.AddValue(so_Trap.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat);
+            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
             axeAnimation = components.GetComponentFromArray<AxeAnimation>();
             so_Axe = (SO_Axe)so_Trap;
             speedPlayClip = so_Axe.SpeedPlayClip;

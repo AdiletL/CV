@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Common;
-using Gameplay.Factory;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Units.Item;
 using ScriptableObjects.Unit.Character.Player;
-using ScriptableObjects.Unit.Item;
 using Unit.Cell;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -33,6 +31,7 @@ namespace Unit.Character.Player
         private InputType baseBlockInput;
         
         private int maxSlot;
+        private bool isNextFrameFromUnblockInput;
         
         private Dictionary<int?, Gameplay.Units.Item.Item> slots;
         
@@ -156,7 +155,7 @@ namespace Unit.Character.Player
                     case ItemBehaviour.PointTarget: 
                     case ItemBehaviour.UnitTarget:
                         currentSelectedItem = slots[slotID]; 
-                        playerBlockInput.IsInputBlocked(baseBlockInput);
+                        playerBlockInput.BlockInput(baseBlockInput);
                         break;
                 }
             }
@@ -191,6 +190,12 @@ namespace Unit.Character.Player
         
         private void Update()
         {
+            if (isNextFrameFromUnblockInput)
+            {
+                playerBlockInput.UnblockInput(baseBlockInput);
+                isNextFrameFromUnblockInput = false;
+            }
+            
             if (currentUseItem != null)
             {
                 if (Input.anyKeyDown && !CheckInputOnUI.IsPointerOverUIObject())
@@ -227,7 +232,7 @@ namespace Unit.Character.Player
                 {
                     currentSelectedItem.Enter(point: hit.point);
                     currentSelectedItem = null;
-                    playerBlockInput.UnblockInput(baseBlockInput);
+                    isNextFrameFromUnblockInput = true;
                 }
             }
         }
@@ -242,7 +247,7 @@ namespace Unit.Character.Player
                 {
                     currentSelectedItem.Enter(target: characterMainController.gameObject);
                     currentSelectedItem = null;
-                    playerBlockInput.UnblockInput(baseBlockInput);
+                    isNextFrameFromUnblockInput = true;
                 }
             }
         }

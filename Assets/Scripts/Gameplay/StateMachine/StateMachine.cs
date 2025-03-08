@@ -43,17 +43,15 @@ public class StateMachine
         return default(T);
     }
 
-    public List<T> GetStates<T>() where T : IState
+    public IEnumerable<T> GetStates<T>() where T : IState
     {
-        var result = new List<T>();
         foreach (var state in states.Values)
         {
             if (state is T desiredState)
             {
-                result.Add(desiredState);
+                yield return desiredState;
             }
         }
-        return result;
     }
 
     public void Initialize()
@@ -91,25 +89,28 @@ public class StateMachine
         
         foreach (var baseType in desiredStates)
         {
-            if (!states.TryGetValue(baseType, out var state))
-                continue;
+            var iState = FindMostDerivedState(baseType);
+            if (iState == null) continue;
+           /* if (!states.TryGetValue(baseType, out var state))
+                continue;*/
 
-            var category = state.Category;
-
+            var category = iState.Category;
+            var type = iState.GetType();
             if (activeStates.TryGetValue(category, out var activeState))
             {
-                if (activeState.GetType() == state.GetType() && !isForceSetState ||
-                    !activeState.IsCanExit)
+                if (!isForceSetState && (activeState.GetType() == type ||
+                    !activeState.IsCanExit || iState == activeState))
                     continue;
                 
                 activeState.Exit();
             }
-
-            if (isForceSetState || !activeStates.ContainsKey(category) || activeStates[category] != state)
+            
+            if (isForceSetState || !activeStates.ContainsKey(category) || 
+                activeStates[category] != iState || iState != activeState)
             {
-                activeStates[category] = state;
-                state.Enter();
-                OnChangedState?.Invoke(state);
+                activeStates[category] = iState;
+                iState.Enter();
+                OnChangedState?.Invoke(iState);
             }
         }
     }
@@ -120,8 +121,10 @@ public class StateMachine
 
         foreach (var state in states.Values)
         {
-            if (baseType.IsAssignableFrom(state.GetType()) &&
-                (mostDerivedState == null || state.GetType().IsSubclassOf(mostDerivedState.GetType())))
+            Type stateType = state.GetType();
+
+            if (baseType.IsAssignableFrom(stateType) &&
+                (mostDerivedState == null || stateType.IsSubclassOf(mostDerivedState.GetType())))
             {
                 mostDerivedState = state;
             }

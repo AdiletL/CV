@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Unit.Trap.Tower
 {
-    public class TowerAttackState : UnitBaseAttackState
+    public class TowerAttackState : UnitAttackState
     {
         [Inject] private DiContainer diContainer;
         [Inject] private PoolManager pool;
@@ -25,16 +25,16 @@ namespace Unit.Trap.Tower
         public Transform PointSpawnProjectile { get; set; }
 
 
-        public override IDamageable GetDamageable()
+        protected override IDamageable CreateDamageable()
         {
-            return new NormalDamage(gameObject, DamageStat);
+            return new NormalDamage(gameObject, DamageStat.CurrentValue);
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            DamageStat.AddValue(damage);
-            var duration = Calculate.Attack.TotalDurationInSecond(AttackSpeed);
+            
+            var duration = Calculate.Attack.TotalDurationInSecond(AttackSpeedStat.CurrentValue);
             timerFire = duration * .55f;
             cooldown = duration;
         }
@@ -69,25 +69,14 @@ namespace Unit.Trap.Tower
             }
             
         }
-
-        public override void AddAttackSpeed(int amount)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void RemoveAttackSpeed(int amount)
-        {
-            throw new System.NotImplementedException();
-        }
-
         protected virtual async UniTask Fire()
         {
             var newGameObject = await this.pool.GetObjectAsync<SphereController>();
             newGameObject.transform.position = PointSpawnProjectile.position;
             newGameObject.transform.rotation = PointSpawnProjectile.rotation;
             var projectile = newGameObject.GetComponent<SphereController>();
-            projectile.Initialize();
             projectile.SetDamageable(Damageable);
+            projectile.Initialize();
         }
         
         public override void ApplyDamage()
@@ -108,7 +97,7 @@ namespace Unit.Trap.Tower
         }
     }
 
-    public class TowerAttackStateBuilder : UnitBaseAttackStateBuilder
+    public class TowerAttackStateBuilder : UnitAttackStateBuilder
     {
         public TowerAttackStateBuilder() : base(new TowerAttackState())
         {

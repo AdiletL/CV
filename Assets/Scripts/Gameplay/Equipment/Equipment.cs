@@ -5,12 +5,12 @@ namespace Gameplay.Equipment
 {
     public abstract class Equipment
     {
-        protected GameObject owner;
         protected Transform ownerCenter;
         protected GameObject equipment;
         protected AssetReferenceGameObject equipmentPrefab;
+        public GameObject Owner { get; protected set; }
         
-        public void SetOwner(GameObject gameObject) => this.owner = gameObject;
+        public void SetOwner(GameObject gameObject) => this.Owner = gameObject;
         public void SetOwnerCenter(Transform ownerCenter) => this.ownerCenter = ownerCenter;
         public void SetEquipmentPrefab(AssetReferenceGameObject equipmentPrefab) => this.equipmentPrefab = equipmentPrefab;
 

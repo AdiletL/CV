@@ -38,6 +38,7 @@ namespace Unit.Character.Player
         private Texture2D selectedAbilityCursor;
         
         private int maxSlot;
+        private bool isNextFrameFromUnblockInput;
         
         private Dictionary<int?, Ability> slots;
         
@@ -167,6 +168,12 @@ namespace Unit.Character.Player
                 AddAbility(newAbility, so_PlayerAbilities.AbilityConfigData.DashConfig.SO_BaseAbilityConfig.Icon);
             }
             
+            if (isNextFrameFromUnblockInput)
+            {
+                playerBlockInput.UnblockInput(baseBlockInput);
+                isNextFrameFromUnblockInput = false;
+            }
+            
             if (currentUseAbility != null)
             {
                 if (Input.anyKeyDown && !CheckInputOnUI.IsPointerOverUIObject())
@@ -227,7 +234,7 @@ namespace Unit.Character.Player
                 {
                     currentSelectedAbility.Enter(point: hit.point);
                     currentSelectedAbility = null;
-                    playerBlockInput.UnblockInput(baseBlockInput);
+                    isNextFrameFromUnblockInput = true;
                 }
             }
         }
@@ -242,7 +249,7 @@ namespace Unit.Character.Player
                 {
                     currentSelectedAbility.Enter(target: characterMainController.gameObject);
                     currentSelectedAbility = null;
-                    playerBlockInput.UnblockInput(baseBlockInput);
+                    isNextFrameFromUnblockInput = true;
                 }
             }
         }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Unit.Character.Player
 {
-  public class PlayerRunToTargetState : CharacterRunState
+  public class PlayerMoveToTargetState : CharacterMoveState
 {
     private PhotonView photonView;
     private PathFinding pathFinder;
@@ -291,37 +291,37 @@ namespace Unit.Character.Player
 }
 
 
-    public class PlayerRunToTargetStateBuilder : CharacterRunStateBuilder
+    public class PlayerMoveToTargetStateBuilder : CharacterMoveStateBuilder
     {
-        public PlayerRunToTargetStateBuilder() : base(new PlayerRunToTargetState())
+        public PlayerMoveToTargetStateBuilder() : base(new PlayerMoveToTargetState())
         {
         }
         
-        public PlayerRunToTargetStateBuilder SetCharacterController(CharacterController characterController)
+        public PlayerMoveToTargetStateBuilder SetCharacterController(CharacterController characterController)
         {
-            if (state is PlayerRunToTargetState playerRunState)
+            if (state is PlayerMoveToTargetState playerRunState)
                 playerRunState.SetCharacterController(characterController);
             
             return this;  
         }
-        public PlayerRunToTargetStateBuilder SetRotationSpeed(float rotationSpeed)
+        public PlayerMoveToTargetStateBuilder SetRotationSpeed(float rotationSpeed)
         {
-            if (state is PlayerRunToTargetState playerRunState)
+            if (state is PlayerMoveToTargetState playerRunState)
                 playerRunState.SetRotationSpeed(rotationSpeed);
             
             return this;  
         }
-        public PlayerRunToTargetStateBuilder SetRunReductionEndurance(float value)
+        public PlayerMoveToTargetStateBuilder SetRunReductionEndurance(float value)
         {
-            if (state is PlayerRunToTargetState playerRunState)
+            if (state is PlayerMoveToTargetState playerRunState)
                 playerRunState.SetRunReductionEndurance(value);
             
             return this;  
         }
 
-        public PlayerRunToTargetStateBuilder SetPhotonView(PhotonView view)
+        public PlayerMoveToTargetStateBuilder SetPhotonView(PhotonView view)
         {
-            if (state is PlayerRunToTargetState playerRunState)
+            if (state is PlayerMoveToTargetState playerRunState)
                 playerRunState.SetPhotonView(view);
             
             return this;  

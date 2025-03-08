@@ -10,16 +10,16 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             playerController = (PlayerController)unitController;
-            var damageStat = playerController.StateMachine.GetState<PlayerWeaponAttackState>().DamageStat;
+            var damageStat = playerController.StateMachine.GetState<PlayerAttackState>().DamageStat;
             AddStatToDictionary(StatType.Damage, damageStat);
 
-            var attackSpeedStat = playerController.StateMachine.GetState<PlayerWeaponAttackState>().AttackSpeedStat;
+            var attackSpeedStat = playerController.StateMachine.GetState<PlayerAttackState>().AttackSpeedStat;
             AddStatToDictionary(StatType.AttackSpeed, attackSpeedStat);
             
-            var rangeAttackStat = playerController.StateMachine.GetState<PlayerWeaponAttackState>().RangeStat;
+            var rangeAttackStat = playerController.StateMachine.GetState<PlayerAttackState>().RangeStat;
             AddStatToDictionary(StatType.AttackRange, rangeAttackStat);
             
-            var movementSpeed = playerController.StateMachine.GetState<PlayerRunState>().MovementSpeedStat;
+            var movementSpeed = playerController.StateMachine.GetState<PlayerMoveState>().MovementSpeedStat;
             AddStatToDictionary(StatType.MovementSpeed, movementSpeed);
         }
     }

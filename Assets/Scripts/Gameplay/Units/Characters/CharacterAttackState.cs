@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gameplay.Damage;
 using Gameplay.Equipment.Weapon;
 using Machine;
 using ScriptableObjects.Unit.Character;
@@ -8,47 +9,54 @@ using Random = UnityEngine.Random;
 
 namespace Unit.Character
 {
-    public class CharacterWeaponAttackState : State
+    public class CharacterAttackState : UnitAttackState
     {
-        public override StateCategory Category { get; } = StateCategory.Attack;
-
         protected SO_CharacterAttack so_CharacterAttack;
-        protected GameObject gameObject;
         protected GameObject currentTarget;
         protected Transform weaponParent;
-        protected Transform center;
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
         protected UnitRenderer unitRenderer;
         protected AnimationClip[] attackClips;
+        protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
+        
+        protected Collider[] findUnitColliders = new Collider[1];
         
         protected float durationAttack, countDurationAttack;
         protected float cooldownApplyDamage, countTimerApplyDamage;
         protected float applyDamageMoment;
+        protected float angleToTarget;
         
         protected bool isAttacked;
         
+        protected const string ATTACK_SPEED_NAME = "SpeedAttack";
+        protected const int ANIMATION_LAYER = 1;
+        
         public Weapon CurrentWeapon { get; protected set; }
-        public Stat AttackSpeedStat { get; } = new();
-        public Stat DamageStat { get; } = new();
         public Stat ReduceEnduranceStat { get; } = new();
         public Stat RangeStat { get; } = new();
 
-
-        ~CharacterWeaponAttackState()
+        ~CharacterAttackState()
         {
-            UnsubscribeEvent();
+            UnsubscribeStatEvent();
         }
 
         public void SetConfig(SO_CharacterAttack config) => so_CharacterAttack = config;
-        public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
-        public void SetCenter(Transform center) => this.center = center;
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
         public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         
+        protected override IDamageable CreateDamageable()
+        {
+            return new NormalDamage(gameObject, so_CharacterAttack.Damage);
+        }
+        
+        public bool IsFindUnitInRange()
+        {
+            return Calculate.Attack.IsFindUnitInRange<ICreepAttackable>(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
+        }
 
         protected AnimationClip getRandomAnimationClip()
         {
@@ -58,10 +66,18 @@ namespace Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            SubscribeEvent();
+            SubscribeStatEvent();
             
             enemyLayer = so_CharacterAttack.EnemyLayer;
             applyDamageMoment = so_CharacterAttack.ApplyDamageMoment;
+            angleToTarget = so_CharacterAttack.AngleToTarget;
+            SetAnimationClip(so_CharacterAttack.DefaultAttackClips);
+            
+            DamageStat.AddValue(so_CharacterAttack.Damage);
+            ReduceEnduranceStat.AddValue(so_CharacterAttack.BaseReductionEndurance);
+            AttackSpeedStat.AddValue(so_CharacterAttack.AttackSpeed);
+            RangeStat.AddValue(so_CharacterAttack.Range);
+            
             unitRenderer.SetRangeScale(RangeStat.CurrentValue);
             unitRenderer.ShowRangeVisual();
         }
@@ -87,40 +103,36 @@ namespace Unit.Character
         public override void Exit()
         {
             base.Exit();
+            this.unitAnimation?.ExitAnimation(ANIMATION_LAYER);
             currentTarget = null;
         }
 
-        protected virtual void SubscribeEvent()
+        protected virtual void SubscribeStatEvent()
         {
-            DamageStat.OnAddCurrentValue += OnAddDamageStatCurrentValue;
-            DamageStat.OnRemoveCurrentValue += OnRemoveDamageStatCurrentValue;
             RangeStat.OnAddCurrentValue += OnAddRangeStatCurrentValue;
             RangeStat.OnRemoveCurrentValue += OnRemoveRangeStatCurrentValue;
             AttackSpeedStat.OnAddCurrentValue += OnAddAttackSpeedStatCurrentValue;
             AttackSpeedStat.OnRemoveCurrentValue += OnRemoveAttackSpeedStatCurrentValue;
         }
 
-        protected virtual void UnsubscribeEvent()
+        protected virtual void UnsubscribeStatEvent()
         {
-            DamageStat.OnAddCurrentValue -= OnAddDamageStatCurrentValue;
-            DamageStat.OnRemoveCurrentValue -= OnRemoveDamageStatCurrentValue;
             RangeStat.OnAddCurrentValue -= OnAddRangeStatCurrentValue;
             RangeStat.OnRemoveCurrentValue -= OnRemoveRangeStatCurrentValue;
             AttackSpeedStat.OnAddCurrentValue -= OnAddAttackSpeedStatCurrentValue;
             AttackSpeedStat.OnRemoveCurrentValue -= OnRemoveAttackSpeedStatCurrentValue;
         }
-        private void OnAddDamageStatCurrentValue(float value) => CurrentWeapon?.DamageStat.AddValue(value);
-        private void OnRemoveDamageStatCurrentValue(float value) => CurrentWeapon?.DamageStat.RemoveValue(value);
         private void OnAddRangeStatCurrentValue(float value)
         {
-            if(CurrentWeapon == null) return;
-            CurrentWeapon.RangeStat.AddValue(value);
-            unitRenderer.SetRangeScale(CurrentWeapon.RangeStat.CurrentValue);
+            var totalRange = RangeStat.CurrentValue;
+            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
+            unitRenderer.SetRangeScale(totalRange);
         }
         private void OnRemoveRangeStatCurrentValue(float value)
         {
-            CurrentWeapon.RangeStat.RemoveValue(value);
-            unitRenderer.SetRangeScale(CurrentWeapon.RangeStat.CurrentValue);
+            var totalRange = RangeStat.CurrentValue;
+            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
+            unitRenderer.SetRangeScale(totalRange);
         }
 
         private void OnAddAttackSpeedStatCurrentValue(float value) => UpdateDurationAttack();
@@ -150,10 +162,11 @@ namespace Unit.Character
             CurrentWeapon = weapon;
             CurrentWeapon.SetInParent(weaponParent);
             CurrentWeapon.SetEnemyLayer(enemyLayer);
+            CurrentWeapon.SetOwnerDamageStat(DamageStat);
+            CurrentWeapon.SetOwnerRangeStat(RangeStat);
             CurrentWeapon.Show();
             ClearValues();
             UpdateDurationAttack();
-            CurrentWeapon.DamageStat.AddValue(DamageStat.CurrentValue);
             ReduceEnduranceStat.AddValue(CurrentWeapon.ReduceEndurance);
         }
 
@@ -161,20 +174,39 @@ namespace Unit.Character
         {
             if(CurrentWeapon == null) return;
             ReduceEnduranceStat.RemoveValue(CurrentWeapon.ReduceEndurance);
-            CurrentWeapon.DamageStat.RemoveValue(DamageStat.CurrentValue);
+            CurrentWeapon.SetOwnerDamageStat(null);
+            CurrentWeapon.SetOwnerRangeStat(null);
             CurrentWeapon.Hide();
             CurrentWeapon = null;
-            SetAnimationClip(null);
+            SetAnimationClip(so_CharacterAttack.DefaultAttackClips);
         }
 
-        protected virtual void SetAnimationClip(AnimationClip[] attackClips)
+        protected void SetAnimationClip(AnimationClip[] attackClips)
         {
             this.attackClips = attackClips;
         }
+
+        private void FindUnitInRange()
+        {
+            var target = Calculate.Attack.FindUnitInRange(center.position, RangeStat.CurrentValue,
+                enemyLayer, ref findUnitColliders);
+            if(target == null) return;
+            
+            var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - center.position).normalized;
+            
+            //Debug.DrawRay(origin, directionToTarget * 100, Color.green, 2);
+            if (Physics.Raycast(center.position, directionToTarget, out var hit, RangeStat.CurrentValue, ~gameObject.layer))
+            {
+                if(hit.collider.gameObject.layer == target.gameObject.layer)
+                    currentTarget = target;
+            }
+        }
         
-        protected void Attack()
+        public override void Attack()
         {
             if(isAttacked) return;
+            
+            this.unitAnimation?.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
             
             countTimerApplyDamage += Time.deltaTime;
             if (countTimerApplyDamage > cooldownApplyDamage)
@@ -185,67 +217,56 @@ namespace Unit.Character
             }
             unitEndurance.EnduranceStat.RemoveValue(ReduceEnduranceStat.CurrentValue);
         }
-
-        protected virtual void ApplyDamage()
+        
+        public override void ApplyDamage()
         {
-            CurrentWeapon?.ApplyDamage();
+            if (CurrentWeapon != null)
+                CurrentWeapon.ApplyDamage();
+            else
+                DefaultApplyDamage();
+        }
+
+        protected virtual void DefaultApplyDamage()
+        {
+            FindUnitInRange();
         }
     }
 
-    public class CharacterWeaponAttackStateBuilder : StateBuilder<CharacterWeaponAttackState>
+    public class CharacterAttackStateBuilder : UnitAttackStateBuilder
     {
-        public CharacterWeaponAttackStateBuilder(CharacterWeaponAttackState instance) : base(instance)
+        public CharacterAttackStateBuilder(CharacterAttackState instance) : base(instance)
         {
         }
         
-        public CharacterWeaponAttackStateBuilder SetConfig(SO_CharacterAttack config)
+        public CharacterAttackStateBuilder SetConfig(SO_CharacterAttack config)
         {
-            if (state is CharacterWeaponAttackState characterWeapon)
+            if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetConfig(config);
-
             return this;
         }
-        public CharacterWeaponAttackStateBuilder SetGameObject(GameObject gameObject)
+        public CharacterAttackStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
-            if (state is CharacterWeaponAttackState characterWeapon)
-                characterWeapon.SetGameObject(gameObject);
-
-            return this;
-        }
-        public CharacterWeaponAttackStateBuilder SetCenter(Transform center)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
-                characterWeapon.SetCenter(center);
-
-            return this;
-        }
-        public CharacterWeaponAttackStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
-        {
-            if (state is CharacterWeaponAttackState characterWeapon)
+            if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetUnitAnimation(unitAnimation);
-
             return this;
         }
 
-        public CharacterWeaponAttackStateBuilder SetWeaponParent(Transform parent)
+        public CharacterAttackStateBuilder SetWeaponParent(Transform parent)
         {
-            if (state is CharacterWeaponAttackState characterWeapon)
+            if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetWeaponParent(parent);
-
             return this;
         }
-        public CharacterWeaponAttackStateBuilder SetUnitEndurance(UnitEndurance endurance)
+        public CharacterAttackStateBuilder SetUnitEndurance(UnitEndurance endurance)
         {
-            if (state is CharacterWeaponAttackState characterWeapon)
+            if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetUnitEndurance(endurance);
-
             return this;
         }
-        public CharacterWeaponAttackStateBuilder SetUnitRenderer(UnitRenderer unitRenderer)
+        public CharacterAttackStateBuilder SetUnitRenderer(UnitRenderer unitRenderer)
         {
-            if (state is CharacterWeaponAttackState characterWeapon)
+            if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetUnitRenderer(unitRenderer);
-
             return this;
         }
     }

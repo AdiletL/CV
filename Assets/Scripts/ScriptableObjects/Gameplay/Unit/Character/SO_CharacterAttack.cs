@@ -9,5 +9,9 @@ namespace ScriptableObjects.Unit.Character
         [field: SerializeField, Header("Percent"), Range(0, 1)]
         public float ApplyDamageMoment { get; private set; } = .55f;
         [field: SerializeField, Space, Range(0, 1)] public float BaseReductionEndurance { get; private set; }
+        
+        [field: SerializeField, Space(10), Header("Default")] 
+        public AnimationClip[] DefaultAttackClips { get; private set; }
+        [field: SerializeField] public AnimationClip DefaultCooldownClip { get; private set; }
     }
 }

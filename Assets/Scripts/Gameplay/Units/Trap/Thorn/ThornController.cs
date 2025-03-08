@@ -40,7 +40,7 @@ namespace Unit.Trap
             EnemyLayer = so_Thorn.EnemyLayer;
             
             DamageStat.AddValue(so_Thorn.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat);
+            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
 
             sphereCollider = GetComponent<SphereCollider>();
             sphereCollider.isTrigger = true;

@@ -2,21 +2,19 @@
 
 namespace Unit.Character
 {
-    public class CharacterPatrolState : CharacterBaseMovementState, IPatrol
+    public class CharacterPatrolState : CharacterMoveState, IPatrol
     {
         public Vector3[] PatrolPoints { get; protected set; }
         
         public void SetPatrolPoints(Vector3[] points) => PatrolPoints = points;
-        
-        
-        public override void ExecuteMovement()
+
+        public virtual void ExecuteMovement()
         {
             
         }
-
     }
 
-    public class CharacterPatrolStateBuilder : CharacterBaseMovementStateBuilder
+    public class CharacterPatrolStateBuilder : CharacterMoveStateBuilder
     {
         public CharacterPatrolStateBuilder(CharacterPatrolState instance) : base(instance)
         {

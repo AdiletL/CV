@@ -18,10 +18,6 @@ namespace Unit.Character
         
         public StateMachine StateMachine { get; protected set; }
         public UnitInformation UnitInformation { get; protected set; }
-
-        public abstract int TotalDamage();
-        public abstract int TotalAttackSpeed();
-        public abstract float TotalAttackRange();
         
         public bool IsNullEquipment(Equipment equipment) => 
             currentEquipments == null || !currentEquipments.Contains(equipment);
@@ -48,7 +44,6 @@ namespace Unit.Character
             SubscribeEvent();
             
             BeforeCreateStates();
-            CreateSwitchState();
             CreateStates();
             StateMachine.Initialize();
             
@@ -72,7 +67,6 @@ namespace Unit.Character
             
         }
         protected abstract void CreateStates();
-        protected abstract void CreateSwitchState();
 
         protected virtual void AfterCreateStates()
         {

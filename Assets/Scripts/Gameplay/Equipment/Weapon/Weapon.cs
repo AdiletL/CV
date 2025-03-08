@@ -14,13 +14,17 @@ namespace Gameplay.Equipment.Weapon
         protected float angleToTarget;
 
         public IDamageable Damageable { get; protected set; }
-        public Stat DamageStat { get; protected set; } = new();
-        public Stat RangeStat { get; protected set; } = new();
+        public Stat DamageStat { get; } = new();
+        public Stat RangeStat { get; } = new();
+        public Stat OwnerDamageStat { get; protected set; } = new();
+        public Stat OwnerRangeStat { get; protected set; } = new();
         public float ReduceEndurance { get; private set; }
         
         public void SetEnemyLayer(LayerMask layer) => enemyLayer = layer;
         public void SetAngleToTarget(float angle) => this.angleToTarget = angle;
         public void SetReduceEndurance(float reduceEndurance) => this.ReduceEndurance = reduceEndurance;
+        public void SetOwnerDamageStat(Stat damageStat) => this.OwnerDamageStat = damageStat;
+        public void SetOwnerRangeStat(Stat rangeStat) => this.OwnerRangeStat = rangeStat;
 
         protected abstract IDamageable CreateDamageable();
         

@@ -11,10 +11,10 @@ namespace Gameplay.Effect
     {
         private struct MovementInfo
         {
-            public CharacterBaseMovementState MovementState { get; }
-            public float Speed { get; }
+            public CharacterMoveState MovementState { get; private set; }
+            public float Speed { get; private set; }
 
-            public MovementInfo(CharacterBaseMovementState movementState, float speed)
+            public MovementInfo(CharacterMoveState movementState, float speed)
             {
                 MovementState = movementState;
                 Speed = speed;
@@ -61,7 +61,7 @@ namespace Gameplay.Effect
             var character = target.GetComponent<CharacterMainController>();
             if(character == null) return;
             
-            var movementStates = character.StateMachine.GetStates<CharacterBaseMovementState>();
+            var movementStates = character.StateMachine.GetStates<CharacterMoveState>();
             var gameValue = new GameValue(value, valueType);
             float result = 0;
             

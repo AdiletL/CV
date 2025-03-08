@@ -45,15 +45,12 @@ namespace Unit.Character.Player
         [ReadOnly] public string currentStateName;
 
         private PlayerStateFactory playerStateFactory;
-        private PlayerSwitchStateFactory playerSwitchStateFactory;
         private PlayerItemInventory playerItemInventory;
         private PlayerAbilityInventory playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
         private PlayerControlDesktop playerControlDesktop;
         private PlayerStatsController playerStatsController;
         
-        private CharacterSwitchMoveState characterSwitchMoveState;
-        private CharacterSwitchAttackState characterSwitchAttackState;
         private CharacterEndurance characterEndurance;
         private CharacterExperience characterExperience;
         private CharacterAnimation characterAnimation;
@@ -66,12 +63,7 @@ namespace Unit.Character.Player
         {
             return new PlayerInformation(this);
         }
-
-        public override int TotalDamage() => characterSwitchAttackState.TotalDamage();
-        public override int TotalAttackSpeed() => characterSwitchAttackState.TotalAttackSpeed();
-        public override float TotalAttackRange() => characterSwitchAttackState.TotalAttackRange();
         
-
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
             return (PlayerControlDesktop)new PlayerControlDesktopBuilder()
@@ -80,8 +72,6 @@ namespace Unit.Character.Player
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetConfig(so_PlayerControlDesktop)
-                .SetCharacterSwitchAttack(characterSwitchAttackState)
-                .SetCharacterSwitchMove(characterSwitchMoveState)
                 .SetPhotonView(photonView)
                 .SetPlayerController(this)
                 .SetPlayerStateFactory(playerStateFactory)
@@ -106,22 +96,6 @@ namespace Unit.Character.Player
                 .SetStateMachine(StateMachine)
                 .SetUnitCenter(unitCenter)
                 .SetGameObject(gameObject)
-                .Build();
-        }
-
-        private PlayerSwitchStateFactory CreatePlayerSwitchStateFactory()
-        {
-            return (PlayerSwitchStateFactory)new PlayerSwitchStateFactoryBuilder()
-                .SetCharacterState(playerStateFactory)
-                .SetCharacterAnimation(characterAnimation)
-                .SetCharacterEndurance(GetComponentInUnit<CharacterEndurance>())
-                .SetPhotonView(photonView)
-                .SetWeaponParent(weaponParent)
-                .SetPlayerAttackConfig(so_PlayerAttack)
-                .SetPlayerMoveConfig(so_PlayerMove)
-                .SetStateMachine(StateMachine)
-                .SetGameObject(gameObject)
-                .SetUnitCenter(unitCenter)
                 .Build();
         }
 
@@ -164,9 +138,6 @@ namespace Unit.Character.Player
             
             playerStateFactory = CreatePlayerStateFactory();
             diContainer.Inject(playerStateFactory);
-            
-            playerSwitchStateFactory = CreatePlayerSwitchStateFactory();
-            diContainer.Inject(playerSwitchStateFactory);
         }
 
         protected override void CreateStates()
@@ -174,23 +145,14 @@ namespace Unit.Character.Player
             var idleState = playerStateFactory.CreateState(typeof(PlayerIdleState));
             diContainer.Inject(idleState);
             StateMachine.AddStates(idleState);
-        }
-
-        protected override void CreateSwitchState()
-        {
-            characterSwitchMoveState = playerSwitchStateFactory.CreateSwitchMoveState(typeof(PlayerSwitchMoveState));
-            diContainer.Inject(characterSwitchMoveState);
-            playerStateFactory.SetCharacterSwitchMove(characterSwitchMoveState);
             
-            characterSwitchAttackState = playerSwitchStateFactory.CreateSwitchAttackState(typeof(PlayerSwitchAttackState));
-            diContainer.Inject(characterSwitchAttackState);
-            playerStateFactory.SetCharacterSwitchAttack(characterSwitchAttackState);
+            var attackState = playerStateFactory.CreateState(typeof(PlayerAttackState));
+            diContainer.Inject(attackState);
+            StateMachine.AddStates(attackState);
             
-            characterSwitchMoveState.SetSwitchAttackState(characterSwitchAttackState);
-            characterSwitchAttackState.SetSwitchMoveState(characterSwitchMoveState);
-            
-            characterSwitchMoveState.Initialize();
-            characterSwitchAttackState.Initialize();
+            var moveState = playerStateFactory.CreateState(typeof(PlayerMoveState));
+            diContainer.Inject(moveState);
+            StateMachine.AddStates(moveState);
         }
 
         protected override void AfterCreateStates()
@@ -216,6 +178,7 @@ namespace Unit.Character.Player
         protected override void AfterInitializeMediator()
         {
             base.AfterInitializeMediator();
+            
             characterExperience = GetComponentInUnit<CharacterExperience>();
             diContainer.Inject(characterExperience);
             characterExperience.Initialize();
@@ -311,7 +274,7 @@ namespace Unit.Character.Player
             base.PutOnEquipment(equipment);
             if (equipment is Weapon weapon)
             {
-                StateMachine.GetState<PlayerWeaponAttackState>()?.SetWeapon(weapon);
+                StateMachine.GetState<PlayerAttackState>()?.SetWeapon(weapon);
             }
         }
 
@@ -320,7 +283,7 @@ namespace Unit.Character.Player
             base.TakeOffEquipment(equipment);
             if (equipment is Weapon weapon)
             {
-                StateMachine.GetState<PlayerWeaponAttackState>()?.RemoveWeapon();
+                StateMachine.GetState<PlayerAttackState>()?.RemoveWeapon();
             }
         }
 

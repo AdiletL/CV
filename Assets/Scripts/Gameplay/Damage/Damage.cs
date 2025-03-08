@@ -13,23 +13,23 @@ namespace Gameplay.Damage
         [Inject] protected DamagePopUpPopUpSpawner damagePopUpPopUpSpawner;
         
         public GameObject Owner { get; }
-        public Stat DamageStat { get; }
         public AbilityHandler AbilityHandler { get; }
         public ItemHandler ItemHandler { get; }
+        public float Value { get; set; }
         
         protected float result;
         
-        public Damage(GameObject owner, Stat damageStat)
+        public Damage(GameObject owner, float damage)
         {
             this.Owner = owner;
-            this.DamageStat = damageStat;
+            this.Value = damage;
             this.AbilityHandler = owner.GetComponent<AbilityHandler>();
             this.ItemHandler = owner.GetComponent<ItemHandler>();
         }
 
         public virtual int GetTotalDamage(GameObject gameObject)
         {
-            result = DamageStat.CurrentValue;
+            result = Value;
             var targetUnitCenter = gameObject.GetComponent<UnitCenter>();
             
             CheckAbility(result, targetUnitCenter);

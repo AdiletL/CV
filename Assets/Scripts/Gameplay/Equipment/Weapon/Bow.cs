@@ -15,7 +15,7 @@ namespace Gameplay.Equipment.Weapon
         
         protected override IDamageable CreateDamageable()
         {
-            return new NormalDamage(owner, DamageStat);
+            return new NormalDamage(Owner, DamageStat.CurrentValue);
         }
 
         public override void Initialize()
@@ -30,8 +30,9 @@ namespace Gameplay.Equipment.Weapon
             newGameObject.transform.position = pointSpawnProjectile.position;
             newGameObject.transform.rotation = pointSpawnProjectile.rotation;
             var arrow = newGameObject.GetComponent<ArrowController>();
-            arrow.Initialize();
+            Damageable.Value = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
             arrow.SetDamageable(Damageable);
+            arrow.Initialize();
             arrow.ClearValues();
         }
     }

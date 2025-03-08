@@ -1,27 +1,20 @@
 ﻿using Gameplay.Equipment.Weapon;
-using Gameplay.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 
 namespace Unit.Character.Player
 {
-    public class PlayerWeaponAttackState : CharacterWeaponAttackState
+    public class PlayerAttackState : CharacterAttackState
     {
         private SO_PlayerAttack so_PlayerAttack;
         private PlayerKinematicControl playerKinematicControl;
-        private AnimationClip[] swordAttackClips;
-        private AnimationClip[] bowAttackClips;
-        private AnimationClip currentClip;
         private Camera baseCamera;
 
         private Vector3 direction;
         private Vector3 worldMousePosition;
         private bool isFacingTarget;
         
-        private const string ATTACK_SPEED_NAME = "SpeedAttack";
-        private const int ANIMATION_LAYER = 1;
-        
-        public Stat RotationSpeed { get; private set; } = new Stat();
+        public Stat RotationSpeed { get; } = new Stat();
         
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
         public void SetPlayerKinematicControl(PlayerKinematicControl control) => playerKinematicControl = control;
@@ -30,8 +23,7 @@ namespace Unit.Character.Player
         {
             base.Initialize();
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
-            swordAttackClips = so_PlayerAttack.SwordAttackClip;
-            bowAttackClips = so_PlayerAttack.BowAttackClip;
+            RotationSpeed.AddValue(so_PlayerAttack.RotationSpeed);
         }
 
         public override void Enter()
@@ -46,34 +38,15 @@ namespace Unit.Character.Player
 
         public override void Update()
         {
-            countDurationAttack += Time.deltaTime;
-            if (durationAttack < countDurationAttack)
-            {
-                stateMachine.ExitCategory(Category, null);
-                countDurationAttack = 0;
-                return;
-            }
-            
-            if (Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
-                    gameObject.transform.forward, worldMousePosition, 50) && !isFacingTarget)
-            {
-                this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
-                isFacingTarget = true;
-            }
+            CheckFacingTarget();
 
             if (isFacingTarget)
             {
-                this.unitAnimation?.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
+                CheckDurationAttack();
                 Attack();
             }
         }
-
-        public override void Exit()
-        {
-            base.Exit();
-            this.unitAnimation?.ExitAnimation(ANIMATION_LAYER);
-        }
-
+        
         protected override void ClearValues()
         {
             base.ClearValues();
@@ -109,8 +82,8 @@ namespace Unit.Character.Player
             base.SetWeapon(weapon);
             switch (weapon)
             {
-                case Sword sword: SetAnimationClip(swordAttackClips); break;
-                case Bow bow: SetAnimationClip(bowAttackClips); break;
+                case Sword sword: SetAnimationClip(so_PlayerAttack.SwordAttackClip); break;
+                case Bow bow: SetAnimationClip(so_PlayerAttack.BowAttackClip); break;
             }
         }
 
@@ -118,24 +91,59 @@ namespace Unit.Character.Player
         {
             playerKinematicControl.SetDirectionRotate(direction);
         }
+
+        private void CheckFacingTarget()
+        {
+            if (Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
+                    gameObject.transform.forward, worldMousePosition, 50) && !isFacingTarget)
+            {
+                this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+                isFacingTarget = true;
+            }
+        }
+
+        private void CheckDurationAttack()
+        {
+            countDurationAttack += Time.deltaTime;
+            if (durationAttack < countDurationAttack)
+            {
+                stateMachine.ExitCategory(Category, null);
+                countDurationAttack = 0;
+            }
+        }
+
+        protected override void DefaultApplyDamage()
+        {
+            base.DefaultApplyDamage();
+            
+            if(currentTarget &&
+               Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
+                   gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
+               currentTarget.TryGetComponent(out IAttackable attackable) && 
+               currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
+            {
+                Damageable.Value = DamageStat.CurrentValue;
+                attackable.TakeDamage(Damageable);
+            }
+        }
     }
 
-    public class PlayerWeaponAttackStateStateBuilder : CharacterWeaponAttackStateBuilder
+    public class PlayerAttackStateBuilder : CharacterAttackStateBuilder
     {
-        public PlayerWeaponAttackStateStateBuilder() : base(new PlayerWeaponAttackState())
+        public PlayerAttackStateBuilder() : base(new PlayerAttackState())
         {
         }
         
-        public PlayerWeaponAttackStateStateBuilder SetBaseCamera(Camera camera)
+        public PlayerAttackStateBuilder SetBaseCamera(Camera camera)
         {
-            if(state is PlayerWeaponAttackState playerWeaponAttackState)
+            if(state is PlayerAttackState playerWeaponAttackState)
                 playerWeaponAttackState.SetBaseCamera(camera);
 
             return this;
         }
-        public PlayerWeaponAttackStateStateBuilder SetPlayerKinematicControl(PlayerKinematicControl control)
+        public PlayerAttackStateBuilder SetPlayerKinematicControl(PlayerKinematicControl control)
         {
-            if(state is PlayerWeaponAttackState playerWeaponAttackState)
+            if(state is PlayerAttackState playerWeaponAttackState)
                 playerWeaponAttackState.SetPlayerKinematicControl(control);
 
             return this;

@@ -11,8 +11,8 @@ namespace Unit
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitEndurance so_UnitEndurance;
         
-        public Stat EnduranceStat { get; protected set; } = new Stat();
-        public Stat RegenerationStat { get; protected set; } = new Stat();
+        public Stat EnduranceStat { get; } = new Stat();
+        public Stat RegenerationStat { get; } = new Stat();
         
 
         protected virtual void OnEnable()
