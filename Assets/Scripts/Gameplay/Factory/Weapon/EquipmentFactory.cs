@@ -1,4 +1,5 @@
-﻿using Gameplay.Equipment.Weapon;
+﻿using System;
+using Gameplay.Equipment.Weapon;
 using ScriptableObjects.Equipment.Weapon;
 using ScriptableObjects.Gameplay.Equipment;
 
@@ -12,6 +13,7 @@ namespace Gameplay.Factory.Weapon
             {
                 _ when config.GetType() == typeof(SO_Sword) => CreateSword(config),
                 _ when config.GetType() == typeof(SO_Bow) => CreateBow(config),
+                _ => throw new ArgumentOutOfRangeException(nameof(config), config, null)
             };
             return result;
         }

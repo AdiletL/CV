@@ -1,5 +1,4 @@
-﻿using Gameplay.Factory;
-using Gameplay.Factory.Character.Creep;
+﻿using Gameplay.Factory.Character.Creep;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
@@ -58,21 +57,21 @@ namespace Gameplay.Unit.Character.Creep
             var moveState = BeholderStateFactory.CreateState(typeof(BeholderMoveState));
             diContainer.Inject(moveState);
             this.StateMachine.AddStates(moveState);
+            
+            var patrolState = BeholderStateFactory.CreateState(typeof(BeholderPatrolState));
+            diContainer.Inject(patrolState);
+            this.StateMachine.AddStates(patrolState);
         }
 
-        protected override void InitializeAllAnimations()
+        public override void Activate()
         {
-            characterAnimation.AddClips(so_BeholderMove.IdleClip);
-            characterAnimation.AddClips(so_BeholderMove.WalkClips);
-            characterAnimation.AddClips(so_BeholderMove.RunClip);
-            characterAnimation.AddClips(so_BeholderAttack.AttackClips);
-            characterAnimation.AddClip(so_BeholderAttack.CooldownClip);
+            base.Activate();
+            this.StateMachine.SetStates(desiredStates:typeof(BeholderIdleState));
         }
 
         public override void Appear()
         {
-            base.Appear();
-            this.StateMachine.SetStates(desiredStates:typeof(BeholderIdleState));
+            throw new System.NotImplementedException();
         }
 
         public override void Disappear()

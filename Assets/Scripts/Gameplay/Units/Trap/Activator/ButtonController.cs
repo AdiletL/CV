@@ -45,9 +45,9 @@ namespace Gameplay.Unit.Trap.Activator
         }
 
 
-        public override void Activate()
+        public override void Trigger()
         {
-            base.Activate();
+            base.Trigger();
             isReady = false;
             buttonAnimation.ChangeAnimationWithDuration(activateClip);
 
@@ -69,9 +69,9 @@ namespace Gameplay.Unit.Trap.Activator
             checkTargetCoroutine = StartCoroutine(CheckTargetCoroutine());
         }
 
-        public override void Deactivate()
+        public override void Reset()
         {
-            base.Deactivate();
+            base.Reset();
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             if(checkTargetCoroutine != null)

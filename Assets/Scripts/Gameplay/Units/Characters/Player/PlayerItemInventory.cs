@@ -12,7 +12,7 @@ using Zenject;
 namespace Gameplay.Unit.Character.Player
 {
     [RequireComponent(typeof(ItemHandler))]
-    public class PlayerItemInventory : MonoBehaviour, IInventory
+    public class PlayerItemInventory : MonoBehaviour, IInventory, IActivatable
     {
         [Inject] private DiContainer diContainer;
 
@@ -34,6 +34,7 @@ namespace Gameplay.Unit.Character.Player
         
         private Dictionary<int?, Item.Item> slots;
         
+        public bool IsActive { get; private set; }
         
         public bool IsFullInventory()
         {
@@ -93,6 +94,9 @@ namespace Gameplay.Unit.Character.Player
                 slots.Add(i, null);
         }
 
+        public void Activate() => IsActive = true;
+        public void Deactivate() => IsActive = false;
+        
         public void AddItem(Item.Item item, Sprite icon)
         {
             int? slotID = null;
@@ -146,6 +150,7 @@ namespace Gameplay.Unit.Character.Player
         
         private void OnClickedLeftMouseInventory(int? slotID)
         {
+            if(!IsActive) return;
             if (!playerBlockInput.IsInputBlocked(InputType.Item))
             {
                 switch (slots[slotID].ItemBehaviourID)
@@ -162,6 +167,7 @@ namespace Gameplay.Unit.Character.Player
 
         private void OnClickedRightMouseInventory(int? slotID)
         {
+            if(!IsActive) return;
             if(slotID == null || slots[slotID] == null) return;
             slots[slotID].ShowContextMenu();
         }
@@ -189,6 +195,8 @@ namespace Gameplay.Unit.Character.Player
         
         private void Update()
         {
+            if(!IsActive) return;
+            
             if (isNextFrameFromUnblockInput)
             {
                 playerBlockInput.UnblockInput(baseBlockInput);

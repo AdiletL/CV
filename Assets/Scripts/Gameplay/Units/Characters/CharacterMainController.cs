@@ -47,7 +47,6 @@ namespace Gameplay.Unit.Character
             
             AfterCreateStates();
             AfterInitializeMediator();
-            InitializeAllAnimations();
         }
 
 
@@ -77,8 +76,6 @@ namespace Gameplay.Unit.Character
             diContainer.Inject(health);
             health?.Initialize();
         }
-
-        protected abstract void InitializeAllAnimations();
 
         public virtual void PutOnEquipment(Equipment.Equipment equipment)
         {

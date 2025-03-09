@@ -7,6 +7,7 @@ namespace Gameplay.Unit.Character.Player
     {
         private Vector3 targetPosition;
         
+
         public override void Subscribe()
         {
             base.Subscribe();

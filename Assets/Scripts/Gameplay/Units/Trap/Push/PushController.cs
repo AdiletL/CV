@@ -57,7 +57,7 @@ namespace Gameplay.Unit.Trap
             ApplyDamage();
         }
 
-        public override void Activate()
+        public override void Trigger()
         {
             if(!isReady) return;
             isReady = false;
@@ -81,7 +81,7 @@ namespace Gameplay.Unit.Trap
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, AfterDeactivate));
         }
-        public override void Deactivate()
+        public override void Reset()
         {
             
         }

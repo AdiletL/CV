@@ -36,6 +36,7 @@ namespace Gameplay.Unit.Character.Player
             maxJumpCount = so_PlayerMove.JumpConfig.MaxCount;
             jumpReductionEndurance = so_PlayerMove.JumpConfig.BaseReductionEndurance;
             jumpKey = so_GameHotkeys.JumpKey;
+            characterAnimation.AddClip(jumpClip);
         }
 
         public override void Enter()

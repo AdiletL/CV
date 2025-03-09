@@ -38,12 +38,12 @@ namespace Gameplay.Unit.Trap
         }
 
 
-        public override void Activate()
+        public override void Trigger()
         {
             axeAnimation.ChangeAnimationWithDuration(activateClip);
         }
 
-        public override void Deactivate()
+        public override void Reset()
         {
             axeAnimation.ChangeAnimationWithDuration(deactivateClip);
         }

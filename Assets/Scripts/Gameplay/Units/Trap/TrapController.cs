@@ -29,8 +29,8 @@ namespace Gameplay.Unit.Trap
         }
         
 
-        public abstract void Activate();
-        public abstract void Deactivate();
+        public abstract void Trigger();
+        public abstract void Reset();
 
         
         public void SetTarget(GameObject target)

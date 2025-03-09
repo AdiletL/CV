@@ -7,15 +7,14 @@ namespace Gameplay.Unit.Character.Creep
     {
         protected NavMeshAgent navMeshAgent;
         protected GameObject currentTarget;
-        protected CreepIdleState creepIdleState;
 
         protected float rotationSpeed;
         protected float timerRunToTarget;
         protected float countTimerRunToTarget;
         protected float countCooldownUpdateTargetPosition;
 
-        protected const float cooldownUpdateTargetPosition = .5f;
-        protected const float stoppingDistance = .2f;
+        protected const float COOLDOWN_UPDATE_TARGET_POSITION = .5f;
+        protected const float STOPPING_DISTANCE = .2f;
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
         public void SetRotationSpeed(float rotationSpeed) => this.rotationSpeed = rotationSpeed;
@@ -27,19 +26,20 @@ namespace Gameplay.Unit.Character.Creep
             base.Initialize();
             navMeshAgent.speed = MovementSpeedStat.CurrentValue;
             navMeshAgent.angularSpeed = rotationSpeed;
-            navMeshAgent.stoppingDistance = stoppingDistance;
+            navMeshAgent.stoppingDistance = STOPPING_DISTANCE;
         }
 
         public override void Enter()
         {
             base.Enter();
-            creepIdleState ??= stateMachine.GetState<CreepIdleState>();
             if (navMeshAgent.isOnNavMesh)
             {
                 navMeshAgent.speed = MovementSpeedStat.CurrentValue;
                 navMeshAgent.destination = currentTarget.transform.position;
                 navMeshAgent.isStopped = false;
             }
+            ClearValues();
+            currentClip = getRandomClip(runClips);
             PlayAnimation();
         }
 
@@ -84,9 +84,9 @@ namespace Gameplay.Unit.Character.Creep
                 TimerUpdateTargetPosition();
                 
                 if (!navMeshAgent.pathPending &&
-                    navMeshAgent.remainingDistance < stoppingDistance)
+                    navMeshAgent.remainingDistance < STOPPING_DISTANCE)
                 {
-                    stateMachine.ExitCategory(Category, null);
+                    CheckUnitInRange();
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace Gameplay.Unit.Character.Creep
         protected virtual void TimerUpdateTargetPosition()
         {
             countCooldownUpdateTargetPosition += Time.deltaTime;
-            if (countCooldownUpdateTargetPosition > cooldownUpdateTargetPosition)
+            if (countCooldownUpdateTargetPosition > COOLDOWN_UPDATE_TARGET_POSITION)
             {
                 navMeshAgent.destination = currentTarget.transform.position;
                 countCooldownUpdateTargetPosition = 0;
@@ -106,10 +106,17 @@ namespace Gameplay.Unit.Character.Creep
             countTimerRunToTarget += Time.deltaTime;
             if (countTimerRunToTarget >= timerRunToTarget)
             {
-                creepIdleState.SetTarget(null);
-                stateMachine.ExitCategory(Category, null);
+                CheckUnitInRange();
                 countTimerRunToTarget = 0;
             }
+        }
+
+        protected virtual void CheckUnitInRange()
+        {
+            if (stateMachine.GetState<CreepAttackState>().IsFindUnitInRange())
+                stateMachine.ExitCategory(Category, typeof(CreepAttackState));
+            else
+                stateMachine.ExitCategory(Category, null);
         }
     }
 

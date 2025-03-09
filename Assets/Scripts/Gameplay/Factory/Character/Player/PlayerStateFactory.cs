@@ -38,11 +38,6 @@ namespace Gameplay.Factory.Character.Player
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
 
 
-        public override void Initialize()
-        {
-            
-        }
-        
         public override State CreateState(Type stateType)
         {
             State result = stateType switch
@@ -134,9 +129,9 @@ namespace Gameplay.Factory.Character.Player
         private PlayerSpecialActionState CreateSpecialActionState()
         {
             return (PlayerSpecialActionState)new PlayerSpecialActionStateBuilder()
-                .SetBlockClip(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip)
                 .SetCharacterAnimation(characterAnimation)
                 .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig)
+                .SetConfig(so_PlayerSpecialAction)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();

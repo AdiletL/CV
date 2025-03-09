@@ -25,7 +25,7 @@ namespace Gameplay.Unit.Character
 
         private void Update()
         {
-            if(!isInitialized) return;
+            if(!IsActive || !isInitialized) return;
             ReductionEndurance();
         }
 

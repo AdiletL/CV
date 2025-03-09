@@ -8,7 +8,7 @@ namespace Gameplay.Unit
 {
     [SelectionBase]
     [RequireComponent(typeof(UnitCenter))]
-    public abstract class UnitController : MonoBehaviour, IUnit
+    public abstract class UnitController : MonoBehaviour, IUnit, IActivatable
     {
         [Inject] protected DiContainer diContainer;
         
@@ -19,6 +19,8 @@ namespace Gameplay.Unit
 
         protected UnitCenter unitCenter;
         protected UnitRenderer unitRenderer;
+
+        public bool IsActive { get; protected set; }
         
         public T GetComponentInUnit<T>() where T: class
         {
@@ -41,13 +43,30 @@ namespace Gameplay.Unit
             }
         }
 
+        public virtual void Activate()
+        {
+            var iActivatables = components.GetComponentsInGameObjects<IActivatable>();
+            for (int i = 0; i < iActivatables.Count; i++)
+                if(!ReferenceEquals(iActivatables[i], this)) 
+                    iActivatables[i].Activate();
+            IsActive = true;
+        }
+
+        public virtual void Deactivate()
+        {
+            var iActivatables = components.GetComponentsInGameObjects<IActivatable>();
+            for (int i = 0; i < iActivatables.Count; i++)
+                if(!ReferenceEquals(iActivatables[i], this)) 
+                    iActivatables[i].Deactivate();
+            IsActive = false;
+        }
+        
         public abstract void Appear();
         public abstract void Disappear();
         
         public void Show() => VisualParent?.SetActive(true);
         public void Hide() => VisualParent?.SetActive(false);
-
-
+        
         public virtual void MoveDirection(Vector3 direction, float speed)
         {
             transform.Translate(direction * (speed * Time.deltaTime));

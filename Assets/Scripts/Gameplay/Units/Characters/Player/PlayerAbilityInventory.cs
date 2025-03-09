@@ -14,7 +14,7 @@ using Zenject;
 namespace Gameplay.Unit.Character.Player
 {
     [RequireComponent(typeof(AbilityHandler))]
-    public class PlayerAbilityInventory : MonoBehaviour, IInventory
+    public class PlayerAbilityInventory : MonoBehaviour, IInventory, IActivatable
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
@@ -40,6 +40,9 @@ namespace Gameplay.Unit.Character.Player
         private bool isNextFrameFromUnblockInput;
         
         private Dictionary<int?, Ability.Ability> slots;
+        
+        public bool IsActive { get; private set; }
+
         
         public bool IsFullInventory()
         {
@@ -81,6 +84,9 @@ namespace Gameplay.Unit.Character.Player
             for (int i = 0; i < maxSlot; i++)
                 slots.Add(i, null);
         }
+        
+        public void Activate() => IsActive = true;
+        public void Deactivate() => IsActive = false;
 
         public void AddAbility(Ability.Ability ability, Sprite icon)
         {

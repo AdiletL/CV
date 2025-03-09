@@ -4812,7 +4812,15 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8641291860690897369, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: nextRoomConfigHandler.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8641291860690897369, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
       propertyPath: 'nextRoomContainers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 5672639890704453420}
+    - target: {fileID: 8641291860690897369, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}
+      propertyPath: 'nextRoomConfigHandler.Array.data[0]'
       value: 
       objectReference: {fileID: 5672639890704453420}
     - target: {fileID: 8641291860690897369, guid: a1b1a6c0f5f44114989113034570e7bc, type: 3}

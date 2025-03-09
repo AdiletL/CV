@@ -49,7 +49,7 @@ namespace Gameplay.Unit.Trap
             isReady = true;
         }
 
-        private void Reset()
+        private void Stop()
         {
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
@@ -69,13 +69,13 @@ namespace Gameplay.Unit.Trap
         }
 
 
-        public override void Activate()
+        public override void Trigger()
         {
             isReady = false;
             Reset();
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(startTimer, Duration));
         }
-        public override void Deactivate()
+        public override void Reset()
         {
             trapAnimation.ChangeAnimationWithDuration(deactivateClip);
             if(startTimerCoroutine != null)

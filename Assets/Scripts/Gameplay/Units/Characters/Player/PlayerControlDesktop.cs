@@ -17,7 +17,6 @@ namespace Gameplay.Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeyse;
         private event Action OnHandleInput;
-        public static event Action<InputType> OnBlockInput; 
         
         private PhotonView photonView;
         private StateMachine stateMachine;

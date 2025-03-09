@@ -11,9 +11,10 @@ namespace Gameplay.Unit.Character
         protected SO_CharacterMove so_CharacterMove;
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
-        protected AnimationClip[] runClips;
         protected GameObject gameObject;
         protected Transform center;
+        protected AnimationClip[] runClips;
+        protected AnimationClip currentClip;
 
         protected float durationAnimation;
         protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
@@ -28,9 +29,9 @@ namespace Gameplay.Unit.Character
         public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
         
 
-        protected AnimationClip getRandomRunClip()
+        protected AnimationClip getRandomClip(AnimationClip[] clips)
         {
-            return  runClips[Random.Range(0, runClips.Length)];
+            return clips[Random.Range(0, clips.Length)];
         }
 
         public override void Initialize()
@@ -38,12 +39,7 @@ namespace Gameplay.Unit.Character
             base.Initialize();
             MovementSpeedStat.AddValue(so_CharacterMove.RunSpeed);
             runClips = so_CharacterMove.RunClip;
-        }
-
-        public override void Enter()
-        {
-            base.Enter();
-            PlayAnimation();
+            unitAnimation.AddClips(runClips);
         }
 
         public override void Update()
@@ -59,13 +55,13 @@ namespace Gameplay.Unit.Character
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
-            unitAnimation.ChangeAnimationWithDuration(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
+            unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeedStat.CurrentValue;
-            unitAnimation.SetSpeedClip(getRandomRunClip(), duration: durationAnimation, SPEED_MOVEMENT_NAME);
+            unitAnimation.SetSpeedClip(currentClip, duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
         
         public virtual void ExecuteMovement()

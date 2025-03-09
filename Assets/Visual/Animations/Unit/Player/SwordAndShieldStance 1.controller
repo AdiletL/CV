@@ -581,7 +581,7 @@ AnimatorStateMachine:
     m_Position: {x: 1504.4719, y: 557.18445, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3675993921776099901}
-    m_Position: {x: 1533.753, y: 241.36736, z: 0}
+    m_Position: {x: 1530, y: 240, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 9122867212508052709}
     m_Position: {x: 1530, y: -40, z: 0}
@@ -755,7 +755,7 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Block
+    m_Name: SpecialAction
     m_StateMachine: {fileID: 3031098760148097088}
     m_Mask: {fileID: 31900000, guid: 6ebeb726d4577e547b2123b7785f188f, type: 2}
     m_Motions: []
@@ -889,7 +889,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Block
+  m_Name: SpecialAction
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 5141089469717679989}

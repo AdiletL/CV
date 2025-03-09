@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit
 {
-    public abstract class UnitHealth : MonoBehaviour, IHealth
+    public abstract class UnitHealth : MonoBehaviour, IHealth, IActivatable
     {
         public event Action<float, float> OnChangedHealth;
         public event Action OnZeroHealth;
@@ -17,6 +17,7 @@ namespace Gameplay.Unit
         public Stat HealthStat { get; } = new Stat();
         public Stat RegenerationStat { get; } = new Stat();
         public bool IsLive { get; protected set; }
+        public bool IsActive { get; protected set; }
         
         
         protected virtual void OnEnable()
@@ -37,6 +38,9 @@ namespace Gameplay.Unit
             HealthStat.AddValue(so_UnitHealth.MaxHealth);
         }
 
+        public void Activate() => IsActive = true;
+        public void Deactivate() => IsActive = false;
+        
         protected virtual void OnAddHealthStatCurrentValue(float value)
         {
             IsLive = HealthStat.CurrentValue > 0;

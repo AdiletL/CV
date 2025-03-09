@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: SO_BeholderAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 100
-  <AttackSpeed>k__BackingField: 300
+  <AttackSpeed>k__BackingField: 150
+  <AngleToTarget>k__BackingField: 50
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 8
-  <Range>k__BackingField: 2
-  <ApplyDamageMoment>k__BackingField: 0.55
+  <Range>k__BackingField: 2.5
+  <RotationSpeed>k__BackingField: 1000
   <BaseReductionEndurance>k__BackingField: 0.01
-  <AttackClips>k__BackingField:
-  - {fileID: 7400000, guid: 0be5f44ec700489faeb0ae9c20edd329, type: 3}
-  - {fileID: 7400000, guid: b1522de0f5934d5a8f7086ec995cab43, type: 3}
-  - {fileID: 7400000, guid: a5aa3ce397c24155845dba13bc634b36, type: 3}
-  - {fileID: 7400000, guid: e9a3d959a28a4f02940e36a70434d669, type: 3}
-  <CooldownClip>k__BackingField: {fileID: 7400000, guid: d7a9297b2394411eb911484794b32687, type: 3}
+  <DefaultAnimations>k__BackingField:
+  - Clip: {fileID: 7400000, guid: a5aa3ce397c24155845dba13bc634b36, type: 3}
+    MomentEvent: 0.68
+  - Clip: {fileID: 7400000, guid: e9a3d959a28a4f02940e36a70434d669, type: 3}
+    MomentEvent: 0.73
+  <AttackAnimations>k__BackingField: []

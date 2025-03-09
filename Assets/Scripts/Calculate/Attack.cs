@@ -36,7 +36,6 @@ namespace Calculate
 
         public static bool IsFindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
-            var isUnit = false;
             float sqrRadius = radius * radius;
             
             int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
@@ -59,8 +58,7 @@ namespace Calculate
                         if (Physics.Raycast(origin, directionToTarget, out var hit2, radius)
                             && hit2.transform.gameObject == hit.gameObject)
                         {
-                            isUnit = true;
-                            break;
+                            return true;
                         }
                     }
                 }
@@ -71,7 +69,7 @@ namespace Calculate
                 overlapHits[i] = null;
             }
 
-            return isUnit;
+            return false;
         }
     }
 }

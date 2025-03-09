@@ -79,7 +79,7 @@ namespace Gameplay.Unit.Trap.Hammer
             SetTarget(null);
         }
         
-        public override void Activate()
+        public override void Trigger()
         {
             isReady = false;
             
@@ -99,7 +99,7 @@ namespace Gameplay.Unit.Trap.Hammer
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, Deactivate));
         }
 
-        public override void Deactivate()
+        public override void Reset()
         {
             hammerAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
             if(startTimerCoroutine != null)

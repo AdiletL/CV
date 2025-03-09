@@ -43,7 +43,6 @@ namespace Gameplay.Unit.Character.Creep
             characterAnimation.Initialize();
             
             CreepStateFactory = CreateCreepStateFactory();
-            CreepStateFactory.Initialize();
         }
 
         protected override void AfterInitializeMediator()
@@ -58,8 +57,9 @@ namespace Gameplay.Unit.Character.Creep
             characterEndurance.Initialize();
         }
 
-        public override void Appear()
+        public override void Activate()
         {
+            base.Activate();
             navMeshAgent.enabled = true;
             gravity.ActivateGravity();
         }
@@ -86,11 +86,13 @@ namespace Gameplay.Unit.Character.Creep
 
         protected void Update()
         {
+            if(!IsActive) return;
             this.StateMachine?.Update();
         }
 
         protected void LateUpdate()
         {
+            if(!IsActive) return;
             this.StateMachine?.LateUpdate();
         }
         

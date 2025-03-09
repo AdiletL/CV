@@ -2,14 +2,14 @@
 
 namespace Gameplay.Unit.Character.Creep
 {
-    public class BeholderPatrolState : CreepAgentPatrolState
+    public class BeholderPatrolState : CreepPatrolState
     {
         private float countCooldownCheckEnemy;
         private const float COOLDOWN_CHECK_ENEMY = .3f;
         
-        public override void LateUpdate()
+        public override void Update()
         {
-            base.LateUpdate();
+            base.Update();
             CheckEnemy();
         }
 

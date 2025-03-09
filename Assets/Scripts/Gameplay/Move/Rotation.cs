@@ -5,9 +5,9 @@ namespace Movement
     public class Rotation
     {
         private Transform transform;
-        public Transform target;
+        private Transform target;
         private Vector3 direction = Vector3.up;
-        public float rotationSpeed;
+        private float rotationSpeed;
         private bool isIgonreX = true;
         private bool isIgonreY = false;
         private bool isIgonreZ = true;

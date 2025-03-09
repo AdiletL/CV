@@ -15,10 +15,10 @@ MonoBehaviour:
   <IdleClip>k__BackingField:
   - {fileID: 7400000, guid: 1125a2cce46b489590671831483c9b9f, type: 3}
   - {fileID: 7400000, guid: d7a9297b2394411eb911484794b32687, type: 3}
-  <RotateSpeed>k__BackingField: 700
-  <RunClips>k__BackingField:
+  <RunClip>k__BackingField:
   - {fileID: 7400000, guid: cabb129121944e2dbd3866b6deba6b9d, type: 3}
   <RunSpeed>k__BackingField: 2.5
+  <RotateSpeed>k__BackingField: 700
   <WalkClips>k__BackingField:
   - {fileID: 7400000, guid: 38b0b6ad62ca4f8fa72ac537c889c8dc, type: 3}
   <WalkSpeed>k__BackingField: 1

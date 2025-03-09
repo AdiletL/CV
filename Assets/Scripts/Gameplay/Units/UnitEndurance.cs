@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit
 {
-    public abstract class UnitEndurance : MonoBehaviour, IEndurance
+    public abstract class UnitEndurance : MonoBehaviour, IEndurance, IActivatable
     {
         public event Action<float, float> OnChangedEndurance;
         
@@ -13,8 +13,11 @@ namespace Gameplay.Unit
         
         public Stat EnduranceStat { get; } = new Stat();
         public Stat RegenerationStat { get; } = new Stat();
+        public bool IsActive { get; protected set; }
         
-
+        public void Activate() => IsActive = true;
+        public void Deactivate() => IsActive = false;
+        
         protected virtual void OnEnable()
         {
             EnduranceStat.OnAddCurrentValue += OnAddHealthStatCurrentValue;

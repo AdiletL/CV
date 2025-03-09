@@ -14,8 +14,6 @@ namespace Gameplay.Factory.Character
         public void SetUnitCenter(UnitCenter unitCenter) => this.unitCenter = unitCenter;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         
-        public abstract void Initialize();
-
         public abstract State CreateState(Type stateType);
     }
 

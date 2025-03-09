@@ -32,7 +32,7 @@ namespace Gameplay.Manager
             UpdateNavMeshBounds();
 
             yield return null;
-            roomController.StartGame();
+            roomController.Activate();
         }
 
         private void UpdateNavMeshBounds()

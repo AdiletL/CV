@@ -7,7 +7,7 @@ namespace Gameplay.Unit.Trap
     {
         [SerializeField] private TrapController[] traps;
         
-        public override void Activate()
+        public override void Trigger()
         {
             foreach (var VARIABLE in traps)
             {
@@ -16,7 +16,7 @@ namespace Gameplay.Unit.Trap
             }
         }
 
-        public override void Deactivate()
+        public override void Reset()
         {
             foreach (var VARIABLE in traps)
             {

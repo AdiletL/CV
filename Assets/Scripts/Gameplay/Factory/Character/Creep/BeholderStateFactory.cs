@@ -17,11 +17,6 @@ namespace Gameplay.Factory.Character.Creep
         public void SetBeholderHealthConfig(SO_BeholderHealth config) => so_BeholderHealth = config;
         
         
-        public override void Initialize()
-        {
-            
-        }
-
         public override State CreateState(Type stateType)
         {
             State result = stateType switch
@@ -29,7 +24,7 @@ namespace Gameplay.Factory.Character.Creep
                 _ when stateType == typeof(BeholderIdleState) => CreateIdleState(),
                 _ when stateType == typeof(BeholderPatrolState) => CreatePatrolState(),
                 _ when stateType == typeof(BeholderMoveState) => CreateRunState(),
-                _ when stateType == typeof(BeholderAttackState) => CreateDefaultAttack(),
+                _ when stateType == typeof(BeholderAttackState) => CreateAttackState(),
                 _ when stateType == typeof(BeholderTakeDamageState) => CreateTakeDamageState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
@@ -54,10 +49,9 @@ namespace Gameplay.Factory.Character.Creep
             var result = (BeholderPatrolState)new BeholderPatrolStateBuilder()
                 .SetNavMeshAgent(navMeshAgent)
                 .SetCharacterAnimation(characterAnimation)
-                .SetWalkClips(so_BeholderMove.WalkClips)
-                .SetRotationSpeed(so_BeholderMove.RotateSpeed)
                 .SetPatrolPoints(patrolPoints)
                 .SetCenter(unitCenter.Center)
+                .SetConfig(so_BeholderMove)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
@@ -79,7 +73,7 @@ namespace Gameplay.Factory.Character.Creep
             return result;
         }
         
-        private BeholderAttackState CreateDefaultAttack()
+        private BeholderAttackState CreateAttackState()
         {
             var result = (BeholderAttackState)new BeholderAttackStateBuilder()
                 .SetNavMeshAgent(navMeshAgent)

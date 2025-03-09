@@ -71,10 +71,11 @@ namespace Gameplay.Manager
             playerController = playerGameObject.GetComponent<PlayerController>();
             diContainer.Inject(playerController);
             diContainer.Bind<PlayerController>().FromInstance(playerController);
+            gameUnits.AddUnits(playerController.gameObject);
             
             playerController.Initialize();
 
-            gameUnits.AddUnits(playerController.gameObject);
+            playerController.Activate();
             playerController.Appear();
         }
     }

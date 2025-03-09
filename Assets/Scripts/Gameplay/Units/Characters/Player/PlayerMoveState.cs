@@ -26,6 +26,13 @@ namespace Gameplay.Unit.Character.Player
             RotationSpeedStat.AddValue(so_PlayerMove.RotateSpeed);
         }
 
+        public override void Enter()
+        {
+            base.Enter();
+            currentClip = getRandomClip(runClips);
+            PlayAnimation();
+        }
+
         public override void Subscribe()
         {
             base.Subscribe();

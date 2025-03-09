@@ -50,7 +50,7 @@ namespace Gameplay.Unit.Trap.Fall
             throw new NotImplementedException();
         }
 
-        public override void Activate()
+        public override void Trigger()
         {
             if(!isReady) return;
             isReady = false;
@@ -58,7 +58,7 @@ namespace Gameplay.Unit.Trap.Fall
             FallGravity();
         }
 
-        public override void Deactivate()
+        public override void Reset()
         {
             if(isReady) return;
             isReady = true;

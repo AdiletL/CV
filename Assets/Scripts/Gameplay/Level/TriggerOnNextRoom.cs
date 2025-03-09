@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    [RequireComponent(typeof(NextRoomContainer))]
+    [RequireComponent(typeof(NextRoomConfigHandler))]
     public class TriggerOnNextRoom : MonoBehaviour
     {
-        private NextRoomContainer nextRoomContainer;
+        private NextRoomConfigHandler _nextRoomConfigHandler;
         private bool isTriggerPlayer;
 
         private void Start()
         {
-            nextRoomContainer = GetComponent<NextRoomContainer>();
+            _nextRoomConfigHandler = GetComponent<NextRoomConfigHandler>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -21,7 +21,7 @@ namespace Gameplay
             if (other.TryGetComponent(out PlayerController player))
             {
                 isTriggerPlayer = true;
-                nextRoomContainer.TriggerNextRoom();
+                _nextRoomConfigHandler.TriggerNextRoom();
             }
         }
     } 

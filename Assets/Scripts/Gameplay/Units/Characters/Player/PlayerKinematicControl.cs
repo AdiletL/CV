@@ -8,7 +8,7 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(KinematicCharacterMotor))]
     public class PlayerKinematicControl : MonoBehaviour, ICharacterController, IMoveControl
     {
-        [SerializeField] private KinematicCharacterMotor  motor;
+        [SerializeField] private KinematicCharacterMotor motor;
 
         private Vector3 gravity;
         

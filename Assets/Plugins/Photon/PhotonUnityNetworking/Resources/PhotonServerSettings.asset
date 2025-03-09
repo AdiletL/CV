@@ -144,6 +144,15 @@ MonoBehaviour:
   - InitializeUICastTimer
   - InitializeUIContextMenu
   - InitializeMainCanvas
+  - ActivateCells
+  - ActivateCharacters
+  - ActivateContainers
+  - ActivateTraps
+  - DeactivateCells
+  - DeactivateCharacters
+  - DeactivateContainers
+  - DeactivateTraps
+  - InitializeContainers
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

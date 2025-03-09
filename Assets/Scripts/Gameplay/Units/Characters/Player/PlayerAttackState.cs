@@ -1,6 +1,8 @@
-﻿using Gameplay.Equipment.Weapon;
+﻿using System;
+using Gameplay.Equipment.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Gameplay.Unit.Character.Player
 {
@@ -19,21 +21,70 @@ namespace Gameplay.Unit.Character.Player
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
         public void SetPlayerKinematicControl(PlayerKinematicControl control) => playerKinematicControl = control;
 
+        protected override AnimationEventConfig getAnimationEventConfig()
+        {
+            if (CurrentWeapon == null)
+                return so_PlayerAttack.DefaultAnimations[Random.Range(0, so_PlayerAttack.DefaultAnimations.Length)];
+
+            AnimationEventConfig config = CurrentWeapon switch
+            {
+                _ when CurrentWeapon.GetType() == typeof(Sword) => so_PlayerAttack.SwordAnimations[
+                    Random.Range(0, so_PlayerAttack.SwordAnimations.Length)],
+                _ when CurrentWeapon.GetType() == typeof(Bow) => so_PlayerAttack.BowAnimations[
+                    Random.Range(0, so_PlayerAttack.BowAnimations.Length)],
+                _ => throw new ArgumentException($"Unknown state type: {CurrentWeapon.GetType()}")
+            };
+            return config;
+        }
+        
         public override void Initialize()
         {
             base.Initialize();
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
             RotationSpeed.AddValue(so_PlayerAttack.RotationSpeed);
+            
+            for (int i = 0; i < so_PlayerAttack.SwordAnimations.Length; i++)
+                unitAnimation.AddClip(so_PlayerAttack.SwordAnimations[i].Clip);
+            
+            for (int i = 0; i < so_PlayerAttack.BowAnimations.Length; i++)
+                unitAnimation.AddClip(so_PlayerAttack.BowAnimations[i].Clip);
         }
 
+        protected override void SubscribeStatEvent()
+        {
+            base.SubscribeStatEvent();
+            RangeStat.OnAddCurrentValue += OnAddRangeStatCurrentValue;
+            RangeStat.OnRemoveCurrentValue += OnRemoveRangeStatCurrentValue;
+        }
+
+        protected override void UnsubscribeStatEvent()
+        {
+            base.UnsubscribeStatEvent();
+            RangeStat.OnAddCurrentValue -= OnAddRangeStatCurrentValue;
+            RangeStat.OnRemoveCurrentValue -= OnRemoveRangeStatCurrentValue;
+        }
+
+        private void OnAddRangeStatCurrentValue(float value)
+        {
+            var totalRange = RangeStat.CurrentValue;
+            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
+            unitRenderer.SetRangeScale(totalRange);
+        }
+        private void OnRemoveRangeStatCurrentValue(float value)
+        {
+            var totalRange = RangeStat.CurrentValue;
+            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
+            unitRenderer.SetRangeScale(totalRange);
+        }
+        
         public override void Enter()
         {
             base.Enter();
+            ClearValues();
             playerKinematicControl.SetRotationSpeed(RotationSpeed.CurrentValue);
             UpdateDirection();
-            ClearValues();
             SetRotateDirection();
-            currentClip = getRandomAnimationClip();
+            UpdateCurrentClip();
         }
 
         public override void Update()
@@ -51,20 +102,8 @@ namespace Gameplay.Unit.Character.Player
         {
             base.ClearValues();
             isFacingTarget = false;
-            countDurationAttack = 0;
-            isFacingTarget = false;
-            isAttacked = false;
         }
-
-        private void ClearColorAtTarget()
-        {
-            if (currentTarget)
-            {
-                if(currentTarget.TryGetComponent(out UnitRenderer unitRenderer))
-                    unitRenderer.ResetColor();
-            }
-        }
-
+        
         private void UpdateDirection()
         {
             // Получаем позицию мыши в мировых координатах
@@ -75,16 +114,6 @@ namespace Gameplay.Unit.Character.Player
             // Вычисляем направление
             direction = worldMousePosition - gameObject.transform.position;
             direction.y = 0; // Игнорируем высоту, вращаем только по Y
-        }
-
-        public override void SetWeapon(Equipment.Weapon.Weapon weapon)
-        {
-            base.SetWeapon(weapon);
-            switch (weapon)
-            {
-                case Sword sword: SetAnimationClip(so_PlayerAttack.SwordAttackClip); break;
-                case Bow bow: SetAnimationClip(so_PlayerAttack.BowAttackClip); break;
-            }
         }
 
         protected void SetRotateDirection()
@@ -114,8 +143,7 @@ namespace Gameplay.Unit.Character.Player
 
         protected override void DefaultApplyDamage()
         {
-            base.DefaultApplyDamage();
-            
+            FindUnitInRange();
             if(currentTarget &&
                Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
                    gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&

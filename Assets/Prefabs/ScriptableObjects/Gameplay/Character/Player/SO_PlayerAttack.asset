@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
   <AttackSpeed>k__BackingField: 100
+  <AngleToTarget>k__BackingField: 100
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 128
   <Range>k__BackingField: 0.5
-  <ApplyDamageMoment>k__BackingField: 0.45
-  <BaseReductionEndurance>k__BackingField: 0.2
-  <DefaultAttackClips>k__BackingField:
-  - {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}
-  <DefaultCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 61f2c64d4f97d9f459a1d367eb16fb13, type: 3}
-  <SwordAttackClip>k__BackingField:
-  - {fileID: 1827226128182048838, guid: db509ad77f9b4f84a8eb1989f589b24c, type: 3}
-  - {fileID: 1827226128182048838, guid: 8283fadf2c89507469495f30db8680db, type: 3}
-  - {fileID: 1827226128182048838, guid: 9a6c3585df66f2e4782635fc7a23494c, type: 3}
-  <SwordCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 0308cf4e83cf517488b60af58b290fe0, type: 3}
-  <BowAttackClip>k__BackingField:
-  - {fileID: 1827226128182048838, guid: 03bef14f938475e429e87b9e986bc32c, type: 3}
-  <BowCooldownClip>k__BackingField: {fileID: 1827226128182048838, guid: 7125eebf1200f4b4ba2f105c37668d1d, type: 3}
   <RotationSpeed>k__BackingField: 800
+  <BaseReductionEndurance>k__BackingField: 0.2
+  <DefaultAnimations>k__BackingField:
+  - Clip: {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}
+    MomentEvent: 0.4
+  <SwordAnimations>k__BackingField:
+  - Clip: {fileID: 1827226128182048838, guid: db509ad77f9b4f84a8eb1989f589b24c, type: 3}
+    MomentEvent: 0.28
+  - Clip: {fileID: 1827226128182048838, guid: 8283fadf2c89507469495f30db8680db, type: 3}
+    MomentEvent: 0.33
+  - Clip: {fileID: 1827226128182048838, guid: 9a6c3585df66f2e4782635fc7a23494c, type: 3}
+    MomentEvent: 0.46
+  <BowAnimations>k__BackingField: []
   <BlockInputType>k__BackingField: 19

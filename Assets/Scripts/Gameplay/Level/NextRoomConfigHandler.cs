@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class NextRoomContainer : MonoBehaviour
+    public class NextRoomConfigHandler : MonoBehaviour
     {
         public event Action<int> OnTrigger;
 

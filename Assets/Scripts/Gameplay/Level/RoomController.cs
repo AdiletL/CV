@@ -9,18 +9,19 @@ using Gameplay.Unit.Container;
 using Gameplay.Unit.Trap;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay
 {
-    public class RoomController : MonoBehaviour
+    public class RoomController : MonoBehaviour, IActivatable
     {
         [Inject] private DiContainer diContainer;
         [Inject] private GameUnits gameUnits;
 
         public static Action<int> OnTriggerSpawnNextRoom;
         
-        [SerializeField] private NextRoomContainer[] nextRoomContainers;
+        [SerializeField] private NextRoomConfigHandler[] nextRoomConfigHandler;
         
         [Space(10)]
         [SerializeField] private CellController[] cells;
@@ -34,12 +35,8 @@ namespace Gameplay
         private PhotonView photonView;
         private int countCreep;
         
-        private Stack<CellController> cellStack = new();
-        private Stack<CharacterMainController> charactersStack = new();
-        private Stack<TrapController> trapsStack = new();
-        private Stack<ContainerController> interactableObjectStack = new();
-        
         public int ID { get; private set; }
+        public bool IsActive { get; protected set; }
         
         
         #region Editor
@@ -59,7 +56,7 @@ namespace Gameplay
             characters = GetComponentsInChildren<CharacterMainController>(true);
             traps = GetComponentsInChildren<TrapController>(true);
             containers = GetComponentsInChildren<ContainerController>(true);
-            nextRoomContainers = GetComponentsInChildren<NextRoomContainer>(true);
+            nextRoomConfigHandler = GetComponentsInChildren<NextRoomConfigHandler>(true);
 
             yield return null;
             MarkDirty();
@@ -82,9 +79,9 @@ namespace Gameplay
             photonView.RPC(nameof(InitializeCells), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeCharacters), RpcTarget.AllBuffered);
             photonView.RPC(nameof(InitializeTraps), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(InitializeInteractableObjects), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(InitializeContainers), RpcTarget.AllBuffered);
 
-            InitializeMediator();
+            SubscribeEvent();
         }
 
         [PunRPC]
@@ -95,9 +92,7 @@ namespace Gameplay
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
-                if (!VARIABLE.gameObject.activeSelf) continue;
-                cellStack.Push(VARIABLE);
-                VARIABLE.Hide();
+                VARIABLE.Deactivate();
             }
         }
         [PunRPC]
@@ -108,9 +103,7 @@ namespace Gameplay
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
-                if (!VARIABLE.gameObject.activeSelf) continue;
-                charactersStack.Push(VARIABLE);
-                VARIABLE.Hide();
+                VARIABLE.Deactivate();
             }
         }
         [PunRPC]
@@ -121,27 +114,23 @@ namespace Gameplay
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
-                if (!VARIABLE.gameObject.activeSelf) continue;
-                trapsStack.Push(VARIABLE);
-                VARIABLE.Hide();
+                VARIABLE.Deactivate();
             }
         }
         [PunRPC]
-        private void InitializeInteractableObjects()
+        private void InitializeContainers()
         {
             foreach (var VARIABLE in containers)
             {
                 gameUnits.AddUnits(VARIABLE.gameObject);
                 diContainer.Inject(VARIABLE);
                 VARIABLE.Initialize();
-                if (!VARIABLE.gameObject.activeSelf) continue;
-                interactableObjectStack.Push(VARIABLE);
-                VARIABLE.Hide();
+                VARIABLE.Deactivate();
             }
         }
         #endregion
 
-        private void InitializeMediator()
+        private void SubscribeEvent()
         {
             foreach (var VARIABLE in characters)
             {
@@ -152,10 +141,10 @@ namespace Gameplay
                 }
             }
 
-            foreach (var VARIABLE in nextRoomContainers)
+            foreach (var VARIABLE in nextRoomConfigHandler)
                 VARIABLE.OnTrigger += OnTriggerNextRoom;
         }
-        private void DeInitializeMediator()
+        private void UnSubscribeEvent()
         {
             foreach (var VARIABLE in characters)
             {
@@ -163,84 +152,80 @@ namespace Gameplay
                     creepController.OnDeath -= OnCreepDeath;
             }
             
-            foreach (var VARIABLE in nextRoomContainers)
+            foreach (var VARIABLE in nextRoomConfigHandler)
                 VARIABLE.OnTrigger -= OnTriggerNextRoom;
         }
 
         #region StartGame
-        public void StartGame()
+        public void Activate()
         {
-            photonView.RPC(nameof(ShowCells), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(ShowTraps), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(ShowCharacters), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(ShowInteractableObjects), RpcTarget.AllBuffered);
-            
-            photonView.RPC(nameof(AppearCells), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(AppearTraps), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(AppearCharacters), RpcTarget.AllBuffered);
-            photonView.RPC(nameof(AppearInteractableObjects), RpcTarget.AllBuffered);
-            //ShowCells();
-            //ShowTraps();
-            //ShowCharacters();
-            //ShowInteractableObjects();
-            
-            //AppearCells();
-            //AppearTraps();
-            //AppearCharacters();
-           // AppearInteractableObjects();
+            photonView.RPC(nameof(ActivateCells), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ActivateTraps), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ActivateCharacters), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(ActivateContainers), RpcTarget.AllBuffered);
+            IsActive = true;
         }
 
-        #region Show
-        [PunRPC]
-        private void ShowCells()
+        public void Deactivate()
         {
-            foreach (var VARIABLE in cellStack)
-                VARIABLE.Show();
+            photonView.RPC(nameof(DeactivateCells), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(DeactivateTraps), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(DeactivateCharacters), RpcTarget.AllBuffered);
+            photonView.RPC(nameof(DeactivateContainers), RpcTarget.AllBuffered);
+            IsActive = false;
+        }
+        
+        #region Activate
+        [PunRPC]
+        private void ActivateCells()
+        {
+            foreach (var VARIABLE in cells)
+                if(VARIABLE.gameObject.activeSelf) VARIABLE.Activate();
         }
         [PunRPC]
-        private void ShowCharacters()
+        private void ActivateCharacters()
         {
-            foreach (var VARIABLE in charactersStack)
-                VARIABLE.Show();
+            foreach (var VARIABLE in characters)
+                if(VARIABLE.gameObject.activeSelf) VARIABLE.Activate();
         }
         [PunRPC]
-        private void ShowTraps()
+        private void ActivateTraps()
         {
-            foreach (var VARIABLE in trapsStack)
-                VARIABLE.Show();
+            foreach (var VARIABLE in traps)
+                if(VARIABLE.gameObject.activeSelf) VARIABLE.Activate();
         }
         [PunRPC]
-        private void ShowInteractableObjects()
+        private void ActivateContainers()
         {
-            foreach (var VARIABLE in interactableObjectStack)
-                VARIABLE.Show();
+            foreach (var VARIABLE in containers)
+                if(VARIABLE.gameObject.activeSelf) VARIABLE.Activate();
         }
         #endregion
-
-        #region Appear
+        
+        #region Deactivate
         [PunRPC]
-        private void AppearCells()
+        private void DeactivateCells()
         {
-            foreach (var VARIABLE in cellStack)
-                VARIABLE.Appear();
+            foreach (var VARIABLE in cells)
+                VARIABLE.Deactivate();
         }
         [PunRPC]
-        private void AppearCharacters()
+        private void DeactivateCharacters()
         {
-            foreach (var VARIABLE in charactersStack)
-                VARIABLE.Appear();
+            foreach (var VARIABLE in characters)
+                VARIABLE.Deactivate();
         }
         [PunRPC]
-        private void AppearTraps()
+        private void DeactivateTraps()
         {
-            foreach (var VARIABLE in trapsStack)
-                VARIABLE.Appear();
+            foreach (var VARIABLE in traps)
+                VARIABLE.Deactivate();
         }
         [PunRPC]
-        private void AppearInteractableObjects()
+        private void DeactivateContainers()
         {
-            foreach (var VARIABLE in interactableObjectStack)
-                VARIABLE.Appear();
+            foreach (var VARIABLE in containers)
+                VARIABLE.Deactivate();
         }
         #endregion
         #endregion
@@ -265,11 +250,10 @@ namespace Gameplay
                 Debug.Log($"Room {ID}: {characters.Length}/{countCreep}");
             }
         }
-        
 
         private void OnDestroy()
         {
-            DeInitializeMediator();
+            UnSubscribeEvent();
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Gameplay.Damage;
-using Gameplay.Equipment.Weapon;
-using Machine;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,7 +14,6 @@ namespace Gameplay.Unit.Character
         protected UnitAnimation unitAnimation;
         protected UnitEndurance unitEndurance;
         protected UnitRenderer unitRenderer;
-        protected AnimationClip[] attackClips;
         protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
         
@@ -25,7 +21,6 @@ namespace Gameplay.Unit.Character
         
         protected float durationAttack, countDurationAttack;
         protected float cooldownApplyDamage, countTimerApplyDamage;
-        protected float applyDamageMoment;
         protected float angleToTarget;
         
         protected bool isAttacked;
@@ -53,33 +48,31 @@ namespace Gameplay.Unit.Character
             return new NormalDamage(gameObject, so_CharacterAttack.Damage);
         }
         
-        public bool IsFindUnitInRange()
+        public virtual bool IsFindUnitInRange()
         {
-            return Calculate.Attack.IsFindUnitInRange<ICreepAttackable>(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
+            return Calculate.Attack.IsFindUnitInRange<IAttackable>(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
         }
-
-        protected AnimationClip getRandomAnimationClip()
+        
+        protected virtual AnimationEventConfig getAnimationEventConfig()
         {
-            return attackClips[Random.Range(0, attackClips.Length)];
+            return so_CharacterAttack.DefaultAnimations[Random.Range(0, so_CharacterAttack.DefaultAnimations.Length)];
         }
-
+        
         public override void Initialize()
         {
             base.Initialize();
             SubscribeStatEvent();
             
             enemyLayer = so_CharacterAttack.EnemyLayer;
-            applyDamageMoment = so_CharacterAttack.ApplyDamageMoment;
             angleToTarget = so_CharacterAttack.AngleToTarget;
-            SetAnimationClip(so_CharacterAttack.DefaultAttackClips);
             
             DamageStat.AddValue(so_CharacterAttack.Damage);
             ReduceEnduranceStat.AddValue(so_CharacterAttack.BaseReductionEndurance);
             AttackSpeedStat.AddValue(so_CharacterAttack.AttackSpeed);
             RangeStat.AddValue(so_CharacterAttack.Range);
-            
-            unitRenderer.SetRangeScale(RangeStat.CurrentValue);
-            unitRenderer.ShowRangeVisual();
+
+            for (int i = 0; i < so_CharacterAttack.DefaultAnimations.Length; i++)
+                unitAnimation.AddClip(so_CharacterAttack.DefaultAnimations[i].Clip);
         }
 
         public override void Enter()
@@ -109,32 +102,15 @@ namespace Gameplay.Unit.Character
 
         protected virtual void SubscribeStatEvent()
         {
-            RangeStat.OnAddCurrentValue += OnAddRangeStatCurrentValue;
-            RangeStat.OnRemoveCurrentValue += OnRemoveRangeStatCurrentValue;
             AttackSpeedStat.OnAddCurrentValue += OnAddAttackSpeedStatCurrentValue;
             AttackSpeedStat.OnRemoveCurrentValue += OnRemoveAttackSpeedStatCurrentValue;
         }
 
         protected virtual void UnsubscribeStatEvent()
         {
-            RangeStat.OnAddCurrentValue -= OnAddRangeStatCurrentValue;
-            RangeStat.OnRemoveCurrentValue -= OnRemoveRangeStatCurrentValue;
             AttackSpeedStat.OnAddCurrentValue -= OnAddAttackSpeedStatCurrentValue;
             AttackSpeedStat.OnRemoveCurrentValue -= OnRemoveAttackSpeedStatCurrentValue;
         }
-        private void OnAddRangeStatCurrentValue(float value)
-        {
-            var totalRange = RangeStat.CurrentValue;
-            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
-            unitRenderer.SetRangeScale(totalRange);
-        }
-        private void OnRemoveRangeStatCurrentValue(float value)
-        {
-            var totalRange = RangeStat.CurrentValue;
-            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
-            unitRenderer.SetRangeScale(totalRange);
-        }
-
         private void OnAddAttackSpeedStatCurrentValue(float value) => UpdateDurationAttack();
         private void OnRemoveAttackSpeedStatCurrentValue(float value) => UpdateDurationAttack();
         
@@ -151,7 +127,13 @@ namespace Gameplay.Unit.Character
         protected void UpdateDurationAttack()
         {
             durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeedStat.CurrentValue);
-            cooldownApplyDamage = durationAttack * applyDamageMoment;
+        }
+
+        protected void UpdateCurrentClip()
+        {
+            var config = getAnimationEventConfig();
+            currentClip = config.Clip;
+            cooldownApplyDamage = durationAttack * config.MomentEvent;
         }
         
         public virtual void SetWeapon(Equipment.Weapon.Weapon weapon)
@@ -178,15 +160,9 @@ namespace Gameplay.Unit.Character
             CurrentWeapon.SetOwnerRangeStat(null);
             CurrentWeapon.Hide();
             CurrentWeapon = null;
-            SetAnimationClip(so_CharacterAttack.DefaultAttackClips);
         }
 
-        protected void SetAnimationClip(AnimationClip[] attackClips)
-        {
-            this.attackClips = attackClips;
-        }
-
-        private void FindUnitInRange()
+        protected void FindUnitInRange()
         {
             var target = Calculate.Attack.FindUnitInRange(center.position, RangeStat.CurrentValue,
                 enemyLayer, ref findUnitColliders);
@@ -228,7 +204,7 @@ namespace Gameplay.Unit.Character
 
         protected virtual void DefaultApplyDamage()
         {
-            FindUnitInRange();
+            
         }
     }
 

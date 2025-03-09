@@ -28,6 +28,7 @@ namespace Gameplay.Unit.Character
         {
             base.Initialize();
             idleClips = so_CharacterMove.IdleClip;
+            characterAnimation.AddClips(idleClips);
         }
 
         public override void Enter()

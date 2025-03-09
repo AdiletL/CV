@@ -201,9 +201,15 @@ namespace Gameplay.Unit.Character.Player
             GetComponentInUnit<CharacterHealth>().OnZeroHealth -= OnZeroHealth;
         }
 
+        public override void Activate()
+        {
+            base.Activate();
+            unitTransformSync.enabled = true;
+        }
+
         public override void Appear()
         {
-            unitTransformSync.enabled = true;
+            
         }
 
         public override void Disappear()
@@ -234,24 +240,10 @@ namespace Gameplay.Unit.Character.Player
             var normalDamageResistance = new NormalDamageResistance(80, ValueType.Percent);
             GetComponentInUnit<ResistanceHandler>().AddResistance(normalDamageResistance);
         }
-
-        protected override void InitializeAllAnimations()
-        {
-            characterAnimation.AddClips(so_PlayerMove.IdleClip);
-            characterAnimation.AddClips(so_PlayerMove.RunClip);
-            characterAnimation.AddClips(so_PlayerAttack.BowAttackClip);
-            characterAnimation.AddClip(so_PlayerAttack.BowCooldownClip);
-            characterAnimation.AddClips(so_PlayerAttack.DefaultAttackClips);
-            characterAnimation.AddClip(so_PlayerAttack.DefaultCooldownClip);
-            characterAnimation.AddClips(so_PlayerAttack.SwordAttackClip);
-            characterAnimation.AddClip(so_PlayerAttack.SwordCooldownClip);
-            characterAnimation.AddClip(so_PlayerMove.JumpConfig.Clip);
-            characterAnimation.AddClip(so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip);
-        }
         
         private void Update()
         {
-            if(!photonView.IsMine) return;
+            if(!IsActive || !photonView.IsMine) return;
             
             playerControlDesktop?.HandleHotkey();
             playerControlDesktop?.HandleInput();
@@ -260,7 +252,8 @@ namespace Gameplay.Unit.Character.Player
 
         private void LateUpdate()
         {
-            if(!photonView.IsMine) return;
+            if(!IsActive || !photonView.IsMine) return;
+            
             StateMachine?.LateUpdate();
         }
         

@@ -1,4 +1,5 @@
 ﻿using Gameplay.Ability;
+using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 using Zenject;
 
@@ -8,6 +9,7 @@ namespace Gameplay.Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         
+        private SO_PlayerSpecialAction so_PlayerSpecialAction;
         private PlayerMoveState playerMoveState;
         private BlockPhysicalDamageConfig blockPhysicalDamageConfig;
         private BlockPhysicalDamageAbility blockPhysicalDamageAbility;
@@ -21,7 +23,6 @@ namespace Gameplay.Unit.Character.Player
         private const int ANIMATION_LAYER = 2;
         
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetBlockClip(AnimationClip blockClip) => this.blockClip = blockClip;
         public void SetBlockPhysicalDamageConfig(BlockPhysicalDamageConfig config) => this.blockPhysicalDamageConfig = config;
 
         private BlockPhysicalDamageAbility CreateBlockPhysicalDamage()
@@ -38,9 +39,13 @@ namespace Gameplay.Unit.Character.Player
         public override void Initialize()
         {
             base.Initialize();
+            so_PlayerSpecialAction = (SO_PlayerSpecialAction)so_CharacterSpecialAction;
+            
             blockPhysicalDamageAbility = CreateBlockPhysicalDamage();
             diContainer.Inject(blockPhysicalDamageAbility);
             blockPhysicalDamageAbility.Initialize();
+            blockClip = so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip;
+            characterAnimation.AddClip(blockClip);
         }
 
         public override void Enter()
@@ -101,12 +106,6 @@ namespace Gameplay.Unit.Character.Player
         {
             if(state is PlayerSpecialActionState playerSpecialActionState)
                 playerSpecialActionState.SetCharacterAnimation(characterAnimation);
-            return this;
-        }
-        public PlayerSpecialActionStateBuilder SetBlockClip(AnimationClip blockClip)
-        {
-            if(state is PlayerSpecialActionState playerSpecialActionState)
-                playerSpecialActionState.SetBlockClip(blockClip);
             return this;
         }
     }
