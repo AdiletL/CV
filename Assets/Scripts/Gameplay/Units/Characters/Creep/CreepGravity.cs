@@ -16,6 +16,7 @@ namespace Gameplay.Unit.Character.Creep
         
         private List<Transform> startRayPoints = new();
         private const float rayDistance = 1;
+        private int baseLayer;
 
         public override bool IsGrounded
         {
@@ -24,7 +25,7 @@ namespace Gameplay.Unit.Character.Creep
                 foreach (var VARIABLE in startRayPoints)
                 {
                     //Debug.DrawRay(VARIABLE.position, Vector3.down * rayDistance, Color.green);
-                    if (Physics.Raycast(VARIABLE.position, Vector3.down, rayDistance))
+                    if (Physics.Raycast(VARIABLE.position, Vector3.down, rayDistance, ~baseLayer))
                         return true;
                 }
 
@@ -40,6 +41,8 @@ namespace Gameplay.Unit.Character.Creep
             
             for (int i = 0; i < startRayPointsParent.childCount; i++)
                 startRayPoints.Add(startRayPointsParent.GetChild(i));
+            
+            baseLayer = gameObject.layer;
         }
 
         private void LateUpdate()

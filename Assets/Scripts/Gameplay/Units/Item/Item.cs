@@ -35,7 +35,7 @@ namespace Gameplay.Unit.Item
         protected bool isActivated;
         protected bool isCasting;
 
-        private List<float> additionalPercentStatsToUnit;
+        private List<float> addedStats;
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetOwnerGameObject(GameObject gameObject) => this.OwnerGameObject = gameObject;
@@ -138,31 +138,37 @@ namespace Gameplay.Unit.Item
 
         public virtual void AddStatsFromUnit()
         {
-            additionalPercentStatsToUnit ??= new List<float>();
-            additionalPercentStatsToUnit.Clear();
+            addedStats ??= new List<float>();
+            addedStats.Clear();
             
             var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
+            float result = 0;
             foreach (var config in Stats)
             {
                 foreach (var statValues in config.StatValuesConfig)
                 {
-                    var unitStats = unitStatController.GetStat(config.StatTypeID);
-                    foreach (var unitStat in unitStats)
+                    var unitStat = unitStatController.GetStat(config.StatTypeID);
+                    var gameValue = new GameValue(statValues.Value, statValues.ValueTypeID);
+                    
+                    switch (statValues.StatValueTypeID)
                     {
-                        var gameValue = new GameValue(statValues.Value, statValues.ValueTypeID);
-                        var result = gameValue.Calculate(unitStat.CurrentValue);
-                        if (statValues.ValueTypeID == ValueType.Percent)
-                            additionalPercentStatsToUnit.Add(result);
-                        
-                        switch (statValues.StatValueTypeID)
-                        {
-                            case StatValueType.Nothing: break;
-                            case StatValueType.Current: unitStat.AddValue(result); break;
-                            case StatValueType.Minimum: unitStat.AddMinValue(result); break;
-                            case StatValueType.Maximum: unitStat.AddMaxValue(result); break;
-                            default: throw new ArgumentOutOfRangeException();
-                        }
+                        case StatValueType.Nothing: break;
+                        case StatValueType.Current: 
+                            result = gameValue.Calculate(unitStat.CurrentValue);
+                            unitStat.AddValue(result); 
+                            break;
+                        case StatValueType.Minimum: 
+                            result = gameValue.Calculate(unitStat.MinimumValue);
+                            unitStat.AddMinValue(result); 
+                            break;
+                        case StatValueType.Maximum: 
+                            result = gameValue.Calculate(unitStat.MaximumValue);
+                            unitStat.AddMaxValue(result); 
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
                     }
+                    
+                    addedStats.Add(result);
                 }
             }
         }
@@ -170,44 +176,23 @@ namespace Gameplay.Unit.Item
         public virtual void RemoveStatsFromUnit()
         {
             var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
-            
+            int index = 0;
             foreach (var config in Stats)
             {
                 foreach (var VARIABLE in config.StatValuesConfig)
                 {
-                    var unitStats = unitStatController.GetStat(config.StatTypeID);
-                    for (int i = 0; i < unitStats.Count; i++)
+                    var unitStat = unitStatController.GetStat(config.StatTypeID);
+                    switch (VARIABLE.StatValueTypeID)
                     {
-                        switch (VARIABLE.StatValueTypeID)
-                        {
-                            case StatValueType.Nothing: break;
+                        case StatValueType.Nothing: break;
 
-                            case StatValueType.Current:
-                                if (VARIABLE.ValueTypeID == ValueType.Percent)
-                                    unitStats[i].RemoveValue(additionalPercentStatsToUnit[i]);
-                                else
-                                    unitStats[i].RemoveValue(VARIABLE.Value);
-                                break;
-
-                            case StatValueType.Minimum:
-                                if (VARIABLE.ValueTypeID == ValueType.Percent)
-                                    unitStats[i].RemoveMinValue(additionalPercentStatsToUnit[i]);
-                                else
-                                    unitStats[i].RemoveMinValue(VARIABLE.Value);
-                                break;
-
-                            case StatValueType.Maximum:
-                                if (VARIABLE.ValueTypeID == ValueType.Percent)
-                                    unitStats[i].RemoveMaxValue(additionalPercentStatsToUnit[i]);
-                                else
-                                    unitStats[i].RemoveMaxValue(VARIABLE.Value);
-                                break;
-
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        case StatValueType.Current: unitStat.RemoveValue(addedStats[index]); break;
+                        case StatValueType.Minimum: unitStat.RemoveMinValue(addedStats[index]); break;
+                        case StatValueType.Maximum: unitStat.RemoveMaxValue(addedStats[index]); break;
+                        default: throw new ArgumentOutOfRangeException();
                     }
                 }
+                index++;
             }
         }
 

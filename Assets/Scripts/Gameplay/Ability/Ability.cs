@@ -140,7 +140,7 @@ namespace Gameplay.Ability
         public float TimerCast;
     }
 
-    public abstract class AbilityBuilder<T> where T : IAbility
+    public abstract class AbilityBuilder
     {
         protected Ability ability;
 
@@ -149,33 +149,33 @@ namespace Gameplay.Ability
             ability = instance;
         }
 
-        public AbilityBuilder<T> SetGameObject(GameObject gameObject)
+        public AbilityBuilder SetGameObject(GameObject gameObject)
         {
             ability.SetGameObject(gameObject);
             return this;
         }
-        public AbilityBuilder<T> SetBlockedInputType(InputType inputType)
+        public AbilityBuilder SetBlockedInputType(InputType inputType)
         {
             ability.SetBlockedInputType(inputType);
             return this;
         }
-        public AbilityBuilder<T> SetAbilityBehaviour(AbilityBehaviour abilityBehaviour)
+        public AbilityBuilder SetAbilityBehaviour(AbilityBehaviour abilityBehaviour)
         {
             ability.SetAbilityBehaviour(abilityBehaviour);
             return this;
         }
-        public AbilityBuilder<T> SetCooldown(float cooldown)
+        public AbilityBuilder SetCooldown(float cooldown)
         {
             ability.SetCooldown(cooldown);
             return this;
         }
-        public AbilityBuilder<T> SetTimerCast(float timerCast)
+        public AbilityBuilder SetTimerCast(float timerCast)
         {
             ability.SetTimerCast(timerCast);
             return this;
         }
         
-        public IAbility Build()
+        public Ability Build()
         {
             return ability;
         }

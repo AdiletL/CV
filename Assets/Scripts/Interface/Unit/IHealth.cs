@@ -1,5 +1,4 @@
 ﻿using Gameplay;
-using UnityEngine;
 
 public interface IHealth
 {
@@ -7,11 +6,4 @@ public interface IHealth
     public Stat RegenerationStat { get; }
     public bool IsLive { get; }
     public void Initialize();
-}
-
-public interface IDamageable
-{
-    public GameObject Owner { get; }
-    public float Value { get; set; }
-    public int GetTotalDamage(GameObject gameObject);
 }

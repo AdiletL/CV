@@ -49,7 +49,27 @@ namespace Gameplay.Unit.Character.Player
             for (int i = 0; i < so_PlayerAttack.BowAnimations.Length; i++)
                 unitAnimation.AddClip(so_PlayerAttack.BowAnimations[i].Clip);
         }
+        
+        public override void Enter()
+        {
+            base.Enter();
+            playerKinematicControl.SetRotationSpeed(RotationSpeed.CurrentValue);
+            UpdateDirection();
+            SetRotateDirection();
+            UpdateCurrentClip();
+        }
 
+        public override void Update()
+        {
+            CheckFacingOnTarget();
+
+            if (isFacingTarget)
+            {
+                CheckDurationAttack();
+                Attack();
+            }
+        }
+        
         protected override void SubscribeStatEvent()
         {
             base.SubscribeStatEvent();
@@ -77,27 +97,6 @@ namespace Gameplay.Unit.Character.Player
             unitRenderer.SetRangeScale(totalRange);
         }
         
-        public override void Enter()
-        {
-            base.Enter();
-            ClearValues();
-            playerKinematicControl.SetRotationSpeed(RotationSpeed.CurrentValue);
-            UpdateDirection();
-            SetRotateDirection();
-            UpdateCurrentClip();
-        }
-
-        public override void Update()
-        {
-            CheckFacingTarget();
-
-            if (isFacingTarget)
-            {
-                CheckDurationAttack();
-                Attack();
-            }
-        }
-        
         protected override void ClearValues()
         {
             base.ClearValues();
@@ -121,13 +120,19 @@ namespace Gameplay.Unit.Character.Player
             playerKinematicControl.SetDirectionRotate(direction);
         }
 
-        private void CheckFacingTarget()
+        private void CheckFacingOnTarget()
         {
-            if (Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
-                    gameObject.transform.forward, worldMousePosition, 50) && !isFacingTarget)
+            if (!isFacingTarget)
             {
-                this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
-                isFacingTarget = true;
+                if (Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
+                        gameObject.transform.forward, worldMousePosition, 500))
+                {
+                    isFacingTarget = true;
+                }
+                else
+                {
+                    this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+                }
             }
         }
 
@@ -140,18 +145,18 @@ namespace Gameplay.Unit.Character.Player
                 countDurationAttack = 0;
             }
         }
-
+        
         protected override void DefaultApplyDamage()
         {
-            FindUnitInRange();
+            currentTarget = FindUnitInRange<IPlayerAttackable>();
             if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
+               Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
                    gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               currentTarget.TryGetComponent(out IAttackable attackable) && 
+               currentTarget.TryGetComponent(out IPlayerAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {
-                Damageable.Value = DamageStat.CurrentValue;
-                attackable.TakeDamage(Damageable);
+                DamageData.Amount = DamageStat.CurrentValue;
+                attackable.TakeDamage(DamageData);
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Resistance
 {
@@ -9,9 +10,9 @@ namespace Gameplay.Resistance
     {
         private Dictionary<Type, List<IResistance>> resistances;
 
-
         public bool IsResistanceNull(Type type)
         {
+            if(resistances == null) return true;
             if (!resistances.ContainsKey(type)) return true;
             if(resistances[type].Count == 0) return true;
             return false;
@@ -20,10 +21,29 @@ namespace Gameplay.Resistance
         {
             return resistances[type];
         }
+
+        public DamageData DamageModifiers(DamageData damageData)
+        {
+            var type = typeof(DamageResistance);
+            if (!IsResistanceNull(type))
+            {
+                var damageResistances = GetResistances(type);
+                DamageResistance damageResistance = null;
+                foreach (var VARIABLE in damageResistances)
+                {
+                    damageResistance = VARIABLE as DamageResistance;
+                    if (damageResistance?.DamageType == damageData.DamageTypeID)
+                        damageData = damageResistance.DamageModify(damageData);
+                }
+            }
+            return damageData;
+        }
             
         public void Initialize()
         {
-           
+            AddResistance(new DamageResistance(StatType.PhysicalResistance, DamageType.Physical, ValueType.Percent, 1));
+            AddResistance(new DamageResistance(StatType.MagicalResistance, DamageType.Magical, ValueType.Percent, 1));
+            AddResistance(new DamageResistance(StatType.PureResistance, DamageType.Pure, ValueType.Percent, 1));
         }
 
         public void AddResistance(IResistance resistance)

@@ -1,5 +1,4 @@
-﻿using Gameplay.Damage;
-using Gameplay.Unit;
+﻿using Gameplay.Unit;
 using Unit;
 using UnityEngine;
 
@@ -10,11 +9,6 @@ namespace Gameplay.Equipment.Weapon
         private Collider[] findColliders = new Collider[1];
         private int ownerLayer;
         
-        protected override IDamageable CreateDamageable()
-        {
-            return new NormalDamage(Owner, DamageStat.CurrentValue);
-        }
-
         public override void Initialize()
         {
             base.Initialize();
@@ -24,12 +18,11 @@ namespace Gameplay.Equipment.Weapon
         private void FindUnitInRange()
         {
             var totalRange = RangeStat.CurrentValue + OwnerRangeStat.CurrentValue;
-            var target = Calculate.Attack.FindUnitInRange(ownerCenter.position, totalRange,
+            var target = Calculate.Attack.FindUnitInRange<IAttackable>(ownerCenter.position, totalRange,
                 enemyLayer, ref findColliders);
-            if(target == null) return;
+            if(!target) return;
             
             var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - ownerCenter.position).normalized;
-            
             //Debug.DrawRay(origin, directionToTarget * 100, Color.green, 2);
             if (Physics.Raycast(ownerCenter.position, directionToTarget, out var hit, totalRange, ~ownerLayer))
             {
@@ -42,14 +35,16 @@ namespace Gameplay.Equipment.Weapon
         {
             FindUnitInRange();
             if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetUsingAngle(Owner.transform.position,
+               Calculate.Rotate.IsFacingTargetXZ(Owner.transform.position,
                    Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {
-                Damageable.Value = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
-                attackable.TakeDamage(Damageable);
+                DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
+                attackable.TakeDamage(DamageData);
             }
+
+            currentTarget = null;
         }
     }
 

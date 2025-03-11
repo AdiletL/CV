@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c596028cfd41038a4cc570c3d4720f, type: 3}
   m_Name: SO_BeholderAttack
   m_EditorClassIdentifier: 
-  <Damage>k__BackingField: 100
-  <AttackSpeed>k__BackingField: 150
+  <Damage>k__BackingField: 10
+  <AttackSpeed>k__BackingField: 100
   <AngleToTarget>k__BackingField: 50
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 8
-  <Range>k__BackingField: 2.5
+  <Range>k__BackingField: 2
   <RotationSpeed>k__BackingField: 1000
   <BaseReductionEndurance>k__BackingField: 0.01
   <DefaultAnimations>k__BackingField:

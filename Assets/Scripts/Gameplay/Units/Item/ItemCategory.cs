@@ -6,6 +6,7 @@ public enum ItemName
     MadnessMask,
     TeleportationScroll,
     NormalSword,
+    NormalShield,
 }
 
 [Flags]

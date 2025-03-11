@@ -47,12 +47,14 @@ namespace Gameplay.Unit.Character.Creep
         public override void Exit()
         {
             base.Exit();
+            if(!navMeshAgent.isOnNavMesh) return;
             navMeshAgent.isStopped = true;
             navMeshAgent.ResetPath();
         }
 
         private void SetTargetPoint()
         {
+            if(!navMeshAgent.isOnNavMesh) return;
             navMeshAgent.destination = PatrolPoints[currentPointIndex];
             currentPointIndex = (currentPointIndex + 1) % PatrolPoints.Length;
             navMeshAgent.isStopped = false;

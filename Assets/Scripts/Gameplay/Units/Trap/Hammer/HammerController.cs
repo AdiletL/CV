@@ -1,5 +1,4 @@
 ﻿using System;
-using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 using System.Collections;
@@ -21,7 +20,7 @@ namespace Gameplay.Unit.Trap.Hammer
         private float cooldownAttack;
         private bool isReady;
         
-        public IDamageable Damageable { get; private set; }
+        public DamageData DamageData { get; private set; }
         
 
         public override void Initialize()
@@ -30,11 +29,11 @@ namespace Gameplay.Unit.Trap.Hammer
             hammerAnimation = components.GetComponentFromArray<HammerAnimation>();
             so_Hammer = (SO_Hammer)so_Trap;
             DamageStat.AddValue(so_Hammer.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
             durationAttack = Calculate.Attack.TotalDurationInSecond(so_Hammer.AttackSpeed);
             cooldownAttack = so_Hammer.CooldownAttack;
             
-            GetComponentInUnit<HammerCollision>()?.Initialize();
+            GetComponentInUnit<HammerTrigger>()?.Initialize();
 
         }
         
@@ -52,14 +51,14 @@ namespace Gameplay.Unit.Trap.Hammer
 
         private void OnEnable()
         {
-            GetComponentInUnit<HammerCollision>().OnHitEnter += OnHitEnter;
-            GetComponentInUnit<HammerCollision>().OnHitExit += OnHitExit;
+            GetComponentInUnit<HammerTrigger>().OnHitEnter += OnHitEnter;
+            GetComponentInUnit<HammerTrigger>().OnHitExit += OnHitExit;
         }
 
         private void OnDisable()
         {
-            GetComponentInUnit<HammerCollision>().OnHitEnter -= OnHitEnter;
-            GetComponentInUnit<HammerCollision>().OnHitExit -= OnHitExit;
+            GetComponentInUnit<HammerTrigger>().OnHitEnter -= OnHitEnter;
+            GetComponentInUnit<HammerTrigger>().OnHitExit -= OnHitExit;
         }
 
         private void OnHitEnter(GameObject target)
@@ -86,7 +85,7 @@ namespace Gameplay.Unit.Trap.Hammer
             if(!CurrentTarget)
                 hammerCollider.isTrigger = false;
             
-            hammerAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
+            hammerAnimation.ChangeAnimationWithDuration(appearClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, AfterActivate));
@@ -101,7 +100,7 @@ namespace Gameplay.Unit.Trap.Hammer
 
         public override void Reset()
         {
-            hammerAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
+            hammerAnimation.ChangeAnimationWithDuration(deappearClip, cooldownAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, AfterDeactivate));
@@ -127,7 +126,7 @@ namespace Gameplay.Unit.Trap.Hammer
                 CurrentTarget.TryGetComponent(out IHealth health) && 
                 health.IsLive)
             {
-                trapAttackable.TakeDamage(Damageable);
+                trapAttackable.TakeDamage(DamageData);
             }
         }
     }

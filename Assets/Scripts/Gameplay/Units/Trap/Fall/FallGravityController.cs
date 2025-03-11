@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Gameplay.Damage;
 using Gameplay.Unit.Cell;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Gameplay.Trap;
@@ -25,7 +24,7 @@ namespace Gameplay.Unit.Trap.Fall
         
         private List<CellController> cellControllers = new();
         
-        public IDamageable Damageable { get; private set; }
+        public DamageData DamageData { get; private set; }
         public float Mass { get; private set; }
 
 
@@ -38,7 +37,7 @@ namespace Gameplay.Unit.Trap.Fall
             Mass = so_FallGravity.Mass + Physics.gravity.y;
             radius = so_FallGravity.Radius + gameConfig.RadiusCell;
             intervalFallObjects = so_FallGravity.IntervalFallObjets;
-            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
         }
         
         public override void Appear()
@@ -73,7 +72,7 @@ namespace Gameplay.Unit.Trap.Fall
                     colliders[i].TryGetComponent(out IHealth health) &&
                     health.IsLive)
                 {
-                    attackable.TakeDamage(Damageable);
+                    attackable.TakeDamage(DamageData);
                 }
             }
         }

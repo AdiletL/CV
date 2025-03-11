@@ -8,15 +8,22 @@ namespace Gameplay.Equipment
         protected Transform ownerCenter;
         protected GameObject equipment;
         protected AssetReferenceGameObject equipmentPrefab;
+        private int ownerLayer;
         public GameObject Owner { get; protected set; }
         
-        public void SetOwner(GameObject gameObject) => this.Owner = gameObject;
+        public void SetOwner(GameObject gameObject)
+        {
+            this.Owner = gameObject;
+            ownerLayer = Owner.layer;
+        }
+
         public void SetOwnerCenter(Transform ownerCenter) => this.ownerCenter = ownerCenter;
         public void SetEquipmentPrefab(AssetReferenceGameObject equipmentPrefab) => this.equipmentPrefab = equipmentPrefab;
 
         public virtual void Initialize()
         {
             equipment = Addressables.InstantiateAsync(equipmentPrefab).WaitForCompletion();
+            equipment.gameObject.layer = ownerLayer;
             Hide();
         }
         

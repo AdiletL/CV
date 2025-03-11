@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Gameplay.Damage;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
@@ -23,12 +22,7 @@ namespace Gameplay.Unit.Trap.Tower
         public TowerAnimation TowerAnimation { get; set; }
         public AnimationClip AttackClip { get; set; }
         public Transform PointSpawnProjectile { get; set; }
-
-
-        protected override IDamageable CreateDamageable()
-        {
-            return new NormalDamage(gameObject, DamageStat.CurrentValue);
-        }
+        
 
         public override void Initialize()
         {
@@ -75,7 +69,7 @@ namespace Gameplay.Unit.Trap.Tower
             newGameObject.transform.position = PointSpawnProjectile.position;
             newGameObject.transform.rotation = PointSpawnProjectile.rotation;
             var projectile = newGameObject.GetComponent<SphereController>();
-            projectile.SetDamageable(Damageable);
+            projectile.SetDamageable(DamageData);
             projectile.Initialize();
         }
         

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Trap.Hammer
 {
-    public class HammerCollision : TrapCollision
+    public class HammerTrigger : TrapTrigger
     {
         public event Action<GameObject> OnHitExit;
         

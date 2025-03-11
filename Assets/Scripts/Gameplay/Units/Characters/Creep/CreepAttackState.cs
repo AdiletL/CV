@@ -9,13 +9,16 @@ namespace Gameplay.Unit.Character.Creep
         protected NavMeshAgent navMeshAgent;
         protected Rotation rotation;
         protected float rangeSqr;
+        protected const float timerExitState = 7;
+        protected float countTimerExitState;
         protected bool isFacingTarget;
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
 
         public override bool IsFindUnitInRange()
         {
-            return Calculate.Attack.IsFindUnitInRange<ICreepAttackable>(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
+            currentTarget = FindUnitInRange<ICreepInteractable>();
+            return currentTarget;
         }
 
         public override void Initialize()
@@ -29,22 +32,22 @@ namespace Gameplay.Unit.Character.Creep
         {
             base.Enter();
             navMeshAgent.updateRotation = false;
+            UpdateCurrentClip();
         }
 
         public override void Update()
         {
             if (!currentTarget)
             {
-                FindUnitInRange();
-                if (!currentTarget)
+                if (!IsFindUnitInRange())
                 {
                     stateMachine.ExitCategory(Category, null);
                     return;
                 }
             }
-            
+
             CheckNearTarget();
-            CheckFacingTarget();
+            CheckFacingOnTarget();
             if (isFacingTarget)
             {
                 CheckDurationAttack();
@@ -56,12 +59,14 @@ namespace Gameplay.Unit.Character.Creep
         {
             base.Exit();
             navMeshAgent.updateRotation = true;
+            unitAnimation.ExitAnimation(ANIMATION_LAYER);
         }
 
         protected override void ClearValues()
         {
             base.ClearValues();
             isFacingTarget = false;
+            countTimerExitState = 0;
         }
 
         private void CheckDurationAttack()
@@ -77,9 +82,9 @@ namespace Gameplay.Unit.Character.Creep
                 }
                 else
                 {
+                    this.unitAnimation.ChangeAnimationWithDuration(null, isDefault: true);
                     UpdateCurrentClip();
                 }
-
                 ClearValues();
                 countDurationAttack = 0;
             }
@@ -91,40 +96,53 @@ namespace Gameplay.Unit.Character.Creep
                 !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
                     rangeSqr))
             {
-                FindUnitInRange();
-                stateMachine.GetState<CreepMoveState>().SetTarget(currentTarget);
-                stateMachine.ExitCategory(Category, typeof(CreepMoveState));
+                var target = FindUnitInRange<ICreepInteractable>();
+                if (!target)
+                {
+                    stateMachine.GetState<CreepMoveState>().SetTarget(currentTarget);
+                    stateMachine.ExitCategory(Category, typeof(CreepMoveState));
+                }
             }
         }
-        private void CheckFacingTarget()
+        private void CheckFacingOnTarget()
         {
             if(!currentTarget) return;
             if (!isFacingTarget)
             {
-                if (Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
-                    gameObject.transform.forward, currentTarget.transform.position, 10))
+                if (Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position) && 
+                    Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50))
                 {
-                    this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
+                    countTimerExitState = 0;
                     isFacingTarget = true;
                 }
                 else
                 {
+                    this.unitAnimation.ChangeAnimationWithDuration(null, isDefault: true);
                     rotation.SetTarget(currentTarget.transform);
                     rotation.RotateToTarget();
+                    TimerExitState();
                 }
             }
         }
 
+        private void TimerExitState()
+        {
+            countTimerExitState += Time.deltaTime;
+            if (timerExitState < countTimerExitState)
+                stateMachine.ExitCategory(Category, null);
+        }
+        
         protected override void DefaultApplyDamage()
         {
             if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position,
+               Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
                    gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
+               Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {
-                Damageable.Value = DamageStat.CurrentValue;
-                attackable.TakeDamage(Damageable);
+                DamageData.Amount = DamageStat.CurrentValue;
+                attackable.TakeDamage(DamageData);
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using Gameplay.Damage;
-using ScriptableObjects.Gameplay.Trap.Tower;
+﻿using ScriptableObjects.Gameplay.Trap.Tower;
 using UnityEngine;
 using Zenject;
 

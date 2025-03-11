@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace Gameplay.Unit.Trap
         
         private bool isReady;
         
-        public IDamageable Damageable { get; private set; }
+        public DamageData DamageData { get; private set; }
 
 
         public override void Initialize()
@@ -40,7 +39,7 @@ namespace Gameplay.Unit.Trap
             EnemyLayer = so_Thorn.EnemyLayer;
             
             DamageStat.AddValue(so_Thorn.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
 
             sphereCollider = GetComponent<SphereCollider>();
             sphereCollider.isTrigger = true;
@@ -77,7 +76,7 @@ namespace Gameplay.Unit.Trap
         }
         public override void Reset()
         {
-            trapAnimation.ChangeAnimationWithDuration(deactivateClip);
+            trapAnimation.ChangeAnimationWithDuration(deappearClip);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
                 
@@ -117,8 +116,8 @@ namespace Gameplay.Unit.Trap
             float countTimer = 0;
 
             HashSet<GameObject> affectedEnemies = new HashSet<GameObject>();
-            trapAnimation.ChangeAnimationWithDuration(activateClip);
-            var interval = activateClip.length;
+            trapAnimation.ChangeAnimationWithDuration(appearClip);
+            var interval = appearClip.length;
             
             yield return new WaitForSeconds(interval - .1f);
             while (countTimer < duration)
@@ -150,7 +149,7 @@ namespace Gameplay.Unit.Trap
             if(CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
                CurrentTarget.TryGetComponent(out IHealth health) && 
                health.IsLive)
-                trapAttackable.TakeDamage(Damageable);
+                trapAttackable.TakeDamage(DamageData);
         }
         
         

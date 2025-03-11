@@ -11,8 +11,8 @@ namespace Gameplay.Unit.Character.Player
         
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
         private PlayerMoveState playerMoveState;
-        private BlockPhysicalDamageConfig blockPhysicalDamageConfig;
-        private BlockPhysicalDamageAbility blockPhysicalDamageAbility;
+        private DamageResistanceConfig damageResistanceConfig;
+        private DamageResistanceAbility damageResistanceAbility;
         private CharacterAnimation characterAnimation;
         private AnimationClip blockClip;
         
@@ -23,16 +23,16 @@ namespace Gameplay.Unit.Character.Player
         private const int ANIMATION_LAYER = 2;
         
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetBlockPhysicalDamageConfig(BlockPhysicalDamageConfig config) => this.blockPhysicalDamageConfig = config;
+        public void SetDamageResistanceAbilityConfig(DamageResistanceConfig config) => this.damageResistanceConfig = config;
 
-        private BlockPhysicalDamageAbility CreateBlockPhysicalDamage()
+        private DamageResistanceAbility CreateBlockPhysicalDamage()
         {
-            return (BlockPhysicalDamageAbility)new BlockPhysicalDamageBuilder()
-                .SetNormalDamageResistanceConfig(blockPhysicalDamageConfig.NormalDamageResistanceConfig)
-                .SetBlockedInputType(blockPhysicalDamageConfig.SO_BaseAbilityConfig.BlockedInputType)
+            return (DamageResistanceAbility)new DamageResistanceAbilityBuilder()
+                .SetStatConfigs(damageResistanceConfig.StatConfigs)
+                .SetBlockedInputType(damageResistanceConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(gameObject)
-                .SetAbilityBehaviour(blockPhysicalDamageConfig.SO_BaseAbilityConfig.AbilityBehaviour)
-                .SetCooldown(blockPhysicalDamageConfig.Cooldown)
+                .SetAbilityBehaviour(damageResistanceConfig.SO_BaseAbilityConfig.AbilityBehaviour)
+                .SetCooldown(damageResistanceConfig.Cooldown)
                 .Build();
         }
 
@@ -41,10 +41,10 @@ namespace Gameplay.Unit.Character.Player
             base.Initialize();
             so_PlayerSpecialAction = (SO_PlayerSpecialAction)so_CharacterSpecialAction;
             
-            blockPhysicalDamageAbility = CreateBlockPhysicalDamage();
-            diContainer.Inject(blockPhysicalDamageAbility);
-            blockPhysicalDamageAbility.Initialize();
-            blockClip = so_PlayerSpecialAction.AbilityConfigData.BlockPhysicalDamageConfig.BlockClip;
+            damageResistanceAbility = CreateBlockPhysicalDamage();
+            diContainer.Inject(damageResistanceAbility);
+            damageResistanceAbility.Initialize();
+            blockClip = so_PlayerSpecialAction.AbilityConfigData.damageResistanceConfig.Clip;
             characterAnimation.AddClip(blockClip);
         }
 
@@ -52,7 +52,7 @@ namespace Gameplay.Unit.Character.Player
         {
             base.Enter();
             IsCanExit = false;
-            blockPhysicalDamageAbility.Enter();
+            damageResistanceAbility.Enter();
             
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
@@ -70,18 +70,18 @@ namespace Gameplay.Unit.Character.Player
         public override void Update()
         {
             base.Update();
-            blockPhysicalDamageAbility.Update();
+            damageResistanceAbility.Update();
         }
         public override void LateUpdate()
         {
             base.LateUpdate();
-            blockPhysicalDamageAbility.LateUpdate();
+            damageResistanceAbility.LateUpdate();
         }
 
         public override void Exit()
         {
             base.Exit();
-            blockPhysicalDamageAbility.Exit();
+            damageResistanceAbility.Exit();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             
@@ -96,10 +96,10 @@ namespace Gameplay.Unit.Character.Player
         {
         }
 
-        public PlayerSpecialActionStateBuilder SetBlockPhysicalDamageConfig(BlockPhysicalDamageConfig config)
+        public PlayerSpecialActionStateBuilder SetBlockPhysicalDamageConfig(DamageResistanceConfig config)
         {
             if(state is PlayerSpecialActionState playerSpecialActionState)
-                playerSpecialActionState.SetBlockPhysicalDamageConfig(config);
+                playerSpecialActionState.SetDamageResistanceAbilityConfig(config);
             return this;
         }
         public PlayerSpecialActionStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)

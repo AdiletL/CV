@@ -63,24 +63,5 @@ namespace Gameplay.Unit.Container
         {
             hotkeyUI.Hide();
         }
-
-        private async UniTask SpawnItems()
-        {
-            Vector3 point;
-            foreach (var VARIABLE in so_Chest.so_Item)
-            {
-                await UniTask.Yield();
-                
-                var item = await Addressables.InstantiateAsync(VARIABLE.SO_Item.Prefab);
-                var itemController = item.GetComponent<ItemController>();
-                diContainer.Inject(itemController);
-                itemController.SetAmount(VARIABLE.amount);
-                itemController.Initialize();
-                item.transform.position = transform.position;
-                Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(0.5f, 1f));
-                point = transform.position + transform.right * randomOffset.x + transform.forward * randomOffset.z;
-                itemController.JumpToPoint(point);
-            }
-        }
     }
 }

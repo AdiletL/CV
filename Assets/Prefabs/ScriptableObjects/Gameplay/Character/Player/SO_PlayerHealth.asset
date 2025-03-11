@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08f0ce5d1f1943a480f396354c39e82c, type: 3}
   m_Name: SO_PlayerHealth
   m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 500
+  <MaxHealth>k__BackingField: 1000
   <IsCanTakeDamageEffect>k__BackingField: 0

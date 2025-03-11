@@ -2,7 +2,7 @@
 
 namespace Gameplay.Unit.Trap
 {
-    public class PushCollision : TrapCollision
+    public class PushTrigger : TrapTrigger
     {
         private void OnCollisionEnter(Collision collision)
         {

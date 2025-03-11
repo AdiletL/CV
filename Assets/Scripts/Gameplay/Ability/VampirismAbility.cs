@@ -1,7 +1,6 @@
 ﻿using Calculate;
 using Gameplay.Spawner;
 using Gameplay.Unit;
-using Unit;
 using UnityEngine;
 using Zenject;
 
@@ -16,12 +15,10 @@ namespace Gameplay.Ability
         private GameObject owner;
         private IHealth ownerHealth;
         private UnitCenter ownerUnitCenter;
-        private ValueType valueType;
-        private int value;
+        private GameValue gameValue;
         
         public void SetOwner(GameObject owner) => this.owner = owner;
-        public void SetValueType(ValueType value) => valueType = value;
-        public void SetValue(int value) => this.value = value;
+        public void SetGameValue(ValueType valueType, float value) => gameValue = new GameValue(value, valueType);
 
         public override void Initialize()
         {
@@ -32,7 +29,6 @@ namespace Gameplay.Ability
 
         public void Heal(float totalDamage)
         {
-            var gameValue = new Calculate.GameValue(value, valueType);
             var result = gameValue.Calculate(totalDamage);
             ownerHealth.HealthStat.AddValue((int)result);
             healPopUpPopUpSpawner.CreatePopUp(ownerUnitCenter.Center.position, result);
@@ -46,22 +42,16 @@ namespace Gameplay.Ability
         public int Value;
     }
 
-    public class ApplyDamageHealBuilder : AbilityBuilder<VampirismAbility>
+    public class ApplyDamageHealBuilder : AbilityBuilder
     {
         public ApplyDamageHealBuilder() : base(new VampirismAbility())
         {
         }
 
-        public ApplyDamageHealBuilder SetValueType(ValueType valueType)
+        public ApplyDamageHealBuilder SetGameValue(ValueType valueType, float value)
         {
             if(ability is VampirismAbility applyDamageHeal)
-                applyDamageHeal.SetValueType(valueType);
-            return this;
-        }
-        public ApplyDamageHealBuilder SetValue(int value)
-        {
-            if(ability is VampirismAbility applyDamageHeal)
-                applyDamageHeal.SetValue(value);
+                applyDamageHeal.SetGameValue(valueType, value);
             return this;
         }
         public ApplyDamageHealBuilder SetOwner(GameObject owner)

@@ -1,5 +1,4 @@
 using System;
-using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
@@ -12,15 +11,15 @@ namespace Gameplay.Unit.Trap
         private AnimationClip playClip;
         private float speedPlayClip;
         
-        public IDamageable Damageable { get; private set; }
-        public Stat DamageStat { get; private set; } = new Stat();
+        public DamageData DamageData { get; private set; }
+        public Stat DamageStat { get; } = new Stat();
         
 
         public override void Initialize()
         {
             base.Initialize();
             DamageStat.AddValue(so_Trap.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
             axeAnimation = components.GetComponentFromArray<AxeAnimation>();
             so_Axe = (SO_Axe)so_Trap;
             speedPlayClip = so_Axe.SpeedPlayClip;
@@ -40,12 +39,12 @@ namespace Gameplay.Unit.Trap
 
         public override void Trigger()
         {
-            axeAnimation.ChangeAnimationWithDuration(activateClip);
+            axeAnimation.ChangeAnimationWithDuration(appearClip);
         }
 
         public override void Reset()
         {
-            axeAnimation.ChangeAnimationWithDuration(deactivateClip);
+            axeAnimation.ChangeAnimationWithDuration(deappearClip);
         }
 
         public void ChangeOnPlayClip()
@@ -55,11 +54,11 @@ namespace Gameplay.Unit.Trap
 
         private void OnEnable()
         {
-            GetComponentInUnit<AxeCollision>().OnHitEnter += OnHitEnter;
+            GetComponentInUnit<AxeTrigger>().OnHitEnter += OnHitEnter;
         }
         private void OnDisable()
         {
-            GetComponentInUnit<AxeCollision>().OnHitEnter -= OnHitEnter;
+            GetComponentInUnit<AxeTrigger>().OnHitEnter -= OnHitEnter;
         }
 
         private void OnHitEnter(GameObject target)
@@ -75,7 +74,7 @@ namespace Gameplay.Unit.Trap
                 CurrentTarget.TryGetComponent(out IHealth health) &&
                 health.IsLive)
             {
-                trapAttackable.TakeDamage(Damageable);
+                trapAttackable.TakeDamage(DamageData);
                 CurrentTarget = null;
             }
         }

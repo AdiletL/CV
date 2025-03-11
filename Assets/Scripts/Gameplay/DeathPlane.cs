@@ -1,20 +1,17 @@
 ﻿using System;
-using Gameplay.Damage;
-using Unit;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay
 {
     public class DeathPlane : MonoBehaviour
     {
-        private IDamageable damageable;
+        private DamageData damageData;
         private Stat damageStat = new Stat();
 
         private void Start()
         {
             damageStat.AddValue(999999);
-            damageable = new NormalDamage(gameObject, damageStat.CurrentValue);
+            damageData = new DamageData(gameObject, DamageType.Physical, damageStat.CurrentValue);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -23,7 +20,7 @@ namespace Gameplay
                 other.TryGetComponent(out IHealth health) &&
                 health.IsLive)
             {
-                attackable.TakeDamage(damageable);
+                attackable.TakeDamage(damageData);
             }
         }
     }

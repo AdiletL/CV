@@ -49,7 +49,7 @@ namespace Gameplay.Unit.Trap.Activator
         {
             base.Trigger();
             isReady = false;
-            buttonAnimation.ChangeAnimationWithDuration(activateClip);
+            buttonAnimation.ChangeAnimationWithDuration(appearClip);
 
             if (!currentCell)
             {
@@ -77,7 +77,7 @@ namespace Gameplay.Unit.Trap.Activator
             if(checkTargetCoroutine != null)
                 StopCoroutine(checkTargetCoroutine);
             isReady = true;
-            buttonAnimation.ChangeAnimationWithDuration(deactivateClip);
+            buttonAnimation.ChangeAnimationWithDuration(deappearClip);
 
             ResetTargetPosition();
         }

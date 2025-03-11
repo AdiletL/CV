@@ -12,7 +12,7 @@ namespace Gameplay.Equipment.Weapon
         protected LayerMask enemyLayer;
         protected float angleToTarget;
 
-        public IDamageable Damageable { get; protected set; }
+        public DamageData DamageData { get; protected set; }
         public Stat DamageStat { get; } = new();
         public Stat RangeStat { get; } = new();
         public Stat OwnerDamageStat { get; protected set; } = new();
@@ -25,13 +25,12 @@ namespace Gameplay.Equipment.Weapon
         public void SetOwnerDamageStat(Stat damageStat) => this.OwnerDamageStat = damageStat;
         public void SetOwnerRangeStat(Stat rangeStat) => this.OwnerRangeStat = rangeStat;
 
-        protected abstract IDamageable CreateDamageable();
         
         public override void Initialize()
         {
             base.Initialize();
-            Damageable = CreateDamageable();
-            diContainer.Inject(Damageable);
+            DamageData = new DamageData(Owner, DamageType.Physical, DamageStat.CurrentValue);
+            diContainer.Inject(DamageData);
         }
         
 

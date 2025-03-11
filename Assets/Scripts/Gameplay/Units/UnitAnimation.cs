@@ -58,7 +58,7 @@ namespace Gameplay.Unit
         {
             if (ShouldSkipAnimationChange(clip, isForce, isDefault)) return;
             clip = ResolveAnimationClip(clip, isDefault);
-
+            
             if (photonView.IsMine)
                 photonView.RPC(nameof(ChangeAnimationWithDurationRPC), RpcTarget.All, clip.name, duration, speedName, transitionDuration, layer);
         }

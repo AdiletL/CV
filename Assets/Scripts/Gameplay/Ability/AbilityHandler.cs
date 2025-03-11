@@ -23,7 +23,7 @@ namespace Gameplay.Ability
             return currentAbilities == null || !currentAbilities.ContainsKey(abilityType);
         }
 
-        public IAbility GetAbility(AbilityType abilityType, int? id)
+        public Ability GetAbility(AbilityType abilityType, int? id)
         {
             if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType)) return null;
             
@@ -38,9 +38,26 @@ namespace Gameplay.Ability
         
         public List<Ability> GetAbilities(AbilityType abilityType)
         {
-            return currentAbilities?[abilityType];
+            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType))
+                return null;
+            return currentAbilities[abilityType];
         }
 
+        public DamageData DamageModifiers(DamageData damageData)
+        {
+            if (!IsAbilityNull(AbilityType.BarrierDamage))
+            {
+                var abilities = GetAbilities(AbilityType.BarrierDamage);
+                for (int i = abilities.Count - 1; i >= 0; i--)
+                {
+                    if (abilities[i] is BarrierDamageAbility barrierDamageAbility)
+                        damageData = barrierDamageAbility.DamageModify(damageData);
+                }
+            }
+
+            return damageData;
+        }
+        
         public void Initialize()
         {
 

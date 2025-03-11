@@ -12,19 +12,21 @@ namespace Calculate
             return 100 / attackSpeed;
         }
         
-        public static GameObject FindUnitInRange(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
+        public static GameObject FindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
             GameObject closestUnit = null;
 
             int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
             float sqrRadius = radius * radius;
-            for (int i = 0; i < hitCount; i++)
+            for (int i = hitCount - 1; i >= 0; i--)
             {
                 Collider hit = overlapHits[i];
-                if (hit.TryGetComponent(out UnitCenter unitCenter))
+                if (hit.TryGetComponent(out T component) && 
+                    hit.TryGetComponent(out IHealth health) &&
+                    health.IsLive &&
+                    hit.TryGetComponent(out UnitCenter unitCenter))
                 {
                     float distanceToTargetSqr = (unitCenter.Center.position - origin).sqrMagnitude;
-                    
                     if (distanceToTargetSqr <= sqrRadius)
                         closestUnit = hit.transform.gameObject;
                 }
@@ -36,11 +38,9 @@ namespace Calculate
 
         public static bool IsFindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
-            float sqrRadius = radius * radius;
-            
             int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);
-            
-            for (int i = 0; i < hitCount; i++)
+            float sqrRadius = radius * radius;
+            for (int i = hitCount - 1; i >= 0; i--)
             {
                 Collider hit = overlapHits[i];
                 
@@ -49,26 +49,13 @@ namespace Calculate
                 
                 if (hit.TryGetComponent(out UnitCenter unitCenter))
                 {
-                    var directionToTarget = (unitCenter.Center.position - origin).normalized;
                     float distanceToTargetSqr = (unitCenter.Center.position - origin).sqrMagnitude;
-                    
                     if (distanceToTargetSqr <= sqrRadius)
                     {
-                        //Debug.DrawRay(origin, direcitonToTarget * (radius), Color.green, 2);
-                        if (Physics.Raycast(origin, directionToTarget, out var hit2, radius)
-                            && hit2.transform.gameObject == hit.gameObject)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
-            
-            for (int i = 0; i < overlapHits.Length; i++)
-            {
-                overlapHits[i] = null;
-            }
-
             return false;
         }
     }

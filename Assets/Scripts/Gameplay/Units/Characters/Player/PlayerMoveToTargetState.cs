@@ -259,7 +259,7 @@ namespace Gameplay.Unit.Character.Player
         }
         else
         {
-            if (!Calculate.Rotate.IsFacingTargetUsingAngle(gameObject.transform.position, gameObject.transform.forward, currentTargetPosition))
+            if (!Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position, gameObject.transform.forward, currentTargetPosition))
             {
                 rotation.RotateToTarget();
                 return;

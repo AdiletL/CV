@@ -5,8 +5,8 @@ public enum AbilityType
     Nothing,
     Dash,
     Vampirism,
-    BlockPhysicalDamage,
-    BlockMagicDamage,
+    DamageResistance,
+    BarrierDamage,
 }
 
 [Flags]

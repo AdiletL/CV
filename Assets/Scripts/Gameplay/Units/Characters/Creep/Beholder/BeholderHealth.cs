@@ -24,9 +24,9 @@ namespace Gameplay.Unit.Character.Creep
             beholderController.GetComponentInUnit<BeholderAnimation>().AddClip(so_BeholderHealth.takeDamageClip);
         }
 
-        public override void TakeDamage(IDamageable damageable)
+        public override void TakeDamage(DamageData damageData)
         {
-            base.TakeDamage(damageable);
+            base.TakeDamage(damageData);
             
             if(!isCanTakeDamageEffect) return;
             CreepController.StateMachine.ExitOtherStates(typeof(BeholderTakeDamageState), true);

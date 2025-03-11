@@ -6,13 +6,12 @@ namespace Gameplay.Unit
 {
     public abstract class UnitAttackState : State, IAttack
     {
-        [Inject] protected DiContainer diContainer;
         public override StateCategory Category { get; } = StateCategory.Attack;
         
         protected GameObject gameObject;
         protected Transform center;
         
-        public IDamageable Damageable { get; protected set; }
+        public DamageData DamageData { get; protected set; }
         
         public Stat DamageStat { get; } = new Stat();
         public Stat AttackSpeedStat { get;} = new Stat();
@@ -20,14 +19,11 @@ namespace Gameplay.Unit
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
 
-        protected abstract IDamageable CreateDamageable();
-
 
         public override void Initialize()
         {
             base.Initialize();
-            Damageable = CreateDamageable();
-            diContainer.Inject(Damageable);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
         }
 
         public abstract void Attack();

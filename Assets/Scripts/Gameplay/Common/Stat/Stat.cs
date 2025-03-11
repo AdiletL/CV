@@ -24,7 +24,9 @@ namespace Gameplay
         RegenerationMana,
         Endurance,
         RegenerationEndurance,
-        Armor,
+        PhysicalResistance,
+        MagicalResistance,
+        PureResistance,
     }
 
     [System.Serializable]

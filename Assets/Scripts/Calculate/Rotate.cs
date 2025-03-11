@@ -4,20 +4,25 @@ namespace Calculate
 {
     public static class Rotate
     {
-        public static bool IsFacingTargetUsingAngle(Vector3 origin, Vector3 forward, Vector3 target, float thresholdDot = 10f)
+        public static bool IsFacingTargetXZ(Vector3 origin, Vector3 forward, Vector3 target, float thresholdDot = 10f)
         {
-            // Направление на цель
-            Vector3 directionToTarget = (target - origin).normalized;
+            // Проецируем forward и directionToTarget на плоскость XZ (обнуляем Y)
+            Vector3 flatForward = new Vector3(forward.x, 0, forward.z).normalized;
+            Vector3 flatDirectionToTarget = new Vector3(target.x - origin.x, 0, target.z - origin.z).normalized;
 
-            // Нормализуем forward
-            Vector3 normalizedForward = forward.normalized;
+            // Вычисляем угол между ними
+            float angle = Vector3.Angle(flatForward, flatDirectionToTarget);
 
-            // Вычисляем угол между векторами
-            float angle = Vector3.Angle(normalizedForward, directionToTarget);
-
-            // Проверяем, находится ли угол в пределах допустимого порога
             return angle <= thresholdDot;
         }
 
+        public static bool IsFacingTargetY(Vector3 origin, Vector3 target, float thresholdDot = 10f)
+        {
+            // Берём только направление по вертикали
+            Vector3 direction = target - origin;
+            float angle = Mathf.Atan2(direction.y, direction.z) * Mathf.Rad2Deg;
+            
+            return angle <= thresholdDot;
+        }
     }
 }

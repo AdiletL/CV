@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Trap
 {
-    public class AxeCollision : TrapCollision
+    public class AxeTrigger : TrapTrigger
     {
         
     }

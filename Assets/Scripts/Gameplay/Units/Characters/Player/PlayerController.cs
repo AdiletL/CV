@@ -19,7 +19,7 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(EffectHandler))]
     [RequireComponent(typeof(AbilityHandler))]
     
-    public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable
+    public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable
     {
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
@@ -96,8 +96,6 @@ namespace Gameplay.Unit.Character.Player
 
         public override void Initialize()
         {
-            //Test
-            InitializeNormalResistance();
             base.Initialize();
             
             //Test
@@ -119,6 +117,8 @@ namespace Gameplay.Unit.Character.Player
 
             PlayerBlockInput = new PlayerBlockInput();
             PlayerBlockInput.Initialize();
+            
+            GetComponentInUnit<ResistanceHandler>().Initialize();
             
             playerKinematicControl = GetComponentInUnit<PlayerKinematicControl>();
             diContainer.Inject(playerKinematicControl);
@@ -233,13 +233,6 @@ namespace Gameplay.Unit.Character.Player
             item.Initialize();
             playerItemInventory.AddItem(item, so_NormalSword.Icon);
         }
-
-        //Test
-        private void InitializeNormalResistance()
-        {
-            var normalDamageResistance = new NormalDamageResistance(80, ValueType.Percent);
-            GetComponentInUnit<ResistanceHandler>().AddResistance(normalDamageResistance);
-        }
         
         private void Update()
         {
@@ -253,7 +246,7 @@ namespace Gameplay.Unit.Character.Player
         private void LateUpdate()
         {
             if(!IsActive || !photonView.IsMine) return;
-            
+           // Debug.Log(StateMachine.GetState<PlayerAttackState>().IsFindUnitInRange());
             StateMachine?.LateUpdate();
         }
         

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Trap
 {
-    public class TrapCollision : MonoBehaviour
+    public abstract class TrapTrigger : MonoBehaviour
     {
         public Action<GameObject> OnHitEnter;
         
@@ -12,7 +12,6 @@ namespace Gameplay.Unit.Trap
         private void OnTriggerEnter(Collider other)
         {
             if(!Calculate.GameLayer.IsTarget(trapController.EnemyLayer, other.gameObject.layer)) return;
-            
             OnHitEnter?.Invoke(other.gameObject);
         }
     }

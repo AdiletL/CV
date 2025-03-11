@@ -1,10 +1,14 @@
-﻿public interface ITrap
-{
-    public void Initialize();
+﻿using UnityEngine;
 
-    public void Activate();
+public interface ITrap
+{
+    public GameObject CurrentTarget { get; }
+    public LayerMask EnemyLayer { get; } 
     
-    public void Deactivate();
+    public void Initialize();
+    
+    public void Trigger();
+    public void Reset();
 }
 
 public interface ITrapInteractable : IInteractable

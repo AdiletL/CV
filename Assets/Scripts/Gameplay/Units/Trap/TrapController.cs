@@ -8,10 +8,10 @@ namespace Gameplay.Unit.Trap
     {
         [SerializeField] protected SO_Trap so_Trap;
 
-        private PhotonView photonView;
+        protected PhotonView photonView;
         protected TrapAnimation trapAnimation;
-        protected AnimationClip activateClip;
-        protected AnimationClip deactivateClip;
+        protected AnimationClip appearClip;
+        protected AnimationClip deappearClip;
 
         public GameObject CurrentTarget { get; protected set; }
         public LayerMask EnemyLayer { get; protected set; }
@@ -19,13 +19,13 @@ namespace Gameplay.Unit.Trap
         public override void Initialize()
         {
             base.Initialize();
-            activateClip = so_Trap.ActivateClip;
-            deactivateClip = so_Trap.DeactivateClip;
+            appearClip = so_Trap.AppearClip;
+            deappearClip = so_Trap.DeappearClip;
             EnemyLayer = so_Trap.EnemyLayer;
             trapAnimation = GetComponentInUnit<TrapAnimation>();
             trapAnimation.Initialize();
-            trapAnimation.AddClip(activateClip);
-            trapAnimation.AddClip(deactivateClip);
+            trapAnimation.AddClip(appearClip);
+            trapAnimation.AddClip(deappearClip);
         }
         
 
@@ -33,9 +33,6 @@ namespace Gameplay.Unit.Trap
         public abstract void Reset();
 
         
-        public void SetTarget(GameObject target)
-        {
-            CurrentTarget = target;
-        }
+        public void SetTarget(GameObject target) => CurrentTarget = target;
     }
 }

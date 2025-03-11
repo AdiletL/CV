@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Gameplay.Resistance;
+using UnityEngine;
 
 namespace Gameplay.Unit.Character.Player
 {
@@ -21,6 +22,20 @@ namespace Gameplay.Unit.Character.Player
             
             var movementSpeed = playerController.StateMachine.GetState<PlayerMoveState>().MovementSpeedStat;
             AddStatToDictionary(StatType.MovementSpeed, movementSpeed);
+
+            var resistanceHandler = GetComponent<ResistanceHandler>();
+            var damageResistances = resistanceHandler.GetResistances(typeof(DamageResistance));
+            DamageResistance damageResistance = null;
+            foreach (var VARIABLE in damageResistances)
+            {
+                damageResistance = VARIABLE as DamageResistance;
+                if (damageResistance?.DamageType == DamageType.Physical)
+                    AddStatToDictionary(StatType.PhysicalResistance, damageResistance.ProtectionStat);
+                else if (damageResistance?.DamageType == DamageType.Magical)
+                    AddStatToDictionary(StatType.MagicalResistance, damageResistance.ProtectionStat);
+                else if (damageResistance?.DamageType == DamageType.Pure)
+                    AddStatToDictionary(StatType.PureResistance, damageResistance.ProtectionStat);
+            }
         }
     }
 }

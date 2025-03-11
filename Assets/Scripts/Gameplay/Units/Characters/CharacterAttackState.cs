@@ -1,5 +1,5 @@
 ﻿using System;
-using Gameplay.Damage;
+using Gameplay.Unit.Character.Player;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -16,7 +16,8 @@ namespace Gameplay.Unit.Character
         protected UnitRenderer unitRenderer;
         protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
-        
+
+        protected RaycastHit hitInTarget;
         protected Collider[] findUnitColliders = new Collider[1];
         
         protected float durationAttack, countDurationAttack;
@@ -43,14 +44,10 @@ namespace Gameplay.Unit.Character
         public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         
-        protected override IDamageable CreateDamageable()
-        {
-            return new NormalDamage(gameObject, so_CharacterAttack.Damage);
-        }
-        
         public virtual bool IsFindUnitInRange()
         {
-            return Calculate.Attack.IsFindUnitInRange<IAttackable>(center.position, RangeStat.CurrentValue, enemyLayer, ref findUnitColliders);
+            currentTarget = FindUnitInRange<IAttackable>();
+            return currentTarget;
         }
         
         protected virtual AnimationEventConfig getAnimationEventConfig()
@@ -162,27 +159,36 @@ namespace Gameplay.Unit.Character
             CurrentWeapon = null;
         }
 
-        protected void FindUnitInRange()
+        protected GameObject FindUnitInRange<T>()
         {
-            var target = Calculate.Attack.FindUnitInRange(center.position, RangeStat.CurrentValue,
+            var totalRange = RangeStat.CurrentValue;
+            if (CurrentWeapon != null)
+                totalRange += CurrentWeapon.RangeStat.CurrentValue;
+
+            var target = Calculate.Attack.FindUnitInRange<T>(center.position, totalRange,
                 enemyLayer, ref findUnitColliders);
-            if(target == null) return;
-            
+            if(!target) return null;
+
+            if (!Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, target.transform.position, 50))
+                return null;
+
             var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - center.position).normalized;
-            
-            //Debug.DrawRay(origin, directionToTarget * 100, Color.green, 2);
-            if (Physics.Raycast(center.position, directionToTarget, out var hit, RangeStat.CurrentValue, ~gameObject.layer))
+            Ray ray = new Ray(center.position, directionToTarget);
+            //Debug.DrawRay(center.position, directionToTarget * totalRange, Color.red, 2);
+            if (Physics.Raycast(ray, out hitInTarget, totalRange, ~gameObject.layer, QueryTriggerInteraction.Collide) ||
+                Physics.SphereCast(ray, .3f, out hitInTarget, totalRange, ~gameObject.layer, QueryTriggerInteraction.Collide))
             {
-                if(hit.collider.gameObject.layer == target.gameObject.layer)
-                    currentTarget = target;
+                if(hitInTarget.collider.gameObject.layer == target.gameObject.layer)
+                    return target;
             }
+            return null;
         }
         
         public override void Attack()
         {
             if(isAttacked) return;
-            
-            this.unitAnimation?.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
+
+            this.unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
             
             countTimerApplyDamage += Time.deltaTime;
             if (countTimerApplyDamage > cooldownApplyDamage)

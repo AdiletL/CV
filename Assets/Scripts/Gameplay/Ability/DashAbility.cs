@@ -54,19 +54,19 @@ namespace Gameplay.Ability
         public float Duration;
     }
 
-    public class DashBuilder : AbilityBuilder<DashAbility>
+    public class DashAbilityBuilder : AbilityBuilder
     {
-        public DashBuilder() : base(new DashAbility())
+        public DashAbilityBuilder() : base(new DashAbility())
         {
         }
         
-        public DashBuilder SetDuration(float duration)
+        public DashAbilityBuilder SetDuration(float duration)
         {
             if(ability is DashAbility dash)
                 dash.SetDuration(duration);
             return this;
         }
-        public DashBuilder SetSpeed(float speed)
+        public DashAbilityBuilder SetSpeed(float speed)
         {
             if(ability is DashAbility dash)
                 dash.SetSpeed(speed);

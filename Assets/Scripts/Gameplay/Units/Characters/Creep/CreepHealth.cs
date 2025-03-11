@@ -23,9 +23,9 @@ namespace Gameplay.Unit.Character.Creep
             isCanTakeDamageEffect = so_CreepHealth.IsCanTakeDamageEffect;
         }
 
-        public override void TakeDamage(IDamageable damageable)
+        public override void TakeDamage(DamageData damageData)
         {
-            base.TakeDamage(damageable);
+            base.TakeDamage(damageData);
             OnTakeDamage?.Invoke();
         }
     }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Gameplay.Damage;
 using ScriptableObjects.Gameplay.Trap;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace Gameplay.Unit.Trap
         private float cooldownAttack;
         private bool isReady = true;
         
-        public IDamageable Damageable { get; private set; }
+        public DamageData DamageData { get; private set; }
 
         public override void Initialize()
         {
@@ -29,7 +28,7 @@ namespace Gameplay.Unit.Trap
             cooldownAttack = so_Push.CooldownAttack;
 
             DamageStat.AddValue(so_Push.Damage);
-            Damageable = new NormalDamage(gameObject, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
         }
 
         public override void Appear()
@@ -44,11 +43,11 @@ namespace Gameplay.Unit.Trap
 
         private void OnEnable()
         {
-            GetComponentInUnit<PushCollision>().OnHitEnter += OnHitEnter;
+            GetComponentInUnit<PushTrigger>().OnHitEnter += OnHitEnter;
         }
         private void OnDisable()
         {
-            GetComponentInUnit<PushCollision>().OnHitEnter -= OnHitEnter;
+            GetComponentInUnit<PushTrigger>().OnHitEnter -= OnHitEnter;
         }
 
         private void OnHitEnter(GameObject target)
@@ -69,7 +68,7 @@ namespace Gameplay.Unit.Trap
 
         private void AfterActivate()
         {
-            pushAnimation.ChangeAnimationWithDuration(activateClip, durationAttack);
+            pushAnimation.ChangeAnimationWithDuration(appearClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, Restart));
@@ -88,7 +87,7 @@ namespace Gameplay.Unit.Trap
 
         private void AfterDeactivate()
         {
-            pushAnimation.ChangeAnimationWithDuration(deactivateClip, cooldownAttack);
+            pushAnimation.ChangeAnimationWithDuration(deappearClip, cooldownAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, ChangeReady));
@@ -111,7 +110,7 @@ namespace Gameplay.Unit.Trap
                 CurrentTarget.TryGetComponent(out IHealth health) && 
                 health.IsLive)
             {
-                trapAttackable.TakeDamage(Damageable);
+                trapAttackable.TakeDamage(DamageData);
             }
         }
     }

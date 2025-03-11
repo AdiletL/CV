@@ -27,10 +27,9 @@ namespace Gameplay.Unit.Character.Player
             playerController.StateMachine.AddStates(takeDamageState);
         }
 
-        public override void TakeDamage(IDamageable damageable)
+        public override void TakeDamage(DamageData damageData)
         {
-            base.TakeDamage(damageable);
-            
+            base.TakeDamage(damageData);
             playerController.StateMachine.ExitCategory(StateCategory.Action, typeof(PlayerTakeDamageState));
         }
     }

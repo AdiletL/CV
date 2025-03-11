@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Gameplay.Damage;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
 using UnityEngine;
@@ -12,11 +11,6 @@ namespace Gameplay.Equipment.Weapon
         [Inject] private PoolManager pool;
         
         private Transform pointSpawnProjectile;
-        
-        protected override IDamageable CreateDamageable()
-        {
-            return new NormalDamage(Owner, DamageStat.CurrentValue);
-        }
 
         public override void Initialize()
         {
@@ -30,8 +24,8 @@ namespace Gameplay.Equipment.Weapon
             newGameObject.transform.position = pointSpawnProjectile.position;
             newGameObject.transform.rotation = pointSpawnProjectile.rotation;
             var arrow = newGameObject.GetComponent<ArrowController>();
-            Damageable.Value = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
-            arrow.SetDamageable(Damageable);
+            DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
+            arrow.SetDamageable(DamageData);
             arrow.Initialize();
             arrow.ClearValues();
         }

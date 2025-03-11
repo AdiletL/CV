@@ -12,6 +12,6 @@ public interface IAttack : IApplyDamage
 
 public interface IApplyDamage
 {
-    public IDamageable Damageable { get; }
+    public DamageData DamageData { get; }
     public void ApplyDamage();
 }

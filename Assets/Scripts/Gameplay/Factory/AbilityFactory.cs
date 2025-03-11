@@ -25,7 +25,7 @@ namespace Gameplay.Factory
         private DashAbility CreateDash(AbilityConfig abilityConfig)
         {
             var dashConfig = abilityConfig as DashConfig;
-            return (DashAbility)new DashBuilder()
+            return (DashAbility)new DashAbilityBuilder()
                 .SetDuration(dashConfig.Duration)
                 .SetSpeed(dashConfig.Speed)
                 .SetBlockedInputType(dashConfig.SO_BaseAbilityConfig.BlockedInputType)
@@ -41,8 +41,7 @@ namespace Gameplay.Factory
             var applyDamageHealConfig = abilityConfig as VampirismConfig;
             return (VampirismAbility)new ApplyDamageHealBuilder()
                 .SetOwner(owner)
-                .SetValueType(applyDamageHealConfig.ValueType)
-                .SetValue(applyDamageHealConfig.Value)
+                .SetGameValue(applyDamageHealConfig.ValueType, applyDamageHealConfig.Value)
                 .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)
                 .SetGameObject(owner)
                 .SetAbilityBehaviour(applyDamageHealConfig.SO_BaseAbilityConfig.AbilityBehaviour)

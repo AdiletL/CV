@@ -14,21 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 03000000
-    ApplyDamageHealConfig:
+    VampirismConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
+      TimerCast: 0
       ValueType: 0
       Value: 0
-    BlockPhysicalDamageConfig:
+    damageResistanceConfig:
       SO_BaseAbilityConfig: {fileID: 11400000, guid: ea29a25dcdcf2b74781d669151fdf860, type: 2}
       Cooldown: 0
-      NormalDamageResistanceConfig:
-        Value: 50
-        ValueType: 1
-      BlockClip: {fileID: 1827226128182048838, guid: 61f2c64d4f97d9f459a1d367eb16fb13, type: 3}
+      TimerCast: 0
+      StatConfigs:
+      - StatTypeID: 11
+        StatValuesConfig:
+        - StatValueTypeID: 1
+          ValueTypeID: 0
+          Value: 35
+      Clip: {fileID: 1827226128182048838, guid: 61f2c64d4f97d9f459a1d367eb16fb13, type: 3}
     DashConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
+      TimerCast: 0
       Speed: 0
       Duration: 0
   <BlockInputType>k__BackingField: 104

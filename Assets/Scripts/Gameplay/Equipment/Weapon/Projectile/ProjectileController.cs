@@ -16,14 +16,14 @@ namespace Gameplay.Weapon.Projectile
         protected LayerMask enemyLayer;
         
 
-        public IDamageable Damageable { get; protected set; }
+        public DamageData DamageData { get; protected set; }
         public AnimationCurve MoveCurve { get; protected set; }
         public Stat MovementSpeedStat { get; protected set; } = new Stat();
 
         protected float height;
         protected bool isInitialized;
         
-        public void SetDamageable(IDamageable damageable) => Damageable = damageable;
+        public void SetDamageable(DamageData damageData) => DamageData = damageData;
 
         public virtual void Initialize()
         {
@@ -51,7 +51,7 @@ namespace Gameplay.Weapon.Projectile
             {
                 if (health.IsLive)
                 {
-                    attackable.TakeDamage(Damageable);
+                    attackable.TakeDamage(DamageData);
                 }
             }
 
@@ -71,7 +71,7 @@ namespace Gameplay.Weapon.Projectile
         private void OnTriggerEnter(Collider other)
         {
             if(!Calculate.GameLayer.IsTarget(enemyLayer, other.gameObject.layer)
-            || other.gameObject == Damageable.Owner || 
+            || other.gameObject == DamageData.Owner || 
             other.TryGetComponent(out RoomController roomController)) return;
             
             SetTriggerTarget(other.gameObject);
