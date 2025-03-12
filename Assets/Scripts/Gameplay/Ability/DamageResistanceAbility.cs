@@ -10,14 +10,14 @@ namespace Gameplay.Ability
 {
     public class DamageResistanceAbility : Ability
     {
-        public override AbilityType AbilityType { get; protected set; } = AbilityType.DamageResistance;
+        public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.DamageResistance;
 
         private UnitStatsController unitStatsController;
         private StatConfig[] statConfigs;
 
         private bool isUsed;
         
-        private List<float> addedStats = new List<float>();
+        private List<float> addedStatValues = new List<float>();
 
         public void SetStatConfigs(StatConfig[] statConfigs) => this.statConfigs = statConfigs;
 
@@ -43,7 +43,7 @@ namespace Gameplay.Ability
 
         private void AddStats()
         {
-            addedStats.Clear();
+            addedStatValues.Clear();
             Stat stat = null;
             float result = 0;
             for (int i = 0; i < statConfigs.Length; i++)
@@ -70,7 +70,7 @@ namespace Gameplay.Ability
                             break;
                     }
                     
-                    addedStats.Add(result);
+                    addedStatValues.Add(result);
                 }
             }
         }
@@ -86,9 +86,9 @@ namespace Gameplay.Ability
                     var statValue = statConfigs[i].StatValuesConfig[j];
                     switch (statValue.StatValueTypeID)
                     {
-                        case StatValueType.Current: stat.RemoveValue(addedStats[i]); break;
-                        case StatValueType.Maximum: stat.RemoveMaxValue(addedStats[i]); break;
-                        case StatValueType.Minimum: stat.RemoveMinValue(addedStats[i]); break;
+                        case StatValueType.Current: stat.RemoveValue(addedStatValues[i]); break;
+                        case StatValueType.Maximum: stat.RemoveMaxValue(addedStatValues[i]); break;
+                        case StatValueType.Minimum: stat.RemoveMinValue(addedStatValues[i]); break;
                     }
                 }
             }

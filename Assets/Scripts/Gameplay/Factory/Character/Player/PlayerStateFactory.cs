@@ -130,7 +130,7 @@ namespace Gameplay.Factory.Character.Player
         {
             return (PlayerSpecialActionState)new PlayerSpecialActionStateBuilder()
                 .SetCharacterAnimation(characterAnimation)
-                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.AbilityConfigData.damageResistanceConfig)
+                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.AbilityConfigData.DamageResistanceConfig)
                 .SetConfig(so_PlayerSpecialAction)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)

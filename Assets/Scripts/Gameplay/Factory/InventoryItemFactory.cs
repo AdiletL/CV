@@ -37,7 +37,7 @@ namespace Gameplay.Factory
         {
             var so_MadnessMask = so_Item as SO_MadnessMask;
             return (MadnessMaskItem)new MadnessMaskItemBuilder()
-                .SetVampirisimConfig(so_MadnessMask.AbilityConfigData.VampirismConfig)
+                .SetVampirisimConfig(so_MadnessMask.EffectConfigData.VampirismConfig)
                 .SetItemBehaviour(so_MadnessMask.ItemBehaviourID)
                 .SetItemCategory(so_MadnessMask.ItemCategoryID)
                 .SetBlockInput(so_MadnessMask.BlockInputTypeID)

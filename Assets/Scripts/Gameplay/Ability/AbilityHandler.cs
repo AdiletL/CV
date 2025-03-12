@@ -38,7 +38,8 @@ namespace Gameplay.Ability
         
         public List<Ability> GetAbilities(AbilityType abilityType)
         {
-            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType))
+            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType) ||
+                currentAbilities[abilityType].Count == 0)
                 return null;
             return currentAbilities[abilityType];
         }
@@ -71,13 +72,13 @@ namespace Gameplay.Ability
         {
             currentAbilities ??= new();
             
-            if (IsAbilityNull(ability.AbilityType))
-                currentAbilities.Add(ability.AbilityType, new List<Ability>());
+            if (IsAbilityNull(ability.AbilityTypeID))
+                currentAbilities.Add(ability.AbilityTypeID, new List<Ability>());
             
             OnUpdate += ability.Update;
             OnLateUpdate += ability.LateUpdate;
             
-            currentAbilities[ability.AbilityType].Add(ability);
+            currentAbilities[ability.AbilityTypeID].Add(ability);
         }
 
         public void RemoveAbilityByID(AbilityType abilityType, int? id)
@@ -93,8 +94,10 @@ namespace Gameplay.Ability
                     currentAbilities[abilityType][i].Exit();
                     
                     currentAbilities[abilityType].Remove(currentAbilities[abilityType][i]);
-                    break;
                 }
+                
+                if(currentAbilities[abilityType].Count == 0)
+                    currentAbilities.Remove(abilityType);
             }
         }
     }

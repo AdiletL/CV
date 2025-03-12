@@ -1,10 +1,13 @@
 ﻿
+using Gameplay.Effect;
+
 namespace Gameplay.Unit.Item
 {
     public class NormalSwordItem : EquipmentItem
     {
         public override ItemName ItemNameID { get; protected set; } = ItemName.NormalSword;
         
+
     }
 
     public class NormalSwordItemBuilder : EquipmentItemBuilder
@@ -12,6 +15,6 @@ namespace Gameplay.Unit.Item
         public NormalSwordItemBuilder() : base(new NormalSwordItem())
         {
         }
-
+        
     }
 }

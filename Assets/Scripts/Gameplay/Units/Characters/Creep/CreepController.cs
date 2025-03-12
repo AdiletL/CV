@@ -1,5 +1,8 @@
 ﻿using System;
+using Gameplay.Ability;
+using Gameplay.Effect;
 using Gameplay.Factory.Character.Creep;
+using Gameplay.Resistance;
 using Machine;
 using Unity.Collections;
 using UnityEngine;
@@ -8,6 +11,12 @@ using UnityEngine.AI;
 namespace Gameplay.Unit.Character.Creep
 {
     [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(ResistanceHandler))]
+    [RequireComponent(typeof(AbilityHandler))]
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CapsuleCollider))]
+    [RequireComponent(typeof(CreepGravity))]
+    [RequireComponent(typeof(EffectHandler))]
     public abstract class CreepController : CharacterMainController
     {
         public event Action<CreepController> OnDeath; 

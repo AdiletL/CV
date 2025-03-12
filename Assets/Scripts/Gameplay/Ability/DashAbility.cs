@@ -10,7 +10,7 @@ namespace Gameplay.Ability
         private float speed;
         private float dashTimer;
         
-        public override AbilityType AbilityType { get; protected set; } = AbilityType.Dash;
+        public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.Dash;
         
         public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
         public void SetDuration(float duration) => this.duration = duration;

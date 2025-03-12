@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
+using Gameplay.Effect;
 using Gameplay.UI.ScreenSpace;
 using UnityEngine;
 using Zenject;
@@ -35,7 +36,7 @@ namespace Gameplay.Unit.Item
         protected bool isActivated;
         protected bool isCasting;
 
-        private List<float> addedStats;
+        private List<float> addedStatValues;
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetOwnerGameObject(GameObject gameObject) => this.OwnerGameObject = gameObject;
@@ -136,10 +137,10 @@ namespace Gameplay.Unit.Item
         }
 
 
-        public virtual void AddStatsFromUnit()
+        public virtual void AddStatsToUnit()
         {
-            addedStats ??= new List<float>();
-            addedStats.Clear();
+            addedStatValues ??= new List<float>();
+            addedStatValues.Clear();
             
             var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
             float result = 0;
@@ -168,9 +169,11 @@ namespace Gameplay.Unit.Item
                         default: throw new ArgumentOutOfRangeException();
                     }
                     
-                    addedStats.Add(result);
+                    addedStatValues.Add(result);
                 }
             }
+
+            AddEffectToUnit();
         }
 
         public virtual void RemoveStatsFromUnit()
@@ -186,16 +189,18 @@ namespace Gameplay.Unit.Item
                     {
                         case StatValueType.Nothing: break;
 
-                        case StatValueType.Current: unitStat.RemoveValue(addedStats[index]); break;
-                        case StatValueType.Minimum: unitStat.RemoveMinValue(addedStats[index]); break;
-                        case StatValueType.Maximum: unitStat.RemoveMaxValue(addedStats[index]); break;
+                        case StatValueType.Current: unitStat.RemoveValue(addedStatValues[index]); break;
+                        case StatValueType.Minimum: unitStat.RemoveMinValue(addedStatValues[index]); break;
+                        case StatValueType.Maximum: unitStat.RemoveMaxValue(addedStatValues[index]); break;
                         default: throw new ArgumentOutOfRangeException();
                     }
                 }
                 index++;
             }
-        }
 
+            RemoveEffectFromUnit();
+        }
+        
         public virtual void PutOn()
         {
             
@@ -218,9 +223,15 @@ namespace Gameplay.Unit.Item
             Abilities.Add(ability);
         }
 
-        protected void RemoveAbility(Ability.Ability ability)
+        protected void RemoveAbility(Ability.Ability ability) => Abilities.Remove(ability);
+        
+        protected virtual void AddEffectToUnit()
         {
-            Abilities.Remove(ability);
+            
+        }
+        protected virtual void RemoveEffectFromUnit()
+        {
+            
         }
         
         public void AddAmount(int amount) => Amount += amount;
@@ -230,7 +241,6 @@ namespace Gameplay.Unit.Item
         {
             
         }
-
         public virtual void HideContextMenu()
         {
             

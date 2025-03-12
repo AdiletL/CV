@@ -1,6 +1,5 @@
 ﻿using System;
-using Gameplay.Ability;
-using Gameplay.Factory;
+using Gameplay.Effect;
 using UnityEngine;
 using Zenject;
 
@@ -12,23 +11,19 @@ namespace Gameplay.Unit.Item
         
         public override ItemName ItemNameID { get; protected set; } = ItemName.MadnessMask;
 
-        private VampirismAbility vampirismAbility;
+        private VampirismEffect vampirismEffect;
         private VampirismConfig vampirismConfig;
+        
+        private static readonly string ID = ItemName.MadnessMask.ToString();
         
         public void SetVampirismConfig(VampirismConfig vampirismConfig) => this.vampirismConfig = vampirismConfig;
 
         public override void Initialize()
         {
             base.Initialize();
-            var abilityFactory = new AbilityFactoryBuilder()
-                .SetOwner(OwnerGameObject)
-                .Build();
-            diContainer.Inject(abilityFactory);
-            
-            vampirismAbility = (VampirismAbility)abilityFactory.CreateAbility(vampirismConfig);
-            diContainer.Inject(vampirismAbility);
-            vampirismAbility.Initialize();
-            AddAbility(vampirismAbility);
+            vampirismEffect = new VampirismEffect(vampirismConfig, ID);
+            diContainer.Inject(vampirismEffect);
+            vampirismEffect.SetTarget(OwnerGameObject);
         }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -41,14 +36,26 @@ namespace Gameplay.Unit.Item
         protected override void AfterCast()
         {
             base.AfterCast();
-            vampirismAbility.Enter();
+            vampirismEffect.ApplyEffect();
         }
 
         public override void Exit()
         {
             if(!isActivated) return;
-            vampirismAbility.Exit();
+            vampirismEffect.DestroyEffect();
             base.Exit();
+        }
+
+        protected override void AddEffectToUnit()
+        {
+            if (OwnerGameObject.TryGetComponent(out EffectHandler effectHandler))
+                effectHandler.AddEffect(vampirismEffect);
+        }
+
+        protected override void RemoveEffectFromUnit()
+        {
+            if (OwnerGameObject.TryGetComponent(out EffectHandler effectHandler))
+                effectHandler.RemoveEffect(vampirismEffect.EffectTypeID, vampirismEffect.ID);
         }
     }
     

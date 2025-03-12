@@ -18,7 +18,7 @@ namespace Gameplay.Ability
         
         public int? InventorySlotID { get; protected set; }
         public GameObject GameObject { get; protected set; }
-        public abstract AbilityType AbilityType { get; protected set; }
+        public abstract AbilityType AbilityTypeID { get; protected set; }
         public AbilityBehaviour AbilityBehaviourID { get; protected set; }
         public InputType BlockedInputTypeID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }

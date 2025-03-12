@@ -43,11 +43,15 @@ namespace Gameplay.Unit.Item
         
         public List<Item> GetItems(ItemName itemNameID)
         {
+            if (currentItems == null || !currentItems.ContainsKey(itemNameID) ||
+                currentItems[itemNameID].Count == 0) return null;
             return currentItems?[itemNameID];
         }
 
         public List<Ability.Ability> GetAbilities(AbilityType abilityType)
         {
+            if(currentAbilities == null || !currentAbilities.ContainsKey(abilityType) ||
+               currentAbilities[abilityType].Count == 0) return null;
             return currentAbilities?[abilityType];
         }
 
@@ -101,9 +105,9 @@ namespace Gameplay.Unit.Item
             for (int i = 0; i < abilities.Count; i++)
             {
                 abilities[i].SetInventorySlotID(inventorySlotID);
-                if(!currentAbilities.ContainsKey(abilities[i].AbilityType))
-                    currentAbilities.Add(abilities[i].AbilityType, new List<Ability.Ability>());
-                currentAbilities[abilities[i].AbilityType].Add(abilities[i]);
+                if(!currentAbilities.ContainsKey(abilities[i].AbilityTypeID))
+                    currentAbilities.Add(abilities[i].AbilityTypeID, new List<Ability.Ability>());
+                currentAbilities[abilities[i].AbilityTypeID].Add(abilities[i]);
             }
         }
 
@@ -113,11 +117,13 @@ namespace Gameplay.Unit.Item
             
             for (int i = abilities.Count - 1; i >= 0; i--)
             {
-                for (int j = currentAbilities[abilities[i].AbilityType].Count - 1; j >= 0; j--)
+                for (int j = currentAbilities[abilities[i].AbilityTypeID].Count - 1; j >= 0; j--)
                 {
-                    if(currentAbilities[abilities[i].AbilityType][j].InventorySlotID == inventorySlotID)
-                        currentAbilities[abilities[i].AbilityType].RemoveAt(j);
+                    if(currentAbilities[abilities[i].AbilityTypeID][j].InventorySlotID == inventorySlotID)
+                        currentAbilities[abilities[i].AbilityTypeID].RemoveAt(j);
                 }
+                if(currentAbilities[abilities[i].AbilityTypeID].Count == 0)
+                    currentAbilities.Remove(abilities[i].AbilityTypeID);
             }
         }
     }

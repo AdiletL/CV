@@ -4,11 +4,11 @@ using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Factory;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
 using Unity.Collections;
 using UnityEngine;
-using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Unit.Character.Player
 {
@@ -17,7 +17,12 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(PlayerAnimation))]
     [RequireComponent(typeof(PlayerExperience))]
     [RequireComponent(typeof(EffectHandler))]
+    [RequireComponent(typeof(PlayerItemInventory))]
+    [RequireComponent(typeof(PlayerAbilityInventory))]
     [RequireComponent(typeof(AbilityHandler))]
+    [RequireComponent(typeof(ResistanceHandler))]
+    [RequireComponent(typeof(ItemHandler))]
+    [RequireComponent(typeof(PlayerKinematicControl))]
     
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable
     {

@@ -59,14 +59,14 @@ namespace Gameplay.Unit.Item
             base.AfterCast();
             isUse = true;
             currentCharacter.PutOnEquipment(equipment);
-            AddStatsFromUnit();
+            AddStatsToUnit();
             Exit();
         }
 
-        public override void AddStatsFromUnit()
+        public override void AddStatsToUnit()
         {
             if(!isUse) return;
-            base.AddStatsFromUnit();
+            base.AddStatsToUnit();
         }
 
         public override void RemoveStatsFromUnit()
@@ -101,7 +101,7 @@ namespace Gameplay.Unit.Item
             equipmentContextMenu?.Hide();
         }
     }
-
+    
     public abstract class EquipmentItemBuilder : ItemBuilder<EquipmentItem>
     {
         protected EquipmentItemBuilder(Item item) : base(item)

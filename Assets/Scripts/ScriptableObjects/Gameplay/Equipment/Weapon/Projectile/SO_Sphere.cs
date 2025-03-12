@@ -6,6 +6,6 @@ namespace ScriptableObjects.Weapon.Projectile
     [CreateAssetMenu(fileName = "SO_Sphere", menuName = "SO/Gameplay/Weapon/Projectile/Sphere", order = 51)]
     public class SO_Sphere : SO_Projectile
     {
-        [field: SerializeField] public SlowMovementInfo SlowMovementInfo { get; set; }
+        [field: SerializeField] public EffectConfigData EffectConfigData { get; set; }
     }
 }

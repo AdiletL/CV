@@ -90,7 +90,7 @@ namespace Gameplay.Unit.Character.Player
 
         public void AddAbility(Ability.Ability ability, Sprite icon)
         {
-            if (slots.Values.Any(a => a != null && a.AbilityType == ability.AbilityType)) return;
+            if (slots.Values.Any(a => a != null && a.AbilityTypeID == ability.AbilityTypeID)) return;
 
             int? slotID = slots.FirstOrDefault(pair => pair.Value == null).Key;
             if (slotID == null) return;
@@ -114,7 +114,7 @@ namespace Gameplay.Unit.Character.Player
             slots[slotID].OnStartedCast -= OnStartedCast;
             slots[slotID].OnFinishedCast -= OnFinishedCast;
             
-            abilityHandler.RemoveAbilityByID(slots[slotID].AbilityType, slotID);
+            abilityHandler.RemoveAbilityByID(slots[slotID].AbilityTypeID, slotID);
             uiAbilityInventory.RemoveAbility(slotID);
             slots[slotID.Value] = null;
         }

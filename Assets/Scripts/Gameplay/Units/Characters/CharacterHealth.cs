@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Ability;
+using Gameplay.Effect;
 using Gameplay.Resistance;
 using UnityEngine;
 
@@ -19,13 +20,13 @@ namespace Gameplay.Unit.Character
 
         private void VampirismAbility(GameObject attacker, float totalDamage)
         {
-            var abilityHandler = attacker.GetComponent<AbilityHandler>();
-            if (abilityHandler == null) return;
+            var effectHandler = attacker.GetComponent<EffectHandler>();
+            if (!effectHandler) return;
 
-            var vampirismAbilities = abilityHandler.GetAbilities(AbilityType.Vampirism);
-            if(vampirismAbilities == null) return;
-            for (int i = vampirismAbilities.Count - 1; i >= 0; i--)
-                (vampirismAbilities[i] as VampirismAbility)?.Heal(totalDamage);
+            var vampirismEffect = effectHandler.GetEffects(EffectType.Vampirism);
+            if(vampirismEffect == null) return;
+            for (int i = vampirismEffect.Count - 1; i >= 0; i--)
+                (vampirismEffect[i] as VampirismEffect)?.Heal(totalDamage);
         }
         
         public override void TakeDamage(DamageData damageData)

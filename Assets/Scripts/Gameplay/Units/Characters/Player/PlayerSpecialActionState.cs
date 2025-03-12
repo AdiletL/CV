@@ -44,7 +44,7 @@ namespace Gameplay.Unit.Character.Player
             damageResistanceAbility = CreateBlockPhysicalDamage();
             diContainer.Inject(damageResistanceAbility);
             damageResistanceAbility.Initialize();
-            blockClip = so_PlayerSpecialAction.AbilityConfigData.damageResistanceConfig.Clip;
+            blockClip = so_PlayerSpecialAction.AbilityConfigData.DamageResistanceConfig.Clip;
             characterAnimation.AddClip(blockClip);
         }
 

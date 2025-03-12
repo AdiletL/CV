@@ -15,7 +15,6 @@ namespace Gameplay.Factory
             Ability.Ability result = abilityConfig.SO_BaseAbilityConfig.AbilityType switch
             {
                 _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Dash => CreateDash(abilityConfig),
-                _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Vampirism => CreateApplyDamageHeal(abilityConfig),
                 _ when abilityConfig.SO_BaseAbilityConfig.AbilityType == AbilityType.Nothing => null,
             };
             
@@ -33,20 +32,6 @@ namespace Gameplay.Factory
                 .SetAbilityBehaviour(dashConfig.SO_BaseAbilityConfig.AbilityBehaviour)
                 .SetTimerCast(dashConfig.TimerCast)
                 .SetCooldown(dashConfig.Cooldown)
-                .Build();
-        }
-
-        private VampirismAbility CreateApplyDamageHeal(AbilityConfig abilityConfig)
-        {
-            var applyDamageHealConfig = abilityConfig as VampirismConfig;
-            return (VampirismAbility)new ApplyDamageHealBuilder()
-                .SetOwner(owner)
-                .SetGameValue(applyDamageHealConfig.ValueType, applyDamageHealConfig.Value)
-                .SetBlockedInputType(applyDamageHealConfig.SO_BaseAbilityConfig.BlockedInputType)
-                .SetGameObject(owner)
-                .SetAbilityBehaviour(applyDamageHealConfig.SO_BaseAbilityConfig.AbilityBehaviour)
-                .SetTimerCast(applyDamageHealConfig.TimerCast)
-                .SetCooldown(applyDamageHealConfig.Cooldown)
                 .Build();
         }
     }

@@ -10,11 +10,8 @@ namespace Gameplay.Ability
     {
         public List<AbilityType> AbilityTypeID;
         
-        [ShowIf("@AbilityTypeID.Contains(AbilityType.Vampirism)"), Space]
-        public VampirismConfig VampirismConfig;
-        
         [ShowIf("@AbilityTypeID.Contains(AbilityType.DamageResistance)"), Space]
-        public DamageResistanceConfig damageResistanceConfig;
+        public DamageResistanceConfig DamageResistanceConfig;
         
         [ShowIf("@AbilityTypeID.Contains(AbilityType.Dash)"), Space]
         public DashConfig DashConfig;

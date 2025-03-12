@@ -2,6 +2,7 @@
 using System.IO;
 using Gameplay;
 using Gameplay.Ability;
+using Gameplay.Effect;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -25,6 +26,7 @@ namespace ScriptableObjects.Unit.Item
         
         [field: SerializeField, Space(15)] public StatConfig[] UnitStatsConfigs { get; private set; }
         [field: SerializeField, Space(15)] public AbilityConfigData AbilityConfigData { get; private set; }
+        [field: SerializeField, Space(15)] public EffectConfigData EffectConfigData { get; private set; }
         
         #if UNITY_EDITOR
         //[Button]

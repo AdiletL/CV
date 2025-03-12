@@ -5,30 +5,40 @@ namespace Gameplay.Effect
 {
     public abstract class Effect : IEffect
     {
-        public event Action<IEffect> OnDestroyEffect;
-        
-        public GameObject target { get; protected set; }
+        public event Action<EffectType, string> OnDestroyEffect;
 
-        public Effect()
+        public abstract EffectType EffectTypeID { get; }
+
+        public string ID { get; protected set; }
+        public GameObject Target { get; protected set; }
+        public bool IsInterim { get; protected set; }
+
+        public Effect(EffectConfig effectConfig, string id)
         {
-            
+            ID = id;
         }
 
-        public void SetTarget(GameObject target)
+        public virtual void SetTarget(GameObject target)
         {
-            this.target = target;
+            this.Target = target;
         }
 
         public abstract void ClearValues();
         
         public abstract void Update();
-        public abstract void LateUpdate();
+        public abstract void FixedUpdate();
 
+        public abstract void UpdateEffect();
         public abstract void ApplyEffect();
 
         public virtual void DestroyEffect()
         {
-            OnDestroyEffect?.Invoke(this);
+            OnDestroyEffect?.Invoke(EffectTypeID, ID);
         }
+    }
+
+    public abstract class EffectConfig
+    {
+        public bool IsInterim = true;
     }
 }

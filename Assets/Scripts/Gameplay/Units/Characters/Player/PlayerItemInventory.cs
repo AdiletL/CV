@@ -107,7 +107,7 @@ namespace Gameplay.Unit.Character.Player
                 if(slotID == null) return;
                 
                 item.SetInventorySlotID(slotID);
-                item.AddStatsFromUnit();
+                item.AddStatsToUnit();
                 
                 slots[slotID] = item;
                 itemHandler.AddItem(item);
@@ -205,7 +205,7 @@ namespace Gameplay.Unit.Character.Player
             
             if (currentUseItem != null)
             {
-                if (Input.anyKeyDown && !CheckInputOnUI.IsPointerOverUIObject())
+                if (Input.anyKey && !CheckInputOnUI.IsPointerOverUIObject())
                 {
                     ClearUseItem();
                 }

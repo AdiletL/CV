@@ -9,7 +9,7 @@ public interface IAbility
     
     public int? InventorySlotID { get; }
     public GameObject GameObject { get; }
-    public AbilityType AbilityType { get; }
+    public AbilityType AbilityTypeID { get; }
     public AbilityBehaviour AbilityBehaviourID { get; }
     public InputType BlockedInputTypeID { get; }
     public Action FinishedCallBack { get; }
