@@ -18,6 +18,7 @@ namespace Gameplay.Unit.Character.Player
     {
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
+        [Inject] private AbilityFactory abilityFactory;
         
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerAbilityInventory so_PlayerAbilityInventory;
@@ -161,14 +162,10 @@ namespace Gameplay.Unit.Character.Player
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                var abilityFactory = (AbilityFactory)new AbilityFactoryBuilder()
-                    .SetOwner(gameObject)
-                    .Build();
-                diContainer.Inject(abilityFactory);
-                
                 var newAbility = (DashAbility)abilityFactory.CreateAbility(so_PlayerAbilities.AbilityConfigData.DashConfig);
                 diContainer.Inject(newAbility);
                 newAbility.SetMoveControl(gameObject.GetComponent<IMoveControl>());
+                newAbility.SetGameObject(gameObject);
                 newAbility.Initialize();
                 AddAbility(newAbility, so_PlayerAbilities.AbilityConfigData.DashConfig.SO_BaseAbilityConfig.Icon);
             }

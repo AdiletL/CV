@@ -3525,6 +3525,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
       insertIndex: -1
       addedObject: {fileID: -1044719356054737009}
+    - targetCorrespondingSourceObject: {fileID: 7290019540245222525, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 692351359827104898}
   m_SourcePrefab: {fileID: 100100000, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}
 --- !u!1 &1290455938804012064 stripped
 GameObject:
@@ -3566,7 +3569,6 @@ MonoBehaviour:
   so_PlayerAbilities: {fileID: 11400000, guid: 0d0ed737da3608143aa9bbd2b6af9b75, type: 2}
   so_PlayerSpecialAction: {fileID: 11400000, guid: b5a7c1b2d9d6ca1438ac0ca4dba990c9, type: 2}
   so_NormalSword: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
-  weaponParent: {fileID: 2888781842470922690}
   currentStateCategory: 0
   currentStateName: 
 --- !u!114 &1634422324230795542
@@ -3898,6 +3900,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitController: {fileID: 6200176588022165938}
+--- !u!114 &692351359827104898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3905064192937531579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5c330976434e9e8b8f8307b6fbaf3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMainController: {fileID: 6200176588022165938}
+  <WeaponParent>k__BackingField: {fileID: 2888781842470922690}
 --- !u!4 &5590145490901760701 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2201950844900472443, guid: eba361d41f2466348afb47774ff3f8fc, type: 3}

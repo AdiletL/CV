@@ -23,7 +23,7 @@ namespace Gameplay.Unit.Item
             base.Initialize();
             vampirismEffect = new VampirismEffect(vampirismConfig, ID);
             diContainer.Inject(vampirismEffect);
-            vampirismEffect.SetTarget(OwnerGameObject);
+            vampirismEffect.SetTarget(Owner);
         }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -48,13 +48,13 @@ namespace Gameplay.Unit.Item
 
         protected override void AddEffectToUnit()
         {
-            if (OwnerGameObject.TryGetComponent(out EffectHandler effectHandler))
+            if (Owner.TryGetComponent(out EffectHandler effectHandler))
                 effectHandler.AddEffect(vampirismEffect);
         }
 
         protected override void RemoveEffectFromUnit()
         {
-            if (OwnerGameObject.TryGetComponent(out EffectHandler effectHandler))
+            if (Owner.TryGetComponent(out EffectHandler effectHandler))
                 effectHandler.RemoveEffect(vampirismEffect.EffectTypeID, vampirismEffect.ID);
         }
     }

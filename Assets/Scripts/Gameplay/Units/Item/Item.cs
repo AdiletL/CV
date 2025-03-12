@@ -18,7 +18,7 @@ namespace Gameplay.Unit.Item
         public event Action<int?, float, float> OnCountCooldown;
         
         public int? InventorySlotID { get; protected set; }
-        public GameObject OwnerGameObject { get; protected set; }
+        public GameObject Owner { get; protected set; }
         public abstract ItemName ItemNameID { get; protected set; }
         public ItemCategory ItemCategoryID { get; protected set; }
         public ItemBehaviour ItemBehaviourID { get; protected set; }
@@ -39,7 +39,7 @@ namespace Gameplay.Unit.Item
         private List<float> addedStatValues;
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
-        public void SetOwnerGameObject(GameObject gameObject) => this.OwnerGameObject = gameObject;
+        public void SetOwner(GameObject gameObject) => this.Owner = gameObject;
         public void SetItemCategory(ItemCategory itemCategory) => ItemCategoryID = itemCategory;
         public void SetItemBehaviour(ItemBehaviour itemBehaviour) => ItemBehaviourID = itemBehaviour;
         public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
@@ -142,7 +142,7 @@ namespace Gameplay.Unit.Item
             addedStatValues ??= new List<float>();
             addedStatValues.Clear();
             
-            var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
+            var unitStatController = Owner.GetComponent<UnitStatsController>();
             float result = 0;
             foreach (var config in Stats)
             {
@@ -178,7 +178,7 @@ namespace Gameplay.Unit.Item
 
         public virtual void RemoveStatsFromUnit()
         {
-            var unitStatController = OwnerGameObject.GetComponent<UnitStatsController>();
+            var unitStatController = Owner.GetComponent<UnitStatsController>();
             int index = 0;
             foreach (var config in Stats)
             {
@@ -258,7 +258,7 @@ namespace Gameplay.Unit.Item
 
         public ItemBuilder<T> SetGameObject(GameObject gameObject)
         {
-            item.SetOwnerGameObject(gameObject);
+            item.SetOwner(gameObject);
             return this;
         }
         

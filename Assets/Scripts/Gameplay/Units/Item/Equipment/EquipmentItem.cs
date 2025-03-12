@@ -10,11 +10,12 @@ namespace Gameplay.Unit.Item
     public abstract class EquipmentItem : Item
     {
         [Inject] private DiContainer diContainer;
+        [Inject] private EquipmentFactory equipmentFactory;
         
-        private SO_Equipment so_Equipment; 
-        private Equipment.Equipment equipment;
+        protected SO_Equipment so_Equipment; 
+        protected Equipment.Equipment equipment;
         private EquipmentContextMenu equipmentContextMenu;
-        private CharacterMainController currentCharacter;
+        private CharacterEquipmentController characterEquipmentController;
 
         private bool isUse;
         
@@ -23,13 +24,12 @@ namespace Gameplay.Unit.Item
         public override void Initialize()
         {
             base.Initialize();
-            currentCharacter = OwnerGameObject.GetComponent<CharacterMainController>();
-            EquipmentFactory equipmentFactory = new EquipmentFactoryBuilder()
-                .Build();
-            equipment = (Equipment.Weapon.Sword)equipmentFactory.CreateEquipment(so_Equipment);
+            characterEquipmentController = Owner.GetComponent<CharacterEquipmentController>();
+            
+            equipment = equipmentFactory.CreateEquipment(so_Equipment);
             diContainer.Inject(equipment);
-            equipment.SetOwner(OwnerGameObject);
-            equipment.SetOwnerCenter(OwnerGameObject.GetComponent<UnitCenter>().Center);
+            equipment.SetOwner(Owner);
+            equipment.SetOwnerCenter(Owner.GetComponent<UnitCenter>().Center);
             equipment.Initialize();
         }
 
@@ -41,15 +41,15 @@ namespace Gameplay.Unit.Item
                 return;
             }
             
-            if(!currentCharacter.IsNullEquipment(equipment)) return;
+            if(!characterEquipmentController.IsNullEquipment(equipment)) return;
             StartEffect();
         }
 
         public override void TakeOff()
         {
-            if(currentCharacter.IsNullEquipment(equipment)) return;
+            if(characterEquipmentController.IsNullEquipment(equipment)) return;
             RemoveStatsFromUnit();
-            currentCharacter.TakeOffEquipment(equipment);
+            characterEquipmentController.TakeOff(equipment);
             isUse = false;
             Exit();
         }
@@ -58,7 +58,7 @@ namespace Gameplay.Unit.Item
         {
             base.AfterCast();
             isUse = true;
-            currentCharacter.PutOnEquipment(equipment);
+            characterEquipmentController.PutOn(equipment);
             AddStatsToUnit();
             Exit();
         }

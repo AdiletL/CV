@@ -12,7 +12,7 @@ public interface IItem
     public event Action<int?, float, float> OnCountCooldown;
     
     public int? InventorySlotID { get; }
-    public GameObject OwnerGameObject { get; }
+    public GameObject Owner { get; }
     public ItemName ItemNameID { get; }
     public ItemCategory ItemCategoryID { get; }
     public ItemBehaviour ItemBehaviourID { get; }

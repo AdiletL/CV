@@ -28,24 +28,27 @@ MonoBehaviour:
   <JumpDuration>k__BackingField: 0.5
   <UnitStatsConfigs>k__BackingField: []
   <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 02000000
-    VampirismConfig:
-      SO_BaseAbilityConfig: {fileID: 11400000, guid: c569a21ec3b80b544a6483ca4ad39dd7, type: 2}
-      Cooldown: 0
-      TimerCast: 0
-      ValueType: 1
-      Value: 200
-    BlockPhysicalDamageConfig:
+    AbilityTypeID: 00000000
+    DamageResistanceConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
       TimerCast: 0
-      NormalDamageResistanceConfig:
-        Value: 0
-        ValueType: 0
-      BlockClip: {fileID: 0}
+      StatConfigs: []
+      Clip: {fileID: 0}
     DashConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
       TimerCast: 0
       Speed: 0
       Duration: 0
+  <EffectConfigData>k__BackingField:
+    EffectTypesID: 02000000
+    SlowMovementConfig:
+      IsInterim: 1
+      ValueType: 0
+      Value: 0
+      Duration: 0
+    VampirismConfig:
+      IsInterim: 0
+      ValueType: 0
+      Value: 3

@@ -9,6 +9,7 @@ using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
 using Unity.Collections;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Unit.Character.Player
 {
@@ -23,11 +24,13 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(ResistanceHandler))]
     [RequireComponent(typeof(ItemHandler))]
     [RequireComponent(typeof(PlayerKinematicControl))]
-    
+    [RequireComponent(typeof(PlayerEquipmentController))]
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable
     {
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
+        
+        [Inject] private InventoryItemFactory inventoryItemFactory;
         
         [Space]
         [SerializeField] private SO_PlayerMove so_PlayerMove;
@@ -38,7 +41,6 @@ namespace Gameplay.Unit.Character.Player
         
         [Space]
         [SerializeField] private SO_NormalSword so_NormalSword;
-        [SerializeField] private Transform weaponParent;
         
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
@@ -50,6 +52,7 @@ namespace Gameplay.Unit.Character.Player
         private PlayerKinematicControl playerKinematicControl;
         private PlayerControlDesktop playerControlDesktop;
         private PlayerStatsController playerStatsController;
+        private PlayerEquipmentController playerEquipmentController;
         
         private CharacterEndurance characterEndurance;
         private CharacterExperience characterExperience;
@@ -92,7 +95,7 @@ namespace Gameplay.Unit.Character.Player
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetCharacterAnimation(characterAnimation)
-                .SetWeaponParent(weaponParent)
+                .SetWeaponParent(playerEquipmentController.WeaponParent)
                 .SetStateMachine(StateMachine)
                 .SetUnitCenter(unitCenter)
                 .SetGameObject(gameObject)
@@ -135,6 +138,10 @@ namespace Gameplay.Unit.Character.Player
             
             unitTransformSync = GetComponentInUnit<UnitTransformSync>();
             diContainer.Inject(unitTransformSync);
+            
+            playerEquipmentController = GetComponentInUnit<PlayerEquipmentController>();
+            diContainer.Inject(playerEquipmentController);
+            playerEquipmentController.Initialize();
             
             playerStateFactory = CreatePlayerStateFactory();
             diContainer.Inject(playerStateFactory);
@@ -226,13 +233,10 @@ namespace Gameplay.Unit.Character.Player
         private void InitializeSword()
         {
             if (!photonView.IsMine) return;
-            var inventoryItemFactory = new ItemInventoryFactoryBuilder()
-                .Build();
-            diContainer.Inject(inventoryItemFactory);
-            inventoryItemFactory.Initialize();
-            inventoryItemFactory.SetOwner(gameObject);
+            
             var item = inventoryItemFactory.CreateItem(so_NormalSword);
             diContainer.Inject(item);
+            item.SetOwner(gameObject);
             item.SetAmountItem(1);
             item.SetStats(so_NormalSword.UnitStatsConfigs);
             item.Initialize();
@@ -255,23 +259,7 @@ namespace Gameplay.Unit.Character.Player
             StateMachine?.LateUpdate();
         }
         
-        public override void PutOnEquipment(Equipment.Equipment equipment)
-        {
-            base.PutOnEquipment(equipment);
-            if (equipment is Equipment.Weapon.Weapon weapon)
-            {
-                StateMachine.GetState<PlayerAttackState>()?.SetWeapon(weapon);
-            }
-        }
-
-        public override void TakeOffEquipment(Equipment.Equipment equipment)
-        {
-            base.TakeOffEquipment(equipment);
-            if (equipment is Equipment.Weapon.Weapon weapon)
-            {
-                StateMachine.GetState<PlayerAttackState>()?.RemoveWeapon();
-            }
-        }
+       
 
         private void OnChangedState(IState state)
         {

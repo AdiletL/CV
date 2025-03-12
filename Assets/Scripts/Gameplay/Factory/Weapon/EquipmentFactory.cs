@@ -40,14 +40,4 @@ namespace Gameplay.Factory.Weapon
             return bow;
         }
     }
-
-    public class EquipmentFactoryBuilder
-    {
-        private EquipmentFactory factory = new();
-
-        public EquipmentFactory Build()
-        {
-            return factory;
-        }
-    }
 }

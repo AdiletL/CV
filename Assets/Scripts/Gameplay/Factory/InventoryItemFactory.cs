@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Gameplay.Ability;
-using Gameplay.Unit.Item;
+﻿using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Item;
-using UnityEngine;
 using Zenject;
 
 namespace Gameplay.Factory
@@ -11,17 +8,6 @@ namespace Gameplay.Factory
     {
         [Inject] private DiContainer diContainer;
         
-        private GameObject owner;
-        private Camera baseCamera;
-
-        public void SetOwner(GameObject gameObject) => this.owner = gameObject;
-        public void SetBaseCamera(Camera camera) => this.baseCamera = camera;
-
-        public void Initialize()
-        {
-            
-        }
-
         public Item CreateItem(SO_Item so_Item)
         {
             Item result = so_Item switch
@@ -43,7 +29,6 @@ namespace Gameplay.Factory
                 .SetBlockInput(so_MadnessMask.BlockInputTypeID)
                 .SetTimerCast(so_MadnessMask.TimerCast)
                 .SetCooldown(so_MadnessMask.Cooldown)
-                .SetGameObject(owner)
                 .Build();
         }
 
@@ -53,7 +38,6 @@ namespace Gameplay.Factory
             return (TeleportationScrollItem)new TeleportationScrollItemBuilder()
                 .SetPortalObject(so_TeleportationScroll.PortalObject)
                 .SetEndPortalID(so_TeleportationScroll.EndPortalID.ID)
-                .SetGameObject(owner)
                 .SetTimerCast(so_TeleportationScroll.TimerCast)
                 .SetCooldown(so_TeleportationScroll.Cooldown)
                 .SetBlockInput(so_TeleportationScroll.BlockInputTypeID)
@@ -71,18 +55,7 @@ namespace Gameplay.Factory
                 .SetItemBehaviour(so_Item.ItemBehaviourID)
                 .SetBlockInput(so_Item.BlockInputTypeID)
                 .SetCooldown(so_NormalSword.Cooldown)
-                .SetGameObject(owner)
                 .Build();
-        }
-    }
-
-    public class ItemInventoryFactoryBuilder
-    {
-        private InventoryItemFactory inventoryItemFactory = new ();
-        
-        public InventoryItemFactory Build()
-        {
-            return inventoryItemFactory;
         }
     }
 }

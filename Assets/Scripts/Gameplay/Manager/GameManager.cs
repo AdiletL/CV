@@ -1,4 +1,6 @@
-﻿using Photon.Pun;
+﻿using Gameplay.Factory;
+using Gameplay.Factory.Weapon;
+using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -61,6 +63,9 @@ namespace Gameplay.Manager
             diContainer.Inject(experienceSystem);
             diContainer.Bind<ExperienceSystem>().FromInstance(experienceSystem).AsSingle();
 
+            InitializeEquipmentFactory();
+            InitializeInventoryItemFactory();
+            InitializeAbilityFactory();
             InitializeManagers();
         }
 
@@ -181,6 +186,27 @@ namespace Gameplay.Manager
             levelManager.transform.SetParent(transform);
             levelManager.Initialize();
             StartLevel();
+        }
+
+        private void InitializeEquipmentFactory()
+        {
+            EquipmentFactory equipmentFactory = new EquipmentFactory();
+            diContainer.Inject(equipmentFactory);
+            diContainer.Bind(equipmentFactory.GetType()).FromInstance(equipmentFactory).AsSingle();
+        }
+
+        private void InitializeInventoryItemFactory()
+        {
+            InventoryItemFactory inventoryItemFactory = new InventoryItemFactory();
+            diContainer.Inject(inventoryItemFactory);
+            diContainer.Bind(inventoryItemFactory.GetType()).FromInstance(inventoryItemFactory).AsSingle();
+        }
+
+        private void InitializeAbilityFactory()
+        {
+            AbilityFactory abilityFactory = new AbilityFactory();
+            diContainer.Inject(abilityFactory);
+            diContainer.Bind(abilityFactory.GetType()).FromInstance(abilityFactory).AsSingle();
         }
 
         private void StartLevel()
