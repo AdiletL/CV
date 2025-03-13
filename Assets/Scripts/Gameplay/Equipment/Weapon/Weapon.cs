@@ -32,7 +32,6 @@ namespace Gameplay.Equipment.Weapon
             DamageData = new DamageData(Owner, DamageType.Physical, DamageStat.CurrentValue);
             diContainer.Inject(DamageData);
         }
-        
 
         public void SetTarget(GameObject target) => currentTarget = target;
             

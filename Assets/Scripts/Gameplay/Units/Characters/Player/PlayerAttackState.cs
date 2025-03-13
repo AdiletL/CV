@@ -149,15 +149,7 @@ namespace Gameplay.Unit.Character.Player
         protected override void DefaultApplyDamage()
         {
             currentTarget = FindUnitInRange<IPlayerAttackable>();
-            if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
-                   gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               currentTarget.TryGetComponent(out IPlayerAttackable attackable) && 
-               currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
-            {
-                DamageData.Amount = DamageStat.CurrentValue;
-                attackable.TakeDamage(DamageData);
-            }
+            base.DefaultApplyDamage();
         }
     }
 

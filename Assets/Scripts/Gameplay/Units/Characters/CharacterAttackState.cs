@@ -23,7 +23,8 @@ namespace Gameplay.Unit.Character
         protected float durationAttack, countDurationAttack;
         protected float cooldownApplyDamage, countTimerApplyDamage;
         protected float angleToTarget;
-        
+        protected int mainLayer;
+
         protected bool isAttacked;
         
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
@@ -50,6 +51,39 @@ namespace Gameplay.Unit.Character
             return currentTarget;
         }
         
+        protected GameObject FindUnitInRange<T>()
+        {
+            var totalRange = RangeStat.CurrentValue;
+            if (CurrentWeapon != null)
+                totalRange += CurrentWeapon.RangeStat.CurrentValue;
+
+            var target = Calculate.Attack.FindUnitInRange<T>(center.position, totalRange,
+                enemyLayer, ref findUnitColliders);
+            if(!target) return null;
+
+            if (!Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, target.transform.position, 50))
+                return null;
+
+            if (!isObstacleBetween(target))
+                return target;
+                
+            return null;
+        }
+
+        protected bool isObstacleBetween(GameObject target)
+        {
+            var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - center.position).normalized;
+            float distance = Vector3.Distance(center.position, target.transform.position);
+            int ignoreLayer = 1 << mainLayer;
+ 
+            if (Physics.Raycast(center.position,  directionToTarget, out hitInTarget, distance, ~ignoreLayer))
+            {
+                if(hitInTarget.collider.gameObject.layer == target.gameObject.layer)
+                    return false;
+            }
+            return true;
+        }
+        
         protected virtual AnimationEventConfig getAnimationEventConfig()
         {
             return so_CharacterAttack.DefaultAnimations[Random.Range(0, so_CharacterAttack.DefaultAnimations.Length)];
@@ -70,6 +104,8 @@ namespace Gameplay.Unit.Character
 
             for (int i = 0; i < so_CharacterAttack.DefaultAnimations.Length; i++)
                 unitAnimation.AddClip(so_CharacterAttack.DefaultAnimations[i].Clip);
+
+            mainLayer = gameObject.layer;
         }
 
         public override void Enter()
@@ -158,31 +194,6 @@ namespace Gameplay.Unit.Character
             CurrentWeapon.Hide();
             CurrentWeapon = null;
         }
-
-        protected GameObject FindUnitInRange<T>()
-        {
-            var totalRange = RangeStat.CurrentValue;
-            if (CurrentWeapon != null)
-                totalRange += CurrentWeapon.RangeStat.CurrentValue;
-
-            var target = Calculate.Attack.FindUnitInRange<T>(center.position, totalRange,
-                enemyLayer, ref findUnitColliders);
-            if(!target) return null;
-
-            if (!Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, target.transform.position, 50))
-                return null;
-
-            var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - center.position).normalized;
-            Ray ray = new Ray(center.position, directionToTarget);
-            //Debug.DrawRay(center.position, directionToTarget * totalRange, Color.red, 2);
-            if (Physics.Raycast(ray, out hitInTarget, totalRange, ~gameObject.layer, QueryTriggerInteraction.Collide) ||
-                Physics.SphereCast(ray, .3f, out hitInTarget, totalRange, ~gameObject.layer, QueryTriggerInteraction.Collide))
-            {
-                if(hitInTarget.collider.gameObject.layer == target.gameObject.layer)
-                    return target;
-            }
-            return null;
-        }
         
         public override void Attack()
         {
@@ -210,7 +221,17 @@ namespace Gameplay.Unit.Character
 
         protected virtual void DefaultApplyDamage()
         {
-            
+            if(currentTarget &&
+               !isObstacleBetween(currentTarget) &&
+               Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
+                   gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
+               Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50) &&
+               currentTarget.TryGetComponent(out IAttackable attackable) && 
+               currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
+            {
+                DamageData.Amount = DamageStat.CurrentValue;
+                attackable.TakeDamage(DamageData);
+            }
         }
     }
 

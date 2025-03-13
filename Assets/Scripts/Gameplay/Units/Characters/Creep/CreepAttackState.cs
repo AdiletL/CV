@@ -94,7 +94,7 @@ namespace Gameplay.Unit.Character.Creep
         {
             if (currentTarget && 
                 !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
-                    rangeSqr))
+                    rangeSqr) || isObstacleBetween(currentTarget))
             {
                 var target = FindUnitInRange<ICreepInteractable>();
                 if (!target)
@@ -130,20 +130,6 @@ namespace Gameplay.Unit.Character.Creep
             countTimerExitState += Time.deltaTime;
             if (timerExitState < countTimerExitState)
                 stateMachine.ExitCategory(Category, null);
-        }
-        
-        protected override void DefaultApplyDamage()
-        {
-            if(currentTarget &&
-               Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
-                   gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50) &&
-               currentTarget.TryGetComponent(out IAttackable attackable) && 
-               currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
-            {
-                DamageData.Amount = DamageStat.CurrentValue;
-                attackable.TakeDamage(DamageData);
-            }
         }
     }
     

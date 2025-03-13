@@ -14,7 +14,7 @@ namespace Gameplay.Unit.Character.Creep
         protected float countCooldownUpdateTargetPosition;
 
         protected const float COOLDOWN_UPDATE_TARGET_POSITION = .5f;
-        protected const float STOPPING_DISTANCE = .2f;
+        protected const float STOPPING_DISTANCE = .5f;
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
         public void SetRotationSpeed(float rotationSpeed) => this.rotationSpeed = rotationSpeed;

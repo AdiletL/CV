@@ -15,28 +15,41 @@ namespace Gameplay.Equipment.Weapon
             ownerLayer = Owner.layer;
         }
 
-        private void FindUnitInRange()
+        private GameObject FindUnitInRange()
         {
             var totalRange = RangeStat.CurrentValue + OwnerRangeStat.CurrentValue;
             var target = Calculate.Attack.FindUnitInRange<IAttackable>(ownerCenter.position, totalRange,
                 enemyLayer, ref findColliders);
-            if(!target) return;
-            
+            if(!target) return null;
+
+            if (!isObstacleBetween(target))
+                return target;
+
+            return null;
+        }
+
+        private bool isObstacleBetween(GameObject target)
+        {
             var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - ownerCenter.position).normalized;
-            //Debug.DrawRay(origin, directionToTarget * 100, Color.green, 2);
-            if (Physics.Raycast(ownerCenter.position, directionToTarget, out var hit, totalRange, ~ownerLayer))
+            float distance = Vector3.Distance(ownerCenter.position, target.transform.position);
+            int ignoreLayer = 1 << ownerLayer;
+            //Debug.DrawRay(ownerCenter.position, directionToTarget * totalRange, Color.green, 2);
+            if (Physics.Raycast(ownerCenter.position,  directionToTarget, out var hitInTarget, distance, ~ignoreLayer))
             {
-                if(hit.collider.gameObject.layer == target.gameObject.layer)
-                    currentTarget = target;
+                if(hitInTarget.collider.gameObject.layer == target.gameObject.layer)
+                    return false;
             }
+            return true;
         }
         
         public override void ApplyDamage()
         {
-            FindUnitInRange();
+            currentTarget = FindUnitInRange();
             if(currentTarget &&
+               !isObstacleBetween(currentTarget) &&
                Calculate.Rotate.IsFacingTargetXZ(Owner.transform.position,
                    Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
+               Calculate.Rotate.IsFacingTargetY(Owner.transform.position, currentTarget.transform.position, 50) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {

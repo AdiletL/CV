@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4689133026271156194}
   - component: {fileID: 3260985260258439175}
   m_Layer: 0
-  m_Name: Stone
+  m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,8 +55,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 1, y: 1.4843757, z: 1}
+  m_Center: {x: 0, y: 0.74218786, z: 0}
 --- !u!114 &8444824977446919287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +72,8 @@ MonoBehaviour:
   baseRenderers:
   - {fileID: 2932153396545511530}
   - {fileID: 432476275938422935}
+  rangeVisual: {fileID: 0}
+  selectedObject: {fileID: 0}
 --- !u!114 &-4689133026271156194
 MonoBehaviour:
   m_ObjectHideFlags: 0
