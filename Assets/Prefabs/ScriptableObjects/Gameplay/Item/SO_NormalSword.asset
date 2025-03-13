@@ -44,12 +44,6 @@ MonoBehaviour:
       Value: 3
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 
-    VampirismConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
-      Cooldown: 0
-      TimerCast: 0
-      ValueType: 0
-      Value: 0
     DamageResistanceConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
@@ -69,4 +63,8 @@ MonoBehaviour:
       ValueType: 1
       Value: 50
       Duration: 0
+    VampirismConfig:
+      IsInterim: 1
+      ValueType: 0
+      Value: 0
   <SO_Equipment>k__BackingField: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}

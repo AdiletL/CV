@@ -33,11 +33,17 @@ namespace Gameplay.Unit.Item
             equipment.Initialize();
         }
 
-        public override void PutOn()
+        public virtual void PutOn()
         {
             if (IsCooldown)
             {
                 Debug.Log($"{ItemBehaviourID} на перезарядке!");
+                return;
+            }
+
+            if (isCasting)
+            {
+                Debug.Log($"{ItemBehaviourID} кастуется!");
                 return;
             }
             
@@ -45,7 +51,7 @@ namespace Gameplay.Unit.Item
             StartEffect();
         }
 
-        public override void TakeOff()
+        public virtual void TakeOff()
         {
             if(characterEquipmentController.IsNullEquipment(equipment)) return;
             RemoveStatsFromUnit();

@@ -49,9 +49,6 @@ namespace Gameplay.Unit.Character.Player
         private InputType jumpBlockInputType;
         private KeyCode jumpKey;
         
-        private bool isJumping;
-        private bool isMoving;
-        
         private readonly List<IInteractionHandler> interactionHandlers = new();
 
         
@@ -83,6 +80,7 @@ namespace Gameplay.Unit.Character.Player
             InitializeHotkeys();
             InitializeInteractionHandler();
             InitializeMouseInputHandler();
+            InitializeJumpState();
             SubscribeEvent();
         }
 
@@ -160,12 +158,10 @@ namespace Gameplay.Unit.Character.Player
         {
             if (typeof(CharacterMoveState).IsAssignableFrom(state.GetType()))
             {
-                isMoving = false;
                 playerBlockInput.UnblockInput(movementBlockInputType);
             }
             else if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
             {
-                isJumping = false;
                 playerBlockInput.UnblockInput(jumpBlockInputType);
             }
         }
@@ -189,18 +185,16 @@ namespace Gameplay.Unit.Character.Player
             if(!photonView.IsMine) return;
             base.HandleInput();
             
-            if (!isMoving &&
-                (Input.GetKey(KeyCode.A) || 
-                Input.GetKey(KeyCode.D) || 
-                Input.GetKey(KeyCode.W) || 
-                Input.GetKey(KeyCode.S)) && 
+            if ((Input.GetKey(KeyCode.A) || 
+                 Input.GetKey(KeyCode.D) || 
+                 Input.GetKey(KeyCode.W) || 
+                 Input.GetKey(KeyCode.S)) && 
                 !playerBlockInput.IsInputBlocked(InputType.Movement))
             {
-                isMoving = true;
                 playerBlockInput.BlockInput(movementBlockInputType);
                 stateMachine.ExitOtherStates(typeof(CharacterMoveState));
             }
-            else if (!isJumping && Input.GetKeyDown(jumpKey) &&
+            else if (Input.GetKeyDown(jumpKey) &&
                      !playerBlockInput.IsInputBlocked(InputType.Jump))
             {
                 TriggerJump();
@@ -212,9 +206,7 @@ namespace Gameplay.Unit.Character.Player
         private void TriggerJump()
         {
             ClearHotkeys();
-            InitializeJumpState();
             stateMachine.ExitOtherStates(typeof(CharacterJumpState), true);
-            isJumping = true;
             playerBlockInput.BlockInput(jumpBlockInputType);
         }
     }

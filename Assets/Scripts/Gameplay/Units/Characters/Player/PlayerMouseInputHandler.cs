@@ -31,9 +31,6 @@ namespace Gameplay.Unit.Character.Player
         private const float COOLDOWN_HIGHLIGHT_OBJECT = .2f;
         private float countCooldownHighlighObject;
         
-        private bool isAttacking;
-        private bool isSpecialAction;
-        
         ~PlayerMouseInputHandler()
         {
             UnSubscribeEvent();
@@ -112,7 +109,6 @@ namespace Gameplay.Unit.Character.Player
             if (typeof(CharacterAttackState).IsAssignableFrom(state.GetType()))
             {
                 playerBlockInput.UnblockInput(attackBlockInputType);
-                isAttacking = false;
             }
         }
         public void ClearSelectedObject()
@@ -126,20 +122,20 @@ namespace Gameplay.Unit.Character.Player
         {
             HandleHighlight();
 
-            if (!isAttacking &&
-                Input.GetMouseButtonDown(attackMouseButton) && 
+            if (Input.GetMouseButtonDown(attackMouseButton) && 
                 !playerBlockInput.IsInputBlocked(InputType.Attack) &&
                 !CheckInputOnUI.IsPointerOverUIObject())
             {
                 TriggerAttack();
             }
-            else if (!isSpecialAction && Input.GetMouseButtonDown(specialActionMouseButton) && 
+            else if (Input.GetMouseButtonDown(specialActionMouseButton) && 
                      !playerBlockInput.IsInputBlocked(InputType.SpecialAction) && 
                      !CheckInputOnUI.IsPointerOverUIObject())
             {
                 TriggerSpecialAction();
             }
-            else if (isSpecialAction && Input.GetMouseButtonUp(specialActionMouseButton))
+            else if (Input.GetMouseButtonUp(specialActionMouseButton) &&
+                     playerBlockInput.IsInputBlocked(InputType.SpecialAction))
             {
                 ExitSpecialAction();
             }
@@ -180,7 +176,6 @@ namespace Gameplay.Unit.Character.Player
         
         private void TriggerAttack()
         {
-            isAttacking = true;
             playerBlockInput.BlockInput(attackBlockInputType);
             stateMachine.ExitOtherStates(typeof(CharacterAttackState));
             playerControlDesktop.ClearHotkeys();
@@ -214,7 +209,6 @@ namespace Gameplay.Unit.Character.Player
             playerBlockInput.BlockInput(specialBlockInputType);
             stateMachine.ExitOtherStates(typeof(PlayerSpecialActionState));
             playerControlDesktop.ClearHotkeys();
-            isSpecialAction = true;
         }
         
         private void ExitSpecialAction()
@@ -222,7 +216,6 @@ namespace Gameplay.Unit.Character.Player
             stateMachine.ExitCategory(StateCategory.Action, null, true);
             playerBlockInput.UnblockInput(specialBlockInputType);
             playerControlDesktop.ClearHotkeys();
-            isSpecialAction = false;
         }
     }
 

@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6577c8f098b4f6d8429817a8f29fcf2, type: 3}
   m_Name: SO_PlayerAbilitynventory
   m_EditorClassIdentifier: 
+  <SelectItemBlockInputType>k__BackingField: 8
+  <UseItemBlockInputType>k__BackingField: 123
   <MaxSlot>k__BackingField: 5

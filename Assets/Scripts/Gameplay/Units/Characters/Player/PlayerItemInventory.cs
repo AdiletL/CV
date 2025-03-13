@@ -27,7 +27,8 @@ namespace Gameplay.Unit.Character.Player
         private Item.Item currentSelectedItem;
         private Item.Item currentUseItem;
         private Camera baseCamera;
-        private InputType baseBlockInput;
+        private InputType selectItemBlockInput;
+        private InputType useItemBlockInput;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
@@ -67,7 +68,8 @@ namespace Gameplay.Unit.Character.Player
 
         public void Initialize()
         {
-            baseBlockInput = so_PlayerItemInventory.BaseBlockInputType;
+            selectItemBlockInput = so_PlayerItemInventory.SelectItemBlockInputType;
+            useItemBlockInput = so_PlayerItemInventory.UseItemBlockInputType;
             maxSlot = so_PlayerItemInventory.MaxCountItem;
             itemHandler = GetComponent<ItemHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
@@ -159,7 +161,7 @@ namespace Gameplay.Unit.Character.Player
                     case ItemBehaviour.PointTarget: 
                     case ItemBehaviour.UnitTarget:
                         currentSelectedItem = slots[slotID]; 
-                        playerBlockInput.BlockInput(baseBlockInput);
+                        playerBlockInput.BlockInput(selectItemBlockInput);
                         break;
                 }
             }
@@ -199,13 +201,13 @@ namespace Gameplay.Unit.Character.Player
             
             if (isNextFrameFromUnblockInput)
             {
-                playerBlockInput.UnblockInput(baseBlockInput);
+                playerBlockInput.UnblockInput(selectItemBlockInput);
                 isNextFrameFromUnblockInput = false;
             }
             
             if (currentUseItem != null)
             {
-                if (Input.anyKey && !CheckInputOnUI.IsPointerOverUIObject())
+                if (Input.anyKey && playerBlockInput.IsInputBlocked(useItemBlockInput))
                 {
                     ClearUseItem();
                 }

@@ -9,7 +9,7 @@ namespace Gameplay.Unit.Item.ContextMenu
     {
         [Inject] private UIContextMenu uiContextMenu;
 
-        private Item item;
+        private EquipmentItem item;
         
         private readonly string[] headers = new string[]
         {
@@ -20,7 +20,7 @@ namespace Gameplay.Unit.Item.ContextMenu
         private const string PUT_ON = "Put on";
         private const string TAKE_OFF = "Take off";
 
-        public EquipmentContextMenu(Item item)
+        public EquipmentContextMenu(EquipmentItem item)
         {
             this.item = item;
         }

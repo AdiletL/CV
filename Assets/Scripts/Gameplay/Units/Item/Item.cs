@@ -136,7 +136,6 @@ namespace Gameplay.Unit.Item
             OnFinishedCast?.Invoke(InventorySlotID);
         }
 
-
         public virtual void AddStatsToUnit()
         {
             addedStatValues ??= new List<float>();
@@ -199,15 +198,6 @@ namespace Gameplay.Unit.Item
             }
 
             RemoveEffectFromUnit();
-        }
-        
-        public virtual void PutOn()
-        {
-            
-        }
-
-        public virtual void TakeOff()
-        {
         }
         
         public virtual void Exit()

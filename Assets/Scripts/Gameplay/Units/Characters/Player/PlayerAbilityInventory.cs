@@ -29,7 +29,8 @@ namespace Gameplay.Unit.Character.Player
         private UIAbilityInventory uiAbilityInventory;
         private PlayerBlockInput playerBlockInput;
 
-        private InputType baseBlockInput;
+        private InputType selectItemBlockInput;
+        private InputType useItemBlockInput;
         private KeyCode[] abilityInventoryKeys;
         private Camera baseCamera;
 
@@ -52,7 +53,8 @@ namespace Gameplay.Unit.Character.Player
 
         public void Initialize()
         {
-            baseBlockInput = so_PlayerAbilityInventory.BaseBlockInputType;
+            selectItemBlockInput = so_PlayerAbilityInventory.SelectItemBlockInputType;
+            useItemBlockInput = so_PlayerAbilityInventory.UseItemBlockInputType;
             maxSlot = so_PlayerAbilityInventory.MaxSlot;
             abilityHandler = GetComponent<AbilityHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
@@ -152,7 +154,7 @@ namespace Gameplay.Unit.Character.Player
                     case AbilityBehaviour.PointTarget: 
                     case AbilityBehaviour.UnitTarget:
                         currentSelectedAbility = slots[slotID]; 
-                        playerBlockInput.IsInputBlocked(baseBlockInput);
+                        playerBlockInput.IsInputBlocked(selectItemBlockInput);
                         break;
                 }
             }
@@ -172,13 +174,13 @@ namespace Gameplay.Unit.Character.Player
             
             if (isNextFrameFromUnblockInput)
             {
-                playerBlockInput.UnblockInput(baseBlockInput);
+                playerBlockInput.UnblockInput(selectItemBlockInput);
                 isNextFrameFromUnblockInput = false;
             }
             
             if (currentUseAbility != null)
             {
-                if (Input.anyKeyDown && !CheckInputOnUI.IsPointerOverUIObject())
+                if (Input.anyKeyDown && playerBlockInput.IsInputBlocked(useItemBlockInput))
                 {
                     ClearUseAbility();
                 }
@@ -217,7 +219,7 @@ namespace Gameplay.Unit.Character.Player
                             case AbilityBehaviour.PointTarget: 
                             case AbilityBehaviour.UnitTarget:
                                 currentSelectedAbility = slots[i]; 
-                                playerBlockInput.IsInputBlocked(baseBlockInput);
+                                playerBlockInput.IsInputBlocked(selectItemBlockInput);
                                 break;
                         }
                     }

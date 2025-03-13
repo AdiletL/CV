@@ -30,4 +30,4 @@ MonoBehaviour:
   - Clip: {fileID: 1827226128182048838, guid: 9a6c3585df66f2e4782635fc7a23494c, type: 3}
     MomentEvent: 0.46
   <BowAnimations>k__BackingField: []
-  <BlockInputType>k__BackingField: 18
+  <BlockInputType>k__BackingField: 26
