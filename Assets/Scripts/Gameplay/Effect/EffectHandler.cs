@@ -30,6 +30,19 @@ namespace Gameplay.Effect
                 currentEffects[effectType].Count == 0) return null;
             return currentEffects[effectType];
         }
+        public List<Effect> GetEffects(EffectType effectType, string id)
+        {
+            if (currentEffects == null || !currentEffects.ContainsKey(effectType) ||
+                currentEffects[effectType].Count == 0) return null;
+            var effects = new List<Effect>();
+
+            for (int i = currentEffects[effectType].Count - 1; i >= 0; i--)
+            {
+                if(string.Equals(currentEffects[effectType][i].ID, id))
+                    effects.Add(currentEffects[effectType][i]);
+            }
+            return effects;
+        }
         
         public void Initialize()
         {
@@ -41,27 +54,28 @@ namespace Gameplay.Effect
 
         public void AddEffect(Effect effect)
         {
-            if (GetEffect(effect.EffectTypeID, effect.ID) != null) return;
-            
-            OnUpdate += effect.Update;
-            effect.OnDestroyEffect += RemoveEffect;
-            effect.ApplyEffect();
-            
             if(!currentEffects.ContainsKey(effect.EffectTypeID))
                 currentEffects.Add(effect.EffectTypeID, new List<Effect>());
             currentEffects[effect.EffectTypeID].Add(effect);
+            
+            OnUpdate += effect.Update;
+            effect.OnDestroyEffect += RemoveEffects;
+            effect.ApplyEffect();
         }
 
-        public void RemoveEffect(EffectType effectType, string id)
+        public void RemoveEffects(EffectType effectType, string id)
         {
-            Effect effect = GetEffect(effectType, id);
-            if (effect == null) return;
-            
-            OnUpdate -= effect.Update;
-            effect.OnDestroyEffect -= RemoveEffect;
-            effect.DestroyEffect();
-            
-            currentEffects[effectType].Remove(effect);
+            var effects = GetEffects(effectType, id);
+            if (effects == null || effects.Count == 0) return;
+
+            for (int i = effects.Count - 1; i >= 0; i--)
+            {
+                OnUpdate -= effects[i].Update;
+                effects[i].OnDestroyEffect -= RemoveEffects;
+                effects[i].DestroyEffect();
+                
+                currentEffects[effectType].Remove(effects[i]);
+            }
             if(currentEffects[effectType].Count == 0)
                 currentEffects.Remove(effectType);
         }

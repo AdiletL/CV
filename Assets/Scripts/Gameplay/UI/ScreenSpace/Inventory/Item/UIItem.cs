@@ -29,28 +29,28 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         public void Clear()
         {
             SlotID = null;
-            UpdateIcon(null);
-            UpdateAmount(0);
-            UpdateSelectable(false);
-            UpdateCooldownBar(0, 0);
+            SetIcon(null);
+            SetAmount(0);
+            SetSelectable(false);
+            SetCooldownBar(0, 0);
         }
 
-        public void UpdateIcon(Sprite sprite)
+        public void SetIcon(Sprite sprite)
         {
             icon.enabled = sprite != null;
             icon.sprite = sprite;
         }
 
-        public void UpdateAmount(int amount)
+        public void SetAmount(int amount)
         {
             if (amount <= 0) amountTxt.enabled = false;
             else amountTxt.enabled = true;
             
             amountTxt.text = amount.ToString();
         }
-        public void UpdateSelectable(bool value) => isInteractable = value;
+        public void SetSelectable(bool value) => isInteractable = value;
 
-        public void UpdateCooldownBar(float current, float max)
+        public void SetCooldownBar(float current, float max)
         {
             if (max <= 0 || current <= 0)
             {
@@ -66,7 +66,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             lastTime = current;
             cooldownBar.fillAmount = current/max;
-            cooldownText.text = current.ToString("0");
+            cooldownText.text = $"{current: 0}";
             
             if(!cooldownText.enabled) cooldownText.enabled = true;
         }

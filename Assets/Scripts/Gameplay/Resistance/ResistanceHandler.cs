@@ -41,7 +41,7 @@ namespace Gameplay.Resistance
             
         public void Initialize()
         {
-            AddResistance(new DamageResistance(StatType.PhysicalResistance, DamageType.Physical, ValueType.Percent, 1));
+            AddResistance(new DamageResistance(StatType.Armor, DamageType.Physical, ValueType.Percent, 1));
             AddResistance(new DamageResistance(StatType.MagicalResistance, DamageType.Magical, ValueType.Percent, 1));
             AddResistance(new DamageResistance(StatType.PureResistance, DamageType.Pure, ValueType.Percent, 1));
         }

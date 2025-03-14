@@ -18,7 +18,7 @@ namespace Gameplay.Unit.Character.Creep
             countCheckEnemyCooldown += Time.deltaTime;
             if (countCheckEnemyCooldown > CHECK_ENEMY_COOLDOWN)
             {
-                if (stateMachine.GetState<CreepAttackState>().IsFindUnitInRange())
+                if (stateMachine.GetState<CreepAttackState>().IsUnitInRange())
                     stateMachine.ExitCategory(Category, typeof(CreepAttackState));
                 else
                     stateMachine.ExitCategory(Category, typeof(CreepPatrolState));

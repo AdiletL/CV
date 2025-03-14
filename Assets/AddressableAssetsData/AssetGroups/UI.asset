@@ -65,6 +65,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf40f1d7379e2b14b9dc36f2a3d320ae
+    m_Address: Portrait
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2360d97b7e484c4096d7f4cfca8a6e6
     m_Address: MainCanvas
     m_ReadOnly: 0

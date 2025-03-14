@@ -59,7 +59,7 @@ namespace Gameplay.Unit.Trap.Tower
             stateMachine.OnChangedState -= OnChangedState;
         }
 
-        public UnitInformation UnitInformation { get; }
+        public ShowStatsOnUI ShowStatsOnUI { get; }
         public void ShowInformation()
         {
             throw new System.NotImplementedException();

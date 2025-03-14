@@ -100,8 +100,6 @@ namespace Gameplay.Manager
             currentLevelController.AddRoom(roomController);
 
             BuildNavMesh(roomGameObject);
-            
-            SpawnNextRoom(roomConfig.ID);
         }
         
         private void SpawnNextRoom(int id)

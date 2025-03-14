@@ -55,7 +55,7 @@ namespace Gameplay.Unit.Item
         protected override void RemoveEffectFromUnit()
         {
             if (Owner.TryGetComponent(out EffectHandler effectHandler))
-                effectHandler.RemoveEffect(vampirismEffect.EffectTypeID, vampirismEffect.ID);
+                effectHandler.RemoveEffects(vampirismEffect.EffectTypeID, vampirismEffect.ID);
         }
     }
     

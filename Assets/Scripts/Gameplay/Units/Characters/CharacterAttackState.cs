@@ -45,7 +45,7 @@ namespace Gameplay.Unit.Character
         public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         
-        public virtual bool IsFindUnitInRange()
+        public virtual bool IsUnitInRange()
         {
             currentTarget = FindUnitInRange<IAttackable>();
             return currentTarget;

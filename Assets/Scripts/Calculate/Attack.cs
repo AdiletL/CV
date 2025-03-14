@@ -35,7 +35,6 @@ namespace Calculate
             return closestUnit;
         }
 
-
         public static bool IsFindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
             int hitCount = Physics.OverlapSphereNonAlloc(origin, radius, overlapHits, layerMask);

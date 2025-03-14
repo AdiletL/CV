@@ -24,7 +24,7 @@ namespace Gameplay
         RegenerationMana,
         Endurance,
         RegenerationEndurance,
-        PhysicalResistance,
+        Armor,
         MagicalResistance,
         PureResistance,
     }

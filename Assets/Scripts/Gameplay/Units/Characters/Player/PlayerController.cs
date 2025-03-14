@@ -4,11 +4,14 @@ using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Factory;
+using Gameplay.UI.ScreenSpace.Portrait;
 using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Unit.Character.Player
@@ -38,6 +41,9 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private SO_PlayerControlDesktop so_PlayerControlDesktop;
         [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
         [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
+
+        [Space] 
+        [SerializeField] private AssetReferenceGameObject uiPortraitPrefab;
         
         [Space]
         [SerializeField] private SO_NormalSword so_NormalSword;
@@ -61,11 +67,6 @@ namespace Gameplay.Unit.Character.Player
 
         public PlayerBlockInput PlayerBlockInput { get; private set; }
         public Camera BaseCamera { get; private set; }
-        
-        protected override UnitInformation CreateUnitInformation()
-        {
-            return new PlayerInformation(this);
-        }
         
         private PlayerControlDesktop CreatePlayerControlDesktop()
         {
@@ -193,20 +194,26 @@ namespace Gameplay.Unit.Character.Player
             characterEndurance = GetComponentInUnit<CharacterEndurance>();
             diContainer.Inject(characterEndurance);
             characterEndurance.Initialize();
+            
+            var newGameObject = Addressables.InstantiateAsync(uiPortraitPrefab).WaitForCompletion();
+            var uiPortrait = newGameObject.GetComponent<UIPortrait>();
+            diContainer.Inject(uiPortrait);
+            uiPortrait.Initialize();
+            uiPortrait.SetStatsController(GetComponentInUnit<IStatsController>());
         }
 
-        protected override void SubscribeEvent()
+        protected override void InitializeMediatorEvent()
         {
-            base.SubscribeEvent();
+            base.InitializeMediatorEvent();
             StateMachine.OnChangedState += OnChangedState;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
             GetComponentInUnit<CharacterHealth>().OnZeroHealth += OnZeroHealth;
         }
 
-        protected override void UnSubscribeEvent()
+        protected override void DeInitializeMediatorEvent()
         {
-            base.UnSubscribeEvent();
+            base.DeInitializeMediatorEvent();
             StateMachine.OnChangedState -= OnChangedState;
             GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
             GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;

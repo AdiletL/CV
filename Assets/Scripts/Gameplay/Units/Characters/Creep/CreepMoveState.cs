@@ -113,7 +113,7 @@ namespace Gameplay.Unit.Character.Creep
 
         protected virtual void CheckUnitInRange()
         {
-            if (stateMachine.GetState<CreepAttackState>().IsFindUnitInRange())
+            if (stateMachine.GetState<CreepAttackState>().IsUnitInRange())
                 stateMachine.ExitCategory(Category, typeof(CreepAttackState));
             else
                 stateMachine.ExitCategory(Category, null);

@@ -31,7 +31,7 @@ namespace Gameplay.Unit.Character.Player
 
         private InputType selectItemBlockInput;
         private InputType useItemBlockInput;
-        private KeyCode[] abilityInventoryKeys;
+        private KeyCode[] abilityInventoryHotkeys;
         private Camera baseCamera;
 
         private Ability.Ability currentSelectedAbility;
@@ -61,7 +61,7 @@ namespace Gameplay.Unit.Character.Player
             baseCamera = playerController.BaseCamera;
             
             InitializeUIInventory();
-            InitializeKeys();
+            InitializeHotkeys();
             InitializeSlots();
         }
 
@@ -74,11 +74,11 @@ namespace Gameplay.Unit.Character.Player
             uiAbilityInventory.CreateCells(maxSlot);
         }
 
-        private void InitializeKeys()
+        private void InitializeHotkeys()
         {
-            abilityInventoryKeys = new KeyCode[so_GameHotkeys.AbilityInventoryKeys.Length];
-            for (int i = 0; i < abilityInventoryKeys.Length; i++)
-                abilityInventoryKeys[i] = so_GameHotkeys.AbilityInventoryKeys[i];
+            abilityInventoryHotkeys = new KeyCode[so_GameHotkeys.AbilityInventoryKeys.Length];
+            for (int i = 0; i < abilityInventoryHotkeys.Length; i++)
+                abilityInventoryHotkeys[i] = so_GameHotkeys.AbilityInventoryKeys[i];
         }
 
         private void InitializeSlots()
@@ -140,8 +140,8 @@ namespace Gameplay.Unit.Character.Player
         private void OnCountCooldownAbility(int? slotID, float current, float max)
         {
             if(slotID == null) return;
-            uiAbilityInventory.UpdateCooldown(slotID, current, max);
-            uiAbilityInventory.UpdateSelectable(slotID, current <= 0);
+            uiAbilityInventory.SetCooldown(slotID, current, max);
+            uiAbilityInventory.SetSelectable(slotID, current <= 0);
         }
 
         private void OnClickedLeftMouse(int? slotID)
@@ -207,9 +207,9 @@ namespace Gameplay.Unit.Character.Player
 
         private void HotkeysHandler()
         {
-            for (int i = 0; i < abilityInventoryKeys.Length; i++)
+            for (int i = 0; i < abilityInventoryHotkeys.Length; i++)
             {
-                if (Input.GetKeyDown(abilityInventoryKeys[i]))
+                if (Input.GetKeyDown(abilityInventoryHotkeys[i]))
                 {
                     if (!playerBlockInput.IsInputBlocked(InputType.Ability))
                     {

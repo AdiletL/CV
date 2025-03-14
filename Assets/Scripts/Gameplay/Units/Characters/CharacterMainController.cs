@@ -13,31 +13,23 @@ namespace Gameplay.Unit.Character
         protected PhotonView photonView;
 
         public StateMachine StateMachine { get; protected set; }
-        public UnitInformation UnitInformation { get; protected set; }
-
-        protected virtual UnitInformation CreateUnitInformation()
-        {
-            return new CharacterInformation(this);
-        }
         
         public override void Initialize()
         {
             base.Initialize();
             
             photonView = GetComponent<PhotonView>();
-            
             StateMachine = new StateMachine();
-            UnitInformation = CreateUnitInformation();
-            diContainer.Inject(UnitInformation);
             
             var ui = GetComponentInUnit<CharacterUI>();
             diContainer.Inject(ui);
             ui?.Initialize();
             
-            SubscribeEvent();
             
             BeforeCreateStates();
             CreateStates();
+            
+            InitializeMediatorEvent();
             StateMachine.Initialize();
             
             AfterCreateStates();
@@ -45,11 +37,11 @@ namespace Gameplay.Unit.Character
         }
 
 
-        protected virtual void SubscribeEvent()
+        protected virtual void InitializeMediatorEvent()
         {
             
         }
-        protected virtual void UnSubscribeEvent()
+        protected virtual void DeInitializeMediatorEvent()
         {
            
         }
@@ -71,14 +63,25 @@ namespace Gameplay.Unit.Character
             diContainer.Inject(health);
             health?.Initialize();
         }
-
-        public void ShowInformation() => UnitInformation.Show();
-        public void UpdateInformation() => UnitInformation.UpdateData();
-        public void HideInformation() => UnitInformation.Hide();
         
         protected virtual void OnDestroy()
         {
-            UnSubscribeEvent();
+            DeInitializeMediatorEvent();
+        }
+
+        public void ShowInformation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateInformation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HideInformation()
+        {
+            throw new NotImplementedException();
         }
     }
 }

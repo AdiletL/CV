@@ -28,8 +28,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             SetIcon(null);
             SetSlotID(null);
-            UpdateCooldownBar(0, 0);
-            UpdateSelectable(false);
+            SetCooldownBar(0, 0);
+            SetSelectable(false);
         }
 
         public void SetSlotID(int? slotID) => SlotID = slotID;
@@ -39,7 +39,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             icon.sprite = sprite;
         }
 
-        public void UpdateCooldownBar(float current, float max)
+        public void SetCooldownBar(float current, float max)
         {
             if (max <= 0 || current <= 0)
             {
@@ -55,13 +55,13 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
             lastTime = current;
             cooldownBar.fillAmount = current/max;
-            cooldownText.text = current.ToString("0");
+            cooldownText.text = $"{current: 0}";
             
             if(!cooldownText.enabled) cooldownText.enabled = true;
         }
 
 
-        public void UpdateSelectable(bool isReady)
+        public void SetSelectable(bool isReady)
         {
             button.interactable = isReady;
         }

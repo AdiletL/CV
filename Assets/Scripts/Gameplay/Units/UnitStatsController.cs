@@ -3,25 +3,25 @@ using UnityEngine;
 
 namespace Gameplay.Unit
 {
-    public abstract class UnitStatsController : MonoBehaviour
+    public abstract class UnitStatsController : MonoBehaviour, IStatsController
     {
         [SerializeField] protected UnitController unitController;
         
-        private Dictionary<StatType, Stat> statsKey;
+        public Dictionary<StatType, Stat> Stats { get; protected set; }
         
         public Stat GetStat(StatType statType)
         {
-            return statsKey.GetValueOrDefault(statType);
+            return Stats.GetValueOrDefault(statType);
         }
 
         public virtual void Initialize()
         {
-            statsKey ??= new Dictionary<StatType, Stat>();
+            Stats ??= new Dictionary<StatType, Stat>();
         }
         
         protected void AddStatToDictionary(StatType statType, Stat stat)
         {
-            statsKey[statType] = stat;
+            Stats[statType] = stat;
         }
     }
 }

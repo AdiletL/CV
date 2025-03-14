@@ -12,7 +12,7 @@ namespace Gameplay.Ability
     {
         public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.DamageResistance;
 
-        private UnitStatsController unitStatsController;
+        private UnitStatsController _unitStatsController;
         private StatConfig[] statConfigs;
 
         private bool isUsed;
@@ -24,7 +24,7 @@ namespace Gameplay.Ability
         public override void Initialize()
         {
             base.Initialize();
-            unitStatsController = GameObject.GetComponent<UnitStatsController>();
+            _unitStatsController = GameObject.GetComponent<UnitStatsController>();
         }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -48,7 +48,7 @@ namespace Gameplay.Ability
             float result = 0;
             for (int i = 0; i < statConfigs.Length; i++)
             {
-                stat = unitStatsController.GetStat(statConfigs[i].StatTypeID);
+                stat = _unitStatsController.GetStat(statConfigs[i].StatTypeID);
                 for (int j = 0; j < statConfigs[i].StatValuesConfig.Length; j++)
                 {
                     var statValue = statConfigs[i].StatValuesConfig[j];
@@ -80,7 +80,7 @@ namespace Gameplay.Ability
             Stat stat = null;
             for (int i = 0; i < statConfigs.Length; i++)
             {
-                stat = unitStatsController.GetStat(statConfigs[i].StatTypeID);
+                stat = _unitStatsController.GetStat(statConfigs[i].StatTypeID);
                 for (int j = 0; j < statConfigs[i].StatValuesConfig.Length; j++)
                 {
                     var statValue = statConfigs[i].StatValuesConfig[j];

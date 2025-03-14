@@ -15,7 +15,7 @@ namespace Gameplay.Unit.Character.Creep
         
         public void SetNavMeshAgent(NavMeshAgent navMeshAgent) => this.navMeshAgent = navMeshAgent;
 
-        public override bool IsFindUnitInRange()
+        public override bool IsUnitInRange()
         {
             currentTarget = FindUnitInRange<ICreepInteractable>();
             return currentTarget;
@@ -39,7 +39,7 @@ namespace Gameplay.Unit.Character.Creep
         {
             if (!currentTarget)
             {
-                if (!IsFindUnitInRange())
+                if (!IsUnitInRange())
                 {
                     stateMachine.ExitCategory(Category, null);
                     return;

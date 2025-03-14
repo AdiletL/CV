@@ -33,11 +33,6 @@ namespace Gameplay.Unit.Character.Creep
                 .Build();
         }
 
-        protected override UnitInformation CreateUnitInformation()
-        {
-            return new BeholderInformation(this);
-        }
-        
         protected override void BeforeCreateStates()
         {
             base.BeforeCreateStates();

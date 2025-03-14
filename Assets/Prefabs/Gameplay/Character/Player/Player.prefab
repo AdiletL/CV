@@ -3568,6 +3568,12 @@ MonoBehaviour:
   so_PlayerControlDesktop: {fileID: 11400000, guid: 0bed9273856cd0a47b9da97da2cae779, type: 2}
   so_PlayerAbilities: {fileID: 11400000, guid: 0d0ed737da3608143aa9bbd2b6af9b75, type: 2}
   so_PlayerSpecialAction: {fileID: 11400000, guid: b5a7c1b2d9d6ca1438ac0ca4dba990c9, type: 2}
+  uiPortraitPrefab:
+    m_AssetGUID: cf40f1d7379e2b14b9dc36f2a3d320ae
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   so_NormalSword: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
   currentStateCategory: 0
   currentStateName: 

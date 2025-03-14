@@ -38,29 +38,29 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             if(slotID == null) return;
             
             uiItems[slotID].SetSlotID(slotID);
-            uiItems[slotID].UpdateIcon(icon);
-            uiItems[slotID].UpdateAmount(amount);
-            uiItems[slotID].UpdateCooldownBar(currentCooldown, maxCooldown);
-            uiItems[slotID].UpdateSelectable(isSelectable);
+            uiItems[slotID].SetIcon(icon);
+            uiItems[slotID].SetAmount(amount);
+            uiItems[slotID].SetCooldownBar(currentCooldown, maxCooldown);
+            uiItems[slotID].SetSelectable(isSelectable);
         }
 
       
-        public void UpdateItemCooldown(int? slotID, float current, float max)
+        public void SetItemCooldown(int? slotID, float current, float max)
         {
             if(slotID == null) return;
-            uiItems[slotID].UpdateCooldownBar(current, max);
+            uiItems[slotID].SetCooldownBar(current, max);
         }
 
-        public void UpdateAmount(int? slotID, int amount)
+        public void SetAmount(int? slotID, int amount)
         {
             if(slotID == null) return;
-            uiItems[slotID].UpdateAmount(amount);
+            uiItems[slotID].SetAmount(amount);
         }
 
-        public void UpdateSelectable(int? slotID, bool isSelectable)
+        public void SetSelectable(int? slotID, bool isSelectable)
         {
             if(slotID == null) return;
-            uiItems[slotID].UpdateSelectable(isSelectable);
+            uiItems[slotID].SetSelectable(isSelectable);
         }
 
         public void RemoveItem(int? slotID)

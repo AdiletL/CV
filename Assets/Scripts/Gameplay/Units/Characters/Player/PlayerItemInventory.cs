@@ -126,7 +126,7 @@ namespace Gameplay.Unit.Character.Player
                 if(slotID == null) return;
                 
                 slots[slotID].AddAmount(item.Amount);
-                uiItemInventory.UpdateAmount(slotID, slots[slotID].Amount);
+                uiItemInventory.SetAmount(slotID, slots[slotID].Amount);
             }
         }
 
@@ -135,7 +135,7 @@ namespace Gameplay.Unit.Character.Player
             if(slotID == null || amount > slots[slotID].Amount) return;
             
             slots[slotID].RemoveAmount(amount);
-            uiItemInventory.UpdateAmount(slotID, slots[slotID].Amount);
+            uiItemInventory.SetAmount(slotID, slots[slotID].Amount);
             
             if (slots[slotID].Amount <= 0)
             {
@@ -177,8 +177,8 @@ namespace Gameplay.Unit.Character.Player
         private void OnCountCooldownItem(int? slotID, float current, float max)
         {
             if(slotID == null) return;
-            uiItemInventory.UpdateItemCooldown(slotID, current, max);
-            uiItemInventory.UpdateSelectable(slotID, current <= 0);
+            uiItemInventory.SetItemCooldown(slotID, current, max);
+            uiItemInventory.SetSelectable(slotID, current <= 0);
         }
         
         private void ClearSelectedItem()

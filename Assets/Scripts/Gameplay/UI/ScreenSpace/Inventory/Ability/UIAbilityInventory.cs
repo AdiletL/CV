@@ -37,20 +37,20 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             uiAbilities[slotID].SetSlotID(slotID);
             uiAbilities[slotID].SetIcon(icon);
-            uiAbilities[slotID].UpdateCooldownBar(currentCooldown, maxCooldown);
-            uiAbilities[slotID].UpdateSelectable(isSelectable);
+            uiAbilities[slotID].SetCooldownBar(currentCooldown, maxCooldown);
+            uiAbilities[slotID].SetSelectable(isSelectable);
         }
 
-        public void UpdateCooldown(int? slotID, float current, float max)
+        public void SetCooldown(int? slotID, float current, float max)
         {
             if(slotID == null) return;
-            uiAbilities[slotID].UpdateCooldownBar(current, max);
+            uiAbilities[slotID].SetCooldownBar(current, max);
         }
 
-        public void UpdateSelectable(int? slotID, bool isSelectable)
+        public void SetSelectable(int? slotID, bool isSelectable)
         {
             if(slotID == null) return;
-            uiAbilities[slotID].UpdateSelectable(isSelectable);
+            uiAbilities[slotID].SetSelectable(isSelectable);
         }
 
         public void RemoveAbility(int? slotID)

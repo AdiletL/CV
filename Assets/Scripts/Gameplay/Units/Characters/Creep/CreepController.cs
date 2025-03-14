@@ -73,9 +73,9 @@ namespace Gameplay.Unit.Character.Creep
             gravity.ActivateGravity();
         }
 
-        protected override void SubscribeEvent()
+        protected override void InitializeMediatorEvent()
         {
-            base.SubscribeEvent();
+            base.InitializeMediatorEvent();
             this.StateMachine.OnChangedState += OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth += OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage += GetComponentInUnit<CreepUI>().OnTakeDamage;
@@ -83,9 +83,9 @@ namespace Gameplay.Unit.Character.Creep
             GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
         }
 
-        protected override void UnSubscribeEvent()
+        protected override void DeInitializeMediatorEvent()
         {
-            base.UnSubscribeEvent();
+            base.DeInitializeMediatorEvent();
             this.StateMachine.OnChangedState -= OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth -= OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage -= GetComponentInUnit<CreepUI>().OnTakeDamage;
