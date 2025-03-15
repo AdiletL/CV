@@ -59,7 +59,7 @@ namespace Gameplay.Unit.Character.Creep
         {
             base.Exit();
             navMeshAgent.updateRotation = true;
-            unitAnimation.ExitAnimation(ANIMATION_LAYER);
+            unitAnimation.ExitAnimation(DEFAULT_ANIMATION_LAYER);
         }
 
         protected override void ClearValues()
@@ -110,7 +110,7 @@ namespace Gameplay.Unit.Character.Creep
             if (!isFacingTarget)
             {
                 if (Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position, gameObject.transform.forward, currentTarget.transform.position) && 
-                    Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50))
+                    Calculate.Rotate.IsFacingTargetY(gameObject.transform, currentTarget.transform.position, 50))
                 {
                     countTimerExitState = 0;
                     isFacingTarget = true;

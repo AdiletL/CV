@@ -49,7 +49,6 @@ namespace Gameplay.Equipment.Weapon
                !isObstacleBetween(currentTarget) &&
                Calculate.Rotate.IsFacingTargetXZ(Owner.transform.position,
                    Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               Calculate.Rotate.IsFacingTargetY(Owner.transform.position, currentTarget.transform.position, 50) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {

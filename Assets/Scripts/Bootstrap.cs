@@ -11,8 +11,8 @@ public class Bootstrap : MonoBehaviour
 
     private void Start()
     {
-        PhotonNetwork.SendRate = 120;
-        PhotonNetwork.SerializationRate = 120;
+        PhotonNetwork.SendRate = 20;
+        PhotonNetwork.SerializationRate = 20;
         
         if (!PhotonNetwork.IsMasterClient)
         {

@@ -24,11 +24,11 @@ namespace Gameplay.Unit.Character
         protected float cooldownApplyDamage, countTimerApplyDamage;
         protected float angleToTarget;
         protected int mainLayer;
-
+        protected int currentAnimatonLayer;
         protected bool isAttacked;
         
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
-        protected const int ANIMATION_LAYER = 1;
+        protected const int DEFAULT_ANIMATION_LAYER = 1;
         
         public Equipment.Weapon.Weapon CurrentWeapon { get; protected set; }
         public Stat ReduceEnduranceStat { get; } = new();
@@ -60,9 +60,6 @@ namespace Gameplay.Unit.Character
             var target = Calculate.Attack.FindUnitInRange<T>(center.position, totalRange,
                 enemyLayer, ref findUnitColliders);
             if(!target) return null;
-
-            if (!Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, target.transform.position, 50))
-                return null;
 
             if (!isObstacleBetween(target))
                 return target;
@@ -129,7 +126,7 @@ namespace Gameplay.Unit.Character
         public override void Exit()
         {
             base.Exit();
-            this.unitAnimation?.ExitAnimation(ANIMATION_LAYER);
+            this.unitAnimation?.ExitAnimation(DEFAULT_ANIMATION_LAYER);
             currentTarget = null;
         }
 
@@ -156,14 +153,15 @@ namespace Gameplay.Unit.Character
 
         protected void UpdateDurationAttack()
         {
-            durationAttack = Calculate.Attack.TotalDurationInSecond(AttackSpeedStat.CurrentValue);
+            durationAttack = Calculate.Convert.AttackSpeedToDuration(AttackSpeedStat.CurrentValue);
         }
 
-        protected void UpdateCurrentClip()
+        protected virtual void UpdateCurrentClip()
         {
             var config = getAnimationEventConfig();
             currentClip = config.Clip;
             cooldownApplyDamage = durationAttack * config.MomentEvent;
+            currentAnimatonLayer = DEFAULT_ANIMATION_LAYER;
         }
         
         public virtual void SetWeapon(Equipment.Weapon.Weapon weapon)
@@ -196,7 +194,7 @@ namespace Gameplay.Unit.Character
         {
             if(isAttacked) return;
 
-            this.unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: ANIMATION_LAYER);
+            this.unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: currentAnimatonLayer);
             
             countTimerApplyDamage += Time.deltaTime;
             if (countTimerApplyDamage > cooldownApplyDamage)
@@ -222,7 +220,6 @@ namespace Gameplay.Unit.Character
                !isObstacleBetween(currentTarget) &&
                Calculate.Rotate.IsFacingTargetXZ(gameObject.transform.position,
                    gameObject.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               Calculate.Rotate.IsFacingTargetY(gameObject.transform.position, currentTarget.transform.position, 50) &&
                currentTarget.TryGetComponent(out IAttackable attackable) && 
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {

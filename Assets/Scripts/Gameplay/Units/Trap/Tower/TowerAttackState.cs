@@ -28,7 +28,7 @@ namespace Gameplay.Unit.Trap.Tower
         {
             base.Initialize();
             
-            var duration = Calculate.Attack.TotalDurationInSecond(AttackSpeedStat.CurrentValue);
+            var duration = Calculate.Convert.AttackSpeedToDuration(AttackSpeedStat.CurrentValue);
             timerFire = duration * .55f;
             cooldown = duration;
         }

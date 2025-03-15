@@ -7,11 +7,6 @@ namespace Calculate
 {
     public static class Attack
     {
-        public static float TotalDurationInSecond(float attackSpeed)
-        {
-            return 100 / attackSpeed;
-        }
-        
         public static GameObject FindUnitInRange<T>(Vector3 origin, float radius, LayerMask layerMask, ref Collider[] overlapHits)
         {
             GameObject closestUnit = null;

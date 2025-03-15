@@ -10,11 +10,11 @@ namespace Gameplay.Unit.Character
             base.Initialize();
             var characterMainController = (CharacterMainController)unitController;
 
-            if (TryGetComponent(out CharacterExperience experience))
-            {
-                AddStatToDictionary(StatType.Level, experience.LevelStat);
+            if (TryGetComponent(out IExperience experience))
                 AddStatToDictionary(StatType.Experience, experience.ExperienceStat);
-            }
+            
+            if(TryGetComponent(out ILevel level))
+                AddStatToDictionary(StatType.Level, level.LevelStat);
             
             var damageStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.DamageStat;
             if(damageStat != null) AddStatToDictionary(StatType.Damage, damageStat);
@@ -28,11 +28,23 @@ namespace Gameplay.Unit.Character
             var movementSpeedStat = characterMainController.StateMachine.GetState<CharacterMoveState>()?.MovementSpeedStat;
             if(movementSpeedStat != null) AddStatToDictionary(StatType.MovementSpeed, movementSpeedStat);
 
-            if (TryGetComponent(out CharacterHealth health))
+            if (TryGetComponent(out IHealth health))
+            {
                 AddStatToDictionary(StatType.Health, health.HealthStat);
-            
-            if(TryGetComponent(out CharacterEndurance characterEndurance)) 
-                AddStatToDictionary(StatType.Endurance, characterEndurance.EnduranceStat);
+                AddStatToDictionary(StatType.RegenerationHealth, health.RegenerationStat);
+            }
+
+            if (TryGetComponent(out IEndurance endurance))
+            {
+                AddStatToDictionary(StatType.Endurance, endurance.EnduranceStat);
+                AddStatToDictionary(StatType.RegenerationEndurance, endurance.RegenerationStat);
+            }
+
+            if (TryGetComponent(out IMana mana))
+            {
+                AddStatToDictionary(StatType.Mana, mana.ManaStat);
+                AddStatToDictionary(StatType.RegenerationMana, mana.RegenerationStat);
+            }
 
             if (TryGetComponent(out ResistanceHandler resistanceHandler))
             {

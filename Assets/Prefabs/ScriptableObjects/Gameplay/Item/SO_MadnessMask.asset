@@ -50,5 +50,5 @@ MonoBehaviour:
       Duration: 0
     VampirismConfig:
       IsInterim: 0
-      ValueType: 0
-      Value: 3
+      ValueType: 1
+      Value: 50

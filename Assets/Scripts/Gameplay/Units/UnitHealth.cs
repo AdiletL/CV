@@ -17,6 +17,7 @@ namespace Gameplay.Unit
         [SerializeField] protected SO_UnitHealth so_UnitHealth;
 
         protected UnitCenter unitCenter;
+        protected float regenRate;
         
         public Stat HealthStat { get; } = new Stat();
         public Stat RegenerationStat { get; } = new Stat();
@@ -40,8 +41,24 @@ namespace Gameplay.Unit
         {
             HealthStat.AddMaxValue(so_UnitHealth.MaxHealth);
             HealthStat.AddValue(so_UnitHealth.MaxHealth);
+            RegenerationStat.AddValue(so_UnitHealth.RegenerationHealth);
             unitCenter = gameObject.GetComponent<UnitCenter>();
+
+            UpdateRegenPerSecond();
+            
+            SubscribeEvent();
         }
+
+        protected virtual void SubscribeEvent()
+        {
+            RegenerationStat.OnChangedCurrentValue += OnChangedRegenerationStatCurrentValue;
+        }
+        protected virtual void UnsubscribeEvent()
+        {
+            RegenerationStat.OnChangedCurrentValue -= OnChangedRegenerationStatCurrentValue;
+        }
+
+        protected virtual void OnChangedRegenerationStatCurrentValue() => UpdateRegenPerSecond();
 
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
@@ -50,6 +67,22 @@ namespace Gameplay.Unit
         {
             IsLive = HealthStat.CurrentValue > 0;
             OnChangedHealth?.Invoke(HealthStat.CurrentValue, HealthStat.MaximumValue);
+        }
+        
+        protected void UpdateRegenPerSecond()
+        {
+            regenRate = Calculate.Convert.RegenerationToRate(RegenerationStat.CurrentValue);
+        }
+        
+        protected virtual void Update()
+        {
+            RegenerationHealth();
+        }
+        
+        private void RegenerationHealth()
+        {
+            if (HealthStat.CurrentValue < HealthStat.MaximumValue)
+                HealthStat.AddValue(Mathf.Min(regenRate * Time.deltaTime, HealthStat.MaximumValue));
         }
 
         public virtual void TakeDamage(DamageData damageData)
@@ -63,6 +96,11 @@ namespace Gameplay.Unit
 
             if (HealthStat.CurrentValue <= 0)
                 OnZeroHealth?.Invoke();
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeEvent();
         }
     }
 }

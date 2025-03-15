@@ -14,6 +14,8 @@ namespace Gameplay.Unit.Character.Player
 
         private Vector3 direction;
         private Vector3 worldMousePosition;
+        private int counterSpecialAttack;
+        private const int specialAttackIndex = 2;
         private bool isFacingTarget;
         
         public Stat RotationSpeed { get; } = new Stat();
@@ -36,6 +38,19 @@ namespace Gameplay.Unit.Character.Player
             };
             return config;
         }
+
+        protected AnimationEventConfig getSpecialAnimationEventConfig()
+        {
+            AnimationEventConfig config = CurrentWeapon switch
+            {
+                _ when CurrentWeapon.GetType() == typeof(Sword) => so_PlayerAttack.SpecialSwordAnimations[
+                    Random.Range(0, so_PlayerAttack.SpecialSwordAnimations.Length)],
+                _ when CurrentWeapon.GetType() == typeof(Bow) => so_PlayerAttack.BowAnimations[
+                    Random.Range(0, so_PlayerAttack.BowAnimations.Length)],
+                _ => throw new ArgumentException($"Unknown state type: {CurrentWeapon.GetType()}")
+            };
+            return config;
+        }
         
         public override void Initialize()
         {
@@ -45,6 +60,9 @@ namespace Gameplay.Unit.Character.Player
             
             for (int i = 0; i < so_PlayerAttack.SwordAnimations.Length; i++)
                 unitAnimation.AddClip(so_PlayerAttack.SwordAnimations[i].Clip);
+            
+            for (int i = 0; i < so_PlayerAttack.SpecialSwordAnimations.Length; i++)
+                unitAnimation.AddClip(so_PlayerAttack.SpecialSwordAnimations[i].Clip);
             
             for (int i = 0; i < so_PlayerAttack.BowAnimations.Length; i++)
                 unitAnimation.AddClip(so_PlayerAttack.BowAnimations[i].Clip);
@@ -69,7 +87,13 @@ namespace Gameplay.Unit.Character.Player
                 Attack();
             }
         }
-        
+
+        public override void Exit()
+        {
+            base.Exit();
+            unitAnimation.ExitAnimation(2);
+        }
+
         protected override void SubscribeStatEvent()
         {
             base.SubscribeStatEvent();
@@ -94,7 +118,22 @@ namespace Gameplay.Unit.Character.Player
             base.ClearValues();
             isFacingTarget = false;
         }
-        
+
+        protected override void UpdateCurrentClip()
+        {
+            if (specialAttackIndex > counterSpecialAttack)
+            {
+                base.UpdateCurrentClip();
+            }
+            else
+            {
+                var config = getSpecialAnimationEventConfig();
+                currentClip = config.Clip;
+                cooldownApplyDamage = durationAttack * config.MomentEvent;
+                currentAnimatonLayer = 2;
+            }
+        }
+
         private void UpdateDirection()
         {
             // Получаем позицию мыши в мировых координатах
@@ -137,7 +176,16 @@ namespace Gameplay.Unit.Character.Player
                 countDurationAttack = 0;
             }
         }
-        
+
+        public override void ApplyDamage()
+        {
+            base.ApplyDamage();
+            if (counterSpecialAttack >= specialAttackIndex)
+                counterSpecialAttack = 0;
+            else
+                counterSpecialAttack++;
+        }
+
         protected override void DefaultApplyDamage()
         {
             currentTarget = FindUnitInRange<IPlayerAttackable>();

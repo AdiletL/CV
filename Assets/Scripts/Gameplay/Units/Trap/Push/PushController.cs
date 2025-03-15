@@ -24,7 +24,7 @@ namespace Gameplay.Unit.Trap
 
             so_Push = (SO_Push)so_Trap;
             pushAnimation = GetComponentInUnit<PushAnimation>();
-            durationAttack = Calculate.Attack.TotalDurationInSecond(so_Push.AttackSpeed);
+            Calculate.Convert.AttackSpeedToDuration(so_Push.AttackSpeed);
             cooldownAttack = so_Push.CooldownAttack;
 
             DamageStat.AddValue(so_Push.Damage);
