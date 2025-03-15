@@ -27,6 +27,8 @@ namespace Gameplay
         Armor,
         MagicalResistance,
         PureResistance,
+        Level,
+        Experience,
     }
 
     [System.Serializable]
@@ -52,12 +54,9 @@ namespace Gameplay
     
     public class Stat
     {
-        public event Action<float> OnAddCurrentValue;
-        public event Action<float> OnRemoveCurrentValue;
-        public event Action<float> OnAddMinimumValue;
-        public event Action<float> OnRemoveMinimumValue;
-        public event Action<float> OnAddMaximumValue;
-        public event Action<float> OnRemoveMaximumValue;
+        public event Action OnChangedCurrentValue;
+        public event Action OnChangedMinimumValue;
+        public event Action OnChangedMaximumValue;
         
         public float CurrentValue { get; private set; }
         public float MinimumValue { get; private set; }
@@ -66,37 +65,37 @@ namespace Gameplay
         public void AddValue(float value)
         {
             CurrentValue += value;
-            OnAddCurrentValue?.Invoke(value);
+            OnChangedCurrentValue?.Invoke();
         }
 
         public void RemoveValue(float value)
         {
             CurrentValue -= value;
-            OnRemoveCurrentValue?.Invoke(value);
+            OnChangedCurrentValue?.Invoke();
         }
         
         public void AddMinValue(float value)
         {
             MinimumValue += value;
-            OnAddMinimumValue?.Invoke(value);
+            OnChangedMinimumValue?.Invoke();
         }
 
         public void RemoveMinValue(float value)
         {
             MinimumValue -= value;
-            OnRemoveMinimumValue?.Invoke(value);
+            OnChangedMinimumValue?.Invoke();
         }
 
         public void AddMaxValue(float value)
         {
             MaximumValue += value;
-            OnAddMaximumValue?.Invoke(value);
+            OnChangedMaximumValue?.Invoke();
         }
 
         public void RemoveMaxValue(float value)
         {
             MaximumValue -= value;
-            OnRemoveMaximumValue?.Invoke(value);
+            OnChangedMaximumValue?.Invoke();
         }
     }
 }

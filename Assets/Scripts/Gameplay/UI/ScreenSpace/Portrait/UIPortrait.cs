@@ -10,7 +10,7 @@ namespace Gameplay.UI.ScreenSpace.Portrait
         
         [SerializeField] private UIStats uiStats;
         
-        private ShowStatsOnUI showStatsOnUI;
+        private MediatorStatsAndUI mediatorStatsAndUI;
 
         public void Initialize()
         {
@@ -20,8 +20,8 @@ namespace Gameplay.UI.ScreenSpace.Portrait
 
         public void SetStatsController(IStatsController statsController)
         {
-            showStatsOnUI = new ShowStatsOnUI(statsController, uiStats);
-            showStatsOnUI.Initialize();
+            mediatorStatsAndUI = new MediatorStatsAndUI(statsController, uiStats);
+            mediatorStatsAndUI.Initialize();
         }
     }
 }

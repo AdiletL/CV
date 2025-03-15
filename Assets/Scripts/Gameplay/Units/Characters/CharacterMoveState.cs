@@ -42,6 +42,20 @@ namespace Gameplay.Unit.Character
             unitAnimation.AddClips(runClips);
         }
 
+        public override void Subscribe()
+        {
+            base.Subscribe();
+            MovementSpeedStat.OnChangedCurrentValue += OnChangedMovementSpeedCurrentValue;
+        }
+
+        public override void Unsubscribe()
+        {
+            base.Unsubscribe();
+            MovementSpeedStat.OnChangedCurrentValue -= OnChangedMovementSpeedCurrentValue;
+        }
+
+        private void OnChangedMovementSpeedCurrentValue() => UpdateDurationAnimation();
+
         public override void Update()
         {
             
@@ -55,13 +69,13 @@ namespace Gameplay.Unit.Character
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();
+            unitAnimation.SetSpeedClip(currentClip, duration: durationAnimation, SPEED_MOVEMENT_NAME);
             unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
 
         protected void UpdateDurationAnimation()
         {
             durationAnimation = 1.5f / MovementSpeedStat.CurrentValue;
-            unitAnimation.SetSpeedClip(currentClip, duration: durationAnimation, SPEED_MOVEMENT_NAME);
         }
         
         public virtual void ExecuteMovement()

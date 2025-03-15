@@ -10,7 +10,7 @@ public interface ILevel
 
 public interface IExperience
 {
-    public ICountExperience ICountExperienceCalculate { get; }
+    public ICountExperience ICountExperience { get; }
     
     public Stat ExperienceStat { get; }
     

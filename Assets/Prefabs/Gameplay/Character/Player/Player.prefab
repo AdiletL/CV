@@ -3754,10 +3754,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.32
-  m_Height: 1.11
+  m_Radius: 0.2
+  m_Height: 1.01
   m_Direction: 1
-  m_Center: {x: 0, y: 0.59, z: 0}
+  m_Center: {x: 0, y: 0.51, z: 0}
 --- !u!114 &5541811888470356373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3771,9 +3771,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Capsule: {fileID: 1836599491007769117}
-  CapsuleRadius: 0.32
-  CapsuleHeight: 1.11
-  CapsuleYOffset: 0.59
+  CapsuleRadius: 0.2
+  CapsuleHeight: 1.01
+  CapsuleYOffset: 0.51
   CapsulePhysicsMaterial: {fileID: 0}
   GroundDetectionExtraDistance: 0.05
   MaxStableSlopeAngle: 60
@@ -3786,7 +3786,7 @@ MonoBehaviour:
   AllowSteppingWithoutStableGrounding: 0
   MinRequiredStepDepth: 0.1
   LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0.32
+  MaxStableDistanceFromLedge: 0.2
   MaxVelocityForLedgeSnap: 0
   MaxStableDenivelationAngle: 180
   InteractiveRigidbodyHandling: 1

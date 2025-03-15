@@ -17,7 +17,7 @@ namespace Gameplay.Unit
         
         private AoeExperienceInfo aoeExperienceInfo;
         
-        public ICountExperience ICountExperienceCalculate { get; protected set; }
+        public ICountExperience ICountExperience { get; protected set; }
         public Stat ExperienceStat { get; } = new Stat();
         public Stat LevelStat { get; } = new Stat();
 
@@ -30,15 +30,16 @@ namespace Gameplay.Unit
         public virtual void Initialize()
         {
             LevelStat.AddValue(so_UnitExperience.StartLevel);
-            ExperienceStat.AddValue(so_UnitExperience.Experience);
+            ExperienceStat.AddValue(so_UnitExperience.CurrentExperience);
+            ExperienceStat.AddMaxValue(so_UnitExperience.MaxExperience);
             RangeTakeExperience = so_UnitExperience.RangeTakeExperience;
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
             IsTakeExperience = so_UnitExperience.IsTakeExperience;
             IsGiveExperience = so_UnitExperience.IsGiveExperience;
             
             aoeExperienceInfo = new AoeExperienceInfo((int)ExperienceStat.CurrentValue, RangeTakeExperience, gameObject);
-            ICountExperienceCalculate = new ExponentialICountExperience();
-            diContainer.Inject(ICountExperienceCalculate);
+            ICountExperience = new ExponentialICountExperience();
+            diContainer.Inject(ICountExperience);
         }
         
         public virtual void AddExperience(int experience)
@@ -51,21 +52,25 @@ namespace Gameplay.Unit
 
         protected virtual void CheckLevelUp()
         {
-            int experienceToNextLevel = ICountExperienceCalculate.CalculateExperienceForNextLevel((int)LevelStat.CurrentValue, (int)ExperienceStat.CurrentValue);
-        
-            while (ExperienceStat.CurrentValue >= experienceToNextLevel)
+            while (ExperienceStat.CurrentValue >= ExperienceStat.MaximumValue)
             {
                 LevelUp(1);
-                experienceToNextLevel = ICountExperienceCalculate.CalculateExperienceForNextLevel((int)LevelStat.CurrentValue, (int)ExperienceStat.CurrentValue);
+                UpdateMaxExperience();
             }
         }
         public virtual void LevelUp(int amount)
         {
             if(!IsTakeLevel) return;
             LevelStat.AddValue(amount);
+            UpdateMaxExperience();
             Debug.Log(gameObject.name + " Level Up! New Level: " + LevelStat.CurrentValue);
         }
-        
+
+        private void UpdateMaxExperience()
+        {
+            int experienceToNextLevel = ICountExperience.CalculateExperienceForNextLevel((int)LevelStat.CurrentValue, (int)ExperienceStat.CurrentValue);
+            ExperienceStat.AddMaxValue(experienceToNextLevel);
+        }
 
         public virtual void GiveExperience()
         {

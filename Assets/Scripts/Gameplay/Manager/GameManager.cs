@@ -4,6 +4,7 @@ using Photon.Pun;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Gameplay.Manager
@@ -18,7 +19,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject navMeshManagerPrefab;
         [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
         [SerializeField] private AssetReferenceGameObject networkManagerPrefab;
-        [SerializeField] private SO_GameConfig so_GameConfigPrefab;
+        [SerializeField] private SO_GameConfig so_GameConfig;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
@@ -44,9 +45,10 @@ namespace Gameplay.Manager
         [PunRPC]
         private void LoadAndBindAsset()
         {
-            diContainer.Bind<SO_GameConfig>().FromInstance(so_GameConfigPrefab).AsSingle();
-            diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfigPrefab.SO_GameHotkeys).AsSingle();
-            diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfigPrefab.SO_GameUIColor).AsSingle();
+            diContainer.Bind<SO_GameConfig>().FromInstance(so_GameConfig).AsSingle();
+            diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfig.SO_GameHotkeys).AsSingle();
+            diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfig.SO_GameUIColor).AsSingle();
+            diContainer.Bind<SO_GameStatIcon>().FromInstance(so_GameConfig.SO_GameStatIcon).AsSingle();
             
             if(!PhotonNetwork.IsMasterClient) return;
             photonView.RPC(nameof(InitializeGameUnitsAndExperienceSystem), RpcTarget.AllBuffered);

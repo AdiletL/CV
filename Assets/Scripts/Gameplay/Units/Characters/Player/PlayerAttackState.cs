@@ -73,24 +73,16 @@ namespace Gameplay.Unit.Character.Player
         protected override void SubscribeStatEvent()
         {
             base.SubscribeStatEvent();
-            RangeStat.OnAddCurrentValue += OnAddRangeStatCurrentValue;
-            RangeStat.OnRemoveCurrentValue += OnRemoveRangeStatCurrentValue;
+            RangeStat.OnChangedCurrentValue += OnChangedRangeStatCurrentValue;
         }
 
         protected override void UnsubscribeStatEvent()
         {
             base.UnsubscribeStatEvent();
-            RangeStat.OnAddCurrentValue -= OnAddRangeStatCurrentValue;
-            RangeStat.OnRemoveCurrentValue -= OnRemoveRangeStatCurrentValue;
+            RangeStat.OnChangedCurrentValue -= OnChangedRangeStatCurrentValue;
         }
 
-        private void OnAddRangeStatCurrentValue(float value)
-        {
-            var totalRange = RangeStat.CurrentValue;
-            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
-            unitRenderer.SetRangeScale(totalRange);
-        }
-        private void OnRemoveRangeStatCurrentValue(float value)
+        private void OnChangedRangeStatCurrentValue()
         {
             var totalRange = RangeStat.CurrentValue;
             if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;

@@ -28,14 +28,12 @@ namespace Gameplay.Unit
         
         protected virtual void OnEnable()
         {
-            HealthStat.OnAddCurrentValue += OnAddHealthStatCurrentValue;
-            HealthStat.OnRemoveCurrentValue += OnRemoveHealthStatCurrentValue;
+            HealthStat.OnChangedCurrentValue += OnChangedHealthStatCurrentValue;
         }
 
         protected virtual void OnDisable()
         {
-            HealthStat.OnAddCurrentValue -= OnAddHealthStatCurrentValue;
-            HealthStat.OnRemoveCurrentValue -= OnRemoveHealthStatCurrentValue;
+            HealthStat.OnChangedCurrentValue -= OnChangedHealthStatCurrentValue;
         }
 
         public virtual void Initialize()
@@ -48,13 +46,7 @@ namespace Gameplay.Unit
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
         
-        protected virtual void OnAddHealthStatCurrentValue(float value)
-        {
-            IsLive = HealthStat.CurrentValue > 0;
-            OnChangedHealth?.Invoke(HealthStat.CurrentValue, HealthStat.MaximumValue);
-        }
-
-        protected virtual void OnRemoveHealthStatCurrentValue(float value)
+        protected virtual void OnChangedHealthStatCurrentValue()
         {
             IsLive = HealthStat.CurrentValue > 0;
             OnChangedHealth?.Invoke(HealthStat.CurrentValue, HealthStat.MaximumValue);

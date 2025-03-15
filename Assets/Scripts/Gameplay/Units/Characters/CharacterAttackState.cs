@@ -135,17 +135,14 @@ namespace Gameplay.Unit.Character
 
         protected virtual void SubscribeStatEvent()
         {
-            AttackSpeedStat.OnAddCurrentValue += OnAddAttackSpeedStatCurrentValue;
-            AttackSpeedStat.OnRemoveCurrentValue += OnRemoveAttackSpeedStatCurrentValue;
+            AttackSpeedStat.OnChangedCurrentValue += OnChangedAttackSpeedStatCurrentValue;
         }
 
         protected virtual void UnsubscribeStatEvent()
         {
-            AttackSpeedStat.OnAddCurrentValue -= OnAddAttackSpeedStatCurrentValue;
-            AttackSpeedStat.OnRemoveCurrentValue -= OnRemoveAttackSpeedStatCurrentValue;
+            AttackSpeedStat.OnChangedCurrentValue -= OnChangedAttackSpeedStatCurrentValue;
         }
-        private void OnAddAttackSpeedStatCurrentValue(float value) => UpdateDurationAttack();
-        private void OnRemoveAttackSpeedStatCurrentValue(float value) => UpdateDurationAttack();
+        private void OnChangedAttackSpeedStatCurrentValue() => UpdateDurationAttack();
         
 
         public void SetTarget(GameObject target) => currentTarget = target;

@@ -61,6 +61,8 @@ namespace Gameplay.Unit.Character.Player
         {
             if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
                 PlayAnimation();
+            if (typeof(CharacterSpecialActionState).IsAssignableFrom(state.GetType()))
+                PlayAnimation();
         }
         
 

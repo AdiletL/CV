@@ -9,6 +9,12 @@ namespace Gameplay.Unit.Character
         {
             base.Initialize();
             var characterMainController = (CharacterMainController)unitController;
+
+            if (TryGetComponent(out CharacterExperience experience))
+            {
+                AddStatToDictionary(StatType.Level, experience.LevelStat);
+                AddStatToDictionary(StatType.Experience, experience.ExperienceStat);
+            }
             
             var damageStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.DamageStat;
             if(damageStat != null) AddStatToDictionary(StatType.Damage, damageStat);
@@ -21,12 +27,12 @@ namespace Gameplay.Unit.Character
             
             var movementSpeedStat = characterMainController.StateMachine.GetState<CharacterMoveState>()?.MovementSpeedStat;
             if(movementSpeedStat != null) AddStatToDictionary(StatType.MovementSpeed, movementSpeedStat);
+
+            if (TryGetComponent(out CharacterHealth health))
+                AddStatToDictionary(StatType.Health, health.HealthStat);
             
-            var healthStat = GetComponent<CharacterHealth>()?.HealthStat;
-            if(healthStat != null) AddStatToDictionary(StatType.Health, healthStat);
-            
-            var enduranceStat = GetComponent<CharacterEndurance>()?.EnduranceStat;
-            if(enduranceStat != null) AddStatToDictionary(StatType.Endurance, enduranceStat);
+            if(TryGetComponent(out CharacterEndurance characterEndurance)) 
+                AddStatToDictionary(StatType.Endurance, characterEndurance.EnduranceStat);
 
             if (TryGetComponent(out ResistanceHandler resistanceHandler))
             {

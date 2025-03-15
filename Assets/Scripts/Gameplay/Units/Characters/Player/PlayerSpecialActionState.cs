@@ -80,13 +80,13 @@ namespace Gameplay.Unit.Character.Player
 
         public override void Exit()
         {
-            base.Exit();
             damageResistanceAbility.Exit();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             
             playerMoveState?.MovementSpeedStat.AddValue(changedMovementSpeedValue);
             playerMoveState?.RotationSpeedStat.AddValue(changedRotateSpeedValue);
+            base.Exit();
         }
     }
 

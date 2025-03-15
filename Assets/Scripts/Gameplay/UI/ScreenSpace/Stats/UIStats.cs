@@ -3,6 +3,7 @@ using System.Text;
 using ScriptableObjects.Gameplay;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -11,14 +12,15 @@ namespace Gameplay.UI.ScreenSpace.Stats
     public class UIStats : MonoBehaviour
     {
         [Inject] private SO_GameUIColor so_GameUIColor;
+        [Inject] private SO_GameStatIcon so_GameStatIcon;
 
         [SerializeField] private Image icon;
         
         [Space] 
         [SerializeField] private UIStat damageStat;
-        [SerializeField] private UIStat movementStat;
+        [SerializeField] private UIStat movementSpeedStat;
         [SerializeField] private UIStat armorStat;
-        [SerializeField] private UIStat rangeStat;
+        [SerializeField] private UIStat rangeAttackStat;
         [SerializeField] private UIStat healthStat;
         [SerializeField] private UIStat enduranceStat;
         [SerializeField] private UIStat manaStat;
@@ -43,14 +45,30 @@ namespace Gameplay.UI.ScreenSpace.Stats
             healthBarGradient = so_GameUIColor.HealthBarGradient;
             enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
             manaBarGradient = so_GameUIColor.ManaBarGradient;
+            
+            damageStat.SetIcon(so_GameStatIcon.Damage);
+            movementSpeedStat.SetIcon(so_GameStatIcon.MovementSpeed);
+            armorStat.SetIcon(so_GameStatIcon.Armor);
+            rangeAttackStat.SetIcon(so_GameStatIcon.RangeAttack);
+            
             ClearStats();
         }
 
         public void ClearStats()
         {
             SetImage(null);
+            SetLevel(0);
+            SetExperience(0, 0);
+            SetDamage(0);
+            SetMovementSpeed(0);
+            SetArmor(0);
+            SetRangeAttack(0);
             SetHealth(0, 0);
             SetEndurance(0, 0);
+            SetMana(0, 0);
+            SetRegenerationHealth(0);
+            SetRegenerationEndurance(0);
+            SetRegenerationMana(0);
         }
         
         public void SetImage(Sprite sprite) => icon.sprite = sprite;
@@ -58,7 +76,7 @@ namespace Gameplay.UI.ScreenSpace.Stats
         public void SetHealth(float current, float max)
         {
             textBuilder.Clear();
-            textBuilder.Append(current).Append("/").Append(max);
+            textBuilder.Append(current.ToString("0")).Append("/").Append(max.ToString("0"));
             healthStat.SetText(textBuilder.ToString());
             
             if (current == 0 || max == 0) this.resulBar = 0;
@@ -71,7 +89,7 @@ namespace Gameplay.UI.ScreenSpace.Stats
         public void SetEndurance(float current, float max)
         {
             textBuilder.Clear();
-            textBuilder.Append(current).Append("/").Append(max);
+            textBuilder.Append(current.ToString("0")).Append("/").Append(max.ToString("0"));
             enduranceStat.SetText(textBuilder.ToString());
             
             if (current == 0 || max == 0) this.resulBar = 0;
@@ -84,7 +102,7 @@ namespace Gameplay.UI.ScreenSpace.Stats
         public void SetMana(float current, float max)
         {
             textBuilder.Clear();
-            textBuilder.Append(current).Append("/").Append(max);
+            textBuilder.Append(current.ToString("0")).Append("/").Append(max.ToString("0"));
             manaStat.SetText(textBuilder.ToString());
             
             if (current == 0 || max == 0) this.resulBar = 0;
@@ -96,47 +114,66 @@ namespace Gameplay.UI.ScreenSpace.Stats
 
         public void SetDamage(float value)
         {
-            damageStat.SetText($"{value:0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0"));
+            damageStat.SetText(textBuilder.ToString());
         }
 
-        public void SetMovement(float value)
+        public void SetMovementSpeed(float value)
         {
-            movementStat.SetText($"{value:0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0"));
+            movementSpeedStat.SetText(textBuilder.ToString());
         }
 
         public void SetArmor(float value)
         {
-            armorStat.SetText($"{value:0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0"));
+            armorStat.SetText(textBuilder.ToString());
         }
 
-        public void SetRange(float value)
+        public void SetRangeAttack(float value)
         {
-            rangeStat.SetText($"{value:0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0"));
+            rangeAttackStat.SetText(textBuilder.ToString());
         }
         
         public void SetLevel(float value)
         {
-            levelStat.SetText($"{value:0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0"));
+            levelStat.SetText(textBuilder.ToString());
         }
         
-        public void SetExperience(float value)
+        public void SetExperience(float current, float max)
         {
-            experienceStat.SetText($"{value:0}");
+            if (current == 0 || max == 0) this.resulBar = 0;
+            else resulBar = current/max;
+            
+            experienceStat.SetBar(resulBar);
         }
 
         public void SetRegenerationHealth(float value)
         {
-            regenerationHealthStat.SetText($"{value:0.0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0.0"));
+            regenerationHealthStat.SetText(textBuilder.ToString());
         }
         
         public void SetRegenerationEndurance(float value)
         {
-            regenerationEnduranceStat.SetText($"{value:0.0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0.0"));
+            regenerationEnduranceStat.SetText(textBuilder.ToString());
         }
 
         public void SetRegenerationMana(float value)
         {
-            regenerationManaStat.SetText($"{value:0.0}");
+            textBuilder.Clear();
+            textBuilder.Append(value.ToString("0.0"));
+            regenerationManaStat.SetText(textBuilder.ToString());
         }
     }
 

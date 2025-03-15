@@ -783,7 +783,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.38
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &203815989266040983
 Rigidbody:
@@ -1950,6 +1950,10 @@ PrefabInstance:
       propertyPath: 'checksGrounded.Array.data[4]'
       value: 
       objectReference: {fileID: 2374097590005839847}
+    - target: {fileID: -1528658912771222569, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
+      propertyPath: m_Constraints
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 3214656952995414030, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
       propertyPath: m_Height
       value: 0.575971
@@ -1988,11 +1992,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8297330417614300368, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
       propertyPath: m_Height
-      value: 1.3
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 8297330417614300368, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
       propertyPath: m_Radius
-      value: 0.35
+      value: 0.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 8297330417614300368, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9130611321084849887, guid: 273e3819b1a25dc4d9acbcbdda045f9c, type: 3}
       propertyPath: m_LocalPosition.x

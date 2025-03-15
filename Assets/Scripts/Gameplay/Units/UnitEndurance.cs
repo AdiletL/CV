@@ -20,14 +20,12 @@ namespace Gameplay.Unit
         
         protected virtual void OnEnable()
         {
-            EnduranceStat.OnAddCurrentValue += OnAddHealthStatCurrentValue;
-            EnduranceStat.OnRemoveCurrentValue += OnRemoveHealthStatCurrentValue;
+            EnduranceStat.OnChangedCurrentValue += OnChangedHealthStatCurrentValue;
         }
 
         protected virtual void OnDisable()
         {
-            EnduranceStat.OnAddCurrentValue -= OnAddHealthStatCurrentValue;
-            EnduranceStat.OnRemoveCurrentValue -= OnRemoveHealthStatCurrentValue;
+            EnduranceStat.OnChangedCurrentValue -= OnChangedHealthStatCurrentValue;
         }
 
         public virtual void Initialize()
@@ -37,12 +35,7 @@ namespace Gameplay.Unit
         }
         
         
-        protected virtual void OnAddHealthStatCurrentValue(float value)
-        {
-            OnChangedEndurance?.Invoke(EnduranceStat.CurrentValue, EnduranceStat.MaximumValue);
-        }
-
-        protected virtual void OnRemoveHealthStatCurrentValue(float value)
+        protected virtual void OnChangedHealthStatCurrentValue()
         {
             OnChangedEndurance?.Invoke(EnduranceStat.CurrentValue, EnduranceStat.MaximumValue);
         }
