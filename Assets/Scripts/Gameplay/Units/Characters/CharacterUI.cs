@@ -1,52 +1,48 @@
 ﻿using System;
-using ScriptableObjects.Gameplay;
+using Gameplay.UI;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Gameplay.Unit.Character
 {
     public abstract class CharacterUI : UnitUI
     {
-        [Inject] protected SO_GameUIColor so_GameUIColor;
+        [Inject] protected DiContainer diContainer;
         
         [SerializeField] protected CharacterMainController characterMainController;
-        [SerializeField] protected Image healthBar;
-        [SerializeField] protected Image enduranceBar;
+        [SerializeField] protected HealthBarUI healthBarUI;
+        [SerializeField] protected EnduranceBarUI enduranceBarUI;
+        [SerializeField] protected ManaBarUI manaBarUI;
         
-        protected Gradient healthBarGradient;
-        protected Gradient enduranceBarGradient;
-        protected float resultHealth;
-        protected float resultEndurance;
-        
-        
+
         public virtual void Initialize()
         {
-            healthBarGradient = so_GameUIColor.HealthBarGradient;
-            enduranceBarGradient = so_GameUIColor.EnduranceBarGradient;
+            diContainer.Inject(healthBarUI);
+            healthBarUI.Initialize();
+            
+            diContainer.Inject(enduranceBarUI);
+            enduranceBarUI.Initialize();
+            
+            diContainer.Inject(manaBarUI);
+            manaBarUI.Initialize();
         }
 
         public virtual void OnChangedHealth(float current, float max)
         {
-            UpdateHealthBar(current, max);
+            healthBarUI.UpdateHealthBar(current, max);
+            healthBarUI.UpdateGradient();
         }
-
-        protected virtual void UpdateHealthBar(float current, float max)
-        {
-            resultHealth = current/max;
-            healthBar.fillAmount = resultHealth;
-            healthBar.color = healthBarGradient.Evaluate(resultHealth);
-        }
-
+        
         public virtual void OnChangedEndurance(float current, float max)
         {
-            UpdateEnduranceBar(current, current);
+            enduranceBarUI.UpdateHealthBar(current, max);
+            enduranceBarUI.UpdateGradient();
         }
-        protected virtual void UpdateEnduranceBar(float current, float max)
+
+        public virtual void OnChangedMana(float current, float max)
         {
-            resultEndurance = current/max;
-            enduranceBar.fillAmount = resultEndurance;
-            enduranceBar.color = enduranceBarGradient.Evaluate(resultEndurance);
+            manaBarUI.UpdateHealthBar(current, max);
+            manaBarUI.UpdateGradient();
         }
     }
 }

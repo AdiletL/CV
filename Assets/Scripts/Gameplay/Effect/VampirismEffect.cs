@@ -56,7 +56,7 @@ namespace Gameplay.Effect
         public void Heal(float totalDamage)
         {
             var result = gameValue.Calculate(totalDamage);
-            targetHealth.HealthStat.AddValue((int)result);
+            targetHealth.HealthStat.AddCurrentValue((int)result);
             healPopUpPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
         }
     }

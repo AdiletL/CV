@@ -23,8 +23,8 @@ namespace Gameplay.Unit.Character.Creep
             so_CreepMove = (SO_CreepMove)so_CharacterMove;
             walkClips = so_CreepMove.WalkClips;
             characterAnimation.AddClips(walkClips);
-            RotationSpeedStat.AddValue(so_CreepMove.RotateSpeed);
-            MovementSpeedStat.AddValue(so_CreepMove.WalkSpeed);
+            RotationSpeedStat.AddCurrentValue(so_CreepMove.RotateSpeed);
+            MovementSpeedStat.AddCurrentValue(so_CreepMove.WalkSpeed);
             
             navMeshAgent.speed = MovementSpeedStat.CurrentValue;
             navMeshAgent.angularSpeed = RotationSpeedStat.CurrentValue;

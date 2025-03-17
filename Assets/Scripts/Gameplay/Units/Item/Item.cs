@@ -149,25 +149,8 @@ namespace Gameplay.Unit.Item
                 {
                     var unitStat = unitStatController.GetStat(config.StatTypeID);
                     var gameValue = new GameValue(statValues.Value, statValues.ValueTypeID);
-                    
-                    switch (statValues.StatValueTypeID)
-                    {
-                        case StatValueType.Nothing: break;
-                        case StatValueType.Current: 
-                            result = gameValue.Calculate(unitStat.CurrentValue);
-                            unitStat.AddValue(result); 
-                            break;
-                        case StatValueType.Minimum: 
-                            result = gameValue.Calculate(unitStat.MinimumValue);
-                            unitStat.AddMinValue(result); 
-                            break;
-                        case StatValueType.Maximum: 
-                            result = gameValue.Calculate(unitStat.MaximumValue);
-                            unitStat.AddMaxValue(result); 
-                            break;
-                        default: throw new ArgumentOutOfRangeException();
-                    }
-                    
+                    result = gameValue.Calculate(unitStat.GetValue(statValues.StatValueTypeID));
+                    unitStat.AddValue(result, statValues.StatValueTypeID); 
                     addedStatValues.Add(result);
                 }
             }
@@ -184,15 +167,7 @@ namespace Gameplay.Unit.Item
                 foreach (var VARIABLE in config.StatValuesConfig)
                 {
                     var unitStat = unitStatController.GetStat(config.StatTypeID);
-                    switch (VARIABLE.StatValueTypeID)
-                    {
-                        case StatValueType.Nothing: break;
-
-                        case StatValueType.Current: unitStat.RemoveValue(addedStatValues[index]); break;
-                        case StatValueType.Minimum: unitStat.RemoveMinValue(addedStatValues[index]); break;
-                        case StatValueType.Maximum: unitStat.RemoveMaxValue(addedStatValues[index]); break;
-                        default: throw new ArgumentOutOfRangeException();
-                    }
+                    unitStat.RemoveValue(addedStatValues[index], VARIABLE.StatValueTypeID);
                 }
                 index++;
             }

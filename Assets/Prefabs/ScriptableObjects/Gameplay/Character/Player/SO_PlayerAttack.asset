@@ -20,7 +20,7 @@ MonoBehaviour:
     m_Bits: 128
   <Range>k__BackingField: 1
   <RotationSpeed>k__BackingField: 800
-  <BaseReductionEndurance>k__BackingField: 0.2
+  <ConsumptionEnduranceRate>k__BackingField: 1
   <DefaultAnimations>k__BackingField:
   - Clip: {fileID: 1827226128182048838, guid: db509ad77f9b4f84a8eb1989f589b24c, type: 3}
     MomentEvent: 0.28

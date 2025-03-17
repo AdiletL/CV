@@ -32,7 +32,7 @@ namespace Gameplay.Unit.Trap.Fall
         {
             base.Initialize();
 
-            DamageStat.AddValue(so_FallGravity.Damage);
+            DamageStat.AddCurrentValue(so_FallGravity.Damage);
             so_FallGravity = (SO_FallGravity)so_Trap;
             Mass = so_FallGravity.Mass + Physics.gravity.y;
             radius = so_FallGravity.Radius + gameConfig.RadiusCell;

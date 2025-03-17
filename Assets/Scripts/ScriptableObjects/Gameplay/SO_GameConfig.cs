@@ -9,8 +9,7 @@ namespace ScriptableObjects.Gameplay
         [field: SerializeField] public SO_GameStatIcon SO_GameStatIcon { get; private set; }
         [field: SerializeField] public SO_GameHotkeys SO_GameHotkeys { get; private set; }
         
-        [field: SerializeField, Space(20)] public float CooldownReductionEndurance { get; private set; } = .2f;
-        [field: SerializeField] public float AmountReductionEndurance { get; private set; } = .01f;
+        [field: SerializeField, Header("Rate in second 2 endurance = 1")] public float BaseConsumptionEnduranceRate { get; private set; } = .1f;
         [field: SerializeField] public float BaseWaitTimeTrap { get; private set; }
         [field: SerializeField, Space(20)] public Material HighlightedMaterial { get; private set; }
         [field: SerializeField, Space] public Texture2D BaseCursor { get; private set; }

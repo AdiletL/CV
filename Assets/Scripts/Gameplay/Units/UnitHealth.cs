@@ -8,7 +8,6 @@ namespace Gameplay.Unit
 {
     public abstract class UnitHealth : MonoBehaviour, IHealth, IActivatable
     {
-        public event Action<float, float> OnChangedHealth;
         public event Action OnZeroHealth;
         
         [Inject] private DamagePopUpPopUpSpawner damagePopUpSpawner;
@@ -17,7 +16,7 @@ namespace Gameplay.Unit
         [SerializeField] protected SO_UnitHealth so_UnitHealth;
 
         protected UnitCenter unitCenter;
-        protected float regenRate;
+        protected float regenerationRate;
         
         public Stat HealthStat { get; } = new Stat();
         public Stat RegenerationStat { get; } = new Stat();
@@ -27,62 +26,51 @@ namespace Gameplay.Unit
         public bool IsActive { get; protected set; }
         
         
-        protected virtual void OnEnable()
-        {
-            HealthStat.OnChangedCurrentValue += OnChangedHealthStatCurrentValue;
-        }
-
-        protected virtual void OnDisable()
-        {
-            HealthStat.OnChangedCurrentValue -= OnChangedHealthStatCurrentValue;
-        }
-
         public virtual void Initialize()
         {
             HealthStat.AddMaxValue(so_UnitHealth.MaxHealth);
-            HealthStat.AddValue(so_UnitHealth.MaxHealth);
-            RegenerationStat.AddValue(so_UnitHealth.RegenerationHealth);
+            HealthStat.AddCurrentValue(so_UnitHealth.MaxHealth);
+            RegenerationStat.AddCurrentValue(so_UnitHealth.RegenerationHealthRate);
             unitCenter = gameObject.GetComponent<UnitCenter>();
 
-            UpdateRegenPerSecond();
-            
+            IsLive = HealthStat.CurrentValue > 0;
+            ConvertingRegenerateRate();
             SubscribeEvent();
         }
 
         protected virtual void SubscribeEvent()
         {
+            HealthStat.OnChangedCurrentValue += OnChangedHealthStatCurrentValue;
             RegenerationStat.OnChangedCurrentValue += OnChangedRegenerationStatCurrentValue;
         }
         protected virtual void UnsubscribeEvent()
         {
             RegenerationStat.OnChangedCurrentValue -= OnChangedRegenerationStatCurrentValue;
+            HealthStat.OnChangedCurrentValue -= OnChangedHealthStatCurrentValue;
         }
 
-        protected virtual void OnChangedRegenerationStatCurrentValue() => UpdateRegenPerSecond();
+        protected virtual void OnChangedHealthStatCurrentValue() => IsLive = HealthStat.CurrentValue > 0;
+        protected virtual void OnChangedRegenerationStatCurrentValue() => ConvertingRegenerateRate();
 
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
         
-        protected virtual void OnChangedHealthStatCurrentValue()
-        {
-            IsLive = HealthStat.CurrentValue > 0;
-            OnChangedHealth?.Invoke(HealthStat.CurrentValue, HealthStat.MaximumValue);
-        }
         
-        protected void UpdateRegenPerSecond()
+        protected void ConvertingRegenerateRate()
         {
-            regenRate = Calculate.Convert.RegenerationToRate(RegenerationStat.CurrentValue);
+            regenerationRate = Calculate.Convert.RegenerationToRate(RegenerationStat.CurrentValue);
         }
         
         protected virtual void Update()
         {
+            if(!IsActive) return;
             RegenerationHealth();
         }
         
         private void RegenerationHealth()
         {
-            if (HealthStat.CurrentValue < HealthStat.MaximumValue)
-                HealthStat.AddValue(Mathf.Min(regenRate * Time.deltaTime, HealthStat.MaximumValue));
+            if (HealthStat.CurrentValue <= HealthStat.MaximumValue)
+                HealthStat.AddCurrentValue(Mathf.Min(regenerationRate * Time.deltaTime, HealthStat.MaximumValue));
         }
 
         public virtual void TakeDamage(DamageData damageData)
@@ -91,9 +79,13 @@ namespace Gameplay.Unit
                 damageData.Amount = 0;
             
             Damaging = damageData.Owner;
-            HealthStat.RemoveValue(damageData.Amount);
             damagePopUpSpawner.CreatePopUp(unitCenter.Center.position, damageData.Amount);
 
+            if (HealthStat.CurrentValue < damageData.Amount)
+                HealthStat.RemoveCurrentValue(HealthStat.CurrentValue);
+            else
+                HealthStat.RemoveCurrentValue(damageData.Amount);
+            
             if (HealthStat.CurrentValue <= 0)
                 OnZeroHealth?.Invoke();
         }

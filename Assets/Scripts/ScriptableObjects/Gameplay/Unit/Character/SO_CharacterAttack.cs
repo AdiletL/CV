@@ -7,7 +7,7 @@ namespace ScriptableObjects.Unit.Character
     {
         [field: SerializeField, Space(15), Range(0, 5f)] public float Range { get; private set; }
         [field: SerializeField, Space(10)] public float RotationSpeed { get; private set; } = 1000;
-        [field: SerializeField, Space, Range(0, 1)] public float BaseReductionEndurance { get; private set; }
+        [field: SerializeField, Space] public float ConsumptionEnduranceRate { get; private set; }
 
         [field: SerializeField, Space(15)] public AnimationEventConfig[] DefaultAnimations { get; private set; }
     }

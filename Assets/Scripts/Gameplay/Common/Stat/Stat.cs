@@ -62,13 +62,46 @@ namespace Gameplay
         public float MinimumValue { get; private set; }
         public float MaximumValue { get; private set; }
 
-        public void AddValue(float value)
+        public float GetValue(StatValueType statValueType)
+        {
+            switch (statValueType)
+            {
+                case StatValueType.Current: return CurrentValue;
+                case StatValueType.Minimum: return MinimumValue;
+                case StatValueType.Maximum: return MaximumValue;
+                default: throw new ArgumentOutOfRangeException(nameof(statValueType), statValueType, null);
+            }
+        }
+        
+        public void AddValue(float value, StatValueType statValueType)
+        {
+            switch (statValueType)
+            {
+                case StatValueType.Current: AddCurrentValue(value); break;
+                case StatValueType.Minimum: AddMinValue(value); break;
+                case StatValueType.Maximum: AddMaxValue(value); break;
+                default: throw new ArgumentOutOfRangeException(nameof(statValueType), statValueType, null);
+            }
+        }
+
+        public void RemoveValue(float value, StatValueType statValueType)
+        {
+            switch (statValueType)
+            {
+                case StatValueType.Current: RemoveCurrentValue(value); break;
+                case StatValueType.Minimum: RemoveMinValue(value); break;
+                case StatValueType.Maximum: RemoveMaxValue(value); break;
+                default: throw new ArgumentOutOfRangeException(nameof(statValueType), statValueType, null);
+            }
+        }
+        
+        public void AddCurrentValue(float value)
         {
             CurrentValue += value;
             OnChangedCurrentValue?.Invoke();
         }
 
-        public void RemoveValue(float value)
+        public void RemoveCurrentValue(float value)
         {
             CurrentValue -= value;
             OnChangedCurrentValue?.Invoke();
@@ -97,5 +130,6 @@ namespace Gameplay
             MaximumValue -= value;
             OnChangedMaximumValue?.Invoke();
         }
+        
     }
 }

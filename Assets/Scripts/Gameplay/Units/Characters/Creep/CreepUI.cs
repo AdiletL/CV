@@ -5,18 +5,13 @@ namespace Gameplay.Unit.Character.Creep
 {
     public class CreepUI : CharacterUI
     {
-        [Space] 
-        [SerializeField] private Transform healthParent;
-        [SerializeField] private Transform enduranceParent;
-
         private float countCooldownHide;
         private readonly float cooldownHide = 3f;
 
         public override void Initialize()
         {
             base.Initialize();
-            HideHealth();
-            HideEndurance();
+            HideStat();
         }
 
         private void Update()
@@ -24,23 +19,29 @@ namespace Gameplay.Unit.Character.Creep
             countCooldownHide += Time.deltaTime;
             if (countCooldownHide >= cooldownHide)
             {
-                HideHealth();
-                HideEndurance();
+                HideStat();
                 countCooldownHide = 0;
             }
         }
 
         public void OnTakeDamage()
         {
-            ShowHealth();
-            ShowEndurance();
+            ShowStat();
             countCooldownHide = 0;
         }
-        
-        private void ShowHealth() => healthParent.gameObject.SetActive(true);
-        private void HideHealth() => healthParent.gameObject.SetActive(false);
-        
-        private void ShowEndurance() => enduranceParent.gameObject.SetActive(true);
-        private void HideEndurance() => enduranceParent.gameObject.SetActive(false);
+
+        private void ShowStat()
+        {
+            healthBarUI.Show();
+            enduranceBarUI.Show();
+            manaBarUI.Show();
+        }
+
+        private void HideStat()
+        {
+            healthBarUI.Hide();
+            enduranceBarUI.Hide();
+            manaBarUI.Hide();
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace Gameplay.Factory.Character.Player
         private Camera baseCamera;
         
         private CharacterAnimation characterAnimation;
-        private CharacterEndurance characterEndurance;
+        private CharacterStatsController characterStatsController;
         
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
@@ -32,7 +32,7 @@ namespace Gameplay.Factory.Character.Player
         public void SetPlayerSpecialAction(SO_PlayerSpecialAction so_PlayerSpecialAction) => this.so_PlayerSpecialAction = so_PlayerSpecialAction;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetCharacterEndurance(CharacterEndurance characterEndurance) => this.characterEndurance = characterEndurance;
+        public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
         public void SetPhotonView(PhotonView view) => photonView = view;
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
@@ -72,7 +72,7 @@ namespace Gameplay.Factory.Character.Player
                 .SetBaseCamera(baseCamera)
                 .SetUnitAnimation(characterAnimation)
                 .SetWeaponParent(weaponParent)
-                .SetUnitEndurance(characterEndurance)
+                .SetCharacterStatsController(characterStatsController)
                 .SetUnitRenderer(unitRenderer)
                 .SetConfig(so_PlayerAttack)
                 .SetCenter(unitCenter.Center)
@@ -86,28 +86,27 @@ namespace Gameplay.Factory.Character.Player
         {
             var result = (PlayerMoveToTargetState)new PlayerMoveToTargetStateBuilder()
                 .SetRotationSpeed(so_PlayerMove.RotateSpeed)
-                .SetRunReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
+                .SetRunReductionEndurance(so_PlayerMove.ConsumptionEnduranceRate)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
-                .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
                 .Build();
-            result.MovementSpeedStat.AddValue(so_PlayerMove.RunSpeed);
+            result.MovementSpeedStat.AddCurrentValue(so_PlayerMove.RunSpeed);
             return result;
         }
         
         private PlayerMoveState CreateRunStateOrig()
         {
             var result = (PlayerMoveState)new PlayerMoveStateBuilder()
+                .SetCharacterStatsController(characterStatsController)
                 .SetPlayerKinematicControl(playerKinematicControl)
-                .SetReductionEndurance(so_PlayerMove.BaseRunReductionEndurance)
+                .SetConsumptionEnduranceRate(so_PlayerMove.ConsumptionEnduranceRate)
                 .SetPhotonView(photonView)
                 .SetUnitAnimation(characterAnimation)
                 .SetConfig(so_PlayerMove)
-                .SetUnitEndurance(characterEndurance)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
@@ -118,7 +117,7 @@ namespace Gameplay.Factory.Character.Player
         private PlayerJumpState CreateJumpState()
         {
             return (PlayerJumpState)new PlayerJumpStateBuilder()
-                .SetEndurance(characterEndurance)
+                .SetCharacterStatsController(characterStatsController)
                 .SetGameObject(gameObject)
                 .SetConfig(so_PlayerMove)
                 .SetCharacterAnimation(characterAnimation)
@@ -185,10 +184,10 @@ namespace Gameplay.Factory.Character.Player
             return this;
         }
         
-        public PlayerStateFactoryBuilder SetCharacterEndurance(CharacterEndurance characterEndurance)
+        public PlayerStateFactoryBuilder SetCharacterStatsController(CharacterStatsController characterStatsController)
         {
             if(factory is PlayerStateFactory playerStateFactory)
-                playerStateFactory.SetCharacterEndurance(characterEndurance);
+                playerStateFactory.SetCharacterStatsController(characterStatsController);
             return this;
         }
 

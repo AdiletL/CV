@@ -38,7 +38,7 @@ namespace Gameplay.Unit.Trap
             radius = so_Thorn.Radius;
             EnemyLayer = so_Thorn.EnemyLayer;
             
-            DamageStat.AddValue(so_Thorn.Damage);
+            DamageStat.AddCurrentValue(so_Thorn.Damage);
             DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
 
             sphereCollider = GetComponent<SphereCollider>();

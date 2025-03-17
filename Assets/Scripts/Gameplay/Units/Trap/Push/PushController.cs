@@ -27,7 +27,7 @@ namespace Gameplay.Unit.Trap
             Calculate.Convert.AttackSpeedToDuration(so_Push.AttackSpeed);
             cooldownAttack = so_Push.CooldownAttack;
 
-            DamageStat.AddValue(so_Push.Damage);
+            DamageStat.AddCurrentValue(so_Push.Damage);
             DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
         }
 

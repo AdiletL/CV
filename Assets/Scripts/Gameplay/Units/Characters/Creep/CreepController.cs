@@ -27,9 +27,12 @@ namespace Gameplay.Unit.Character.Creep
         
         protected NavMeshAgent navMeshAgent;
         protected CharacterAnimation characterAnimation;
-        protected CharacterEndurance characterEndurance;
         protected CharacterExperience characterExperience;
+        protected CreepEndurance creepEndurance;
+        protected CreepHealth creepHealth;
+        protected CreepMana creepMana;
         protected Gravity gravity;
+        protected CreepUI creepUI;
 
         public CreepStateFactory CreepStateFactory { get; private set; }
         
@@ -52,18 +55,31 @@ namespace Gameplay.Unit.Character.Creep
             characterAnimation.Initialize();
             
             CreepStateFactory = CreateCreepStateFactory();
+            
+            creepUI = GetComponentInUnit<CreepUI>();
+            diContainer.Inject(creepUI);
+            creepUI.Initialize();
         }
 
         protected override void AfterInitializeMediator()
         {
             base.AfterInitializeMediator();
+            
+            creepHealth = GetComponentInUnit<CreepHealth>();
+            diContainer.Inject(creepHealth);
+            creepHealth.Initialize();
+            
             characterExperience = GetComponentInUnit<CharacterExperience>();
             diContainer.Inject(characterExperience);
             characterExperience.Initialize();
             
-            characterEndurance = GetComponentInUnit<CharacterEndurance>();
-            diContainer.Inject(characterEndurance);
-            characterEndurance.Initialize();
+            creepEndurance = GetComponentInUnit<CreepEndurance>();
+            diContainer.Inject(creepEndurance);
+            creepEndurance.Initialize();
+            
+            creepMana = GetComponentInUnit<CreepMana>();
+            diContainer.Inject(creepMana);
+            creepMana.Initialize();
         }
 
         public override void Activate()
@@ -79,8 +95,12 @@ namespace Gameplay.Unit.Character.Creep
             this.StateMachine.OnChangedState += OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth += OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage += GetComponentInUnit<CreepUI>().OnTakeDamage;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CreepEndurance>().EnduranceStat.OnChangedCurrentValue += OnChangedEndurance;
+            GetComponentInUnit<CreepEndurance>().EnduranceStat.OnChangedMaximumValue += OnChangedEndurance;
+            GetComponentInUnit<CreepHealth>().HealthStat.OnChangedCurrentValue += OnChangedHealth;
+            GetComponentInUnit<CreepHealth>().HealthStat.OnChangedMaximumValue += OnChangedHealth;
+            GetComponentInUnit<CreepMana>().ManaStat.OnChangedCurrentValue += OnChangedMana;
+            GetComponentInUnit<CreepMana>().ManaStat.OnChangedMaximumValue += OnChangedMana;
         }
 
         protected override void DeInitializeMediatorEvent()
@@ -89,10 +109,28 @@ namespace Gameplay.Unit.Character.Creep
             this.StateMachine.OnChangedState -= OnChangedState;
             GetComponentInUnit<CreepHealth>().OnZeroHealth -= OnZeroHealth;
             GetComponentInUnit<CreepHealth>().OnTakeDamage -= GetComponentInUnit<CreepUI>().OnTakeDamage;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CreepEndurance>().EnduranceStat.OnChangedCurrentValue -= OnChangedEndurance;
+            GetComponentInUnit<CreepEndurance>().EnduranceStat.OnChangedMaximumValue -= OnChangedEndurance;
+            GetComponentInUnit<CreepHealth>().HealthStat.OnChangedCurrentValue -= OnChangedHealth;
+            GetComponentInUnit<CreepHealth>().HealthStat.OnChangedMaximumValue -= OnChangedHealth;
+            GetComponentInUnit<CreepMana>().ManaStat.OnChangedCurrentValue -= OnChangedMana;
+            GetComponentInUnit<CreepMana>().ManaStat.OnChangedMaximumValue -= OnChangedMana;
         }
 
+        private void OnChangedEndurance()
+        {
+            creepUI.OnChangedEndurance(creepEndurance.EnduranceStat.CurrentValue, creepEndurance.EnduranceStat.MaximumValue);
+        }
+        private void OnChangedHealth()
+        {
+            creepUI.OnChangedHealth(creepHealth.HealthStat.CurrentValue, creepHealth.HealthStat.MaximumValue);
+        }
+
+        private void OnChangedMana()
+        {
+            creepUI.OnChangedMana(creepMana.ManaStat.CurrentValue, creepMana.ManaStat.MaximumValue);
+        }
+        
         protected void Update()
         {
             if(!IsActive) return;

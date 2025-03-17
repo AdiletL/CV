@@ -30,7 +30,7 @@ namespace Gameplay.Weapon.Projectile
             if(isInitialized) return;
             
             MoveCurve = so_Projectile.Curve;
-            MovementSpeedStat.AddValue(so_Projectile.Speed);
+            MovementSpeedStat.AddCurrentValue(so_Projectile.Speed);
             height = so_Projectile.Height;
             enemyLayer = so_Projectile.EnemyLayer;
         }

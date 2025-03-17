@@ -56,7 +56,7 @@ namespace Gameplay.Unit.Character.Player
         {
             base.Initialize();
             so_PlayerAttack = (SO_PlayerAttack)so_CharacterAttack;
-            RotationSpeed.AddValue(so_PlayerAttack.RotationSpeed);
+            RotationSpeed.AddCurrentValue(so_PlayerAttack.RotationSpeed);
             
             for (int i = 0; i < so_PlayerAttack.SwordAnimations.Length; i++)
                 unitAnimation.AddClip(so_PlayerAttack.SwordAnimations[i].Clip);
@@ -125,7 +125,7 @@ namespace Gameplay.Unit.Character.Player
             {
                 base.UpdateCurrentClip();
             }
-            else
+            else if (CurrentWeapon != null)
             {
                 var config = getSpecialAnimationEventConfig();
                 currentClip = config.Clip;

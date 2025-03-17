@@ -9,21 +9,25 @@ namespace Gameplay.Unit.Character.Player
         private SO_PlayerMove so_PlayerMove;
         private PhotonView photonView;
         private PlayerKinematicControl playerKinematicControl;
+        private CharacterStatsController characterStatsController;
         
         private Vector3 directionMovement;
-        private float reductionEndurance;
+        private float consumptionEnduranceRate;
+        private float currentConsumptionEnduranceRate;
+        private bool isAddedEnduranceStat;
         
         public Stat RotationSpeedStat { get; } = new Stat();
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
-        public void SetRunReductionEndurance(float runReductionEndurance) => this.reductionEndurance = runReductionEndurance;
+        public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
+        public void SetRunConsumptionEnduranceRate(float consumptionEnduranceRate) => this.consumptionEnduranceRate = consumptionEnduranceRate;
 
         public override void Initialize()
         {
             base.Initialize();
             so_PlayerMove = (SO_PlayerMove)so_CharacterMove;
-            RotationSpeedStat.AddValue(so_PlayerMove.RotateSpeed);
+            RotationSpeedStat.AddCurrentValue(so_PlayerMove.RotateSpeed);
         }
 
         public override void Enter()
@@ -57,6 +61,12 @@ namespace Gameplay.Unit.Character.Player
                 stateMachine.ExitCategory(Category, typeof(CharacterIdleState));
         }
 
+        public override void Exit()
+        {
+            base.Exit();
+            ClearRegenerationEnduranceStat();
+        }
+
         private void OnExitCategory(IState state)
         {
             if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
@@ -65,7 +75,6 @@ namespace Gameplay.Unit.Character.Player
                 PlayAnimation();
         }
         
-
         private void CheckDirectionMovement()
         {
             directionMovement = Vector3.zero;
@@ -84,12 +93,30 @@ namespace Gameplay.Unit.Character.Player
             base.ExecuteMovement();
             playerKinematicControl.SetVelocity(directionMovement * (MovementSpeedStat.CurrentValue));
             playerKinematicControl.SetRotationSpeed(RotationSpeedStat.CurrentValue);
-            unitEndurance.EnduranceStat.RemoveValue(reductionEndurance);
+            AddRegenerationEnduranceStat();
         }
 
         private void Rotate()
         {
             playerKinematicControl.SetDirectionRotate(directionMovement);
+        }
+
+        private void AddRegenerationEnduranceStat()
+        {
+            if (!isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEnduranceRate);
+                isAddedEnduranceStat = true;
+            }
+        }
+
+        private void ClearRegenerationEnduranceStat()
+        {
+            if (isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEnduranceRate);
+                isAddedEnduranceStat = false;
+            }
         }
     }
 
@@ -101,22 +128,28 @@ namespace Gameplay.Unit.Character.Player
         
         public PlayerMoveStateBuilder SetPhotonView(PhotonView photonView)
         {
-            if(state is PlayerMoveState playerRunStateOrig)
-                playerRunStateOrig.SetPhotonView(photonView);
+            if(state is PlayerMoveState playerMoveState)
+                playerMoveState.SetPhotonView(photonView);
             return this;
         }
         
-        public PlayerMoveStateBuilder SetReductionEndurance(float reductionEndurance)
+        public PlayerMoveStateBuilder SetConsumptionEnduranceRate(float consumptionEnduranceRate)
         {
-            if(state is PlayerMoveState playerRunStateOrig)
-                playerRunStateOrig.SetRunReductionEndurance(reductionEndurance);
+            if(state is PlayerMoveState playerMoveState)
+                playerMoveState.SetRunConsumptionEnduranceRate(consumptionEnduranceRate);
             return this;
         }
         
         public PlayerMoveStateBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
         {
-            if(state is PlayerMoveState playerRunStateOrig)
-                playerRunStateOrig.SetPlayerKinematicControl(playerKinematicControl);
+            if(state is PlayerMoveState playerMoveState)
+                playerMoveState.SetPlayerKinematicControl(playerKinematicControl);
+            return this;
+        }
+        public PlayerMoveStateBuilder SetCharacterStatsController(CharacterStatsController characterStatsController)
+        {
+            if(state is PlayerMoveState playerMoveState)
+                playerMoveState.SetCharacterStatsController(characterStatsController);
             return this;
         }
     }

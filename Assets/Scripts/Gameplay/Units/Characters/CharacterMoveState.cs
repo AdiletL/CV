@@ -10,7 +10,6 @@ namespace Gameplay.Unit.Character
         
         protected SO_CharacterMove so_CharacterMove;
         protected UnitAnimation unitAnimation;
-        protected UnitEndurance unitEndurance;
         protected GameObject gameObject;
         protected Transform center;
         protected AnimationClip[] runClips;
@@ -26,7 +25,6 @@ namespace Gameplay.Unit.Character
         public void SetCenter(Transform center) => this.center = center;
         public void SetConfig(SO_CharacterMove so_CharacterMove) => this.so_CharacterMove = so_CharacterMove;
         public void SetUnitAnimation(UnitAnimation unitAnimation) => this.unitAnimation = unitAnimation;
-        public void SetUnitEndurance(UnitEndurance unitEndurance) => this.unitEndurance = unitEndurance;
         
 
         protected AnimationClip getRandomClip(AnimationClip[] clips)
@@ -37,7 +35,7 @@ namespace Gameplay.Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            MovementSpeedStat.AddValue(so_CharacterMove.RunSpeed);
+            MovementSpeedStat.AddCurrentValue(so_CharacterMove.RunSpeed);
             runClips = so_CharacterMove.RunClip;
             unitAnimation.AddClips(runClips);
         }
@@ -108,11 +106,6 @@ namespace Gameplay.Unit.Character
         public CharacterMoveStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
             state.SetUnitAnimation(unitAnimation);
-            return this;
-        }
-        public CharacterMoveStateBuilder SetUnitEndurance(UnitEndurance unitEndurance)
-        {
-            state.SetUnitEndurance(unitEndurance);
             return this;
         }
     }

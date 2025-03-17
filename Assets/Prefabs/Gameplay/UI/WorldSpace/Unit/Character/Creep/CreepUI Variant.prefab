@@ -60,31 +60,26 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3081633784391214726}
   m_SourcePrefab: {fileID: 100100000, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
---- !u!4 &1928934102779418309 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8873749825801808584, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
-  m_PrefabInstance: {fileID: 7052943965558160397}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3894008886777614201 stripped
+--- !u!114 &2492574460382768501 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6335257737148773236, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4861196443270467960, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
   m_PrefabInstance: {fileID: 7052943965558160397}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: f834bb3c9cd94edf9eb7ce94dd432889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5102712233280356697 stripped
+--- !u!114 &7096111512194394404 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2824160034016165204, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
+  m_CorrespondingSourceObject: {fileID: 259912428227925289, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
   m_PrefabInstance: {fileID: 7052943965558160397}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: eb001eb1be5d42b0961dffccfc3ccfad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7430869083984098140 stripped
@@ -105,12 +100,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterMainController: {fileID: 0}
-  healthBar: {fileID: 5102712233280356697}
-  enduranceBar: {fileID: 3894008886777614201}
-  healthParent: {fileID: 1928934102779418309}
-  enduranceParent: {fileID: 7646767567291455717}
---- !u!4 &7646767567291455717 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 864640266239649000, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
+  healthBarUI: {fileID: 2492574460382768501}
+  enduranceBarUI: {fileID: 8641516640053037320}
+  manaBarUI: {fileID: 7096111512194394404}
+--- !u!114 &8641516640053037320 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1589140314720384261, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
   m_PrefabInstance: {fileID: 7052943965558160397}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5e3f6ec576d4dfebb519d29ed17283a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -10,6 +10,6 @@ namespace Gameplay.Movement
         public AnimationClip Clip;
         public float Power = 1.5f;
         public int MaxCount = 1;
-        public float BaseReductionEndurance = .1f;
+        [FormerlySerializedAs("BaseReductionEndurance")] public float ConsumptionEndurance = .1f;
     }
 }

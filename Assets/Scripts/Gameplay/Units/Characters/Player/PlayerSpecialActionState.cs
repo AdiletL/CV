@@ -20,7 +20,7 @@ namespace Gameplay.Unit.Character.Player
         private float changedMovementSpeedValue;
 
         private const float MULTIPLY_MOVEMENT_SPEED = .5f;
-        private const int ANIMATION_LAYER = 2;
+        private const int ANIMATION_LAYER = 3;
         
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetDamageResistanceAbilityConfig(DamageResistanceConfig config) => this.damageResistanceConfig = config;
@@ -61,10 +61,10 @@ namespace Gameplay.Unit.Character.Player
             if(playerMoveState == null) return;
             
             changedMovementSpeedValue = playerMoveState.MovementSpeedStat.CurrentValue * MULTIPLY_MOVEMENT_SPEED;
-            playerMoveState.MovementSpeedStat.RemoveValue(changedMovementSpeedValue);
+            playerMoveState.MovementSpeedStat.RemoveCurrentValue(changedMovementSpeedValue);
             
             changedRotateSpeedValue = playerMoveState.RotationSpeedStat.CurrentValue;
-            playerMoveState.RotationSpeedStat.RemoveValue(changedRotateSpeedValue);
+            playerMoveState.RotationSpeedStat.RemoveCurrentValue(changedRotateSpeedValue);
         }
 
         public override void Update()
@@ -84,8 +84,8 @@ namespace Gameplay.Unit.Character.Player
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             
-            playerMoveState?.MovementSpeedStat.AddValue(changedMovementSpeedValue);
-            playerMoveState?.RotationSpeedStat.AddValue(changedRotateSpeedValue);
+            playerMoveState?.MovementSpeedStat.AddCurrentValue(changedMovementSpeedValue);
+            playerMoveState?.RotationSpeedStat.AddCurrentValue(changedRotateSpeedValue);
             base.Exit();
         }
     }

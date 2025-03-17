@@ -267,8 +267,6 @@ namespace Gameplay.Unit.Character.Player
 
             movementDirection = (currentTargetPosition - gameObject.transform.position).normalized;
             characterController.Move(movementDirection * (MovementSpeedStat.CurrentValue * Time.deltaTime));
-
-            ReduceEndurance();
         }
     }
     
@@ -282,11 +280,6 @@ namespace Gameplay.Unit.Character.Player
 
             countCooldownheckEnemy = 0;
         }
-    }
-
-    private void ReduceEndurance()
-    {
-        unitEndurance.EnduranceStat.RemoveValue(runReductionEndurance);
     }
 }
 

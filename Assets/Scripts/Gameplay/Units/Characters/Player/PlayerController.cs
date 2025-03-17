@@ -59,6 +59,9 @@ namespace Gameplay.Unit.Character.Player
         private PlayerControlDesktop playerControlDesktop;
         private PlayerStatsController playerStatsController;
         private PlayerEquipmentController playerEquipmentController;
+        private PlayerUI playerUI;
+        private PlayerHealth playerHealth;
+        private PlayerMana playerMana;
         
         private CharacterEndurance characterEndurance;
         private CharacterExperience characterExperience;
@@ -91,7 +94,7 @@ namespace Gameplay.Unit.Character.Player
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(BaseCamera)
-                .SetCharacterEndurance(GetComponentInUnit<CharacterEndurance>())
+                .SetCharacterStatsController(GetComponentInUnit<CharacterStatsController>())
                 .SetPhotonView(photonView)
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
@@ -146,6 +149,10 @@ namespace Gameplay.Unit.Character.Player
             
             playerStateFactory = CreatePlayerStateFactory();
             diContainer.Inject(playerStateFactory);
+            
+            playerUI = GetComponentInUnit<PlayerUI>();
+            diContainer.Inject(playerUI);
+            playerUI.Initialize();
         }
 
         protected override void CreateStates()
@@ -187,6 +194,14 @@ namespace Gameplay.Unit.Character.Player
         {
             base.AfterInitializeMediator();
             
+            playerHealth = GetComponentInUnit<PlayerHealth>();
+            diContainer.Inject(playerHealth);
+            playerHealth.Initialize();
+            
+            playerMana = GetComponentInUnit<PlayerMana>();
+            diContainer.Inject(playerMana);
+            playerMana.Initialize();
+            
             characterExperience = GetComponentInUnit<CharacterExperience>();
             diContainer.Inject(characterExperience);
             characterExperience.Initialize();
@@ -206,8 +221,12 @@ namespace Gameplay.Unit.Character.Player
         {
             base.InitializeMediatorEvent();
             StateMachine.OnChangedState += OnChangedState;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance += GetComponentInUnit<CharacterUI>().OnChangedEndurance;
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth += GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterEndurance>().EnduranceStat.OnChangedCurrentValue += OnChangedEndurance; 
+            GetComponentInUnit<CharacterEndurance>().EnduranceStat.OnChangedMaximumValue += OnChangedEndurance; 
+            GetComponentInUnit<CharacterHealth>().HealthStat.OnChangedCurrentValue += OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().HealthStat.OnChangedMaximumValue += OnChangedHealth;
+            GetComponentInUnit<CharacterMana>().ManaStat.OnChangedCurrentValue += OnChangedMana;
+            GetComponentInUnit<CharacterMana>().ManaStat.OnChangedMaximumValue += OnChangedMana;
             GetComponentInUnit<CharacterHealth>().OnZeroHealth += OnZeroHealth;
         }
 
@@ -215,11 +234,28 @@ namespace Gameplay.Unit.Character.Player
         {
             base.DeInitializeMediatorEvent();
             StateMachine.OnChangedState -= OnChangedState;
-            GetComponentInUnit<CharacterEndurance>().OnChangedEndurance -= GetComponentInUnit<CharacterUI>().OnChangedEndurance;
-            GetComponentInUnit<CharacterHealth>().OnChangedHealth -= GetComponentInUnit<CharacterUI>().OnChangedHealth;
+            GetComponentInUnit<CharacterEndurance>().EnduranceStat.OnChangedCurrentValue -= OnChangedEndurance; 
+            GetComponentInUnit<CharacterEndurance>().EnduranceStat.OnChangedMaximumValue -= OnChangedEndurance; 
+            GetComponentInUnit<CharacterHealth>().HealthStat.OnChangedCurrentValue -= OnChangedHealth;
+            GetComponentInUnit<CharacterHealth>().HealthStat.OnChangedMaximumValue -= OnChangedHealth;
+            GetComponentInUnit<CharacterMana>().ManaStat.OnChangedCurrentValue -= OnChangedMana;
+            GetComponentInUnit<CharacterMana>().ManaStat.OnChangedMaximumValue -= OnChangedMana;
             GetComponentInUnit<CharacterHealth>().OnZeroHealth -= OnZeroHealth;
         }
 
+        private void OnChangedEndurance()
+        {
+             playerUI.OnChangedEndurance(characterEndurance.EnduranceStat.CurrentValue, characterEndurance.EnduranceStat.MaximumValue);
+        }
+        private void OnChangedHealth()
+        {
+            playerUI.OnChangedHealth(playerHealth.HealthStat.CurrentValue, playerHealth.HealthStat.MaximumValue);
+        }
+        private void OnChangedMana()
+        {
+            playerUI.OnChangedMana(playerMana.ManaStat.CurrentValue, playerMana.ManaStat.MaximumValue);
+        }
+        
         public override void Activate()
         {
             base.Activate();

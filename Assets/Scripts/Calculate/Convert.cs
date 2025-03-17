@@ -9,7 +9,7 @@
 
         public static float RegenerationToRate(float regeneration)
         {
-            return 10 * regeneration;
+            return 2 * regeneration;
         }
     }
 }

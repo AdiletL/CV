@@ -20,11 +20,11 @@ MonoBehaviour:
   - {fileID: 1827226128182048838, guid: 0791e523b7f1b2740a3b1cde42b6aeac, type: 3}
   <RunSpeed>k__BackingField: 3
   <RotateSpeed>k__BackingField: 700
-  <BaseRunReductionEndurance>k__BackingField: 0.01
+  <ConsumptionEnduranceRate>k__BackingField: 1
   <JumpConfig>k__BackingField:
     BlockInputType: 26
     Clip: {fileID: 1827226128182048838, guid: 7d1e5bb9bc81eee4095f91385b5effe1, type: 3}
     Power: 5
     MaxCount: 2
-    BaseReductionEndurance: 0.1
+    ConsumptionEndurance: 0.5
   <BlockInputType>k__BackingField: 9

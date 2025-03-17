@@ -11,7 +11,7 @@ namespace Gameplay.Unit.Character.Player
         
         private SO_PlayerMove so_PlayerMove;
         private PlayerKinematicControl playerKinematicControl;
-        private IEndurance endurance;
+        private CharacterStatsController characterStatsController;
 
         private AnimationClip jumpClip;
         private KeyCode jumpKey;
@@ -20,10 +20,11 @@ namespace Gameplay.Unit.Character.Player
 
         private readonly float cooldownCheckGround = .1f;
         private float countCooldownCheckGround;
-        private float jumpReductionEndurance;
+        private float consumptionEndurance;
         private float jumpPower;
+        private bool isAddedEnduranceStat;
 
-        public void SetEndurance(IEndurance endurance) => this.endurance = endurance;
+        public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
 
         
         public override void Initialize()
@@ -34,7 +35,7 @@ namespace Gameplay.Unit.Character.Player
             jumpClip = so_PlayerMove.JumpConfig.Clip;
             jumpPower = so_PlayerMove.JumpConfig.Power;
             maxJumpCount = so_PlayerMove.JumpConfig.MaxCount;
-            jumpReductionEndurance = so_PlayerMove.JumpConfig.BaseReductionEndurance;
+            consumptionEndurance = so_PlayerMove.JumpConfig.ConsumptionEndurance;
             jumpKey = so_GameHotkeys.JumpKey;
             characterAnimation.AddClip(jumpClip);
         }
@@ -46,6 +47,7 @@ namespace Gameplay.Unit.Character.Player
             characterAnimation.SetBlock(true);
             ClearValues();
             StartJump();
+            AddRegenerationEnduranceStat();
         }
 
         public override void Update()
@@ -80,12 +82,30 @@ namespace Gameplay.Unit.Character.Player
             base.Exit();
             IsCanExit = true;
             characterAnimation.SetBlock(false);
+            ClearRegenerationEnduranceStat();
         }
-
         private void ClearValues()
         {
             currentJumpCount = 0;
             countCooldownCheckGround = 0;
+        }
+
+        private void AddRegenerationEnduranceStat()
+        {
+            if (!isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEndurance);
+                isAddedEnduranceStat = true;
+            }
+        }
+
+        private void ClearRegenerationEnduranceStat()
+        {
+            if (isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEndurance);
+                isAddedEnduranceStat = false;
+            }
         }
         
         private void StartJump()
@@ -99,12 +119,6 @@ namespace Gameplay.Unit.Character.Player
             characterAnimation.ChangeAnimationWithDuration(jumpClip, isForce: true);
             playerKinematicControl.AddVelocity(velocity);
             playerKinematicControl.ForceUnground();
-            ReductionEndurance();
-        }
-        
-        private void ReductionEndurance()
-        {
-            endurance.EnduranceStat.RemoveValue(jumpReductionEndurance);
         }
     }
     
@@ -114,10 +128,10 @@ namespace Gameplay.Unit.Character.Player
         {
         }
 
-        public PlayerJumpStateBuilder SetEndurance(IEndurance endurance)
+        public PlayerJumpStateBuilder SetCharacterStatsController(CharacterStatsController characterStatsController)
         {
             if(state is PlayerJumpState playerJumpState)
-                playerJumpState.SetEndurance(endurance);
+                playerJumpState.SetCharacterStatsController(characterStatsController);
             
             return this;
         }

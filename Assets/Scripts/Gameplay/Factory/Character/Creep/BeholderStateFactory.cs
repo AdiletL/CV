@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Unit;
+using Gameplay.Unit.Character;
 using Gameplay.Unit.Character.Creep;
 using Machine;
 using ScriptableObjects.Unit.Character.Creep;
@@ -79,7 +80,7 @@ namespace Gameplay.Factory.Character.Creep
                 .SetNavMeshAgent(navMeshAgent)
                 .SetConfig(so_BeholderAttack)
                 .SetUnitRenderer(gameObject.GetComponent<UnitRenderer>())
-                .SetUnitEndurance(gameObject.GetComponent<UnitEndurance>())
+                .SetCharacterStatsController(gameObject.GetComponent<CharacterStatsController>())
                 .SetUnitAnimation(characterAnimation)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)

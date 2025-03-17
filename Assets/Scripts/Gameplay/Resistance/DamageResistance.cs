@@ -14,7 +14,7 @@ namespace Gameplay.Resistance
             StatTypeID = statTypeID;
             DamageType = damageType;
             ValueType = valueType;
-            ProtectionStat.AddValue(value);
+            ProtectionStat.AddCurrentValue(value);
         }
 
         public DamageData DamageModify(DamageData damageData)

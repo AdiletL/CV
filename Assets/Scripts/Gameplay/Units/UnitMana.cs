@@ -8,20 +8,55 @@ namespace Gameplay.Unit
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitMana so_UnitMana;
         
-        public Stat ManaStat { get; }
-        public Stat RegenerationStat { get; }
+        protected float regenerationRate;
+        
+        public Stat ManaStat { get; } = new Stat();
+        public Stat RegenerationStat { get; } = new Stat();
         
         public bool IsActive { get; protected set; }
         
+        public void Activate() => IsActive = true;
+        public void Deactivate() => IsActive = false;
         public virtual void Initialize()
         {
             ManaStat.AddMaxValue(so_UnitMana.MaxMana);
-            ManaStat.AddValue(so_UnitMana.MaxMana);
+            ManaStat.AddCurrentValue(so_UnitMana.MaxMana); 
+            RegenerationStat.AddCurrentValue(so_UnitMana.RegenerationManaRate);
             
-            
+            ConvertingRegenerateRate();
+            SubscribeEvent();
+        }
+        protected virtual void SubscribeEvent()
+        {
+            RegenerationStat.OnChangedCurrentValue += OnChangedRegenerationStatCurrentValue;
+        }
+        protected virtual void UnsubscribeEvent()
+        {
+            RegenerationStat.OnChangedCurrentValue -= OnChangedRegenerationStatCurrentValue;
+        }
+        
+        protected virtual void OnChangedRegenerationStatCurrentValue() => ConvertingRegenerateRate();
+        
+        protected void ConvertingRegenerateRate()
+        {
+            regenerationRate = Calculate.Convert.RegenerationToRate(RegenerationStat.CurrentValue);
+        }
+        
+        protected virtual void Update()
+        {
+            if(!IsActive) return;
+            RegenerationMana();
+        }
+        
+        private void RegenerationMana()
+        {
+            if (ManaStat.CurrentValue <= ManaStat.MaximumValue)
+                ManaStat.AddCurrentValue(Mathf.Min(regenerationRate * Time.deltaTime, ManaStat.MaximumValue));
         }
 
-        public void Activate() => IsActive = true;
-        public void Deactivate() => IsActive = false;
+        private void OnDestroy()
+        {
+            UnsubscribeEvent();
+        }
     } 
 }

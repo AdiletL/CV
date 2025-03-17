@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6cb7224a5b49c5b0dc9a5c4d5ee214, type: 3}
   m_Name: SO_BeholderEndurance
   m_EditorClassIdentifier: 
-  <MaxEndurance>k__BackingField: 50
+  <MaxEndurance>k__BackingField: 500
+  <RegenerationEnduranceRate>k__BackingField: 0

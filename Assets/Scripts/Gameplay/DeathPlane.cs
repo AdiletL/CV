@@ -10,7 +10,7 @@ namespace Gameplay
 
         private void Start()
         {
-            damageStat.AddValue(999999);
+            damageStat.AddCurrentValue(999999);
             damageData = new DamageData(gameObject, DamageType.Physical, damageStat.CurrentValue);
         }
 

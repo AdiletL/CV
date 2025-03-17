@@ -59,7 +59,6 @@ namespace Gameplay.Unit.Character.Creep
         {
             base.Exit();
             navMeshAgent.updateRotation = true;
-            unitAnimation.ExitAnimation(DEFAULT_ANIMATION_LAYER);
         }
 
         protected override void ClearValues()

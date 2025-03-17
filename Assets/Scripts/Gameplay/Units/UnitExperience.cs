@@ -29,8 +29,8 @@ namespace Gameplay.Unit
 
         public virtual void Initialize()
         {
-            LevelStat.AddValue(so_UnitExperience.StartLevel);
-            ExperienceStat.AddValue(so_UnitExperience.CurrentExperience);
+            LevelStat.AddCurrentValue(so_UnitExperience.StartLevel);
+            ExperienceStat.AddCurrentValue(so_UnitExperience.CurrentExperience);
             ExperienceStat.AddMaxValue(so_UnitExperience.MaxExperience);
             RangeTakeExperience = so_UnitExperience.RangeTakeExperience;
             IsTakeLevel = so_UnitExperience.IsTakeLevel;
@@ -45,7 +45,7 @@ namespace Gameplay.Unit
         public virtual void AddExperience(int experience)
         {
             if(!IsTakeExperience) return;
-            ExperienceStat.AddValue(experience);
+            ExperienceStat.AddCurrentValue(experience);
             CheckLevelUp();
             Debug.Log(gameObject.name + " Added Experience " + ExperienceStat.CurrentValue);
         }
@@ -61,7 +61,7 @@ namespace Gameplay.Unit
         public virtual void LevelUp(int amount)
         {
             if(!IsTakeLevel) return;
-            LevelStat.AddValue(amount);
+            LevelStat.AddCurrentValue(amount);
             UpdateMaxExperience();
             Debug.Log(gameObject.name + " Level Up! New Level: " + LevelStat.CurrentValue);
         }

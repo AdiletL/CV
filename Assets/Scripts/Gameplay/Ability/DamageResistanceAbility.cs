@@ -58,7 +58,7 @@ namespace Gameplay.Ability
                     {
                         case StatValueType.Current: 
                             result = gameValue.Calculate(stat.CurrentValue);
-                            stat.AddValue(result);
+                            stat.AddCurrentValue(result);
                             break;
                         case StatValueType.Maximum:
                             result = gameValue.Calculate(stat.MaximumValue);
@@ -86,7 +86,7 @@ namespace Gameplay.Ability
                     var statValue = statConfigs[i].StatValuesConfig[j];
                     switch (statValue.StatValueTypeID)
                     {
-                        case StatValueType.Current: stat.RemoveValue(addedStatValues[i]); break;
+                        case StatValueType.Current: stat.RemoveCurrentValue(addedStatValues[i]); break;
                         case StatValueType.Maximum: stat.RemoveMaxValue(addedStatValues[i]); break;
                         case StatValueType.Minimum: stat.RemoveMinValue(addedStatValues[i]); break;
                     }

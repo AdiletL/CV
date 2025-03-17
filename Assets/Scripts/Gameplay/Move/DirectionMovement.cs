@@ -13,7 +13,7 @@ namespace Gameplay.Movement
         public DirectionMovement(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.MovementSpeedStat.AddValue(movementSpeed);
+            this.MovementSpeedStat.AddCurrentValue(movementSpeed);
         }
 
         public void Initialize()

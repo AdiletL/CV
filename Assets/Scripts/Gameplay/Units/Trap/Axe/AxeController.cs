@@ -18,7 +18,7 @@ namespace Gameplay.Unit.Trap
         public override void Initialize()
         {
             base.Initialize();
-            DamageStat.AddValue(so_Trap.Damage);
+            DamageStat.AddCurrentValue(so_Trap.Damage);
             DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
             axeAnimation = components.GetComponentFromArray<AxeAnimation>();
             so_Axe = (SO_Axe)so_Trap;

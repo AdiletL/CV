@@ -65,7 +65,7 @@ namespace Gameplay.Effect
             var movementStat = characterStatsController.GetStat(StatType.MovementSpeed);
             var gameValue = new GameValue(value, valueType);
             addedStatValue = gameValue.Calculate(movementStat.CurrentValue);
-            movementStat.RemoveValue(addedStatValue);
+            movementStat.RemoveCurrentValue(addedStatValue);
         }
 
         public override void DestroyEffect()
@@ -74,7 +74,7 @@ namespace Gameplay.Effect
             if(!characterStatsController) return;
             
             var movementStat = characterStatsController.GetStat(StatType.MovementSpeed);
-            movementStat.AddValue(addedStatValue);
+            movementStat.AddCurrentValue(addedStatValue);
             ClearValues();
             base.DestroyEffect();
         }

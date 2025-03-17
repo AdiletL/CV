@@ -13,7 +13,7 @@ namespace Gameplay.Movement
         public MovementToPoint(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
-            this.MovementSpeedStat.AddValue(movementSpeed);
+            this.MovementSpeedStat.AddCurrentValue(movementSpeed);
         }
 
         public bool IsInPlace()

@@ -1,6 +1,6 @@
 ﻿namespace ScriptableObjects.Unit.Character
 {
-    public class SO_CharacterMana
+    public abstract class SO_CharacterMana : SO_UnitMana
     {
         
     }

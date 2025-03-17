@@ -18,5 +18,5 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  <ReduceEndurance>k__BackingField: 0.01
+  <ReduceEndurance>k__BackingField: 1.5
   <AngleToTarget>k__BackingField: 100

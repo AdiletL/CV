@@ -12,7 +12,7 @@ namespace Gameplay.Unit.Character
         protected GameObject currentTarget;
         protected Transform weaponParent;
         protected UnitAnimation unitAnimation;
-        protected UnitEndurance unitEndurance;
+        protected CharacterStatsController characterStatsController;
         protected UnitRenderer unitRenderer;
         protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
@@ -26,12 +26,13 @@ namespace Gameplay.Unit.Character
         protected int mainLayer;
         protected int currentAnimatonLayer;
         protected bool isAttacked;
+        protected bool isAddedEnduranceStat;
         
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
         protected const int DEFAULT_ANIMATION_LAYER = 1;
         
         public Equipment.Weapon.Weapon CurrentWeapon { get; protected set; }
-        public Stat ReduceEnduranceStat { get; } = new();
+        public Stat ConsumptionEnduranceStat { get; } = new();
         public Stat RangeStat { get; } = new();
 
         ~CharacterAttackState()
@@ -42,7 +43,7 @@ namespace Gameplay.Unit.Character
         public void SetConfig(SO_CharacterAttack config) => so_CharacterAttack = config;
         public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
-        public void SetUnitEndurance(UnitEndurance endurance) => unitEndurance = endurance;
+        public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         
         public virtual bool IsUnitInRange()
@@ -94,10 +95,10 @@ namespace Gameplay.Unit.Character
             enemyLayer = so_CharacterAttack.EnemyLayer;
             angleToTarget = so_CharacterAttack.AngleToTarget;
             
-            DamageStat.AddValue(so_CharacterAttack.Damage);
-            ReduceEnduranceStat.AddValue(so_CharacterAttack.BaseReductionEndurance);
-            AttackSpeedStat.AddValue(so_CharacterAttack.AttackSpeed);
-            RangeStat.AddValue(so_CharacterAttack.Range);
+            DamageStat.AddCurrentValue(so_CharacterAttack.Damage);
+            ConsumptionEnduranceStat.AddCurrentValue(so_CharacterAttack.ConsumptionEnduranceRate);
+            AttackSpeedStat.AddCurrentValue(so_CharacterAttack.AttackSpeed);
+            RangeStat.AddCurrentValue(so_CharacterAttack.Range);
 
             for (int i = 0; i < so_CharacterAttack.DefaultAnimations.Length; i++)
                 unitAnimation.AddClip(so_CharacterAttack.DefaultAnimations[i].Clip);
@@ -126,7 +127,8 @@ namespace Gameplay.Unit.Character
         public override void Exit()
         {
             base.Exit();
-            this.unitAnimation?.ExitAnimation(DEFAULT_ANIMATION_LAYER);
+            this.unitAnimation.ExitAnimation(DEFAULT_ANIMATION_LAYER);
+            ClearRegenerationEnduranceStat();
             currentTarget = null;
         }
 
@@ -149,6 +151,7 @@ namespace Gameplay.Unit.Character
             countDurationAttack = 0;
             countTimerApplyDamage = 0;
             isAttacked = false;
+            ClearRegenerationEnduranceStat();
         }
 
         protected void UpdateDurationAttack()
@@ -177,17 +180,35 @@ namespace Gameplay.Unit.Character
             CurrentWeapon.Show();
             ClearValues();
             UpdateDurationAttack();
-            ReduceEnduranceStat.AddValue(CurrentWeapon.ReduceEndurance);
+            ConsumptionEnduranceStat.AddCurrentValue(CurrentWeapon.ReduceEndurance);
         }
 
         public void RemoveWeapon()
         {
             if(CurrentWeapon == null) return;
-            ReduceEnduranceStat.RemoveValue(CurrentWeapon.ReduceEndurance);
+            ConsumptionEnduranceStat.RemoveCurrentValue(CurrentWeapon.ReduceEndurance);
             CurrentWeapon.SetOwnerDamageStat(null);
             CurrentWeapon.SetOwnerRangeStat(null);
             CurrentWeapon.Hide();
             CurrentWeapon = null;
+        }
+
+        private void AddRegenerationEnduranceStat()
+        {
+            if (characterStatsController && !isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance)?.RemoveCurrentValue(ConsumptionEnduranceStat.CurrentValue);
+                isAddedEnduranceStat = true;
+            }
+        }
+
+        private void ClearRegenerationEnduranceStat()
+        {
+            if (characterStatsController && isAddedEnduranceStat)
+            {
+                characterStatsController.GetStat(StatType.RegenerationEndurance)?.AddCurrentValue(ConsumptionEnduranceStat.CurrentValue);
+                isAddedEnduranceStat = false;
+            }
         }
         
         public override void Attack()
@@ -203,7 +224,8 @@ namespace Gameplay.Unit.Character
                 isAttacked = true;
                 countTimerApplyDamage = 0;
             }
-            unitEndurance.EnduranceStat.RemoveValue(ReduceEnduranceStat.CurrentValue);
+
+            AddRegenerationEnduranceStat();
         }
         
         public override void ApplyDamage()
@@ -254,10 +276,10 @@ namespace Gameplay.Unit.Character
                 characterWeapon.SetWeaponParent(parent);
             return this;
         }
-        public CharacterAttackStateBuilder SetUnitEndurance(UnitEndurance endurance)
+        public CharacterAttackStateBuilder SetCharacterStatsController(CharacterStatsController characterStatsController)
         {
             if (state is CharacterAttackState characterWeapon)
-                characterWeapon.SetUnitEndurance(endurance);
+                characterWeapon.SetCharacterStatsController(characterStatsController);
             return this;
         }
         public CharacterAttackStateBuilder SetUnitRenderer(UnitRenderer unitRenderer)

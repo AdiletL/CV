@@ -29,7 +29,7 @@ namespace Gameplay.Movement
         public ArcMovement(GameObject gameObject, float movementSpeed, float height, AnimationCurve moveCurve)
         {
             this.gameObject = gameObject;
-            this.MovementSpeedStat.AddValue(movementSpeed);
+            this.MovementSpeedStat.AddCurrentValue(movementSpeed);
             this.height = height;
             this.moveCurve = moveCurve;
         }

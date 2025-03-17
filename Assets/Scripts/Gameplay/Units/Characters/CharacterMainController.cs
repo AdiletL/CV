@@ -21,11 +21,6 @@ namespace Gameplay.Unit.Character
             photonView = GetComponent<PhotonView>();
             StateMachine = new StateMachine();
             
-            var ui = GetComponentInUnit<CharacterUI>();
-            diContainer.Inject(ui);
-            ui?.Initialize();
-            
-            
             BeforeCreateStates();
             CreateStates();
             
@@ -56,12 +51,9 @@ namespace Gameplay.Unit.Character
         {
             
         }
-
         protected virtual void AfterInitializeMediator()
         {
-            var health = GetComponentInUnit<CharacterHealth>();
-            diContainer.Inject(health);
-            health?.Initialize();
+
         }
         
         protected virtual void OnDestroy()
