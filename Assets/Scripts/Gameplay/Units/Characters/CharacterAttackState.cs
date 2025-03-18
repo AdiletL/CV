@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gameplay.Unit.Character.Player;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
@@ -20,13 +21,19 @@ namespace Gameplay.Unit.Character
         protected RaycastHit hitInTarget;
         protected Collider[] findUnitColliders = new Collider[1];
         
-        protected float durationAttack, countDurationAttack;
-        protected float cooldownApplyDamage, countTimerApplyDamage;
-        protected float angleToTarget;
         protected int mainLayer;
         protected int currentAnimatonLayer;
+        protected int specialActionConfigIndex;
+        
+        protected float durationAttack, countDurationAttack;
+        protected float angleToTarget;
+        
         protected bool isAttacked;
         protected bool isAddedEnduranceStat;
+        protected bool isActivatedSpecialAction;
+        
+       
+        protected Queue<float> cooldownsApplyDamage;
         
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
         protected const int DEFAULT_ANIMATION_LAYER = 1;
@@ -85,6 +92,11 @@ namespace Gameplay.Unit.Character
         protected virtual AnimationEventConfig getAnimationEventConfig()
         {
             return so_CharacterAttack.DefaultAnimations[Random.Range(0, so_CharacterAttack.DefaultAnimations.Length)];
+        }
+
+        protected virtual AnimationEventConfig getSpecialAnimationEventConfig()
+        {
+            return null;
         }
         
         public override void Initialize()
@@ -149,9 +161,9 @@ namespace Gameplay.Unit.Character
         protected virtual void ClearValues()
         {
             countDurationAttack = 0;
-            countTimerApplyDamage = 0;
+            cooldownsApplyDamage?.Clear();
             isAttacked = false;
-            ClearRegenerationEnduranceStat();
+            isActivatedSpecialAction = false;
         }
 
         protected void UpdateDurationAttack()
@@ -161,10 +173,25 @@ namespace Gameplay.Unit.Character
 
         protected virtual void UpdateCurrentClip()
         {
-            var config = getAnimationEventConfig();
-            currentClip = config.Clip;
-            cooldownApplyDamage = durationAttack * config.MomentEvent;
-            currentAnimatonLayer = DEFAULT_ANIMATION_LAYER;
+            AnimationEventConfig config = null;
+            if (CurrentWeapon != null && CurrentWeapon.IsActivatedSpecialAction)
+            {
+                specialActionConfigIndex = CurrentWeapon.SpecialActionIndex;
+                config = getSpecialAnimationEventConfig();
+                currentClip = config.Clip;
+                currentAnimatonLayer = 2;
+            }
+            else
+            {
+                config = getAnimationEventConfig();
+                currentClip = config.Clip;
+                currentAnimatonLayer = DEFAULT_ANIMATION_LAYER;
+            }
+            
+            cooldownsApplyDamage ??= new Queue<float>();
+            cooldownsApplyDamage.Clear();
+            for (int i = 0; i < config.MomentEvents.Length; i++)
+                cooldownsApplyDamage.Enqueue(durationAttack * config.MomentEvents[i]);
         }
         
         public virtual void SetWeapon(Equipment.Weapon.Weapon weapon)
@@ -192,8 +219,8 @@ namespace Gameplay.Unit.Character
             CurrentWeapon.Hide();
             CurrentWeapon = null;
         }
-
-        private void AddRegenerationEnduranceStat()
+        
+        protected void AddRegenerationEnduranceStat()
         {
             if (characterStatsController && !isAddedEnduranceStat)
             {
@@ -202,7 +229,7 @@ namespace Gameplay.Unit.Character
             }
         }
 
-        private void ClearRegenerationEnduranceStat()
+        protected void ClearRegenerationEnduranceStat()
         {
             if (characterStatsController && isAddedEnduranceStat)
             {
@@ -217,15 +244,30 @@ namespace Gameplay.Unit.Character
 
             this.unitAnimation.ChangeAnimationWithDuration(currentClip, duration: durationAttack, ATTACK_SPEED_NAME, layer: currentAnimatonLayer);
             
-            countTimerApplyDamage += Time.deltaTime;
-            if (countTimerApplyDamage > cooldownApplyDamage)
+            countDurationAttack += Time.deltaTime;
+            if (durationAttack < countDurationAttack)
             {
-                ApplyDamage();
-                isAttacked = true;
-                countTimerApplyDamage = 0;
+                FinishedAttack();
+                countDurationAttack = 0;
             }
+            else
+            {
+                if (cooldownsApplyDamage.Count > 0)
+                {
+                    if (cooldownsApplyDamage.Peek() <= countDurationAttack)
+                    {
+                        ApplyDamage();
+                        cooldownsApplyDamage.Dequeue();
+                    }
+                }
 
-            AddRegenerationEnduranceStat();
+                AddRegenerationEnduranceStat();
+            }
+        }
+
+        protected virtual void FinishedAttack()
+        {
+            stateMachine.ExitCategory(Category, null);
         }
         
         public override void ApplyDamage()

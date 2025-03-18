@@ -50,7 +50,6 @@ namespace Gameplay.Unit.Character.Creep
             CheckFacingOnTarget();
             if (isFacingTarget)
             {
-                CheckDurationAttack();
                 Attack();
             }
         }
@@ -68,27 +67,6 @@ namespace Gameplay.Unit.Character.Creep
             countTimerExitState = 0;
         }
 
-        private void CheckDurationAttack()
-        {
-            countDurationAttack += Time.deltaTime;
-            if (durationAttack < countDurationAttack)
-            {
-                if (!currentTarget ||
-                    !currentTarget.TryGetComponent(out IHealth health) ||
-                    !health.IsLive)
-                {
-                    currentTarget = null;
-                }
-                else
-                {
-                    this.unitAnimation.ChangeAnimationWithDuration(null, isDefault: true);
-                    UpdateCurrentClip();
-                }
-                ClearValues();
-                countDurationAttack = 0;
-            }
-        }
-        
         private void CheckNearTarget()
         {
             if (currentTarget && 
@@ -129,6 +107,23 @@ namespace Gameplay.Unit.Character.Creep
             countTimerExitState += Time.deltaTime;
             if (timerExitState < countTimerExitState)
                 stateMachine.ExitCategory(Category, null);
+        }
+
+        protected override void FinishedAttack()
+        {
+            if (!currentTarget ||
+                !currentTarget.TryGetComponent(out IHealth health) ||
+                !health.IsLive)
+            {
+                currentTarget = null;
+            }
+            else
+            {
+                this.unitAnimation.ChangeAnimationWithDuration(null, isDefault: true);
+                UpdateCurrentClip();
+            }
+            ClearValues();
+            countDurationAttack = 0;
         }
     }
     

@@ -8,6 +8,8 @@ namespace Gameplay.Equipment.Weapon
     {
         private Collider[] findColliders = new Collider[1];
         private int ownerLayer;
+        private int counterSpecialAction;
+        private const int SPECIAL_ATTACK_INDEX = 2;
         
         public override void Initialize()
         {
@@ -30,6 +32,8 @@ namespace Gameplay.Equipment.Weapon
 
         private bool isObstacleBetween(GameObject target)
         {
+            if(!target) return true;
+            
             var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - ownerCenter.position).normalized;
             float distance = Vector3.Distance(ownerCenter.position, target.transform.position);
             int ignoreLayer = 1 << ownerLayer;
@@ -44,19 +48,56 @@ namespace Gameplay.Equipment.Weapon
         
         public override void ApplyDamage()
         {
-            currentTarget = FindUnitInRange();
-            if(currentTarget &&
-               !isObstacleBetween(currentTarget) &&
-               Calculate.Rotate.IsFacingTargetXZ(Owner.transform.position,
-                   Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
-               currentTarget.TryGetComponent(out IAttackable attackable) && 
-               currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
+            if (IsActivatedSpecialAction)
             {
-                DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
-                attackable.TakeDamage(DamageData);
+                SpecialAction();
             }
+            else
+            {
+                currentTarget = FindUnitInRange();
+                if (currentTarget &&
+                    Calculate.Rotate.IsFacingTargetXZ(Owner.transform.position,
+                        Owner.transform.forward, currentTarget.transform.position, angleToTarget) &&
+                    currentTarget.TryGetComponent(out IAttackable attackable) &&
+                    currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
+                {
+                    DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
+                    attackable.TakeDamage(DamageData);
 
-            currentTarget = null;
+                    if (counterSpecialAction >= SPECIAL_ATTACK_INDEX)
+                    {
+                        IsActivatedSpecialAction = true;
+                        SpecialActionIndex = 0;
+                        counterSpecialAction = 0;
+                    }
+                    else
+                    {
+                        counterSpecialAction++;
+                    }
+                }
+
+                currentTarget = null;
+            }
+        }
+
+        private void SpecialAction()
+        {
+            var totalRange = RangeStat.CurrentValue + OwnerRangeStat.CurrentValue;
+            var colliders = Physics.OverlapSphere(ownerCenter.position, totalRange, enemyLayer);
+            for (int i = colliders.Length - 1; i >= 0; i--)
+            {
+                var target = colliders[i]?.gameObject;
+                if(!target) continue;
+
+                if (!isObstacleBetween(target) &&
+                    target.TryGetComponent(out IAttackable attackable) &&
+                    target.TryGetComponent(out IHealth health) && health.IsLive)
+                {
+                    DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
+                    attackable.TakeDamage(DamageData);
+                }
+            }
+            IsActivatedSpecialAction = false;
         }
     }
 

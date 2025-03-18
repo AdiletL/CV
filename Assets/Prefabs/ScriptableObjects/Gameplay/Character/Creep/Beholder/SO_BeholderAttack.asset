@@ -23,7 +23,9 @@ MonoBehaviour:
   <ConsumptionEnduranceRate>k__BackingField: 0.1
   <DefaultAnimations>k__BackingField:
   - Clip: {fileID: 7400000, guid: a5aa3ce397c24155845dba13bc634b36, type: 3}
-    MomentEvent: 0.68
+    MomentEvents:
+    - 0.65
   - Clip: {fileID: 7400000, guid: e9a3d959a28a4f02940e36a70434d669, type: 3}
-    MomentEvent: 0.73
+    MomentEvents:
+    - 0.73
   <AttackAnimations>k__BackingField: []

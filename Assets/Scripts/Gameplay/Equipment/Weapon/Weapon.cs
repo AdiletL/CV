@@ -1,4 +1,5 @@
-﻿using Unit;
+﻿using System;
+using Unit;
 using UnityEngine;
 using Zenject;
 
@@ -7,7 +8,7 @@ namespace Gameplay.Equipment.Weapon
     public abstract class Weapon : Equipment, IWeapon
     {
         [Inject] private DiContainer diContainer;
-        
+
         protected GameObject currentTarget;
         protected LayerMask enemyLayer;
         protected float angleToTarget;
@@ -17,7 +18,10 @@ namespace Gameplay.Equipment.Weapon
         public Stat RangeStat { get; } = new();
         public Stat OwnerDamageStat { get; protected set; } = new();
         public Stat OwnerRangeStat { get; protected set; } = new();
+        
+        public int SpecialActionIndex { get; protected set; }
         public float ReduceEndurance { get; private set; }
+        public bool IsActivatedSpecialAction { get; protected set; }
         
         public void SetEnemyLayer(LayerMask layer) => enemyLayer = layer;
         public void SetAngleToTarget(float angle) => this.angleToTarget = angle;
@@ -34,7 +38,7 @@ namespace Gameplay.Equipment.Weapon
         }
 
         public void SetTarget(GameObject target) => currentTarget = target;
-            
+
         public abstract void ApplyDamage();
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gameplay.Equipment.Weapon;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Gameplay.Unit.Character.Player
         private Vector3 direction;
         private Vector3 worldMousePosition;
         private int counterSpecialAttack;
-        private const int specialAttackIndex = 2;
+        private const int SPECIAL_ATTACK_INDEX = 2;
         private bool isFacingTarget;
         
         public Stat RotationSpeed { get; } = new Stat();
@@ -39,14 +40,12 @@ namespace Gameplay.Unit.Character.Player
             return config;
         }
 
-        protected AnimationEventConfig getSpecialAnimationEventConfig()
+        protected override AnimationEventConfig getSpecialAnimationEventConfig()
         {
             AnimationEventConfig config = CurrentWeapon switch
             {
-                _ when CurrentWeapon.GetType() == typeof(Sword) => so_PlayerAttack.SpecialSwordAnimations[
-                    Random.Range(0, so_PlayerAttack.SpecialSwordAnimations.Length)],
-                _ when CurrentWeapon.GetType() == typeof(Bow) => so_PlayerAttack.BowAnimations[
-                    Random.Range(0, so_PlayerAttack.BowAnimations.Length)],
+                _ when CurrentWeapon.GetType() == typeof(Sword) => so_PlayerAttack.SpecialSwordAnimations[specialActionConfigIndex],
+                _ when CurrentWeapon.GetType() == typeof(Bow) => so_PlayerAttack.BowAnimations[specialActionConfigIndex],
                 _ => throw new ArgumentException($"Unknown state type: {CurrentWeapon.GetType()}")
             };
             return config;
@@ -83,7 +82,6 @@ namespace Gameplay.Unit.Character.Player
 
             if (isFacingTarget)
             {
-                CheckDurationAttack();
                 Attack();
             }
         }
@@ -119,21 +117,6 @@ namespace Gameplay.Unit.Character.Player
             isFacingTarget = false;
         }
 
-        protected override void UpdateCurrentClip()
-        {
-            if (specialAttackIndex > counterSpecialAttack)
-            {
-                base.UpdateCurrentClip();
-            }
-            else if (CurrentWeapon != null)
-            {
-                var config = getSpecialAnimationEventConfig();
-                currentClip = config.Clip;
-                cooldownApplyDamage = durationAttack * config.MomentEvent;
-                currentAnimatonLayer = 2;
-            }
-        }
-
         private void UpdateDirection()
         {
             // Получаем позицию мыши в мировых координатах
@@ -165,25 +148,6 @@ namespace Gameplay.Unit.Character.Player
                     this.unitAnimation?.ChangeAnimationWithDuration(null, isDefault: true);
                 }
             }
-        }
-
-        private void CheckDurationAttack()
-        {
-            countDurationAttack += Time.deltaTime;
-            if (durationAttack < countDurationAttack)
-            {
-                stateMachine.ExitCategory(Category, null);
-                countDurationAttack = 0;
-            }
-        }
-
-        public override void ApplyDamage()
-        {
-            base.ApplyDamage();
-            if (counterSpecialAttack >= specialAttackIndex)
-                counterSpecialAttack = 0;
-            else
-                counterSpecialAttack++;
         }
 
         protected override void DefaultApplyDamage()

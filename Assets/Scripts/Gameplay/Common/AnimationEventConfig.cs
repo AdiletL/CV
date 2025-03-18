@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay
 {
@@ -6,6 +7,6 @@ namespace Gameplay
     public class AnimationEventConfig
     {
         public AnimationClip Clip;
-        [Range(0f, 1f), Tooltip("Percent")] public float MomentEvent;
+        [Range(0f, 1f), Tooltip("Percent")] public float[] MomentEvents;
     }
 }

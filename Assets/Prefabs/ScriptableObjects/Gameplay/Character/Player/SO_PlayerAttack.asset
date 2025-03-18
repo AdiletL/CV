@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_PlayerAttack
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 5
-  <AttackSpeed>k__BackingField: 100
+  <AttackSpeed>k__BackingField: 10
   <AngleToTarget>k__BackingField: 100
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
@@ -23,14 +23,19 @@ MonoBehaviour:
   <ConsumptionEnduranceRate>k__BackingField: 1
   <DefaultAnimations>k__BackingField:
   - Clip: {fileID: 1827226128182048838, guid: db509ad77f9b4f84a8eb1989f589b24c, type: 3}
-    MomentEvent: 0.28
+    MomentEvents:
+    - 0.25
   <SwordAnimations>k__BackingField:
   - Clip: {fileID: 1827226128182048838, guid: 8283fadf2c89507469495f30db8680db, type: 3}
-    MomentEvent: 0.33
+    MomentEvents:
+    - 0.33
   - Clip: {fileID: 1827226128182048838, guid: 9a6c3585df66f2e4782635fc7a23494c, type: 3}
-    MomentEvent: 0.46
+    MomentEvents:
+    - 0.43
   <SpecialSwordAnimations>k__BackingField:
   - Clip: {fileID: 1827226128182048838, guid: b267a2c210dbd1d4badc3f270df6d12d, type: 3}
-    MomentEvent: 0.42
+    MomentEvents:
+    - 0.42
+    - 0.64
   <BowAnimations>k__BackingField: []
   <BlockInputType>k__BackingField: 26
