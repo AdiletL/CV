@@ -7,16 +7,16 @@ namespace Gameplay.Unit.Trap
     {
         [SerializeField] private TrapController[] traps;
         
-        public override void Trigger()
+        public  void Trigger()
         {
             foreach (var VARIABLE in traps)
             {
-                VARIABLE.SetTarget(CurrentTarget);
+                //VARIABLE.SetTarget(CurrentTarget);
                 VARIABLE.Activate();
             }
         }
 
-        public override void Reset()
+        public  void Reset()
         {
             foreach (var VARIABLE in traps)
             {

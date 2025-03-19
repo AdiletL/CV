@@ -37,14 +37,14 @@ namespace Gameplay.Unit.Trap
         }
 
 
-        public override void Trigger()
+        public  void Trigger()
         {
-            axeAnimation.ChangeAnimationWithDuration(appearClip);
+            axeAnimation.ChangeAnimationWithDuration(base.playClip);
         }
 
-        public override void Reset()
+        public  void Reset()
         {
-            axeAnimation.ChangeAnimationWithDuration(deappearClip);
+            axeAnimation.ChangeAnimationWithDuration(resetClip);
         }
 
         public void ChangeOnPlayClip()
@@ -54,29 +54,23 @@ namespace Gameplay.Unit.Trap
 
         private void OnEnable()
         {
-            GetComponentInUnit<AxeTrigger>().OnHitEnter += OnHitEnter;
+            //GetComponentInUnit<AxeCollision>().OnHitEnter += OnHitEnter;
         }
         private void OnDisable()
         {
-            GetComponentInUnit<AxeTrigger>().OnHitEnter -= OnHitEnter;
+            //GetComponentInUnit<AxeCollision>().OnHitEnter -= OnHitEnter;
         }
 
         private void OnHitEnter(GameObject target)
         {
-            SetTarget(target);
+            //SetTarget(target);
             ApplyDamage();
         }
 
 
         public void ApplyDamage()
         {
-            if (CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
-                CurrentTarget.TryGetComponent(out IHealth health) &&
-                health.IsLive)
-            {
-                trapAttackable.TakeDamage(DamageData);
-                CurrentTarget = null;
-            }
+            
         }
     }
 }

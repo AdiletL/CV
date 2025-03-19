@@ -8,7 +8,6 @@ namespace Gameplay.Unit.Trap
     public class PushController : TrapController, IApplyDamage
     {
         private SO_Push so_Push;
-        private PushAnimation pushAnimation;
         private Coroutine startTimerCoroutine;
         public Stat DamageStat { get; private set; } = new Stat();
 
@@ -23,7 +22,6 @@ namespace Gameplay.Unit.Trap
             base.Initialize();
 
             so_Push = (SO_Push)so_Trap;
-            pushAnimation = GetComponentInUnit<PushAnimation>();
             Calculate.Convert.AttackSpeedToDuration(so_Push.AttackSpeed);
             cooldownAttack = so_Push.CooldownAttack;
 
@@ -43,20 +41,20 @@ namespace Gameplay.Unit.Trap
 
         private void OnEnable()
         {
-            GetComponentInUnit<PushTrigger>().OnHitEnter += OnHitEnter;
+            //GetComponentInUnit<PushCollision>().OnHitEnter += OnHitEnter;
         }
         private void OnDisable()
         {
-            GetComponentInUnit<PushTrigger>().OnHitEnter -= OnHitEnter;
+            //GetComponentInUnit<PushCollision>().OnHitEnter -= OnHitEnter;
         }
 
         private void OnHitEnter(GameObject target)
         {
-            SetTarget(target);
+            //SetTarget(target);
             ApplyDamage();
         }
 
-        public override void Trigger()
+        public void Trigger()
         {
             if(!isReady) return;
             isReady = false;
@@ -68,7 +66,7 @@ namespace Gameplay.Unit.Trap
 
         private void AfterActivate()
         {
-            pushAnimation.ChangeAnimationWithDuration(appearClip, durationAttack);
+            //pushAnimation.ChangeAnimationWithDuration(playClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, Restart));
@@ -80,14 +78,9 @@ namespace Gameplay.Unit.Trap
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, AfterDeactivate));
         }
-        public override void Reset()
-        {
-            
-        }
-
         private void AfterDeactivate()
         {
-            pushAnimation.ChangeAnimationWithDuration(deappearClip, cooldownAttack);
+           // pushAnimation.ChangeAnimationWithDuration(resetClip, cooldownAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, ChangeReady));
@@ -106,12 +99,7 @@ namespace Gameplay.Unit.Trap
 
         public void ApplyDamage()
         {
-            if (CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
-                CurrentTarget.TryGetComponent(out IHealth health) && 
-                health.IsLive)
-            {
-                trapAttackable.TakeDamage(DamageData);
-            }
+            
         }
     }
 }

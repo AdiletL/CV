@@ -2,13 +2,12 @@
 
 public interface ITrap
 {
-    public GameObject CurrentTarget { get; }
     public LayerMask EnemyLayer { get; } 
     
     public void Initialize();
-    
-    public void Trigger();
-    public void Reset();
+
+    public void StartAction();
+    public void ResetAction();
 }
 
 public interface ITrapInteractable : IInteractable

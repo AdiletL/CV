@@ -6,12 +6,10 @@ namespace Gameplay
     public class DeathPlane : MonoBehaviour
     {
         private DamageData damageData;
-        private Stat damageStat = new Stat();
 
         private void Start()
         {
-            damageStat.AddCurrentValue(999999);
-            damageData = new DamageData(gameObject, DamageType.Physical, damageStat.CurrentValue);
+            damageData = new DamageData(gameObject, DamageType.Physical, 999999);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -21,6 +19,10 @@ namespace Gameplay
                 health.IsLive)
             {
                 attackable.TakeDamage(damageData);
+            }
+            else if (!other.TryGetComponent(out IAttackable attackable2))
+            {
+                other.gameObject.SetActive(false);
             }
         }
     }

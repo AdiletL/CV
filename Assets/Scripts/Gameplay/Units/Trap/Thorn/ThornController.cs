@@ -6,57 +6,59 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Trap
 {
-    [RequireComponent(typeof(SphereCollider))]
     public class ThornController : TrapController, IApplyDamage
     {
         private SO_Thorn so_Thorn;
-        private SphereCollider sphereCollider;
-        public Stat DamageStat { get; private set; } = new Stat();
 
-        private Coroutine startTimerCoroutine;
-        private Coroutine applyDamageCoroutine;
-
-        private float startTimer;
-        private float duration;
-        private float applyDamageCooldown;
-        private float cooldown;
-        private float radius;
+        private Coroutine startIntervalResetActionCoroutine;
         
-        private bool isReady;
+        private float radius;
+        private const float INTERVAL_RESET_ACTION = 1.5f;
         
         public DamageData DamageData { get; private set; }
 
 
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, radius);
+        }
+
+        private List<GameObject> FindUnitsInRange()
+        {
+            var colliders = Physics.OverlapSphere(transform.position, radius, EnemyLayer);
+            if (colliders.Length > 0)
+            {
+                var list = new List<GameObject>();
+                for (int i = colliders.Length - 1; i >= 0; i--)
+                {
+                    var target = colliders[i]?.gameObject;
+                    if (!target) continue;
+
+                    list.Add(target);
+                }
+
+                return list;
+            }
+
+            return null;
+        }
+
         public override void Initialize()
         {
             base.Initialize();
+            
             so_Thorn = (SO_Thorn)so_Trap;
-            startTimer = so_Thorn.StartTimer;
-            duration = so_Thorn.Duration;
-            applyDamageCooldown = so_Thorn.ApplyDamageCooldown;
             cooldown = so_Thorn.Cooldown;
-            radius = so_Thorn.Radius;
             EnemyLayer = so_Thorn.EnemyLayer;
+
+            var trapCollision = GetComponentInUnit<TrapCollision>();
+            if(trapCollision && trapCollision.TryGetComponent(out SphereCollider sphereCollider))
+                radius = sphereCollider.radius;
             
-            DamageStat.AddCurrentValue(so_Thorn.Damage);
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
-
-            sphereCollider = GetComponent<SphereCollider>();
-            sphereCollider.isTrigger = true;
-            sphereCollider.radius = radius;
-
-            isReady = true;
+            DamageData = new DamageData(gameObject, DamageType.Physical, so_Thorn.Damage);
         }
 
-        private void Stop()
-        {
-            if(startTimerCoroutine != null)
-                StopCoroutine(startTimerCoroutine);
-            
-            if(applyDamageCoroutine != null)
-                StopCoroutine(applyDamageCoroutine);
-        }
-        
         public override void Appear()
         {
             
@@ -64,99 +66,32 @@ namespace Gameplay.Unit.Trap
 
         public override void Disappear()
         {
-            throw new NotImplementedException();
+           
         }
-
-
-        public override void Trigger()
-        {
-            isReady = false;
-            Reset();
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(startTimer, Duration));
-        }
-        public override void Reset()
-        {
-            trapAnimation.ChangeAnimationWithDuration(deappearClip);
-            if(startTimerCoroutine != null)
-                StopCoroutine(startTimerCoroutine);
-                
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldown, () =>
-            {
-                isReady = true;
-                Collider[] colliders = Physics.OverlapSphere(transform.position, radius, Layers.PLAYER_LAYER);
-                if (colliders.Length > 0)
-                {
-                    Activate();
-                }
-            }));
-        }
-        
-        private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
-        {
-            float countTimer = 0;
-            while (countTimer < waitTime)
-            {
-                countTimer += Time.deltaTime;
-                yield return null;
-            }
-            
-            callback?.Invoke();
-        }
-
-        private void Duration()
-        {
-            if(applyDamageCoroutine != null)
-                StopCoroutine(applyDamageCoroutine);
-            
-            applyDamageCoroutine = StartCoroutine(ApplyDamageCoroutine());
-        }
-
-        private IEnumerator ApplyDamageCoroutine()
-        {
-            float countTimer = 0;
-
-            HashSet<GameObject> affectedEnemies = new HashSet<GameObject>();
-            trapAnimation.ChangeAnimationWithDuration(appearClip);
-            var interval = appearClip.length;
-            
-            yield return new WaitForSeconds(interval - .1f);
-            while (countTimer < duration)
-            {
-                affectedEnemies.Clear();
-
-                var colliders = Physics.OverlapSphere(transform.position, radius, EnemyLayer);
-
-                foreach (var collider in colliders)
-                {
-                    if (!affectedEnemies.Contains(collider.gameObject)) // Check if not already affected
-                    {
-                        affectedEnemies.Add(collider.gameObject);
-                        CurrentTarget = collider.gameObject;
-                        ApplyDamage();
-                    }
-                }
-
-                yield return new WaitForSeconds(applyDamageCooldown);
-                countTimer += applyDamageCooldown;
-            }
-
-            Deactivate();
-        }
-        
 
         public void ApplyDamage()
         {
-            if(CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
-               CurrentTarget.TryGetComponent(out IHealth health) && 
-               health.IsLive)
-                trapAttackable.TakeDamage(DamageData);
+            var targets = FindUnitsInRange();
+            if (targets == null) return;
+
+            for (int i = targets.Count - 1; i >= 0; i--)
+            {
+                if (targets[i] &&
+                    targets[i].TryGetComponent(out ITrapAttackable trapAttackable) &&
+                    targets[i].TryGetComponent(out IHealth health) &&
+                    health.IsLive)
+                {
+                    trapAttackable.TakeDamage(DamageData);
+                }
+            }
+            if(startIntervalResetActionCoroutine != null) StopCoroutine(startIntervalResetActionCoroutine);
+            startIntervalResetActionCoroutine = StartCoroutine(StartIntervalResetActionCoroutine());
         }
-        
-        
-        private void OnTriggerEnter(Collider other)
+
+        private IEnumerator StartIntervalResetActionCoroutine()
         {
-            if(!isReady || !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)) return;
-            Activate();
+            yield return new WaitForSeconds(INTERVAL_RESET_ACTION);
+            ResetAction();
         }
     }
 }

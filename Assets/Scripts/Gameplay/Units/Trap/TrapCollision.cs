@@ -3,16 +3,17 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Trap
 {
-    public abstract class TrapTrigger : MonoBehaviour
+    public class TrapCollision : MonoBehaviour
     {
-        public Action<GameObject> OnHitEnter;
+        public event Action<GameObject> OnHit;
         
         [SerializeField] protected TrapController trapController;
-
+        
         private void OnTriggerEnter(Collider other)
         {
             if(!Calculate.GameLayer.IsTarget(trapController.EnemyLayer, other.gameObject.layer)) return;
-            OnHitEnter?.Invoke(other.gameObject);
+            OnHit?.Invoke(other.gameObject);
+            trapController.StartAction();
         }
     }
 }

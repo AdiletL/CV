@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: SO_FallGravity
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: -1
-  <ActivateClip>k__BackingField: {fileID: 0}
-  <DeactivateClip>k__BackingField: {fileID: 0}
+  <ActivationDelay>k__BackingField: 0.5
+  <Cooldown>k__BackingField: 0
+  <IsReusable>k__BackingField: 0
+  <PlayClip>k__BackingField: {fileID: 0}
+  <ResetClip>k__BackingField: {fileID: 0}
   <EnemyLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 8
-  <Radius>k__BackingField: 0.2
   <Mass>k__BackingField: 10
   <IntervalFallObjets>k__BackingField: 0.2

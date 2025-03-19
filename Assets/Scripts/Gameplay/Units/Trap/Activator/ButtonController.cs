@@ -45,11 +45,11 @@ namespace Gameplay.Unit.Trap.Activator
         }
 
 
-        public override void Trigger()
+        public  void Trigger()
         {
             base.Trigger();
             isReady = false;
-            buttonAnimation.ChangeAnimationWithDuration(appearClip);
+            buttonAnimation.ChangeAnimationWithDuration(playClip);
 
             if (!currentCell)
             {
@@ -69,7 +69,7 @@ namespace Gameplay.Unit.Trap.Activator
             checkTargetCoroutine = StartCoroutine(CheckTargetCoroutine());
         }
 
-        public override void Reset()
+        public  void Reset()
         {
             base.Reset();
             if(startTimerCoroutine != null)
@@ -77,7 +77,7 @@ namespace Gameplay.Unit.Trap.Activator
             if(checkTargetCoroutine != null)
                 StopCoroutine(checkTargetCoroutine);
             isReady = true;
-            buttonAnimation.ChangeAnimationWithDuration(deappearClip);
+            buttonAnimation.ChangeAnimationWithDuration(resetClip);
 
             ResetTargetPosition();
         }
@@ -123,7 +123,7 @@ namespace Gameplay.Unit.Trap.Activator
 
         private void OnTriggerEnter(Collider other)
         {
-            if(!isReady || 
+           /*if(!isReady || 
                !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer) ||
                !other.TryGetComponent(out ITrapInteractable trapInteractable) ||
                CurrentTarget) return;
@@ -131,16 +131,16 @@ namespace Gameplay.Unit.Trap.Activator
             CurrentTarget = other.gameObject;
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(0.1f, Activate));
+            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(0.1f, Activate));*/
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if(!Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)
+            /*if(!Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer)
                || !CurrentTarget) return;
             
             Deactivate();
-            CurrentTarget = null;
+            CurrentTarget = null;*/
         }
     }
 }

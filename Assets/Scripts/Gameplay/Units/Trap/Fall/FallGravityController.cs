@@ -14,17 +14,12 @@ namespace Gameplay.Unit.Trap.Fall
         [Inject] private SO_GameConfig gameConfig;
         
         private SO_FallGravity so_FallGravity;
-        private Coroutine startTimerCoroutine;
         private Coroutine checkAndAddRigidBodyCoroutine;
-        public Stat DamageStat { get; private set; } = new Stat();
         
         private float intervalFallObjects;
         private float radius;
-        private bool isReady = true;
         
-        private List<CellController> cellControllers = new();
         
-        public DamageData DamageData { get; private set; }
         public float Mass { get; private set; }
 
 
@@ -32,12 +27,11 @@ namespace Gameplay.Unit.Trap.Fall
         {
             base.Initialize();
 
-            DamageStat.AddCurrentValue(so_FallGravity.Damage);
             so_FallGravity = (SO_FallGravity)so_Trap;
-            Mass = so_FallGravity.Mass + Physics.gravity.y;
-            radius = so_FallGravity.Radius + gameConfig.RadiusCell;
+            Mass = so_FallGravity.Mass;
             intervalFallObjects = so_FallGravity.IntervalFallObjets;
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
+            if(TryGetComponent(out SphereCollider sphereCollider))
+                radius = sphereCollider.radius;
         }
         
         public override void Appear()
@@ -46,92 +40,32 @@ namespace Gameplay.Unit.Trap.Fall
 
         public override void Disappear()
         {
-            throw new NotImplementedException();
-        }
-
-        public override void Trigger()
-        {
-            if(!isReady) return;
-            isReady = false;
             
-            FallGravity();
         }
 
-        public override void Reset()
+        public override void StartAction()
         {
-            if(isReady) return;
-            isReady = true;
+            if(isStarted) return;
+            ExecuteFallGravity();
         }
 
-        public void ApplyDamage()
-        {
-            var colliders = Physics.OverlapSphere(transform.position, radius, ~Layers.CELL_LAYER);
-            for (int i = colliders.Length - 1; i >= 0; i--)
-            {
-                if (colliders[i].TryGetComponent(out IAttackable attackable) &&
-                    colliders[i].TryGetComponent(out IHealth health) &&
-                    health.IsLive)
-                {
-                    attackable.TakeDamage(DamageData);
-                }
-            }
-        }
-
-        private void InActiveCells()
-        {
-            for (int i = cellControllers.Count - 1; i >= 0; i--)
-            {
-                cellControllers[i].gameObject.SetActive(false);
-            }
-        }
-        
-        public void FallGravity()
+        public void ExecuteFallGravity()
         {
             if(checkAndAddRigidBodyCoroutine != null) StopCoroutine(checkAndAddRigidBodyCoroutine);
-            checkAndAddRigidBodyCoroutine = StartCoroutine(CheckCellInRadiusAndAddRigidbodyCoroutine());
+            checkAndAddRigidBodyCoroutine = StartCoroutine(CheckInRadiusAndAddRigidbodyCoroutine());
         }
         
-        private IEnumerator CheckCellInRadiusAndAddRigidbodyCoroutine()
+        private IEnumerator CheckInRadiusAndAddRigidbodyCoroutine()
         {
-            var colliders = Physics.OverlapSphere(transform.position, radius, Layers.CELL_LAYER);
+            var colliders = Physics.OverlapSphere(transform.position, radius);
             for (int i = colliders.Length - 1; i >= 0; i--)
             {
-                if (colliders[i].TryGetComponent(out CellController cell))
+                if (colliders[i].TryGetComponent(out IFallatable fallatable))
                 {
-                    if(cell.IsBlocked()) continue;
-                    if(!cell.gameObject.TryGetComponent(out Rigidbody rigidBody))
-                        cell.gameObject.AddComponent<Rigidbody>();
-                    
-                    cell.GetComponent<Rigidbody>().mass = Mass;
-                    cellControllers.Add(cell);
+                    fallatable.ActivateFall(Mass);
                     yield return new WaitForSeconds(intervalFallObjects);
                 }
             }
         }
-
-        private IEnumerator StartTimerCoroutine(float waitTime, Action callback)
-        {
-            yield return new WaitForSeconds(waitTime);
-            callback?.Invoke();
-        }
-        
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.TryGetComponent(out DeathPlane deathPlane))
-            {
-                ApplyDamage();
-                InActiveCells();
-                Deactivate();
-            }
-            
-            if(!isReady || 
-               !Calculate.GameLayer.IsTarget(EnemyLayer, other.gameObject.layer) || 
-               !other.TryGetComponent(out ITrapInteractable trapInteractable)) return;
-
-            if(startTimerCoroutine != null) StopCoroutine(startTimerCoroutine);
-            startTimerCoroutine = StartCoroutine(StartTimerCoroutine(gameConfig.BaseWaitTimeTrap, Activate));
-        }
-
     }
 }

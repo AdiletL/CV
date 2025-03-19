@@ -11,7 +11,6 @@ namespace Gameplay.Unit.Trap.Hammer
         [SerializeField] private Collider hammerCollider;
         
         private SO_Hammer so_Hammer;
-        private HammerAnimation hammerAnimation;
         private Coroutine startTimerCoroutine;
         private Collider[] checkUnitColliders = new Collider[1];
         public Stat DamageStat { get; private set; } = new Stat();
@@ -26,15 +25,11 @@ namespace Gameplay.Unit.Trap.Hammer
         public override void Initialize()
         {
             base.Initialize();
-            hammerAnimation = components.GetComponentFromArray<HammerAnimation>();
             so_Hammer = (SO_Hammer)so_Trap;
             DamageStat.AddCurrentValue(so_Hammer.Damage);
             DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
             durationAttack = Calculate.Convert.AttackSpeedToDuration(so_Hammer.AttackSpeed);
             cooldownAttack = so_Hammer.CooldownAttack;
-            
-            GetComponentInUnit<HammerTrigger>()?.Initialize();
-
         }
         
         public override void Appear()
@@ -51,14 +46,14 @@ namespace Gameplay.Unit.Trap.Hammer
 
         private void OnEnable()
         {
-            GetComponentInUnit<HammerTrigger>().OnHitEnter += OnHitEnter;
-            GetComponentInUnit<HammerTrigger>().OnHitExit += OnHitExit;
+            //GetComponentInUnit<HammerCollision>().OnHitEnter += OnHitEnter;
+            //GetComponentInUnit<HammerCollision>().OnHitExit += OnHitExit;
         }
 
         private void OnDisable()
         {
-            GetComponentInUnit<HammerTrigger>().OnHitEnter -= OnHitEnter;
-            GetComponentInUnit<HammerTrigger>().OnHitExit -= OnHitExit;
+            //GetComponentInUnit<HammerCollision>().OnHitEnter -= OnHitEnter;
+            //GetComponentInUnit<HammerCollision>().OnHitExit -= OnHitExit;
         }
 
         private void OnHitEnter(GameObject target)
@@ -66,7 +61,7 @@ namespace Gameplay.Unit.Trap.Hammer
             if(isReady) return;
 
             hammerCollider.isTrigger = true;
-            SetTarget(target);
+            //SetTarget(target);
             ApplyDamage();
         }
         
@@ -75,17 +70,17 @@ namespace Gameplay.Unit.Trap.Hammer
             if(!isReady) return;
 
             hammerCollider.isTrigger = false;
-            SetTarget(null);
+            //SetTarget(null);
         }
         
-        public override void Trigger()
+        public void Trigger()
         {
             isReady = false;
             
-            if(!CurrentTarget)
-                hammerCollider.isTrigger = false;
+           // if(!CurrentTarget)
+            //    hammerCollider.isTrigger = false;
             
-            hammerAnimation.ChangeAnimationWithDuration(appearClip, durationAttack);
+            //hammerAnimation.ChangeAnimationWithDuration(playClip, durationAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(durationAttack, AfterActivate));
@@ -98,9 +93,9 @@ namespace Gameplay.Unit.Trap.Hammer
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(1, Deactivate));
         }
 
-        public override void Reset()
+        public void Reset()
         {
-            hammerAnimation.ChangeAnimationWithDuration(deappearClip, cooldownAttack);
+            //hammerAnimation.ChangeAnimationWithDuration(resetClip, cooldownAttack);
             if(startTimerCoroutine != null)
                 StopCoroutine(startTimerCoroutine);
             startTimerCoroutine = StartCoroutine(StartTimerCoroutine(cooldownAttack, AfterDeactivate));
@@ -122,12 +117,7 @@ namespace Gameplay.Unit.Trap.Hammer
 
         public void ApplyDamage()
         {
-            if (CurrentTarget.TryGetComponent(out ITrapAttackable trapAttackable) &&
-                CurrentTarget.TryGetComponent(out IHealth health) && 
-                health.IsLive)
-            {
-                trapAttackable.TakeDamage(DamageData);
-            }
+            
         }
     }
 }

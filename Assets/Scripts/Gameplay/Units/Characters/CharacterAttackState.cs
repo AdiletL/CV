@@ -30,13 +30,13 @@ namespace Gameplay.Unit.Character
         
         protected bool isAttacked;
         protected bool isAddedEnduranceStat;
-        protected bool isActivatedSpecialAction;
         
        
         protected Queue<float> cooldownsApplyDamage;
         
         protected const string ATTACK_SPEED_NAME = "SpeedAttack";
         protected const int DEFAULT_ANIMATION_LAYER = 1;
+        protected const int SPECIAL_ANIMATION_LAYER = 2;
         
         public Equipment.Weapon.Weapon CurrentWeapon { get; protected set; }
         public Stat ConsumptionEnduranceStat { get; } = new();
@@ -163,7 +163,6 @@ namespace Gameplay.Unit.Character
             countDurationAttack = 0;
             cooldownsApplyDamage?.Clear();
             isAttacked = false;
-            isActivatedSpecialAction = false;
         }
 
         protected void UpdateDurationAttack()
@@ -179,7 +178,7 @@ namespace Gameplay.Unit.Character
                 specialActionConfigIndex = CurrentWeapon.SpecialActionIndex;
                 config = getSpecialAnimationEventConfig();
                 currentClip = config.Clip;
-                currentAnimatonLayer = 2;
+                currentAnimatonLayer = SPECIAL_ANIMATION_LAYER;
             }
             else
             {

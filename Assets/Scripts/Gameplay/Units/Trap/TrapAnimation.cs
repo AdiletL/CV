@@ -1,6 +1,6 @@
 ﻿namespace Gameplay.Unit.Trap
 {
-    public abstract class TrapAnimation : UnitAnimation
+    public class TrapAnimation : UnitAnimation
     {
         
     }

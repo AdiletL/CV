@@ -8,7 +8,9 @@ using UnityEngine.AddressableAssets;
 
 namespace Gameplay.Unit.Container
 {
-    public abstract class ContainerController : UnitController, IContainer
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(BoxCollider))]
+    public abstract class ContainerController : UnitController, IContainer, IFallatable
     {
         [System.Serializable]
         public class ItemData
@@ -25,6 +27,8 @@ namespace Gameplay.Unit.Container
         protected AnimationClip closeClip;
         protected bool isOpened;
 
+        public bool IsFalling { get; protected set; }
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -54,11 +58,36 @@ namespace Gameplay.Unit.Container
                 diContainer.Inject(itemController);
                 itemController.SetAmount(VARIABLE.amount);
                 itemController.Initialize();
+                
                 item.transform.position = transform.position;
                 Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(0.5f, 1f));
                 point = transform.position + transform.right * randomOffset.x + transform.forward * randomOffset.z;
                 itemController.JumpToPoint(point);
             }
+        }
+
+
+        public void ActivateFall(float mass)
+        {
+            if(IsFalling) return;
+            
+            var rigidBody = GetComponent<Rigidbody>();
+            rigidBody.useGravity = true;
+            rigidBody.isKinematic = false;
+            rigidBody.mass = mass;
+            
+            IsFalling = true;
+        }
+
+        public void DeactivateFall()
+        {
+            if(!IsFalling) return;
+            
+            var rigidBody = GetComponent<Rigidbody>();
+            rigidBody.useGravity = false;
+            rigidBody.isKinematic = true;
+            
+            IsFalling = false;
         }
     }
 }

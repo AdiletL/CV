@@ -45,12 +45,12 @@ namespace Gameplay.Unit.Trap.Tower
             throw new NotImplementedException();
         }
 
-        public override void Trigger()
+        public void Trigger()
         {
             this.stateMachine.ExitOtherStates(typeof(DragonIdleState));
         }
 
-        public override void Reset()
+        public void Reset()
         {
             this.stateMachine.ExitOtherStates(typeof(DragonDeactivateState));
         }
