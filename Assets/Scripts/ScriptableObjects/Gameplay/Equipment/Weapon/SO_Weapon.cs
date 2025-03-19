@@ -2,7 +2,7 @@
 using Unit;
 using UnityEngine;
 
-namespace ScriptableObjects.Equipment.Weapon
+namespace ScriptableObjects.Gameplay.Equipment.Weapon
 {
     public abstract class SO_Weapon : SO_Equipment
     {

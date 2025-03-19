@@ -37,8 +37,25 @@ namespace Gameplay.UI.ScreenSpace.Stats
         private Gradient manaBarGradient;
 
         //private readonly Vector2 sizeDelta = new Vector2(280, 25);
-        private StringBuilder textBuilder = new();
+        private static readonly StringBuilder textBuilder = new();
         private float resulBar;
+        
+        private string FormatValue(float value, int decimalPlaces = 0)
+        {
+            textBuilder.Clear();
+
+            if (value == 0)
+            {
+                textBuilder.Append('0');
+            }
+            else
+            {
+                if (value > 0) textBuilder.Append('+');
+                textBuilder.Append(value.ToString($"F{decimalPlaces}"));
+            }
+
+            return textBuilder.ToString();
+        }
 
         public void Initialize()
         {
@@ -114,37 +131,29 @@ namespace Gameplay.UI.ScreenSpace.Stats
 
         public void SetDamage(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0"));
-            damageStat.SetText(textBuilder.ToString());
+            damageStat.SetText(FormatValue(value));
         }
 
         public void SetMovementSpeed(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0"));
-            movementSpeedStat.SetText(textBuilder.ToString());
+            movementSpeedStat.SetText(FormatValue(value));
         }
 
         public void SetArmor(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0"));
-            armorStat.SetText(textBuilder.ToString());
+            armorStat.SetText(FormatValue(value));
         }
 
         public void SetRangeAttack(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0"));
-            rangeAttackStat.SetText(textBuilder.ToString());
+            rangeAttackStat.SetText(FormatValue(value));
         }
         
         public void SetLevel(float value)
         {
             textBuilder.Clear();
-            textBuilder.Append(value.ToString("0"));
-            levelStat.SetText(textBuilder.ToString());
+            textBuilder.Append(value);
+            levelStat.SetText(value.ToString("0"));
         }
         
         public void SetExperience(float current, float max)
@@ -157,23 +166,17 @@ namespace Gameplay.UI.ScreenSpace.Stats
 
         public void SetRegenerationHealth(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0.0"));
-            regenerationHealthStat.SetText(textBuilder.ToString());
+            regenerationHealthStat.SetText(FormatValue(value, 1));
         }
         
         public void SetRegenerationEndurance(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0.0"));
-            regenerationEnduranceStat.SetText(textBuilder.ToString());
+            regenerationEnduranceStat.SetText(FormatValue(value, 1));
         }
 
         public void SetRegenerationMana(float value)
         {
-            textBuilder.Clear();
-            textBuilder.Append(value.ToString("0.0"));
-            regenerationManaStat.SetText(textBuilder.ToString());
+            regenerationManaStat.SetText(FormatValue(value, 1));
         }
     }
 

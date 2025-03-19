@@ -1,4 +1,5 @@
 ﻿using System;
+using ScriptableObjects.Gameplay.Equipment.Weapon;
 using Unit;
 using UnityEngine;
 using Zenject;
@@ -9,6 +10,9 @@ namespace Gameplay.Equipment.Weapon
     {
         [Inject] private DiContainer diContainer;
 
+        public override EquipmentType EquipmentTypeID { get; protected set; } = EquipmentType.Weapon;
+
+        protected SO_Weapon so_Weapon;
         protected GameObject currentTarget;
         protected LayerMask enemyLayer;
         protected float angleToTarget;
@@ -20,12 +24,9 @@ namespace Gameplay.Equipment.Weapon
         public Stat OwnerRangeStat { get; protected set; } = new();
         
         public int SpecialActionIndex { get; protected set; }
-        public float ReduceEndurance { get; private set; }
         public bool IsActivatedSpecialAction { get; protected set; }
         
         public void SetEnemyLayer(LayerMask layer) => enemyLayer = layer;
-        public void SetAngleToTarget(float angle) => this.angleToTarget = angle;
-        public void SetReduceEndurance(float reduceEndurance) => this.ReduceEndurance = reduceEndurance;
         public void SetOwnerDamageStat(Stat damageStat) => this.OwnerDamageStat = damageStat;
         public void SetOwnerRangeStat(Stat rangeStat) => this.OwnerRangeStat = rangeStat;
 
@@ -33,6 +34,9 @@ namespace Gameplay.Equipment.Weapon
         public override void Initialize()
         {
             base.Initialize();
+            so_Weapon = (SO_Weapon)so_Equipment;
+            angleToTarget = so_Weapon.AngleToTarget;
+            
             DamageData = new DamageData(Owner, DamageType.Physical, DamageStat.CurrentValue);
             diContainer.Inject(DamageData);
         }
@@ -42,23 +46,10 @@ namespace Gameplay.Equipment.Weapon
         public abstract void ApplyDamage();
     }
 
-    public abstract class WeaponBuilder : EquipmentBuilder<Weapon>
+    public abstract class WeaponBuilder : EquipmentBuilder
     {
         protected WeaponBuilder(Equipment equipment) : base(equipment)
         {
-        }
-
-        public WeaponBuilder SetAngleToTarget(float angle)
-        {
-            if(equipment is Weapon weapon)
-                weapon.SetAngleToTarget(angle);
-            return this;
-        }
-        public WeaponBuilder SetReduceEndurance(float value)
-        {
-            if(equipment is Weapon weapon)
-                weapon.SetReduceEndurance(value);
-            return this;
         }
     }
 }

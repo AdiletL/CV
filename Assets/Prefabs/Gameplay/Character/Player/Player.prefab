@@ -3922,7 +3922,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterMainController: {fileID: 6200176588022165938}
-  <WeaponParent>k__BackingField: {fileID: 2888781842470922690}
+  weaponParent: {fileID: 2888781842470922690}
+  shieldParent: {fileID: 7128446736962727633}
 --- !u!114 &7731336036992275382
 MonoBehaviour:
   m_ObjectHideFlags: 0

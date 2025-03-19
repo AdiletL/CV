@@ -80,7 +80,6 @@ namespace Gameplay.Factory.Character.Creep
                 .SetNavMeshAgent(navMeshAgent)
                 .SetConfig(so_BeholderAttack)
                 .SetUnitRenderer(gameObject.GetComponent<UnitRenderer>())
-                .SetCharacterStatsController(gameObject.GetComponent<CharacterStatsController>())
                 .SetUnitAnimation(characterAnimation)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)

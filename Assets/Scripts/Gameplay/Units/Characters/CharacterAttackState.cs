@@ -11,9 +11,7 @@ namespace Gameplay.Unit.Character
     {
         protected SO_CharacterAttack so_CharacterAttack;
         protected GameObject currentTarget;
-        protected Transform weaponParent;
         protected UnitAnimation unitAnimation;
-        protected CharacterStatsController characterStatsController;
         protected UnitRenderer unitRenderer;
         protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
@@ -48,9 +46,7 @@ namespace Gameplay.Unit.Character
         }
 
         public void SetConfig(SO_CharacterAttack config) => so_CharacterAttack = config;
-        public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
-        public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         
         public virtual bool IsUnitInRange()
@@ -140,7 +136,6 @@ namespace Gameplay.Unit.Character
         {
             base.Exit();
             this.unitAnimation.ExitAnimation(DEFAULT_ANIMATION_LAYER);
-            ClearRegenerationEnduranceStat();
             currentTarget = null;
         }
 
@@ -199,42 +194,21 @@ namespace Gameplay.Unit.Character
             RemoveWeapon();
             
             CurrentWeapon = weapon;
-            CurrentWeapon.SetInParent(weaponParent);
             CurrentWeapon.SetEnemyLayer(enemyLayer);
             CurrentWeapon.SetOwnerDamageStat(DamageStat);
             CurrentWeapon.SetOwnerRangeStat(RangeStat);
             CurrentWeapon.Show();
             ClearValues();
             UpdateDurationAttack();
-            ConsumptionEnduranceStat.AddCurrentValue(CurrentWeapon.ReduceEndurance);
         }
 
         public void RemoveWeapon()
         {
             if(CurrentWeapon == null) return;
-            ConsumptionEnduranceStat.RemoveCurrentValue(CurrentWeapon.ReduceEndurance);
             CurrentWeapon.SetOwnerDamageStat(null);
             CurrentWeapon.SetOwnerRangeStat(null);
             CurrentWeapon.Hide();
             CurrentWeapon = null;
-        }
-        
-        protected void AddRegenerationEnduranceStat()
-        {
-            if (characterStatsController && !isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance)?.RemoveCurrentValue(ConsumptionEnduranceStat.CurrentValue);
-                isAddedEnduranceStat = true;
-            }
-        }
-
-        protected void ClearRegenerationEnduranceStat()
-        {
-            if (characterStatsController && isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance)?.AddCurrentValue(ConsumptionEnduranceStat.CurrentValue);
-                isAddedEnduranceStat = false;
-            }
         }
         
         public override void Attack()
@@ -259,8 +233,6 @@ namespace Gameplay.Unit.Character
                         cooldownsApplyDamage.Dequeue();
                     }
                 }
-
-                AddRegenerationEnduranceStat();
             }
         }
 
@@ -311,18 +283,6 @@ namespace Gameplay.Unit.Character
             return this;
         }
 
-        public CharacterAttackStateBuilder SetWeaponParent(Transform parent)
-        {
-            if (state is CharacterAttackState characterWeapon)
-                characterWeapon.SetWeaponParent(parent);
-            return this;
-        }
-        public CharacterAttackStateBuilder SetCharacterStatsController(CharacterStatsController characterStatsController)
-        {
-            if (state is CharacterAttackState characterWeapon)
-                characterWeapon.SetCharacterStatsController(characterStatsController);
-            return this;
-        }
         public CharacterAttackStateBuilder SetUnitRenderer(UnitRenderer unitRenderer)
         {
             if (state is CharacterAttackState characterWeapon)

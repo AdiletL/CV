@@ -145,12 +145,12 @@ namespace Gameplay.Unit.Item
             float result = 0;
             foreach (var config in Stats)
             {
-                foreach (var statValues in config.StatValuesConfig)
+                foreach (var statValue in config.StatValuesConfig)
                 {
                     var unitStat = unitStatController.GetStat(config.StatTypeID);
-                    var gameValue = new GameValue(statValues.Value, statValues.ValueTypeID);
-                    result = gameValue.Calculate(unitStat.GetValue(statValues.StatValueTypeID));
-                    unitStat.AddValue(result, statValues.StatValueTypeID); 
+                    var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
+                    result = gameValue.Calculate(unitStat.GetValue(statValue.StatValueTypeID));
+                    unitStat.AddValue(result, statValue.StatValueTypeID); 
                     addedStatValues.Add(result);
                 }
             }
@@ -168,8 +168,8 @@ namespace Gameplay.Unit.Item
                 {
                     var unitStat = unitStatController.GetStat(config.StatTypeID);
                     unitStat.RemoveValue(addedStatValues[index], VARIABLE.StatValueTypeID);
+                    index++;
                 }
-                index++;
             }
 
             RemoveEffectFromUnit();

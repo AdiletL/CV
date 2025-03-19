@@ -71,6 +71,9 @@ namespace Gameplay.Unit.Trap
 
         public void ApplyDamage()
         {
+            if(startIntervalResetActionCoroutine != null) StopCoroutine(startIntervalResetActionCoroutine);
+            startIntervalResetActionCoroutine = StartCoroutine(StartIntervalResetActionCoroutine());
+            
             var targets = FindUnitsInRange();
             if (targets == null) return;
 
@@ -84,8 +87,6 @@ namespace Gameplay.Unit.Trap
                     trapAttackable.TakeDamage(DamageData);
                 }
             }
-            if(startIntervalResetActionCoroutine != null) StopCoroutine(startIntervalResetActionCoroutine);
-            startIntervalResetActionCoroutine = StartCoroutine(StartIntervalResetActionCoroutine());
         }
 
         private IEnumerator StartIntervalResetActionCoroutine()

@@ -1,7 +1,8 @@
 ﻿using System;
 using Gameplay.Equipment.Weapon;
-using ScriptableObjects.Equipment.Weapon;
 using ScriptableObjects.Gameplay.Equipment;
+using ScriptableObjects.Gameplay.Equipment.Shield;
+using ScriptableObjects.Gameplay.Equipment.Weapon;
 
 namespace Gameplay.Factory.Weapon
 {
@@ -13,6 +14,7 @@ namespace Gameplay.Factory.Weapon
             {
                 _ when config.GetType() == typeof(SO_Sword) => CreateSword(config),
                 _ when config.GetType() == typeof(SO_Bow) => CreateBow(config),
+                //_ when config.GetType() == typeof(SO_NormalShield) => CreateNormalShield(config),
                 _ => throw new ArgumentOutOfRangeException(nameof(config), config, null)
             };
             return result;
@@ -20,24 +22,19 @@ namespace Gameplay.Factory.Weapon
 
         private Sword CreateSword(SO_Equipment config)
         {
-            var so_Sword = config as SO_Sword;
             var sword = (Sword)new SwordBuilder()
-                .SetReduceEndurance(so_Sword.ReduceEndurance)
-                .SetAngleToTarget(so_Sword.AngleToTarget)
-                .SetEquipmentPrefab(so_Sword.EquipmentPrefab)
+                .SetConfig(config)
                 .Build();
             return sword;
         }
         
         private Bow CreateBow(SO_Equipment config)
         {
-            var so_Bow = config as SO_Bow;
             var bow = (Bow)new BowBuilder()
-                .SetReduceEndurance(so_Bow.ReduceEndurance)
-                .SetAngleToTarget(so_Bow.AngleToTarget)
-                .SetEquipmentPrefab(so_Bow.EquipmentPrefab)
+                .SetConfig(config)
                 .Build();
             return bow;
         }
+        
     }
 }

@@ -99,7 +99,6 @@ namespace Gameplay.Unit.Character.Player
                 .SetPlayerAttackConfig(so_PlayerAttack)
                 .SetPlayerMoveConfig(so_PlayerMove)
                 .SetCharacterAnimation(characterAnimation)
-                .SetWeaponParent(playerEquipmentController.WeaponParent)
                 .SetStateMachine(StateMachine)
                 .SetUnitCenter(unitCenter)
                 .SetGameObject(gameObject)
@@ -245,7 +244,7 @@ namespace Gameplay.Unit.Character.Player
 
         private void OnChangedEndurance()
         {
-             playerUI.OnChangedEndurance(characterEndurance.EnduranceStat.CurrentValue, characterEndurance.EnduranceStat.MaximumValue);
+            playerUI.OnChangedEndurance(characterEndurance.EnduranceStat.CurrentValue, characterEndurance.EnduranceStat.MaximumValue);
         }
         private void OnChangedHealth()
         {
@@ -284,6 +283,7 @@ namespace Gameplay.Unit.Character.Player
             item.SetStats(so_NormalSword.UnitStatsConfigs);
             item.Initialize();
             playerItemInventory.AddItem(item, so_NormalSword.Icon);
+            var equipmentItem = (EquipmentItem)item;
         }
         
         private void Update()

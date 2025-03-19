@@ -2,7 +2,8 @@
 {
     public class NormalSwordItem : SwordItem
     {
-        
+        public override ItemName ItemNameID { get; protected set; } = ItemName.NormalSword;
+
     }
     
     public class NormalSwordItemBuilder : SwordItemBuilder

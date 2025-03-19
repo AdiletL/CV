@@ -213,7 +213,7 @@ namespace Gameplay.Unit.Character.Player
                 {
                     if (!playerBlockInput.IsInputBlocked(InputType.Ability))
                     {
-                        switch (slots[i].AbilityBehaviourID)
+                        switch (slots[i]?.AbilityBehaviourID)
                         {
                             case AbilityBehaviour.NoTarget: slots[i].Enter(); break;
                             case AbilityBehaviour.PointTarget: 

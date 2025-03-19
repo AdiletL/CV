@@ -1,4 +1,6 @@
-﻿using Gameplay.Factory.Weapon;
+﻿using System;
+using Gameplay.Equipment;
+using Gameplay.Factory.Weapon;
 using Gameplay.Unit.Character;
 using Gameplay.Unit.Item.ContextMenu;
 using ScriptableObjects.Gameplay.Equipment;
@@ -11,6 +13,8 @@ namespace Gameplay.Unit.Item
     {
         [Inject] private DiContainer diContainer;
         [Inject] private EquipmentFactory equipmentFactory;
+        
+        public abstract EquipmentType EquipmentTypeID { get; protected set; }
         
         protected SO_Equipment so_Equipment; 
         protected Equipment.Equipment equipment;
@@ -31,6 +35,16 @@ namespace Gameplay.Unit.Item
             equipment.SetOwner(Owner);
             equipment.SetOwnerCenter(Owner.GetComponent<UnitCenter>().Center);
             equipment.Initialize();
+            equipment.Hide();
+        }
+
+        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        {
+            base.Enter(finishedCallBack, target, point);
+            if(characterEquipmentController.IsNullEquipment(equipment)) 
+                PutOn();
+            else
+                TakeOff();
         }
 
         public virtual void PutOn()

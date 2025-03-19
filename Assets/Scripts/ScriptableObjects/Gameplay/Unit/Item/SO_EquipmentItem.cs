@@ -1,5 +1,4 @@
-﻿using ScriptableObjects.Equipment.Weapon;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ScriptableObjects.Unit.Item
 {

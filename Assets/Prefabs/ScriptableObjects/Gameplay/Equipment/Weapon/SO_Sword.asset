@@ -18,5 +18,10 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  <ReduceEndurance>k__BackingField: 1.5
+  <StatConfigs>k__BackingField:
+  - StatTypeID: 10
+    StatValuesConfig:
+    - StatValueTypeID: 1
+      ValueTypeID: 0
+      Value: -0.2
   <AngleToTarget>k__BackingField: 100

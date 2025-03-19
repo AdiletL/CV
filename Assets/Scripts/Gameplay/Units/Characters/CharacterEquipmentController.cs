@@ -7,8 +7,10 @@ namespace Gameplay.Unit.Character
     public abstract class CharacterEquipmentController : MonoBehaviour
     {
         [SerializeField] protected CharacterMainController characterMainController;
-        
-        [field: SerializeField, Space] public Transform WeaponParent { get; private set; }
+
+        [Space] 
+        [SerializeField] public Transform weaponParent;
+        [SerializeField] public Transform shieldParent;
         
         private List<Equipment.Equipment> equipments;
         
@@ -23,17 +25,36 @@ namespace Gameplay.Unit.Character
         public virtual void PutOn(Equipment.Equipment equipment)
         {
             equipments ??= new List<Equipment.Equipment>();
-            
-            if (equipment is Equipment.Weapon.Weapon weapon)
-                characterMainController.StateMachine.GetState<CharacterAttackState>()?.SetWeapon(weapon);
-            
+
+            Debug.Log(equipment.EquipmentTypeID);
+            switch (equipment.EquipmentTypeID)
+            {
+                case Equipment.EquipmentType.Weapon:
+                    equipment.SetInParent(weaponParent);
+                    characterMainController.StateMachine.GetState<CharacterAttackState>()?.SetWeapon((Equipment.Weapon.Weapon)equipment);
+                    break;
+                case Equipment.EquipmentType.Shield:
+                    equipment.SetInParent(shieldParent);
+                    equipment.Show();
+                    break;
+            }
+
             equipments.Add(equipment);
         }
 
         public virtual void TakeOff(Equipment.Equipment equipment)
         {
-            if (equipment is Equipment.Weapon.Weapon weapon)
-                characterMainController.StateMachine.GetState<CharacterAttackState>()?.RemoveWeapon();
+            switch (equipment.EquipmentTypeID)
+            {
+                case Equipment.EquipmentType.Weapon:
+                    characterMainController.StateMachine.GetState<CharacterAttackState>()?.RemoveWeapon();
+                    equipment.SetInParent(null);
+                    break;
+                case Equipment.EquipmentType.Shield:
+                    equipment.Hide();
+                    equipment.SetInParent(null);
+                    break;
+            }
             
             equipments?.Remove(equipment);
         }

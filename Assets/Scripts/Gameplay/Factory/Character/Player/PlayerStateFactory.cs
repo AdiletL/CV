@@ -15,7 +15,6 @@ namespace Gameplay.Factory.Character.Player
         private UnitRenderer unitRenderer;
         private StateMachine stateMachine;
         private PhotonView photonView;
-        private Transform weaponParent;
         private Camera baseCamera;
         
         private CharacterAnimation characterAnimation;
@@ -34,7 +33,6 @@ namespace Gameplay.Factory.Character.Player
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
         public void SetPhotonView(PhotonView view) => photonView = view;
-        public void SetWeaponParent(Transform parent) => weaponParent = parent;
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
 
 
@@ -71,8 +69,6 @@ namespace Gameplay.Factory.Character.Player
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(baseCamera)
                 .SetUnitAnimation(characterAnimation)
-                .SetWeaponParent(weaponParent)
-                .SetCharacterStatsController(characterStatsController)
                 .SetUnitRenderer(unitRenderer)
                 .SetConfig(so_PlayerAttack)
                 .SetCenter(unitCenter.Center)
@@ -195,13 +191,6 @@ namespace Gameplay.Factory.Character.Player
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPhotonView(view);
-            return this;
-        }
-        
-        public PlayerStateFactoryBuilder SetWeaponParent(Transform parent)
-        {
-            if(factory is PlayerStateFactory playerStateFactory)
-                playerStateFactory.SetWeaponParent(parent);
             return this;
         }
         
