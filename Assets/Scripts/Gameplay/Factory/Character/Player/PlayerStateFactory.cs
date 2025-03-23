@@ -12,6 +12,7 @@ namespace Gameplay.Factory.Character.Player
     public class PlayerStateFactory : CharacterStateFactory
     {
         private PlayerKinematicControl playerKinematicControl;
+        private PlayerItemInventory playerItemInventory;
         private UnitRenderer unitRenderer;
         private StateMachine stateMachine;
         private PhotonView photonView;
@@ -23,12 +24,15 @@ namespace Gameplay.Factory.Character.Player
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
+        private SO_PlayerItemUsage so_PlayerItemUsage;
         
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
+        public void SetPlayerItemInventory(PlayerItemInventory itemInventory) => this.playerItemInventory = itemInventory;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
         public void SetPlayerSpecialAction(SO_PlayerSpecialAction so_PlayerSpecialAction) => this.so_PlayerSpecialAction = so_PlayerSpecialAction;
+        public void SetPlayerItemUsageConfig(SO_PlayerItemUsage so_PlayerItemUsage) => this.so_PlayerItemUsage = so_PlayerItemUsage;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
@@ -46,6 +50,7 @@ namespace Gameplay.Factory.Character.Player
                 _ when stateType == typeof(PlayerMoveState) => CreateRunStateOrig(),
                 _ when stateType == typeof(PlayerJumpState) => CreateJumpState(),
                 _ when stateType == typeof(PlayerSpecialActionState) => CreateSpecialActionState(),
+                _ when stateType == typeof(PlayerItemUsageState) => CreateItemUsageState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
@@ -125,9 +130,18 @@ namespace Gameplay.Factory.Character.Player
         {
             return (PlayerSpecialActionState)new PlayerSpecialActionStateBuilder()
                 .SetCharacterAnimation(characterAnimation)
-                .SetBlockPhysicalDamageConfig(so_PlayerSpecialAction.AbilityConfigData.DamageResistanceConfig)
                 .SetConfig(so_PlayerSpecialAction)
                 .SetGameObject(gameObject)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
+
+        private PlayerItemUsageState CreateItemUsageState()
+        {
+            return (PlayerItemUsageState)new PlayerItemUsageStateBuilder()
+                .SetInventory(playerItemInventory)
+                .SetCharacterAnimation(characterAnimation)
+                .SetConfig(so_PlayerItemUsage)
                 .SetStateMachine(stateMachine)
                 .Build();
         }
@@ -166,6 +180,13 @@ namespace Gameplay.Factory.Character.Player
             return this;
         }
 
+        public PlayerStateFactoryBuilder SetPlayerItemInventory(PlayerItemInventory playerItemInventory)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerItemInventory(playerItemInventory);
+            return this;
+        }
+        
         public PlayerStateFactoryBuilder SetStateMachine(StateMachine stateMachine)
         {
             if(factory is PlayerStateFactory playerStateFactory)

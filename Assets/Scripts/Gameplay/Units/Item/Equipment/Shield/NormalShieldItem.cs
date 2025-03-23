@@ -1,17 +1,14 @@
 ﻿using Gameplay.Equipment;
+using ScriptableObjects.Unit.Item;
 
 namespace Gameplay.Unit.Item
 {
     public class NormalShieldItem : ShieldItem
     {
-        public override ItemName ItemNameID { get; protected set; } = ItemName.NormalShield;
-        public override EquipmentType EquipmentTypeID { get; protected set; } = EquipmentType.Shield;
-    }
-    
-    public class NormalShieldItemBuilder : ShieldItemBuilder
-    {
-        public NormalShieldItemBuilder() : base(new NormalShieldItem())
+        public override string ItemName { get; protected set; } = nameof(NormalShieldItem);
+        public NormalShieldItem(SO_NormalShieldItem so_EquipmentItem) : base(so_EquipmentItem)
         {
         }
+
     }
 }

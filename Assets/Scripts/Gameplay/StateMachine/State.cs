@@ -23,16 +23,13 @@
         public virtual void Subscribe()
         {
             stateMachine.OnUpdate += Update;
-            stateMachine.OnLateUpdate += LateUpdate;
         }
 
         public abstract void Update();
-        public abstract void LateUpdate();
         
         public virtual void Unsubscribe()
         {
             stateMachine.OnUpdate -= Update;
-            stateMachine.OnLateUpdate -= LateUpdate;
         }
 
         public virtual void Exit()

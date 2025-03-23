@@ -10,15 +10,15 @@ namespace Gameplay.Unit.Item
         public event Action OnLateUpdate;
 
         private Dictionary<AbilityType, List<Ability.Ability>> currentAbilities;
-        private Dictionary<ItemName, List<Item>> currentItems;
+        private Dictionary<string, List<Item>> currentItems;
 
 
-        public bool IsItemActive(ItemName itemNameID)
+        public bool IsItemActive(string itemName)
         {
-            return currentItems.ContainsKey(itemNameID);
+            return currentItems.ContainsKey(itemName);
         }
 
-        public bool IsNullItem(ItemName abilityType)
+        public bool IsNullItem(string abilityType)
         {
             return currentItems == null || !currentItems.ContainsKey(abilityType);
         }
@@ -28,24 +28,24 @@ namespace Gameplay.Unit.Item
             return currentAbilities == null || !currentAbilities.ContainsKey(abilityType);
         }
         
-        public Item GetItem(ItemName itemNameID, int? inventorySlotID)
+        public Item GetItem(string itemName, int? inventorySlotID)
         {
-            if (currentItems == null || !currentItems.ContainsKey(itemNameID)) return null;
+            if (currentItems == null || !currentItems.ContainsKey(itemName)) return null;
             
-            for (int i = currentItems[itemNameID].Count - 1; i >= 0; i--)
+            for (int i = currentItems[itemName].Count - 1; i >= 0; i--)
             {
-                if (currentItems[itemNameID][i].InventorySlotID == inventorySlotID)
-                    return currentItems[itemNameID][i];
+                if (currentItems[itemName][i].InventorySlotID == inventorySlotID)
+                    return currentItems[itemName][i];
             }
 
             return null;
         }
         
-        public List<Item> GetItems(ItemName itemNameID)
+        public List<Item> GetItems(string itemName)
         {
-            if (currentItems == null || !currentItems.ContainsKey(itemNameID) ||
-                currentItems[itemNameID].Count == 0) return null;
-            return currentItems?[itemNameID];
+            if (currentItems == null || !currentItems.ContainsKey(itemName) ||
+                currentItems[itemName].Count == 0) return null;
+            return currentItems?[itemName];
         }
 
         public List<Ability.Ability> GetAbilities(AbilityType abilityType)
@@ -68,30 +68,30 @@ namespace Gameplay.Unit.Item
         {
             currentItems ??= new();
             
-            if (IsNullItem(item.ItemNameID))
-                currentItems.Add(item.ItemNameID, new List<Item>());
+            if (IsNullItem(item.ItemName))
+                currentItems.Add(item.ItemName, new List<Item>());
             
             OnUpdate += item.Update;
             OnLateUpdate += item.LateUpdate;
             
-            currentItems[item.ItemNameID].Add(item);
+            currentItems[item.ItemName].Add(item);
             AddAbilities(item.Abilities, item.InventorySlotID);
         }
 
-        public void RemoveItemByID(ItemName itemNameID, int? inventorySlotID)
+        public void RemoveItemByID(string itemName, int? inventorySlotID)
         {
-            if (!IsNullItem(itemNameID))
+            if (!IsNullItem(itemName))
             {
-                for (int i = currentItems[itemNameID].Count - 1; i >= 0; i--)
+                for (int i = currentItems[itemName].Count - 1; i >= 0; i--)
                 {
-                    if (currentItems[itemNameID][i].InventorySlotID != inventorySlotID) continue;
+                    if (currentItems[itemName][i].InventorySlotID != inventorySlotID) continue;
                     
-                    OnUpdate -= currentItems[itemNameID][i].Update;
-                    OnLateUpdate -= currentItems[itemNameID][i].LateUpdate;
-                    currentItems[itemNameID][i].Exit();
+                    OnUpdate -= currentItems[itemName][i].Update;
+                    OnLateUpdate -= currentItems[itemName][i].LateUpdate;
+                    currentItems[itemName][i].Exit();
                     
-                    RemoveAbilitiesByID(currentItems[itemNameID][i].Abilities, inventorySlotID);
-                    currentItems[itemNameID].Remove(currentItems[itemNameID][i]);
+                    RemoveAbilitiesByID(currentItems[itemName][i].Abilities, inventorySlotID);
+                    currentItems[itemName].Remove(currentItems[itemName][i]);
                     break;
                 }
             }

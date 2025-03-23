@@ -60,11 +60,6 @@ namespace Gameplay.Unit.Character.Player
                     StartJump();
                 }
             }
-        }
-
-        public override void LateUpdate()
-        {
-            base.LateUpdate();
             countCooldownCheckGround += Time.deltaTime;
             if (countCooldownCheckGround > cooldownCheckGround)
             {

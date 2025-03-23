@@ -5,17 +5,27 @@ namespace Gameplay.Ability
 {
     public class DashAbility : Ability
     {
+        public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.Dash;
+        
+        private DashConfig dashConfig;
         private IMoveControl moveControl;
         private float duration;
         private float speed;
         private float dashTimer;
-        
-        public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.Dash;
-        
+
+        public DashAbility(DashConfig dashConfig) : base(dashConfig)
+        {
+            this.dashConfig = dashConfig;
+        }
+
         public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
-        public void SetDuration(float duration) => this.duration = duration;
-        public void SetSpeed(float speed) => this.speed = speed;
-        
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            duration = dashConfig.Duration;
+            speed = dashConfig.Speed;
+        }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
@@ -25,7 +35,6 @@ namespace Gameplay.Ability
             StartEffect();
         }
         
-
         public override void LateUpdate()
         {
             if (isActivated)
@@ -52,25 +61,5 @@ namespace Gameplay.Ability
     {
         public float Speed;
         public float Duration;
-    }
-
-    public class DashAbilityBuilder : AbilityBuilder
-    {
-        public DashAbilityBuilder() : base(new DashAbility())
-        {
-        }
-        
-        public DashAbilityBuilder SetDuration(float duration)
-        {
-            if(ability is DashAbility dash)
-                dash.SetDuration(duration);
-            return this;
-        }
-        public DashAbilityBuilder SetSpeed(float speed)
-        {
-            if(ability is DashAbility dash)
-                dash.SetSpeed(speed);
-            return this;
-        }
     }
 }

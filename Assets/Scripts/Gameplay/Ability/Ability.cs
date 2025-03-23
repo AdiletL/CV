@@ -26,22 +26,27 @@ namespace Gameplay.Ability
         public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
 
+        protected AbilityConfig abilityConfig;
         private float countCooldown;
         private float countTimerCast;
         protected bool isActivated;
         protected bool isCasting;
-        
 
+        public Ability(AbilityConfig abilityConfig)
+        {
+            this.abilityConfig = abilityConfig;
+        }
+        
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
-        public void SetBlockedInputType(InputType inputType) => this.BlockedInputTypeID = inputType;
-        public void SetAbilityBehaviour(AbilityBehaviour abilityBehaviour) => this.AbilityBehaviourID = abilityBehaviour;
-        public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
-        public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         
 
         public virtual void Initialize()
         {
+            BlockedInputTypeID = abilityConfig.SO_BaseAbilityConfig.BlockedInputType;
+            AbilityBehaviourID = abilityConfig.SO_BaseAbilityConfig.AbilityBehaviour;
+            Cooldown = abilityConfig.Cooldown;
+            TimerCast = abilityConfig.TimerCast;
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -138,46 +143,5 @@ namespace Gameplay.Ability
         public SO_BaseAbilityConfig SO_BaseAbilityConfig;
         public float Cooldown;
         public float TimerCast;
-    }
-
-    public abstract class AbilityBuilder
-    {
-        protected Ability ability;
-
-        public AbilityBuilder(Ability instance)
-        {
-            ability = instance;
-        }
-
-        public AbilityBuilder SetGameObject(GameObject gameObject)
-        {
-            ability.SetGameObject(gameObject);
-            return this;
-        }
-        public AbilityBuilder SetBlockedInputType(InputType inputType)
-        {
-            ability.SetBlockedInputType(inputType);
-            return this;
-        }
-        public AbilityBuilder SetAbilityBehaviour(AbilityBehaviour abilityBehaviour)
-        {
-            ability.SetAbilityBehaviour(abilityBehaviour);
-            return this;
-        }
-        public AbilityBuilder SetCooldown(float cooldown)
-        {
-            ability.SetCooldown(cooldown);
-            return this;
-        }
-        public AbilityBuilder SetTimerCast(float timerCast)
-        {
-            ability.SetTimerCast(timerCast);
-            return this;
-        }
-        
-        public Ability Build()
-        {
-            return ability;
-        }
     }
 }

@@ -4,6 +4,7 @@ using Gameplay.Factory.Weapon;
 using Gameplay.Unit.Character;
 using Gameplay.Unit.Item.ContextMenu;
 using ScriptableObjects.Gameplay.Equipment;
+using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
 
@@ -15,36 +16,53 @@ namespace Gameplay.Unit.Item
         [Inject] private EquipmentFactory equipmentFactory;
         
         public abstract EquipmentType EquipmentTypeID { get; protected set; }
-        
-        protected SO_Equipment so_Equipment; 
+        public override ItemUsageType ItemUsageTypeID { get; } = ItemUsageType.Equip;
+
+        protected SO_EquipmentItem so_Equipment; 
         protected Equipment.Equipment equipment;
         private EquipmentContextMenu equipmentContextMenu;
         private CharacterEquipmentController characterEquipmentController;
 
         private bool isUse;
-        
-        public void SetEquipmentConfig(SO_Equipment config) => so_Equipment = config;
+
+
+        public EquipmentItem(SO_EquipmentItem so_EquipmentItem) : base(so_EquipmentItem)
+        {
+            this.so_Equipment = so_EquipmentItem;
+        }
         
         public override void Initialize()
         {
             base.Initialize();
             characterEquipmentController = Owner.GetComponent<CharacterEquipmentController>();
             
-            equipment = equipmentFactory.CreateEquipment(so_Equipment);
+            equipment = equipmentFactory.CreateEquipment(so_Equipment.SO_Equipment);
             diContainer.Inject(equipment);
             equipment.SetOwner(Owner);
-            equipment.SetOwnerCenter(Owner.GetComponent<UnitCenter>().Center);
             equipment.Initialize();
             equipment.Hide();
         }
 
-        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        public override void StartEffect()
         {
-            base.Enter(finishedCallBack, target, point);
-            if(characterEquipmentController.IsNullEquipment(equipment)) 
-                PutOn();
-            else
+            if (IsCooldown)
+            {
+                Debug.Log($"{ItemBehaviourID} на перезарядке!");
+                return;
+            }
+
+            if (isCasting)
+            {
+                Debug.Log($"{ItemBehaviourID} кастуется!");
+                return;
+            }
+
+            if (!characterEquipmentController.IsNullEquipment(equipment))
+            {
                 TakeOff();
+                return;
+            }
+            base.StartEffect();
         }
 
         public virtual void PutOn()
@@ -119,20 +137,6 @@ namespace Gameplay.Unit.Item
         public override void HideContextMenu()
         {
             equipmentContextMenu?.Hide();
-        }
-    }
-    
-    public abstract class EquipmentItemBuilder : ItemBuilder<EquipmentItem>
-    {
-        protected EquipmentItemBuilder(Item item) : base(item)
-        {
-        }
-
-        public EquipmentItemBuilder SetEquipmentConfig(SO_Equipment config)
-        {
-            if(item is EquipmentItem equipmentItem)
-                equipmentItem.SetEquipmentConfig(config);
-            return this;
         }
     }
 }

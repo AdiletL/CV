@@ -17,11 +17,6 @@ namespace Gameplay.Unit
         public override void Update()
         {
         }
-        public override void LateUpdate()
-        {
-            
-        }
-
     }
 
     public class UnitIdleStateBuilder : StateBuilder<UnitIdleState>

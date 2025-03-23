@@ -12,12 +12,11 @@ namespace ScriptableObjects.Unit.Item
 {
     public abstract class SO_Item : ScriptableObject
     {
-        public abstract ItemName ItemNameID { get; protected set; }
+        public abstract string ItemName { get; protected set; }
         [field: SerializeField, PreviewField] public Sprite Icon { get; private set; }
         [field: SerializeField] public AssetReferenceT<GameObject> Prefab { get; private set; }
         [field: SerializeField] public ItemCategory ItemCategoryID { get; private set; }
         [field: SerializeField] public ItemBehaviour ItemBehaviourID { get; private set; }
-        [field: SerializeField] public InputType BlockInputTypeID { get; private set; }
         [field: SerializeField] public float Cooldown { get; private set; }
         [field: SerializeField] public float TimerCast { get; private set; }
         

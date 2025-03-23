@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Effect;
+using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
 
@@ -9,14 +10,19 @@ namespace Gameplay.Unit.Item
     {
         [Inject] private DiContainer diContainer;
         
-        public override ItemName ItemNameID { get; protected set; } = ItemName.MadnessMask;
+        public override ItemUsageType ItemUsageTypeID { get; } = ItemUsageType.Nothing;
+        public override string ItemName { get; protected set; } = nameof(MadnessMaskItem);
 
         private VampirismEffect vampirismEffect;
         private VampirismConfig vampirismConfig;
         
-        private static readonly string ID = ItemName.MadnessMask.ToString();
+        private static readonly string ID = nameof(MadnessMaskItem);
         
-        public void SetVampirismConfig(VampirismConfig vampirismConfig) => this.vampirismConfig = vampirismConfig;
+
+        public MadnessMaskItem(SO_MadnessMaskItem so_MadnessMaskItem) : base(so_MadnessMaskItem)
+        {
+            vampirismConfig = so_MadnessMaskItem.EffectConfigData.VampirismConfig;
+        }
 
         public override void Initialize()
         {
@@ -25,14 +31,7 @@ namespace Gameplay.Unit.Item
             diContainer.Inject(vampirismEffect);
             vampirismEffect.SetTarget(Owner);
         }
-
-        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
-        {
-            base.Enter(finishedCallBack, target, point);
-            if(!isActivated) return;
-            StartEffect();
-        }
-
+        
         protected override void AfterCast()
         {
             base.AfterCast();
@@ -56,20 +55,6 @@ namespace Gameplay.Unit.Item
         {
             if (Owner.TryGetComponent(out EffectHandler effectHandler))
                 effectHandler.RemoveEffects(vampirismEffect.EffectTypeID, vampirismEffect.ID);
-        }
-    }
-    
-    public class MadnessMaskItemBuilder : ItemBuilder<MadnessMaskItem>
-    {
-        public MadnessMaskItemBuilder() : base(new MadnessMaskItem())
-        {
-        }
-
-        public MadnessMaskItemBuilder SetVampirisimConfig(VampirismConfig config)
-        {
-            if(item is MadnessMaskItem madnessMask)
-                madnessMask.SetVampirismConfig(config);
-            return this;
         }
     }
 }

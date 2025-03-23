@@ -1,16 +1,15 @@
 ﻿using System;
+using Gameplay.Equipment;
+using ScriptableObjects.Unit.Item;
 using UnityEngine;
 
 namespace Gameplay.Unit.Item
 {
     public abstract class ShieldItem : EquipmentItem
     {
-        
-    }
+        public override EquipmentType EquipmentTypeID { get; protected set; } = EquipmentType.Shield;
 
-    public abstract class ShieldItemBuilder : EquipmentItemBuilder
-    {
-        protected ShieldItemBuilder(Item item) : base(item)
+        protected ShieldItem(SO_EquipmentItem so_EquipmentItem) : base(so_EquipmentItem)
         {
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Gameplay.Unit;
-using Unit;
+using ScriptableObjects.Gameplay.Equipment.Weapon;
 using UnityEngine;
 
 namespace Gameplay.Equipment.Weapon
@@ -10,11 +10,10 @@ namespace Gameplay.Equipment.Weapon
         private int ownerLayer;
         private int counterSpecialAction;
         private const int SPECIAL_ATTACK_INDEX = 2;
-        
-        public override void Initialize()
+
+        public Sword(SO_Sword so_Sword) : base(so_Sword)
         {
-            base.Initialize();
-            ownerLayer = Owner.layer;
+            
         }
 
         private GameObject FindUnitInRange()
@@ -98,13 +97,6 @@ namespace Gameplay.Equipment.Weapon
                 }
             }
             IsActivatedSpecialAction = false;
-        }
-    }
-
-    public class SwordBuilder : WeaponBuilder
-    {
-        public SwordBuilder() : base(new Sword())
-        {
         }
     }
 }

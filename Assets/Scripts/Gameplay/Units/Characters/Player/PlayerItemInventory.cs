@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay.Factory.Character.Player;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Unit.Cell;
 using Gameplay.Unit.Item;
@@ -18,17 +19,18 @@ namespace Gameplay.Unit.Character.Player
 
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
+        [SerializeField] private SO_PlayerItemUsage so_PlayerItemUsage;
         [SerializeField] private AssetReferenceGameObject uiItemInventoryPrefab;
 
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
         private PlayerBlockInput playerBlockInput;
+        private PlayerItemUsageState playerItemUsageState;
 
         private Item.Item currentSelectedItem;
         private Item.Item currentUseItem;
         private Camera baseCamera;
         private InputType selectItemBlockInput;
-        private InputType useItemBlockInput;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
@@ -42,25 +44,25 @@ namespace Gameplay.Unit.Character.Player
             return slots != null && !slots.ContainsValue(null);
         }
         
-        public bool IsNotNullItem(ItemName itemNameID)
+        public bool IsNotNullItem(string itemName)
         {
             if (slots == null) return false;
             foreach (var VARIABLE in slots.Values)
             {
                 if(VARIABLE != null && 
-                   VARIABLE.ItemNameID == itemNameID)
+                   string.Equals(VARIABLE.ItemName, itemName))
                     return true;
             }
 
             return false;
         }
 
-        public Item.Item GetItem(ItemName itemNameID)
+        public Item.Item GetItem(string itemName)
         {
             if (slots == null) return null;
             foreach (var VARIABLE in slots.Values)
             {
-                if(VARIABLE.ItemNameID == itemNameID)
+                if(string.Equals(VARIABLE.ItemName, itemName))
                     return VARIABLE;
             }
             return null;
@@ -69,14 +71,14 @@ namespace Gameplay.Unit.Character.Player
         public void Initialize()
         {
             selectItemBlockInput = so_PlayerItemInventory.SelectItemBlockInputType;
-            useItemBlockInput = so_PlayerItemInventory.UseItemBlockInputType;
             maxSlot = so_PlayerItemInventory.MaxCountItem;
-            itemHandler = GetComponent<ItemHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
             baseCamera = playerController.BaseCamera;
+            itemHandler = GetComponent<ItemHandler>();
             
             InitializeUIInventory();
             InitializeSlots();
+            InitializeItemUsageState();
         }
 
         private  void InitializeUIInventory()
@@ -96,6 +98,15 @@ namespace Gameplay.Unit.Character.Player
                 slots.Add(i, null);
         }
 
+        private void InitializeItemUsageState()
+        {
+            playerController.PlayerStateFactory.SetPlayerItemUsageConfig(so_PlayerItemUsage);
+            playerItemUsageState = (PlayerItemUsageState)playerController.PlayerStateFactory.CreateState(typeof(PlayerItemUsageState));
+            diContainer.Inject(playerItemUsageState);
+            playerItemUsageState.Initialize();
+            playerController.StateMachine.AddStates(playerItemUsageState);
+        }
+
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
         
@@ -103,7 +114,7 @@ namespace Gameplay.Unit.Character.Player
         {
             int? slotID = null;
             
-            if (!IsNotNullItem(item.ItemNameID))
+            if (!IsNotNullItem(item.ItemName))
             {
                 slotID = slots.FirstOrDefault(pair => pair.Value == null).Key;
                 if(slotID == null) return;
@@ -114,15 +125,13 @@ namespace Gameplay.Unit.Character.Player
                 slots[slotID] = item;
                 itemHandler.AddItem(item);
                 item.OnCountCooldown += OnCountCooldownItem;
-                item.OnStartedCast += OnStartedCastItem;
-                item.OnFinishedCast += OnFinishedCastItem;
                 
                 bool isSelectable = item.ItemBehaviourID != ItemBehaviour.Passive;
                 uiItemInventory.AddItem(slotID, icon, item.Amount, isSelectable, 0, 0);
             }
             else
             {
-                slotID = slots.FirstOrDefault(pair => Equals(item.ItemNameID, pair.Value.ItemNameID)).Key;
+                slotID = slots.FirstOrDefault(pair => Equals(item.ItemName, pair.Value.ItemName)).Key;
                 if(slotID == null) return;
                 
                 slots[slotID].AddAmount(item.Amount);
@@ -130,23 +139,20 @@ namespace Gameplay.Unit.Character.Player
             }
         }
 
-        public void RemoveItem(int? slotID, int amount)
+        public void RemoveItem(Item.Item item, int amount)
         {
-            if(slotID == null || amount > slots[slotID].Amount) return;
+            if(item == null || amount > item.Amount) return;
             
-            slots[slotID].RemoveAmount(amount);
-            uiItemInventory.SetAmount(slotID, slots[slotID].Amount);
+            item.RemoveAmount(amount);
+            uiItemInventory.SetAmount(item.InventorySlotID, item.Amount);
             
-            if (slots[slotID].Amount <= 0)
+            if (item.Amount <= 0)
             {
-                slots[slotID].OnCountCooldown -= OnCountCooldownItem;
-                slots[slotID].OnStartedCast -= OnStartedCastItem;
-                slots[slotID].OnFinishedCast -= OnFinishedCastItem;
+                item.OnCountCooldown -= OnCountCooldownItem;
                 
-                itemHandler.RemoveItemByID(slots[slotID].ItemNameID, slotID);
-                uiItemInventory.RemoveItem(slotID);
-                slots[slotID].RemoveStatsFromUnit();
-                slots[slotID] = null;
+                itemHandler.RemoveItemByID(item.ItemName, item.InventorySlotID);
+                uiItemInventory.RemoveItem(item.InventorySlotID);
+                item.RemoveStatsFromUnit();
             }
         }
         
@@ -157,7 +163,10 @@ namespace Gameplay.Unit.Character.Player
             {
                 switch (slots[slotID].ItemBehaviourID)
                 {
-                    case ItemBehaviour.NoTarget: slots[slotID].Enter(); break;
+                    case ItemBehaviour.NoTarget: 
+                        playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(slots[slotID]);
+                        playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
+                        break;
                     case ItemBehaviour.PointTarget: 
                     case ItemBehaviour.UnitTarget:
                         currentSelectedItem = slots[slotID]; 
@@ -186,14 +195,6 @@ namespace Gameplay.Unit.Character.Player
             ExitItem(currentSelectedItem);
             currentSelectedItem = null;
         }
-
-        private void ClearUseItem()
-        {
-            if(currentUseItem == null) return;
-            playerBlockInput.UnblockInput(slots[currentUseItem.InventorySlotID].BlockInputTypeID);
-            ExitItem(currentUseItem);
-            currentUseItem = null;
-        }
         
         private void Update()
         {
@@ -203,14 +204,6 @@ namespace Gameplay.Unit.Character.Player
             {
                 playerBlockInput.UnblockInput(selectItemBlockInput);
                 isNextFrameFromUnblockInput = false;
-            }
-            
-            if (currentUseItem != null)
-            {
-                if (Input.anyKey && playerBlockInput.IsInputBlocked(useItemBlockInput))
-                {
-                    ClearUseItem();
-                }
             }
             
             if (currentSelectedItem != null)
@@ -240,6 +233,8 @@ namespace Gameplay.Unit.Character.Player
                     !cellController.IsBlocked())
                 {
                     currentSelectedItem.Enter(point: hit.point);
+                    playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(currentSelectedItem);
+                    playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
                 }
@@ -255,26 +250,19 @@ namespace Gameplay.Unit.Character.Player
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
                     currentSelectedItem.Enter(target: characterMainController.gameObject);
+                    playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(currentSelectedItem);
+                    playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
                 }
             }
         }
-        
-        private void OnStartedCastItem(int? slotID)
+
+        public void FinishedCastItem(Item.Item item)
         {
-            if(slotID == null) return;
-            ExitItem(currentUseItem);
-            playerBlockInput.BlockInput(slots[slotID].BlockInputTypeID);
-            currentUseItem = slots[slotID];
-        }
-        private void OnFinishedCastItem(int? slotID)
-        {
-            if(slotID == null) return;
-            playerBlockInput.UnblockInput(slots[slotID].BlockInputTypeID);
-            currentUseItem = null;
-            if(!(slots[slotID] is EquipmentItem))
-                RemoveItem(slotID, 1);
+            if(item == null) return;
+            if(!(item is EquipmentItem))
+                RemoveItem(item, 1);
         }
         private void ExitItem(Item.Item item)
         {

@@ -1,15 +1,14 @@
-﻿namespace Gameplay.Unit.Item
+﻿using ScriptableObjects.Unit.Item;
+
+namespace Gameplay.Unit.Item
 {
     public class NormalSwordItem : SwordItem
     {
-        public override ItemName ItemNameID { get; protected set; } = ItemName.NormalSword;
-
-    }
-    
-    public class NormalSwordItemBuilder : SwordItemBuilder
-    {
-        public NormalSwordItemBuilder() : base(new NormalSwordItem())
+        public override string ItemName { get; protected set; } = nameof(NormalSwordItem);
+        public NormalSwordItem(SO_NormalSwordItem so_EquipmentItem) : base(so_EquipmentItem)
         {
         }
+
     }
+
 }

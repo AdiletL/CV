@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Unit.Portal;
+using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Zenject;
@@ -10,22 +11,27 @@ namespace Gameplay.Unit.Item
     {
         [Inject] private PortalController[] startPortals;
 
-        public override ItemName ItemNameID { get; protected set; } = ItemName.TeleportationScroll;
+        public override ItemUsageType ItemUsageTypeID { get; } = ItemUsageType.ApplyToPoint;
+        public override string ItemName { get; protected set; } = nameof(TeleportationScrollItem);
         
-        private AssetReferenceT<GameObject> portalObject;
+        private AssetReferenceT<GameObject> portalObjectPrefab;
         private Camera baseCamera;
         private Vector3? spawnPosition;
         private string endPortalID;
 
-        public void SetPortalObject(AssetReferenceT<GameObject> portalObject) => this.portalObject = portalObject;
-        public void SetEndPortalID(string id) => this.endPortalID = id;
+
+        public TeleportationScrollItem(SO_TeleportationScrollItem so_TeleportationScrollItem) : base(so_TeleportationScrollItem)
+        {
+            portalObjectPrefab = so_TeleportationScrollItem.PortalObject;
+            endPortalID = so_TeleportationScrollItem.EndPortalID.ID;
+        }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
         {
             base.Enter(finishedCallBack, target, point);
             if (!isActivated || point == null) return;
             spawnPosition = point;
-            StartEffect();
+            //StartEffect();
         }
 
         protected override void AfterCast()
@@ -37,7 +43,7 @@ namespace Gameplay.Unit.Item
         
         private void CreateTeleport()
         {
-            var newTeleportObject = Addressables.InstantiateAsync(portalObject).WaitForCompletion();
+            var newTeleportObject = Addressables.InstantiateAsync(portalObjectPrefab).WaitForCompletion();
             newTeleportObject.transform.position = spawnPosition.Value;
             
             var portal = newTeleportObject.GetComponent<PortalController>();
@@ -52,28 +58,6 @@ namespace Gameplay.Unit.Item
             }
             portal.Initialize();
             portal.Appear();
-        }
-    }
-    
-    
-    public class TeleportationScrollItemBuilder : ItemBuilder<TeleportationScrollItem>
-    {
-        public TeleportationScrollItemBuilder() : base(new TeleportationScrollItem())
-        {
-        }
-
-        public TeleportationScrollItemBuilder SetPortalObject(AssetReferenceT<GameObject> portalObject)
-        {
-            if(item is TeleportationScrollItem teleportationScroll)
-                teleportationScroll.SetPortalObject(portalObject);
-            return this;
-        }
-        
-        public TeleportationScrollItemBuilder SetEndPortalID(string id)
-        {
-            if(item is TeleportationScrollItem teleportationScroll)
-                teleportationScroll.SetEndPortalID(id);
-            return this;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Calculate;
 using Gameplay.Effect;
 using Gameplay.UI.ScreenSpace;
+using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
 using ValueType = Calculate.ValueType;
@@ -19,10 +20,10 @@ namespace Gameplay.Unit.Item
         
         public int? InventorySlotID { get; protected set; }
         public GameObject Owner { get; protected set; }
-        public abstract ItemName ItemNameID { get; protected set; }
+        public abstract string ItemName { get; protected set; }
         public ItemCategory ItemCategoryID { get; protected set; }
         public ItemBehaviour ItemBehaviourID { get; protected set; }
-        public InputType BlockInputTypeID { get; protected set; }
+        public abstract ItemUsageType ItemUsageTypeID { get; }
         public Action FinishedCallBack { get; protected set; }
         public int Amount { get; protected set; }
         public float Cooldown { get; protected set; }
@@ -31,22 +32,22 @@ namespace Gameplay.Unit.Item
         public StatConfig[] Stats { get; protected set; }
         public List<Ability.Ability> Abilities { get; protected set; }
 
+        protected SO_Item so_Item;
         private float countCooldown;
         private float countTimerCast;
         protected bool isActivated;
         protected bool isCasting;
 
         private List<float> addedStatValues;
+
+        public Item(SO_Item so_Item)
+        {
+            this.so_Item = so_Item;
+        }
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetOwner(GameObject gameObject) => this.Owner = gameObject;
-        public void SetItemCategory(ItemCategory itemCategory) => ItemCategoryID = itemCategory;
-        public void SetItemBehaviour(ItemBehaviour itemBehaviour) => ItemBehaviourID = itemBehaviour;
-        public void SetCooldown(float cooldown) => this.Cooldown = cooldown;
-        public void SetTimerCast(float timerCast) => this.TimerCast = timerCast;
         public void SetAmountItem(int amount) => Amount = amount;
-        public void SetBlockInputType(InputType inputType) => BlockInputTypeID = inputType;
-
         public void SetStats(StatConfig[] stats)
         {
             Stats = new StatConfig[stats.Length];
@@ -55,10 +56,13 @@ namespace Gameplay.Unit.Item
                 Stats[i] = stats[i];
             }
         }
-        
 
         public virtual void Initialize()
         {
+            ItemCategoryID = so_Item.ItemCategoryID;
+            ItemBehaviourID = so_Item.ItemBehaviourID;
+            Cooldown = so_Item.Cooldown;
+            TimerCast = so_Item.TimerCast;
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -81,10 +85,9 @@ namespace Gameplay.Unit.Item
             isActivated = true;
         }
         
-        public void StartEffect()
+        public virtual void StartEffect()
         {
-            StartCooldown();
-            StartCasting();
+            if(isActivated) StartCasting();
         }
         
         public virtual void Update()
@@ -130,6 +133,7 @@ namespace Gameplay.Unit.Item
         
         protected virtual void AfterCast()
         {
+            StartCooldown();
             isCasting = false;
             uiCastTimer.Hide();
             FinishedCallBack?.Invoke();
@@ -142,15 +146,16 @@ namespace Gameplay.Unit.Item
             addedStatValues.Clear();
             
             var unitStatController = Owner.GetComponent<UnitStatsController>();
+            Stat stat = null;
             float result = 0;
             foreach (var config in Stats)
             {
+                stat = unitStatController.GetStat(config.StatTypeID);
                 foreach (var statValue in config.StatValuesConfig)
                 {
-                    var unitStat = unitStatController.GetStat(config.StatTypeID);
                     var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
-                    result = gameValue.Calculate(unitStat.GetValue(statValue.StatValueTypeID));
-                    unitStat.AddValue(result, statValue.StatValueTypeID); 
+                    result = gameValue.Calculate(stat.GetValue(statValue.StatValueTypeID));
+                    stat.AddValue(result, statValue.StatValueTypeID); 
                     addedStatValues.Add(result);
                 }
             }
@@ -161,13 +166,14 @@ namespace Gameplay.Unit.Item
         public virtual void RemoveStatsFromUnit()
         {
             var unitStatController = Owner.GetComponent<UnitStatsController>();
+            Stat stat = null;
             int index = 0;
             foreach (var config in Stats)
             {
-                foreach (var VARIABLE in config.StatValuesConfig)
+                stat = unitStatController.GetStat(config.StatTypeID);
+                foreach (var statValue in config.StatValuesConfig)
                 {
-                    var unitStat = unitStatController.GetStat(config.StatTypeID);
-                    unitStat.RemoveValue(addedStatValues[index], VARIABLE.StatValueTypeID);
+                    stat.RemoveValue(addedStatValues[index], statValue.StatValueTypeID);
                     index++;
                 }
             }
@@ -209,57 +215,6 @@ namespace Gameplay.Unit.Item
         public virtual void HideContextMenu()
         {
             
-        }
-    }
-    
-    public abstract class ItemBuilder<T> where T : IItem
-    {
-        protected Item item;
-
-        public ItemBuilder(Item item)
-        {
-            this.item = item;
-        }
-
-        public ItemBuilder<T> SetGameObject(GameObject gameObject)
-        {
-            item.SetOwner(gameObject);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetItemCategory(ItemCategory itemCategoryID)
-        {
-            item.SetItemCategory(itemCategoryID);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetItemBehaviour(ItemBehaviour itemBehaviourID)
-        {
-            item.SetItemBehaviour(itemBehaviourID);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetBlockInput(InputType inputType)
-        {
-            item.SetBlockInputType(inputType);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetCooldown(float cooldown)
-        {
-            item.SetCooldown(cooldown);
-            return this;
-        }
-        
-        public ItemBuilder<T> SetTimerCast(float timerCast)
-        {
-            item.SetTimerCast(timerCast);
-            return this;
-        }
-
-        public Item Build()
-        {
-            return item;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Gameplay.Manager;
 using Gameplay.Weapon.Projectile;
+using ScriptableObjects.Gameplay.Equipment.Weapon;
 using UnityEngine;
 using Zenject;
 
@@ -11,6 +12,11 @@ namespace Gameplay.Equipment.Weapon
         [Inject] private PoolManager pool;
         
         private Transform pointSpawnProjectile;
+
+        public Bow(SO_Bow so_Bow) : base(so_Bow)
+        {
+            
+        }
 
         public override void Initialize()
         {
@@ -28,13 +34,6 @@ namespace Gameplay.Equipment.Weapon
             arrow.SetDamageable(DamageData);
             arrow.Initialize();
             arrow.ClearValues();
-        }
-    }
-    
-    public class BowBuilder : WeaponBuilder
-    {
-        public BowBuilder() : base(new Bow())
-        {
         }
     }
 }

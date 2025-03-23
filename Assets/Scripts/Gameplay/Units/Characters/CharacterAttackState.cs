@@ -126,12 +126,7 @@ namespace Gameplay.Unit.Character
         {
 
         }
-
-        public override void LateUpdate()
-        {
-            
-        }
-
+        
         public override void Exit()
         {
             base.Exit();

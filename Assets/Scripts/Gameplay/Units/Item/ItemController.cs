@@ -51,7 +51,7 @@ namespace Gameplay.Unit.Item
             if (gameObject.TryGetComponent(out PlayerItemInventory playerInventory))
             {
                 if (!playerInventory.IsFullInventory() || 
-                    playerInventory.IsNotNullItem(so_Item.ItemNameID))
+                    playerInventory.IsNotNullItem(so_Item.ItemName))
                 {
                     var item = inventoryItemFactory.CreateItem(so_Item);
                     diContainer.Inject(item);

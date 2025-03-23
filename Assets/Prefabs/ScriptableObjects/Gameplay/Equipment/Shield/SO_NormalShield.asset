@@ -13,9 +13,14 @@ MonoBehaviour:
   m_Name: SO_NormalShield
   m_EditorClassIdentifier: 
   <EquipmentPrefab>k__BackingField:
-    m_AssetGUID: 
+    m_AssetGUID: 5b0deab5d8959534d8b3525ecbfd27ed
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  <StatConfigs>k__BackingField: []
+  <StatConfigs>k__BackingField:
+  - StatTypeID: 10
+    StatValuesConfig:
+    - StatValueTypeID: 1
+      ValueTypeID: 0
+      Value: -0.2

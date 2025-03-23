@@ -11,8 +11,6 @@ namespace Gameplay.Unit.Character.Player
         
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
         private PlayerMoveState playerMoveState;
-        private DamageResistanceConfig damageResistanceConfig;
-        private DamageResistanceAbility damageResistanceAbility;
         private CharacterAnimation characterAnimation;
         private AnimationClip blockClip;
         
@@ -23,27 +21,13 @@ namespace Gameplay.Unit.Character.Player
         private const int ANIMATION_LAYER = 3;
         
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        public void SetDamageResistanceAbilityConfig(DamageResistanceConfig config) => this.damageResistanceConfig = config;
-
-        private DamageResistanceAbility CreateBlockPhysicalDamage()
-        {
-            return (DamageResistanceAbility)new DamageResistanceAbilityBuilder()
-                .SetStatConfigs(damageResistanceConfig.StatConfigs)
-                .SetBlockedInputType(damageResistanceConfig.SO_BaseAbilityConfig.BlockedInputType)
-                .SetGameObject(gameObject)
-                .SetAbilityBehaviour(damageResistanceConfig.SO_BaseAbilityConfig.AbilityBehaviour)
-                .SetCooldown(damageResistanceConfig.Cooldown)
-                .Build();
-        }
+        
 
         public override void Initialize()
         {
             base.Initialize();
             so_PlayerSpecialAction = (SO_PlayerSpecialAction)so_CharacterSpecialAction;
             
-            damageResistanceAbility = CreateBlockPhysicalDamage();
-            diContainer.Inject(damageResistanceAbility);
-            damageResistanceAbility.Initialize();
             blockClip = so_PlayerSpecialAction.AbilityConfigData.DamageResistanceConfig.Clip;
             characterAnimation.AddClip(blockClip);
         }
@@ -52,7 +36,6 @@ namespace Gameplay.Unit.Character.Player
         {
             base.Enter();
             IsCanExit = false;
-            damageResistanceAbility.Enter();
             
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
@@ -67,25 +50,13 @@ namespace Gameplay.Unit.Character.Player
             playerMoveState.RotationSpeedStat.RemoveCurrentValue(changedRotateSpeedValue);
         }
 
-        public override void Update()
-        {
-            base.Update();
-            damageResistanceAbility.Update();
-        }
-        public override void LateUpdate()
-        {
-            base.LateUpdate();
-            damageResistanceAbility.LateUpdate();
-        }
-
         public override void Exit()
         {
-            damageResistanceAbility.Exit();
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
             
-            playerMoveState?.MovementSpeedStat.AddCurrentValue(changedMovementSpeedValue);
-            playerMoveState?.RotationSpeedStat.AddCurrentValue(changedRotateSpeedValue);
+            //playerMoveState?.MovementSpeedStat.AddCurrentValue(changedMovementSpeedValue);
+            //playerMoveState?.RotationSpeedStat.AddCurrentValue(changedRotateSpeedValue);
             base.Exit();
         }
     }
@@ -95,13 +66,7 @@ namespace Gameplay.Unit.Character.Player
         public PlayerSpecialActionStateBuilder() : base(new PlayerSpecialActionState())
         {
         }
-
-        public PlayerSpecialActionStateBuilder SetBlockPhysicalDamageConfig(DamageResistanceConfig config)
-        {
-            if(state is PlayerSpecialActionState playerSpecialActionState)
-                playerSpecialActionState.SetDamageResistanceAbilityConfig(config);
-            return this;
-        }
+        
         public PlayerSpecialActionStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             if(state is PlayerSpecialActionState playerSpecialActionState)

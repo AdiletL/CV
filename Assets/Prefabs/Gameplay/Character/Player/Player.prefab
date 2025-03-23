@@ -274,7 +274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &469260294878320779
 Transform:
   m_ObjectHideFlags: 0
@@ -3577,7 +3577,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  so_NormalSword: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
+  soNormalSwordItem: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
   currentStateCategory: 0
   currentStateName: 
 --- !u!114 &1634422324230795542
@@ -3857,6 +3857,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 6200176588022165938}
   so_PlayerItemInventory: {fileID: 11400000, guid: 3c3cdc11d4faae948a1db14046bae835, type: 2}
+  so_PlayerItemUsage: {fileID: 11400000, guid: 6e9f91b6a239d5244bb3a53d79b827a2, type: 2}
   uiItemInventoryPrefab:
     m_AssetGUID: 69c3b8dfa5cd73147bcfeac948d4cdbd
     m_SubObjectName: 

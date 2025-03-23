@@ -20,11 +20,6 @@ namespace Gameplay.Unit.Character
             
         }
 
-        public override void LateUpdate()
-        {
-            
-        }
-
         public virtual void Execute()
         {
             

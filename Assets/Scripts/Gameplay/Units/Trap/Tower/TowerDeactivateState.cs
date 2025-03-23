@@ -10,9 +10,5 @@ namespace Gameplay.Unit.Trap.Tower
         {
         }
 
-        public override void LateUpdate()
-        {
-        }
-        
     }
 }

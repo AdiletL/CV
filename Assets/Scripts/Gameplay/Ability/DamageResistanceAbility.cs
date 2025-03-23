@@ -12,19 +12,25 @@ namespace Gameplay.Ability
     {
         public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.DamageResistance;
 
-        private UnitStatsController _unitStatsController;
+        private DamageResistanceConfig config;
+        private UnitStatsController unitStatsController;
         private StatConfig[] statConfigs;
 
         private bool isUsed;
         
         private List<float> addedStatValues = new List<float>();
 
-        public void SetStatConfigs(StatConfig[] statConfigs) => this.statConfigs = statConfigs;
+
+        public DamageResistanceAbility(DamageResistanceConfig config) : base(config)
+        {
+            this.config = config;
+        }
 
         public override void Initialize()
         {
             base.Initialize();
-            _unitStatsController = GameObject.GetComponent<UnitStatsController>();
+            unitStatsController = GameObject.GetComponent<UnitStatsController>();
+            statConfigs = config.StatConfigs;
         }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -46,30 +52,14 @@ namespace Gameplay.Ability
             addedStatValues.Clear();
             Stat stat = null;
             float result = 0;
-            for (int i = 0; i < statConfigs.Length; i++)
+            foreach (var statConfig in statConfigs)
             {
-                stat = _unitStatsController.GetStat(statConfigs[i].StatTypeID);
-                for (int j = 0; j < statConfigs[i].StatValuesConfig.Length; j++)
+                stat = unitStatsController.GetStat(statConfig.StatTypeID);
+                foreach (var statValue in statConfig.StatValuesConfig)
                 {
-                    var statValue = statConfigs[i].StatValuesConfig[j];
                     var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
-                    
-                    switch (statValue.StatValueTypeID)
-                    {
-                        case StatValueType.Current: 
-                            result = gameValue.Calculate(stat.CurrentValue);
-                            stat.AddCurrentValue(result);
-                            break;
-                        case StatValueType.Maximum:
-                            result = gameValue.Calculate(stat.MaximumValue);
-                            stat.AddMaxValue(result);
-                            break;
-                        case StatValueType.Minimum:
-                            result = gameValue.Calculate(stat.MinimumValue);
-                            stat.AddMinValue(result);
-                            break;
-                    }
-                    
+                    result = gameValue.Calculate(stat.CurrentValue);
+                    stat.AddValue(result, statValue.StatValueTypeID);
                     addedStatValues.Add(result);
                 }
             }
@@ -78,18 +68,14 @@ namespace Gameplay.Ability
         private void RemoveStats()
         {
             Stat stat = null;
-            for (int i = 0; i < statConfigs.Length; i++)
+            int index = 0;
+            foreach (var config in statConfigs)
             {
-                stat = _unitStatsController.GetStat(statConfigs[i].StatTypeID);
-                for (int j = 0; j < statConfigs[i].StatValuesConfig.Length; j++)
+                stat = unitStatsController.GetStat(config.StatTypeID);
+                foreach (var statValue in config.StatValuesConfig)
                 {
-                    var statValue = statConfigs[i].StatValuesConfig[j];
-                    switch (statValue.StatValueTypeID)
-                    {
-                        case StatValueType.Current: stat.RemoveCurrentValue(addedStatValues[i]); break;
-                        case StatValueType.Maximum: stat.RemoveMaxValue(addedStatValues[i]); break;
-                        case StatValueType.Minimum: stat.RemoveMinValue(addedStatValues[i]); break;
-                    }
+                    stat.RemoveValue(addedStatValues[index], statValue.StatValueTypeID);
+                    index++;
                 }
             }
         }
@@ -108,19 +94,5 @@ namespace Gameplay.Ability
     {
         public StatConfig[] StatConfigs;
         public AnimationClip Clip;
-    }
-    
-    public class DamageResistanceAbilityBuilder : AbilityBuilder
-    {
-        public DamageResistanceAbilityBuilder() : base(new DamageResistanceAbility())
-        {
-        }
-
-        public DamageResistanceAbilityBuilder SetStatConfigs(StatConfig[] configs)
-        {
-            if (ability is DamageResistanceAbility blockPhysicalDamage)
-                blockPhysicalDamage.SetStatConfigs(configs);
-            return this;
-        }
     }
 }

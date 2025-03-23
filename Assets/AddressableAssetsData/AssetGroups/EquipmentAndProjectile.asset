@@ -10,13 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: WeaponAndProjectile
+  m_Name: EquipmentAndProjectile
   m_EditorClassIdentifier: 
-  m_GroupName: WeaponAndProjectile
+  m_GroupName: EquipmentAndProjectile
   m_GUID: 5828f45b4aedcf244b074e9e3ae6626e
   m_SerializeEntries:
   - m_GUID: 3497c4e51618c62488a2efea667beab7
     m_Address: NormalSword
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b0deab5d8959534d8b3525ecbfd27ed
+    m_Address: NormalShield
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

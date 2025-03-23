@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Calculate;
+using Gameplay.Unit;
 using ScriptableObjects.Gameplay.Equipment;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -27,15 +28,19 @@ namespace Gameplay.Equipment
         private List<float> addedStats;
         
         public GameObject Owner { get; protected set; }
+
+
+        public Equipment(SO_Equipment so_Equipment)
+        {
+            this.so_Equipment = so_Equipment;   
+        }
         
         public void SetOwner(GameObject gameObject)
         {
             this.Owner = gameObject;
             ownerLayer = Owner.layer;
+            ownerCenter = Owner.GetComponent<UnitCenter>().Center;
         }
-
-        public void SetConfig(SO_Equipment so_Equipment) => this.so_Equipment = so_Equipment;
-        public void SetOwnerCenter(Transform ownerCenter) => this.ownerCenter = ownerCenter;
 
         public virtual void Initialize()
         {
@@ -98,26 +103,7 @@ namespace Gameplay.Equipment
             if(!parent) return;
             equipment.transform.localPosition = Vector3.zero;
             equipment.transform.localRotation = Quaternion.identity;
-        }
-    }
-
-    public abstract class EquipmentBuilder
-    {
-        protected Equipment equipment;
-
-        public EquipmentBuilder(Equipment equipment)
-        {
-            this.equipment = equipment;
-        }
-
-        public EquipmentBuilder SetConfig(SO_Equipment so_Equipment)
-        {
-            equipment.SetConfig(so_Equipment);
-            return this;
-        }
-        public Equipment Build()
-        {
-            return equipment;
+            equipment.transform.localScale = Vector3.one;
         }
     }
 }

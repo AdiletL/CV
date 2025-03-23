@@ -45,14 +45,14 @@ namespace Gameplay.Unit.Character.Player
         [Space] 
         [SerializeField] private AssetReferenceGameObject uiPortraitPrefab;
         
+        [FormerlySerializedAs("so_NormalSword")]
         [Space]
-        [SerializeField] private SO_NormalSword so_NormalSword;
+        [SerializeField] private SO_NormalSwordItem soNormalSwordItem;
         
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
 
-        private PlayerStateFactory playerStateFactory;
         private PlayerItemInventory playerItemInventory;
         private PlayerAbilityInventory playerAbilityInventory;
         private PlayerKinematicControl playerKinematicControl;
@@ -68,6 +68,7 @@ namespace Gameplay.Unit.Character.Player
         private CharacterAnimation characterAnimation;
         private UnitTransformSync unitTransformSync;
 
+        public PlayerStateFactory PlayerStateFactory { get; private set; }
         public PlayerBlockInput PlayerBlockInput { get; private set; }
         public Camera BaseCamera { get; private set; }
         
@@ -81,7 +82,7 @@ namespace Gameplay.Unit.Character.Player
                 .SetConfig(so_PlayerControlDesktop)
                 .SetPhotonView(photonView)
                 .SetPlayerController(this)
-                .SetPlayerStateFactory(playerStateFactory)
+                .SetPlayerStateFactory(PlayerStateFactory)
                 .SetStateMachine(this.StateMachine)
                 .SetGameObject(gameObject)
                 .Build();
@@ -91,6 +92,7 @@ namespace Gameplay.Unit.Character.Player
         {
             return (PlayerStateFactory)new PlayerStateFactoryBuilder()
                 .SetUnitRenderer(unitRenderer)
+                .SetPlayerItemInventory(GetComponentInUnit<PlayerItemInventory>())
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(BaseCamera)
@@ -146,8 +148,8 @@ namespace Gameplay.Unit.Character.Player
             diContainer.Inject(playerEquipmentController);
             playerEquipmentController.Initialize();
             
-            playerStateFactory = CreatePlayerStateFactory();
-            diContainer.Inject(playerStateFactory);
+            PlayerStateFactory = CreatePlayerStateFactory();
+            diContainer.Inject(PlayerStateFactory);
             
             playerUI = GetComponentInUnit<PlayerUI>();
             diContainer.Inject(playerUI);
@@ -156,15 +158,15 @@ namespace Gameplay.Unit.Character.Player
 
         protected override void CreateStates()
         {
-            var idleState = playerStateFactory.CreateState(typeof(PlayerIdleState));
+            var idleState = PlayerStateFactory.CreateState(typeof(PlayerIdleState));
             diContainer.Inject(idleState);
             StateMachine.AddStates(idleState);
             
-            var attackState = playerStateFactory.CreateState(typeof(PlayerAttackState));
+            var attackState = PlayerStateFactory.CreateState(typeof(PlayerAttackState));
             diContainer.Inject(attackState);
             StateMachine.AddStates(attackState);
             
-            var moveState = playerStateFactory.CreateState(typeof(PlayerMoveState));
+            var moveState = PlayerStateFactory.CreateState(typeof(PlayerMoveState));
             diContainer.Inject(moveState);
             StateMachine.AddStates(moveState);
         }
@@ -276,13 +278,13 @@ namespace Gameplay.Unit.Character.Player
         {
             if (!photonView.IsMine) return;
             
-            var item = inventoryItemFactory.CreateItem(so_NormalSword);
+            var item = inventoryItemFactory.CreateItem(soNormalSwordItem);
             diContainer.Inject(item);
             item.SetOwner(gameObject);
             item.SetAmountItem(1);
-            item.SetStats(so_NormalSword.UnitStatsConfigs);
+            item.SetStats(soNormalSwordItem.UnitStatsConfigs);
             item.Initialize();
-            playerItemInventory.AddItem(item, so_NormalSword.Icon);
+            playerItemInventory.AddItem(item, soNormalSwordItem.Icon);
             var equipmentItem = (EquipmentItem)item;
         }
         

@@ -94,11 +94,6 @@ namespace Gameplay.Unit.Character.Player
 
         UpdatePath();
         ExecuteMovement();
-    }
-
-    public override void LateUpdate()
-    {
-        base.LateUpdate();
         CheckEnemy();
     }
 

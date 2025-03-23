@@ -21,9 +21,6 @@ namespace Gameplay.Unit.Character
         {
         }
 
-        public override void LateUpdate()
-        {
-        }
     }
     
     public class CharacterJumpStateBuilder : StateBuilder<CharacterJumpState>

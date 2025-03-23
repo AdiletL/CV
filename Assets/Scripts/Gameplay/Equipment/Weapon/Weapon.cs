@@ -25,6 +25,11 @@ namespace Gameplay.Equipment.Weapon
         
         public int SpecialActionIndex { get; protected set; }
         public bool IsActivatedSpecialAction { get; protected set; }
+
+        public Weapon(SO_Weapon so_Weapon) : base(so_Weapon)
+        {
+            
+        }
         
         public void SetEnemyLayer(LayerMask layer) => enemyLayer = layer;
         public void SetOwnerDamageStat(Stat damageStat) => this.OwnerDamageStat = damageStat;
@@ -44,12 +49,5 @@ namespace Gameplay.Equipment.Weapon
         public void SetTarget(GameObject target) => currentTarget = target;
 
         public abstract void ApplyDamage();
-    }
-
-    public abstract class WeaponBuilder : EquipmentBuilder
-    {
-        protected WeaponBuilder(Equipment equipment) : base(equipment)
-        {
-        }
     }
 }

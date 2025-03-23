@@ -11,10 +11,6 @@ namespace Gameplay.Unit.Character
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         
-        public override void LateUpdate()
-        {
-            
-        }
         public override void Update()
         {
         }

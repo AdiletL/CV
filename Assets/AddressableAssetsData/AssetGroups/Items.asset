@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c76f8e45c44534d4cabac091871d09ad
+    m_Address: NormalShieldItem
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f9b6aaf698e42464e855462214230e39
     m_Address: SpawPortalItem
     m_ReadOnly: 0

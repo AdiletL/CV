@@ -44,12 +44,6 @@ namespace Gameplay.Unit.Trap.Tower
             Attack();
         }
 
-        public override void LateUpdate()
-        {
-            
-        }
-
-
         public override void Attack()
         {
             if (!isAttack) return;

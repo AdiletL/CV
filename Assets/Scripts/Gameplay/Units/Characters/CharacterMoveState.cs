@@ -59,11 +59,6 @@ namespace Gameplay.Unit.Character
             
         }
 
-        public override void LateUpdate()
-        {
-            
-        }
-
         protected void PlayAnimation()
         {
             UpdateDurationAnimation();

@@ -13,10 +13,10 @@ public interface IItem
     
     public int? InventorySlotID { get; }
     public GameObject Owner { get; }
-    public ItemName ItemNameID { get; }
+    public string ItemName { get; }
     public ItemCategory ItemCategoryID { get; }
     public ItemBehaviour ItemBehaviourID { get; }
-    public InputType BlockInputTypeID { get; }
+    public ItemUsageType ItemUsageTypeID { get; }
     public Action FinishedCallBack { get; }
     public int Amount { get; }
     public float Cooldown { get; }

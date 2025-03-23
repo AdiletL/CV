@@ -136,8 +136,10 @@ namespace Gameplay.Unit
             allClips.Remove(clip);
         }
 
-        public void ExitAnimation(int layer, float transitionDuration = .1f)
+        public void ExitAnimation(int layer = 0, float transitionDuration = .1f)
         {
+            currentClip = null;
+            currentSpeed = 0;
             animator.CrossFadeInFixedTime(EMPTY_ANIMATION_NAME, transitionDuration, layer);
         }
     }
