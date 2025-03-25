@@ -55,14 +55,9 @@ namespace Gameplay.Ability
             else
             {
                 moveControl.ClearVelocity();
+                isStartEffect = false;
                 Exit();
             }
-        }
-
-        public override void Exit()
-        {
-            base.Exit();
-            isStartEffect = false;
         }
     }
     

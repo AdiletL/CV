@@ -83,7 +83,6 @@ namespace Gameplay.Unit.Item
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
-            Debug.Log(isActivated);
         }
         
         public virtual void StartEffect()

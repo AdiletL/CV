@@ -69,8 +69,7 @@ namespace Gameplay.Unit.Character
         public override void Exit()
         {
             if(!IsActive) return;
-            currentAbility = null;
-            characterAnimation.ExitAnimation();
+            ExitCurrentAbility();
             base.Exit();
         }
 
@@ -78,10 +77,9 @@ namespace Gameplay.Unit.Character
         {
             countDurationAnimation = 0;
             momentEvents?.Clear();
-            
         }
 
-        private void ExitCurrentItem()
+        private void ExitCurrentAbility()
         {
             characterAnimation.ExitAnimation();
             currentAbility?.Exit();
@@ -91,7 +89,7 @@ namespace Gameplay.Unit.Character
         public void SetAbility(Ability.Ability ability)
         {
             if(currentAbility != ability)
-                ExitCurrentItem();
+                ExitCurrentAbility();
             ClearValues();
             currentAbility = ability;
             UpdateAnimation();

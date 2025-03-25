@@ -71,8 +71,7 @@ namespace Gameplay.Unit.Character
         public override void Exit()
         {
             if(!IsActive) return;
-            characterAnimation.ExitAnimation();
-            currentItem = null;
+            ExitCurrentItem();
             base.Exit();
         }
 
@@ -80,7 +79,6 @@ namespace Gameplay.Unit.Character
         {
             countDurationAnimation = 0;
             momentEvents?.Clear();
-            
         }
 
         private void ExitCurrentItem()

@@ -165,7 +165,6 @@ namespace Gameplay.Unit.Character.Player
                 {
                     case ItemBehaviour.NoTarget: 
                         slots[slotID].Enter();
-                        Debug.Log("a");
                         playerItemUsageState.SetItem(slots[slotID]);
                         playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                         break;
