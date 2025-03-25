@@ -164,8 +164,10 @@ namespace Gameplay.Unit.Character.Player
                 switch (slots[slotID].ItemBehaviourID)
                 {
                     case ItemBehaviour.NoTarget: 
-                        playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(slots[slotID]);
-                        playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
+                        slots[slotID].Enter();
+                        Debug.Log("a");
+                        playerItemUsageState.SetItem(slots[slotID]);
+                        playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                         break;
                     case ItemBehaviour.PointTarget: 
                     case ItemBehaviour.UnitTarget:
@@ -233,8 +235,8 @@ namespace Gameplay.Unit.Character.Player
                     !cellController.IsBlocked())
                 {
                     currentSelectedItem.Enter(point: hit.point);
-                    playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(currentSelectedItem);
-                    playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
+                    playerItemUsageState.SetItem(currentSelectedItem);
+                    playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
                 }
@@ -250,8 +252,8 @@ namespace Gameplay.Unit.Character.Player
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
                     currentSelectedItem.Enter(target: characterMainController.gameObject);
-                    playerController.StateMachine.GetState<PlayerItemUsageState>()?.SetItem(currentSelectedItem);
-                    playerController.StateMachine.ExitOtherStates(typeof(PlayerItemUsageState));
+                    playerItemUsageState.SetItem(currentSelectedItem);
+                    playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
                 }

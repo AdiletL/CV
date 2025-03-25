@@ -72,7 +72,6 @@ namespace Gameplay.Unit.Item
                 currentItems.Add(item.ItemName, new List<Item>());
             
             OnUpdate += item.Update;
-            OnLateUpdate += item.LateUpdate;
             
             currentItems[item.ItemName].Add(item);
             AddAbilities(item.Abilities, item.InventorySlotID);
@@ -87,7 +86,6 @@ namespace Gameplay.Unit.Item
                     if (currentItems[itemName][i].InventorySlotID != inventorySlotID) continue;
                     
                     OnUpdate -= currentItems[itemName][i].Update;
-                    OnLateUpdate -= currentItems[itemName][i].LateUpdate;
                     currentItems[itemName][i].Exit();
                     
                     RemoveAbilitiesByID(currentItems[itemName][i].Abilities, inventorySlotID);

@@ -20,7 +20,6 @@ namespace Gameplay.Ability
         public GameObject GameObject { get; protected set; }
         public abstract AbilityType AbilityTypeID { get; protected set; }
         public AbilityBehaviour AbilityBehaviourID { get; protected set; }
-        public InputType BlockedInputTypeID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
         public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
@@ -43,7 +42,6 @@ namespace Gameplay.Ability
 
         public virtual void Initialize()
         {
-            BlockedInputTypeID = abilityConfig.SO_BaseAbilityConfig.BlockedInputType;
             AbilityBehaviourID = abilityConfig.SO_BaseAbilityConfig.AbilityBehaviour;
             Cooldown = abilityConfig.Cooldown;
             TimerCast = abilityConfig.TimerCast;
@@ -76,9 +74,9 @@ namespace Gameplay.Ability
             isActivated = true;
         }
 
-        protected void StartEffect()
+        public virtual void StartEffect()
         {
-            if (isCasting) Exit();
+            if (!isActivated) return;
             StartCooldown();
             StartCasting();
         }
@@ -102,11 +100,6 @@ namespace Gameplay.Ability
                     AfterCast();
                 }
             }
-        }
-
-        public virtual void LateUpdate()
-        {
-            
         }
 
         private void StartCooldown()

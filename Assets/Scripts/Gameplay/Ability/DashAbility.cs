@@ -12,6 +12,7 @@ namespace Gameplay.Ability
         private float duration;
         private float speed;
         private float dashTimer;
+        private bool isStartEffect;
 
         public DashAbility(DashConfig dashConfig) : base(dashConfig)
         {
@@ -27,17 +28,20 @@ namespace Gameplay.Ability
             speed = dashConfig.Speed;
         }
 
-        public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
+        public override void StartEffect()
         {
-            base.Enter(finishedCallBack, target, point);
-            if(!isActivated) return;
-            dashTimer = duration;
-            StartEffect();
-        }
-        
-        public override void LateUpdate()
-        {
+            base.StartEffect();
             if (isActivated)
+            {
+                dashTimer = duration;
+                isStartEffect = true;
+            }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if(isStartEffect)
                 DashUpdate();
         }
 
@@ -53,6 +57,12 @@ namespace Gameplay.Ability
                 moveControl.ClearVelocity();
                 Exit();
             }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            isStartEffect = false;
         }
     }
     

@@ -28,6 +28,5 @@ public interface IItem
     public void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);
     public void StartEffect();
     public void Update();
-    public void LateUpdate();
     public void Exit();
 }

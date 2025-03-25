@@ -14,20 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 01000000
-    ApplyDamageHealConfig:
+    DamageResistanceConfig:
       SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
-      ValueType: 0
-      Value: 0
-    BlockPhysicalDamageConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
-      Cooldown: 0
-      NormalDamageResistanceConfig:
-        Value: 0
-        ValueType: 0
-      BlockClip: {fileID: 0}
+      TimerCast: 0
+      StatConfigs: []
+      Clip: {fileID: 0}
     DashConfig:
       SO_BaseAbilityConfig: {fileID: 11400000, guid: de4a739b37fe8f945b6d10311cf49361, type: 2}
-      Cooldown: 2
+      Cooldown: 5
+      TimerCast: 0.1
       Speed: 15
       Duration: 0.15

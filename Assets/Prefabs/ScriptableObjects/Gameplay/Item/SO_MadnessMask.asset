@@ -20,8 +20,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   <ItemCategoryID>k__BackingField: 1
-  <ItemBehaviourID>k__BackingField: 32
-  <BlockInputTypeID>k__BackingField: 0
+  <ItemBehaviourID>k__BackingField: 4
   <Cooldown>k__BackingField: 0
   <TimerCast>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5

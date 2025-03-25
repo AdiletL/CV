@@ -3879,6 +3879,7 @@ MonoBehaviour:
   playerController: {fileID: 6200176588022165938}
   so_PlayerAbilityInventory: {fileID: 11400000, guid: e956c5e2af24c4640ba9e603a0b94b65, type: 2}
   so_PlayerAbilities: {fileID: 11400000, guid: 0d0ed737da3608143aa9bbd2b6af9b75, type: 2}
+  so_PlayerAbilityUsage: {fileID: 11400000, guid: 28859287e7d98fe43829b0da0d9a636d, type: 2}
   uiAbilityInventoryPrefab:
     m_AssetGUID: c84910cba8312ca42b1c6a8bc7eb28cd
     m_SubObjectName: 

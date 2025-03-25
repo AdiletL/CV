@@ -3,6 +3,7 @@ using Gameplay.Unit.Character;
 using Gameplay.Unit.Character.Player;
 using Machine;
 using Photon.Pun;
+using ScriptableObjects.Unit.Character;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 using Zenject;
@@ -25,6 +26,7 @@ namespace Gameplay.Factory.Character.Player
         private SO_PlayerAttack so_PlayerAttack;
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
         private SO_PlayerItemUsage so_PlayerItemUsage;
+        private SO_PlayerAbilityUsage so_PlayerAbilityUsage;
         
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
@@ -33,6 +35,7 @@ namespace Gameplay.Factory.Character.Player
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
         public void SetPlayerSpecialAction(SO_PlayerSpecialAction so_PlayerSpecialAction) => this.so_PlayerSpecialAction = so_PlayerSpecialAction;
         public void SetPlayerItemUsageConfig(SO_PlayerItemUsage so_PlayerItemUsage) => this.so_PlayerItemUsage = so_PlayerItemUsage;
+        public void SetPlayerAbilityUsageConfig(SO_PlayerAbilityUsage so_PlayerAbilityUsage) => this.so_PlayerAbilityUsage = so_PlayerAbilityUsage;
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
@@ -51,6 +54,7 @@ namespace Gameplay.Factory.Character.Player
                 _ when stateType == typeof(PlayerJumpState) => CreateJumpState(),
                 _ when stateType == typeof(PlayerSpecialActionState) => CreateSpecialActionState(),
                 _ when stateType == typeof(PlayerItemUsageState) => CreateItemUsageState(),
+                _ when stateType == typeof(PlayerAbilityUsageState) => CreateAbilityUsageState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
@@ -142,6 +146,15 @@ namespace Gameplay.Factory.Character.Player
                 .SetInventory(playerItemInventory)
                 .SetCharacterAnimation(characterAnimation)
                 .SetConfig(so_PlayerItemUsage)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
+
+        private PlayerAbilityUsageState CreateAbilityUsageState()
+        {
+            return (PlayerAbilityUsageState)new PlayerAbilityUsageStateBuilder()
+                .SetConfig(so_PlayerAbilityUsage)
+                .SetCharacterAnimation(characterAnimation)
                 .SetStateMachine(stateMachine)
                 .Build();
         }

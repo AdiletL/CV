@@ -23,19 +23,20 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerAbilityInventory so_PlayerAbilityInventory;
         [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
+        [SerializeField] private SO_PlayerAbilityUsage so_PlayerAbilityUsage;
         [SerializeField] private AssetReferenceGameObject uiAbilityInventoryPrefab;
         
         private AbilityHandler abilityHandler;
         private UIAbilityInventory uiAbilityInventory;
         private PlayerBlockInput playerBlockInput;
+        private PlayerAbilityUsageState playerAbilityUsageState;
 
         private InputType selectItemBlockInput;
-        private InputType useItemBlockInput;
         private KeyCode[] abilityInventoryHotkeys;
         private Camera baseCamera;
 
         private Ability.Ability currentSelectedAbility;
-        private Ability.Ability currentUseAbility;
+        //private Ability.Ability currentUseAbility;
         private Texture2D selectedAbilityCursor;
         
         private int maxSlot;
@@ -54,7 +55,6 @@ namespace Gameplay.Unit.Character.Player
         public void Initialize()
         {
             selectItemBlockInput = so_PlayerAbilityInventory.SelectItemBlockInputType;
-            useItemBlockInput = so_PlayerAbilityInventory.UseItemBlockInputType;
             maxSlot = so_PlayerAbilityInventory.MaxSlot;
             abilityHandler = GetComponent<AbilityHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
@@ -63,6 +63,7 @@ namespace Gameplay.Unit.Character.Player
             InitializeUIInventory();
             InitializeHotkeys();
             InitializeSlots();
+            InitializeUsageState();
         }
 
         private  void InitializeUIInventory()
@@ -87,6 +88,15 @@ namespace Gameplay.Unit.Character.Player
             for (int i = 0; i < maxSlot; i++)
                 slots.Add(i, null);
         }
+
+        private void InitializeUsageState()
+        {
+            playerController.PlayerStateFactory.SetPlayerAbilityUsageConfig(so_PlayerAbilityUsage);
+            playerAbilityUsageState = (PlayerAbilityUsageState)playerController.PlayerStateFactory.CreateState(typeof(PlayerAbilityUsageState));
+            diContainer.Inject(playerAbilityUsageState);
+            playerAbilityUsageState.Initialize();
+            playerController.StateMachine.AddStates(playerAbilityUsageState);
+        }
         
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
@@ -102,8 +112,6 @@ namespace Gameplay.Unit.Character.Player
             abilityHandler.AddAbility(ability);
             slots[slotID.Value] = ability;
             ability.OnCountCooldown += OnCountCooldownAbility;
-            ability.OnStartedCast += OnStartedCast;
-            ability.OnFinishedCast += OnFinishedCast;
 
             var isSelectable = (ability.AbilityBehaviourID & AbilityBehaviour.Passive) == 0;
             uiAbilityInventory.AddAbility(slotID, icon, isSelectable, 0, 0);
@@ -114,8 +122,6 @@ namespace Gameplay.Unit.Character.Player
             if (slotID == null) return;
 
             slots[slotID].OnCountCooldown -= OnCountCooldownAbility;
-            slots[slotID].OnStartedCast -= OnStartedCast;
-            slots[slotID].OnFinishedCast -= OnFinishedCast;
             
             abilityHandler.RemoveAbilityByID(slots[slotID].AbilityTypeID, slotID);
             uiAbilityInventory.RemoveAbility(slotID);
@@ -124,19 +130,10 @@ namespace Gameplay.Unit.Character.Player
 
         private void ClearSelectedAbility()
         {
-            
             ExitAbility(currentSelectedAbility);
             currentSelectedAbility = null;
         }
-        
-        private void ClearUseAbility()
-        {
-            if(currentUseAbility == null) return;
-            playerBlockInput.UnblockInput(slots[currentUseAbility.InventorySlotID].BlockedInputTypeID);
-            ExitAbility(currentUseAbility);
-            currentUseAbility = null;
-        }
-        
+
         private void OnCountCooldownAbility(int? slotID, float current, float max)
         {
             if(slotID == null) return;
@@ -150,8 +147,12 @@ namespace Gameplay.Unit.Character.Player
             {
                 switch (slots[slotID].AbilityBehaviourID)
                 {
-                    case AbilityBehaviour.NoTarget: slots[slotID].Enter(); break;
-                    case AbilityBehaviour.PointTarget: 
+                    case AbilityBehaviour.NoTarget: 
+                        slots[slotID].Enter();
+                        playerAbilityUsageState.SetAbility(slots[slotID]);
+                        playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
+                        break;
+                    case AbilityBehaviour.PointTarget:
                     case AbilityBehaviour.UnitTarget:
                         currentSelectedAbility = slots[slotID]; 
                         playerBlockInput.IsInputBlocked(selectItemBlockInput);
@@ -178,13 +179,13 @@ namespace Gameplay.Unit.Character.Player
                 isNextFrameFromUnblockInput = false;
             }
             
-            if (currentUseAbility != null)
+            /*if (currentUseAbility != null)
             {
                 if (Input.anyKeyDown && playerBlockInput.IsInputBlocked(useItemBlockInput))
                 {
                     ClearUseAbility();
                 }
-            }
+            }*/
             
             if (currentSelectedAbility != null)
             {
@@ -215,7 +216,11 @@ namespace Gameplay.Unit.Character.Player
                     {
                         switch (slots[i]?.AbilityBehaviourID)
                         {
-                            case AbilityBehaviour.NoTarget: slots[i].Enter(); break;
+                            case AbilityBehaviour.NoTarget: 
+                                slots[i].Enter();
+                                playerAbilityUsageState.SetAbility(slots[i]);
+                                playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
+                                break;
                             case AbilityBehaviour.PointTarget: 
                             case AbilityBehaviour.UnitTarget:
                                 currentSelectedAbility = slots[i]; 
@@ -230,13 +235,14 @@ namespace Gameplay.Unit.Character.Player
         private void PointTarget()
         {
             Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
-
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CELL_LAYER))
             {
                 if (hit.collider.TryGetComponent(out CellController cellController) &&
                     !cellController.IsBlocked())
                 {
                     currentSelectedAbility.Enter(point: hit.point);
+                    playerAbilityUsageState.SetAbility(currentSelectedAbility);
+                    playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
                     currentSelectedAbility = null;
                     isNextFrameFromUnblockInput = true;
                 }
@@ -246,12 +252,13 @@ namespace Gameplay.Unit.Character.Player
         private void UnitTarget()
         {
             Ray ray = baseCamera.ScreenPointToRay(Input.mousePosition);
-
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity, Layers.CREEP_LAYER | Layers.PLAYER_LAYER))
             {
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
                     currentSelectedAbility.Enter(target: characterMainController.gameObject);
+                    playerAbilityUsageState.SetAbility(currentSelectedAbility);
+                    playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
                     currentSelectedAbility = null;
                     isNextFrameFromUnblockInput = true;
                 }
@@ -261,20 +268,6 @@ namespace Gameplay.Unit.Character.Player
         private void ExitAbility(Ability.Ability ability)
         {
             ability?.Exit();
-        }
-
-        private void OnStartedCast(int? slotID)
-        {
-            if(slotID == null) return;
-            ExitAbility(currentUseAbility);
-            playerBlockInput.BlockInput(slots[slotID].BlockedInputTypeID);
-            currentUseAbility = slots[slotID];
-        }
-        private void OnFinishedCast(int? slotID)
-        {
-            if(slotID == null) return;
-            playerBlockInput.UnblockInput(slots[slotID].BlockedInputTypeID);
-            currentUseAbility = null;
         }
     }
 }

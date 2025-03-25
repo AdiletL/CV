@@ -1,37 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Machine;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 
 namespace Gameplay.Unit.Character
 {
-    public class CharacterItemUsageState : State
+    public class CharacterAbilityUsageState : State
     {
         public override StateCategory Category { get; } = StateCategory.Action;
         
-        protected SO_CharacterItemUsage so_CharacterItemUsage;
+        protected SO_CharacterAbilityUsage so_CharacterAbilityUsage;
         protected CharacterAnimation characterAnimation;
-
-        protected Item.Item currentItem;
-
+        
+        protected Ability.Ability currentAbility;
+        
         protected float durationAnimation, countDurationAnimation;
 
         protected Queue<float> momentEvents;
         
-        public void SetConfig(SO_CharacterItemUsage so_CharacterItemUsage) => this.so_CharacterItemUsage = so_CharacterItemUsage;
+        public void SetConfig(SO_CharacterAbilityUsage so_CharacterAbilityUsage) => this.so_CharacterAbilityUsage = so_CharacterAbilityUsage;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         
-        
-        protected virtual AnimationEventConfig getAnimationEventConfig(ItemUsageType itemUsageType)
+         protected virtual AnimationEventConfig getAnimationEventConfig(AbilityBehaviour abilityBehaviour)
         { 
-            return so_CharacterItemUsage.Animations[itemUsageType];
+            return so_CharacterAbilityUsage.Animations[abilityBehaviour];
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            foreach (var VARIABLE in so_CharacterItemUsage.Animations.Values)
+            foreach (var VARIABLE in so_CharacterAbilityUsage.Animations.Values)
             {
                 if(VARIABLE?.Clip) characterAnimation.AddClip(VARIABLE.Clip);   
             }
@@ -41,11 +39,11 @@ namespace Gameplay.Unit.Character
         {
             base.Enter();
 
-            if (currentItem == null)
+            if (currentAbility == null)
                 stateMachine.ExitCategory(Category, null);
 
             if (momentEvents == null || momentEvents.Count == 0 || durationAnimation == 0)
-                currentItem.StartEffect();
+                currentAbility.StartEffect();
         }
 
         public override void Update()
@@ -61,7 +59,7 @@ namespace Gameplay.Unit.Character
                 {
                     if (momentEvents.Peek() <= countDurationAnimation)
                     {
-                        currentItem.StartEffect();
+                        currentAbility.StartEffect();
                         momentEvents.Dequeue();
                     }
                 }
@@ -71,8 +69,8 @@ namespace Gameplay.Unit.Character
         public override void Exit()
         {
             if(!IsActive) return;
+            currentAbility = null;
             characterAnimation.ExitAnimation();
-            currentItem = null;
             base.Exit();
         }
 
@@ -86,23 +84,23 @@ namespace Gameplay.Unit.Character
         private void ExitCurrentItem()
         {
             characterAnimation.ExitAnimation();
-            currentItem?.Exit();
-            currentItem = null;
+            currentAbility?.Exit();
+            currentAbility = null;
         }
         
-        public void SetItem(Item.Item item)
+        public void SetAbility(Ability.Ability ability)
         {
-            if(currentItem != item)
+            if(currentAbility != ability)
                 ExitCurrentItem();
             ClearValues();
-            currentItem = item;
+            currentAbility = ability;
             UpdateAnimation();
         }
 
         protected virtual void UpdateAnimation()
         {
-            var animationEventConfig = getAnimationEventConfig(currentItem.ItemUsageTypeID);
-            if (currentItem.TimerCast <= 0)
+            var animationEventConfig = getAnimationEventConfig(currentAbility.AbilityBehaviourID);
+            if (currentAbility.TimerCast <= 0)
             {
                 if (animationEventConfig.Clip)
                     durationAnimation = animationEventConfig.Clip.length;
@@ -114,8 +112,8 @@ namespace Gameplay.Unit.Character
             }
             else
             {
-                durationAnimation = currentItem.TimerCast;
-                if(IsActive) currentItem.StartEffect();
+                durationAnimation = currentAbility.TimerCast;
+                if(IsActive) currentAbility.StartEffect();
             }
             
             if(animationEventConfig.Clip) 
@@ -127,20 +125,20 @@ namespace Gameplay.Unit.Character
             stateMachine.ExitCategory(Category, null);
         }
     }
-
-    public class CharacterItemUsageStateBuilder : StateBuilder<CharacterItemUsageState>
+    
+    public class CharacterAbilityUsageStateBuilder : StateBuilder<CharacterAbilityUsageState>
     {
-        public CharacterItemUsageStateBuilder(CharacterItemUsageState instance) : base(instance)
+        public CharacterAbilityUsageStateBuilder(CharacterAbilityUsageState instance) : base(instance)
         {
         }
 
-        public CharacterItemUsageStateBuilder SetConfig(SO_CharacterItemUsage so_CharacterItemUsage)
+        public CharacterAbilityUsageStateBuilder SetConfig(SO_CharacterAbilityUsage so_CharacterAbilityUsage)
         {
-            state.SetConfig(so_CharacterItemUsage);
+            state.SetConfig(so_CharacterAbilityUsage);
             return this;
         }
         
-        public CharacterItemUsageStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
+        public CharacterAbilityUsageStateBuilder SetCharacterAnimation(CharacterAnimation characterAnimation)
         {
             state.SetCharacterAnimation(characterAnimation);
             return this;

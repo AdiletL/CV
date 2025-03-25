@@ -76,7 +76,6 @@ namespace Gameplay.Ability
                 currentAbilities.Add(ability.AbilityTypeID, new List<Ability>());
             
             OnUpdate += ability.Update;
-            OnLateUpdate += ability.LateUpdate;
             
             currentAbilities[ability.AbilityTypeID].Add(ability);
         }
@@ -90,7 +89,6 @@ namespace Gameplay.Ability
                     if (currentAbilities[abilityType][i].InventorySlotID != id) continue;
                     
                     OnUpdate -= currentAbilities[abilityType][i].Update;
-                    OnLateUpdate -= currentAbilities[abilityType][i].LateUpdate;
                     currentAbilities[abilityType][i].Exit();
                     
                     currentAbilities[abilityType].Remove(currentAbilities[abilityType][i]);

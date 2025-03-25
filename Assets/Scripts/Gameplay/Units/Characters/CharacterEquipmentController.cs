@@ -24,6 +24,7 @@ namespace Gameplay.Unit.Character
         
         public virtual void PutOn(Equipment.Equipment equipment)
         {
+            Debug.Log("puton");
             equipments ??= new List<Equipment.Equipment>();
 
             Debug.Log(equipment.EquipmentTypeID);

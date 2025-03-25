@@ -11,7 +11,6 @@ public interface IAbility
     public GameObject GameObject { get; }
     public AbilityType AbilityTypeID { get; }
     public AbilityBehaviour AbilityBehaviourID { get; }
-    public InputType BlockedInputTypeID { get; }
     public Action FinishedCallBack { get; }
     public float Cooldown { get; }
     public bool IsCooldown { get; }
@@ -20,7 +19,6 @@ public interface IAbility
     public void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);
 
     public void Update();
-    public void LateUpdate();
 
     public void Exit();
 }

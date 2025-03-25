@@ -83,11 +83,14 @@ namespace Gameplay.Unit.Item
             
             FinishedCallBack = finishedCallBack;
             isActivated = true;
+            Debug.Log(isActivated);
         }
         
         public virtual void StartEffect()
         {
-            if(isActivated) StartCasting();
+            if(!isActivated) return;
+            StartCasting();
+            StartCooldown();
         }
         
         public virtual void Update()
@@ -112,11 +115,6 @@ namespace Gameplay.Unit.Item
             }
         }
 
-        public virtual void LateUpdate()
-        {
-            
-        }
-        
         private void StartCooldown()
         {
             IsCooldown = true;
@@ -133,7 +131,6 @@ namespace Gameplay.Unit.Item
         
         protected virtual void AfterCast()
         {
-            StartCooldown();
             isCasting = false;
             uiCastTimer.Hide();
             FinishedCallBack?.Invoke();

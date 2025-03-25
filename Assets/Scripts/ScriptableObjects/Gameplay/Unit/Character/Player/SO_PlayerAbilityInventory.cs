@@ -6,7 +6,6 @@ namespace ScriptableObjects.Unit.Character.Player
     public class SO_PlayerAbilityInventory : ScriptableObject
     {
         [field: SerializeField] public InputType SelectItemBlockInputType { get; private set; } = InputType.Attack;
-        [field: SerializeField] public InputType UseItemBlockInputType { get; private set; } = InputType.Attack;
         [field: SerializeField] public int MaxSlot { get; private set; } = 1;
     }
 }
