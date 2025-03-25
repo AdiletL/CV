@@ -64,6 +64,7 @@ namespace Gameplay.Ability
     [System.Serializable]
     public class DashConfig : AbilityConfig
     {
+        public override AbilityType AbilityTypeID { get; } = AbilityType.Dash;
         public float Speed;
         public float Duration;
     }

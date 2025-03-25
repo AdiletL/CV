@@ -15,14 +15,12 @@ MonoBehaviour:
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 01000000
     DamageResistanceConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
       TimerCast: 0
       StatConfigs: []
       Clip: {fileID: 0}
     DashConfig:
-      SO_BaseAbilityConfig: {fileID: 11400000, guid: de4a739b37fe8f945b6d10311cf49361, type: 2}
-      Cooldown: 5
+      Cooldown: 1
       TimerCast: 0.1
       Speed: 15
       Duration: 0.15

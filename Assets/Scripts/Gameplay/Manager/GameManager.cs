@@ -1,6 +1,7 @@
 ﻿using Gameplay.Factory;
 using Gameplay.Factory.Weapon;
 using Photon.Pun;
+using ScriptableObjects.Ability;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -20,6 +21,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
         [SerializeField] private AssetReferenceGameObject networkManagerPrefab;
         [SerializeField] private SO_GameConfig so_GameConfig;
+        [SerializeField] private SO_BaseAbilityConfigContainer so_BaseAbilityConfigContainer;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
@@ -49,6 +51,7 @@ namespace Gameplay.Manager
             diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfig.SO_GameHotkeys).AsSingle();
             diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfig.SO_GameUIColor).AsSingle();
             diContainer.Bind<SO_GameStatIcon>().FromInstance(so_GameConfig.SO_GameStatIcon).AsSingle();
+            diContainer.Bind<SO_BaseAbilityConfigContainer>().FromInstance(so_BaseAbilityConfigContainer).AsSingle();
             
             if(!PhotonNetwork.IsMasterClient) return;
             photonView.RPC(nameof(InitializeGameUnitsAndExperienceSystem), RpcTarget.AllBuffered);
@@ -210,7 +213,7 @@ namespace Gameplay.Manager
             diContainer.Inject(abilityFactory);
             diContainer.Bind(abilityFactory.GetType()).FromInstance(abilityFactory).AsSingle();
         }
-
+        
         private void StartLevel()
         {
             levelManager.StartLevel();

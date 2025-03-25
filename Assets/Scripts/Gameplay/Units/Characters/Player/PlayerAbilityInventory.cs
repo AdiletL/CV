@@ -5,6 +5,7 @@ using Gameplay.Factory;
 using Gameplay.Ability;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Unit.Cell;
+using ScriptableObjects.Ability;
 using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Gameplay.Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         [Inject] private AbilityFactory abilityFactory;
+        [Inject] private SO_BaseAbilityConfigContainer so_BaseAbilityConfigContainer;
         
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerAbilityInventory so_PlayerAbilityInventory;
@@ -170,7 +172,7 @@ namespace Gameplay.Unit.Character.Player
                 newAbility.SetMoveControl(gameObject.GetComponent<IMoveControl>());
                 newAbility.SetGameObject(gameObject);
                 newAbility.Initialize();
-                AddAbility(newAbility, so_PlayerAbilities.AbilityConfigData.DashConfig.SO_BaseAbilityConfig.Icon);
+                AddAbility(newAbility, so_BaseAbilityConfigContainer.GetAbilityConfig(so_PlayerAbilities.AbilityConfigData.DashConfig.AbilityTypeID).Icon);
             }
             
             if (isNextFrameFromUnblockInput)

@@ -1,6 +1,8 @@
 ﻿using System;
 using Gameplay.Ability;
+using ScriptableObjects.Ability;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Factory
 {
@@ -8,10 +10,10 @@ namespace Gameplay.Factory
     {
         public Ability.Ability CreateAbility(AbilityConfig abilityConfig)
         {
-            Ability.Ability result = abilityConfig.SO_BaseAbilityConfig.AbilityTypeID switch
+            Ability.Ability result = abilityConfig.AbilityTypeID switch
             {
-                _ when abilityConfig.SO_BaseAbilityConfig.AbilityTypeID == AbilityType.Nothing => null,
-                _ when abilityConfig.SO_BaseAbilityConfig.AbilityTypeID == AbilityType.Dash => CreateDash(abilityConfig),
+                _ when abilityConfig.AbilityTypeID == AbilityType.Nothing => null,
+                _ when abilityConfig.AbilityTypeID == AbilityType.Dash => CreateDash(abilityConfig),
                 _ => throw new ArgumentOutOfRangeException()
             };
             

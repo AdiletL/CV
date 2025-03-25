@@ -92,6 +92,7 @@ namespace Gameplay.Ability
     [System.Serializable]
     public class DamageResistanceConfig : AbilityConfig
     {
+        public override AbilityType AbilityTypeID { get; } = AbilityType.DamageResistance;
         public StatConfig[] StatConfigs;
         public AnimationClip Clip;
     }

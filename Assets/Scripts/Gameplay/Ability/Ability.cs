@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Gameplay.UI.ScreenSpace;
-using ScriptableObjects.Gameplay;
-using ScriptableObjects.Unit;
+using ScriptableObjects.Ability;
 using UnityEngine;
 using Zenject;
 
@@ -11,6 +10,7 @@ namespace Gameplay.Ability
     public abstract class Ability : IAbility
     {
         [Inject] protected UICastTimer uiCastTimer;
+        [Inject] protected SO_BaseAbilityConfigContainer SO_BaseAbilityConfigContainer;
 
         public event Action<int?, float, float> OnCountCooldown;
         public event Action<int?> OnStartedCast;
@@ -42,7 +42,7 @@ namespace Gameplay.Ability
 
         public virtual void Initialize()
         {
-            AbilityBehaviourID = abilityConfig.SO_BaseAbilityConfig.AbilityBehaviour;
+            AbilityBehaviourID = SO_BaseAbilityConfigContainer.GetAbilityConfig(abilityConfig.AbilityTypeID).AbilityBehaviour;
             Cooldown = abilityConfig.Cooldown;
             TimerCast = abilityConfig.TimerCast;
         }
@@ -133,7 +133,7 @@ namespace Gameplay.Ability
 
     public abstract class AbilityConfig
     {
-        public SO_BaseAbilityConfig SO_BaseAbilityConfig;
+        public abstract AbilityType AbilityTypeID { get; }
         public float Cooldown;
         public float TimerCast;
     }
