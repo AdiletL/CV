@@ -6,6 +6,7 @@
     Move,
     Action,
     Jump,
+    Disable,
 }
 
 public interface IState
@@ -21,4 +22,4 @@ public interface IState
     public void Update();
     public void Unsubscribe();
     public void Exit();
-    }
+}

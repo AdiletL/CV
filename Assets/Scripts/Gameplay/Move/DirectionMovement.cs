@@ -9,7 +9,8 @@ namespace Gameplay.Movement
         private Vector3 direction;
 
         public Stat MovementSpeedStat { get; private set; } = new Stat();
-        
+        public bool IsCanMove { get; private set; }
+
         public DirectionMovement(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
@@ -25,7 +26,18 @@ namespace Gameplay.Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.Translate(direction * (MovementSpeedStat.CurrentValue * Time.deltaTime), Space.World);
+            if(IsCanMove)
+                gameObject.transform.Translate(direction * (MovementSpeedStat.CurrentValue * Time.deltaTime), Space.World);
+        }
+
+        public void ActivateMovement()
+        {
+            IsCanMove = true;
+        }
+
+        public void DeactivateMovement()
+        {
+            IsCanMove = false;
         }
     }
 }

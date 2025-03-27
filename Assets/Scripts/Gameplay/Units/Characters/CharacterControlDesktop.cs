@@ -2,13 +2,14 @@
 
 namespace Gameplay.Unit.Character
 {
-    public class CharacterControlDesktop : UnitControlDesktop
+    public abstract class CharacterControlDesktop
     {
         protected GameObject gameObject;
+        protected bool isCanControl = true;
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         
-        public override void Initialize()
+        public virtual void Initialize()
         {
             
         }
@@ -18,28 +19,43 @@ namespace Gameplay.Unit.Character
         {
             
         }
-        public override void HandleHotkey()
+        public virtual void HandleHotkey()
         {
             
         }
 
-        public override void HandleInput()
+        public virtual void HandleInput()
         {
+        }
+
+        public virtual void ActivateControl()
+        {
+            isCanControl = true;
+        }
+
+        public virtual void DeactivateControl()
+        {
+            isCanControl = false;
         }
     }
 
-    public class CharacterControlDesktopBuilder : UnitControlDesktopBuilder<CharacterControlDesktop>
+    public abstract class CharacterControlDesktopBuilder
     {
-        public CharacterControlDesktopBuilder(UnitControlDesktop instance) : base(instance)
+        protected CharacterControlDesktop characterControlDesktop;
+        public CharacterControlDesktopBuilder(CharacterControlDesktop instance)
         {
+            characterControlDesktop = instance;
         }
 
         public CharacterControlDesktopBuilder SetGameObject(GameObject gameObject)
         {
-            if(unitControlDesktop is CharacterControlDesktop characterControlDesktop)
-                characterControlDesktop.SetGameObject(gameObject);
-            
+            characterControlDesktop.SetGameObject(gameObject);
             return this;
+        }
+        
+        public CharacterControlDesktop Build()
+        {
+            return characterControlDesktop;
         }
     }
 }

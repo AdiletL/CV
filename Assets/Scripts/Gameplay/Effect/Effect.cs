@@ -12,16 +12,16 @@ namespace Gameplay.Effect
         public string ID { get; protected set; }
         public GameObject Target { get; protected set; }
         public bool IsInterim { get; protected set; }
+        public bool IsBuff { get; protected set; }
+        
 
         public Effect(EffectConfig effectConfig, string id)
         {
             ID = id;
         }
 
-        public virtual void SetTarget(GameObject target)
-        {
-            this.Target = target;
-        }
+        public void SetModifier(bool isBuff) => IsBuff = isBuff;
+        public virtual void SetTarget(GameObject target) => this.Target = target;
 
         public abstract void ClearValues();
         

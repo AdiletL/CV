@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Calculate;
 using Gameplay.Unit;
 using Gameplay.Unit.Character;
@@ -14,13 +13,13 @@ namespace Gameplay.Effect
 
         private ValueType valueType;
         private float value;
-        private float duration, countDuration;
+        private float timer, countTimer;
         private float addedStatValue;
         
         public SlowMovementEffect(SlowMovementConfig slowMovementConfig, string id) : base(slowMovementConfig, id)
         {
             this.value = slowMovementConfig.Value;
-            this.duration = slowMovementConfig.Duration;
+            this.timer = slowMovementConfig.Timer;
             this.valueType = slowMovementConfig.ValueType;
             this.IsInterim = slowMovementConfig.IsInterim;
         }
@@ -28,19 +27,16 @@ namespace Gameplay.Effect
         public override void ClearValues()
         {
             addedStatValue = 0;
-            countDuration = 0;
+            countTimer = timer;
         }
 
         public override void Update()
         {
             if(!IsInterim) return;
             
-            countDuration += Time.deltaTime;
-            if (countDuration >= duration)
-            {
+            countTimer -= Time.deltaTime;
+            if (countTimer <= 0)
                 DestroyEffect();
-                countDuration = 0;
-            }
         }
 
         public override void FixedUpdate()
@@ -50,7 +46,7 @@ namespace Gameplay.Effect
 
         public override void UpdateEffect()
         {
-            countDuration = 0;
+            countTimer = timer;
         }
 
         public override void ApplyEffect()
@@ -85,6 +81,6 @@ namespace Gameplay.Effect
     {
         public ValueType ValueType;
         public float Value;
-        public float Duration;
+        public float Timer;
     }
 }

@@ -19,6 +19,7 @@ namespace Gameplay.Unit.Character
         protected const string SPEED_MOVEMENT_NAME = "SpeedMovement";
         
         public Stat MovementSpeedStat { get; } = new Stat();
+        public bool IsCanMove { get; protected set; } = true;
 
 
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
@@ -75,6 +76,9 @@ namespace Gameplay.Unit.Character
         {
             
         }
+
+        public virtual void ActivateMovement() => IsCanMove = true;
+        public virtual void DeactivateMovement() => IsCanMove = false;
     }
 
     public class CharacterMoveStateBuilder : StateBuilder<CharacterMoveState>

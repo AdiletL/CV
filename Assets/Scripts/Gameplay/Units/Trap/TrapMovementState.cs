@@ -9,8 +9,18 @@ namespace Gameplay.Unit.Trap
 
         public GameObject GameObject { get; set; }
         public Stat MovementSpeedStat { get; }
-        
+        public bool IsCanMove { get; }
+
         public abstract void ExecuteMovement();
+        public void ActivateMovement()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeactivateMovement()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class TrapMovementStateBuilder : StateBuilder<TrapMovementState>

@@ -8,7 +8,9 @@ public interface IEffect
     public string ID { get; }
     public GameObject Target { get; }
     public bool IsInterim { get; }
+    public bool IsBuff { get; }
     
+    public void SetModifier(bool isBuff);
     public void SetTarget(GameObject target);
     public void ClearValues();
     public void Update();
@@ -23,4 +25,5 @@ public enum EffectType
     Nothing,
     SlowMovement,
     Vampirism,
+    Disable,
 }

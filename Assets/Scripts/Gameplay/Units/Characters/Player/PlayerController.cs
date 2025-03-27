@@ -28,7 +28,8 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(ItemHandler))]
     [RequireComponent(typeof(PlayerKinematicControl))]
     [RequireComponent(typeof(PlayerEquipmentController))]
-    public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable
+    [RequireComponent(typeof(PlayerDisableController))]
+    public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable, IPlayerController
     {
         public Action<GameObject> TriggerEnter;
         public Action<GameObject> TriggerExit;
@@ -189,6 +190,10 @@ namespace Gameplay.Unit.Character.Player
             
             playerStatsController = GetComponentInUnit<PlayerStatsController>();
             playerStatsController.Initialize();
+            
+            var playerDisableController = GetComponentInUnit<PlayerDisableController>();
+            diContainer.Inject(playerDisableController);
+            playerDisableController.Initialize();
         }
 
         protected override void AfterInitializeMediator()
@@ -325,6 +330,16 @@ namespace Gameplay.Unit.Character.Player
         private void OnTriggerExit(Collider other)
         {
             TriggerExit?.Invoke(other.gameObject);
+        }
+
+        public void ActivateControl()
+        {
+            playerControlDesktop.ActivateControl();
+        }
+
+        public void DeactivateControl()
+        {
+            playerControlDesktop.DeactivateControl();
         }
     }
 }

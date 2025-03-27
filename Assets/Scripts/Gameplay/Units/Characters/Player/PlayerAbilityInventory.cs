@@ -206,6 +206,15 @@ namespace Gameplay.Unit.Character.Player
             }
 
             HotkeysHandler();
+
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                GetComponent<PlayerDisableController>().ActivateDisable(DisableType.Stun);
+            }
+            else if(Input.GetKeyDown(KeyCode.K))
+            {
+                GetComponent<PlayerDisableController>().DeactivateDisable(DisableType.Stun);
+            }
         }
 
         private void HotkeysHandler()

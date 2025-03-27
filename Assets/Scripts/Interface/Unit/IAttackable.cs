@@ -18,7 +18,7 @@ public enum DamageType
 public class DamageData
 {
     public GameObject Owner { get; }
-    public DamageType DamageTypeID;
+    public DamageType DamageTypeID { get; }
     public float Amount;
 
     public DamageData(GameObject owner, DamageType damageTypeID, float amount)

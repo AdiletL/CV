@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Machine;
 using UnityEngine;
 
@@ -43,15 +44,32 @@ public class StateMachine
         return default(T);
     }
 
-    public IEnumerable<T> GetStates<T>() where T : IState
+    public T GetInterfaceImplementingClass<T>() where T : class
     {
-        foreach (var state in states.Values)
+        foreach (var kvp in states)
         {
-            if (state is T desiredState)
+            if (kvp.Key.GetInterfaces().Contains(typeof(T)))
             {
-                yield return desiredState;
+                return kvp.Value as T;
             }
         }
+
+        return null;
+    }
+    
+    public bool TryGetInterfaceImplementingClass<T>(out T result) where T : class
+    {
+        foreach (var kvp in states)
+        {
+            if (kvp.Key.GetInterfaces().Contains(typeof(T)))
+            {
+                result = kvp.Value as T;
+                return true;
+            }
+        }
+
+        result = null;
+        return false;
     }
 
     public void Initialize()
@@ -98,15 +116,15 @@ public class StateMachine
             var type = iState.GetType();
             if (activeStates.TryGetValue(category, out var activeState))
             {
-                if (!isForceSetState && (activeState.GetType() == type ||
-                    !activeState.IsCanExit || iState == activeState))
+                if ((activeState.GetType() == type ||
+                    !activeState.IsCanExit /*|| iState == activeState*/))
                     continue;
                 
                 activeState.Exit();
             }
             
-            if (isForceSetState || !activeStates.ContainsKey(category) || 
-                activeStates[category] != iState || iState != activeState)
+            if (!activeStates.ContainsKey(category) || (isForceSetState && activeStates[category] != iState) || 
+                activeStates[category] != iState /*|| iState != activeState*/)
             {
                 activeStates[category] = iState;
                 iState.Enter();
@@ -117,6 +135,8 @@ public class StateMachine
 
     private IState FindMostDerivedState(Type baseType)
     {
+        if (baseType == null) return null;
+        
         IState mostDerivedState = null;
 
         foreach (var state in states.Values)
@@ -143,7 +163,7 @@ public class StateMachine
         
         foreach (var category in cachedCategories)
         {
-            if (category == targetState.Category ||
+            if (category == targetState?.Category ||
                 !activeStates[category].IsCanExit) continue;
 
             activeStates[category].Exit();

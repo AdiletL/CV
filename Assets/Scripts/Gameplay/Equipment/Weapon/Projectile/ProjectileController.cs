@@ -19,6 +19,7 @@ namespace Gameplay.Weapon.Projectile
         public DamageData DamageData { get; protected set; }
         public AnimationCurve MoveCurve { get; protected set; }
         public Stat MovementSpeedStat { get; protected set; } = new Stat();
+        public bool IsCanMove { get; }
 
         protected float height;
         protected bool isInitialized;
@@ -41,6 +42,15 @@ namespace Gameplay.Weapon.Projectile
             ExecuteMovement();
         }
         public abstract void ExecuteMovement();
+        public void ActivateMovement()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeactivateMovement()
+        {
+            throw new NotImplementedException();
+        }
 
 
         public virtual void ApplyDamage()

@@ -9,7 +9,8 @@ namespace Gameplay.Movement
         private Vector3 point;
 
         public Stat MovementSpeedStat { get; private set; } = new Stat();
-        
+        public bool IsCanMove { get; private set; }
+
         public MovementToPoint(GameObject gameObject, float movementSpeed)
         {
             this.gameObject = gameObject;
@@ -34,7 +35,18 @@ namespace Gameplay.Movement
         
         public void ExecuteMovement()
         {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, MovementSpeedStat.CurrentValue * Time.deltaTime);
+            if(IsCanMove)
+                gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, point, MovementSpeedStat.CurrentValue * Time.deltaTime);
+        }
+
+        public void ActivateMovement()
+        {
+            IsCanMove = true;
+        }
+
+        public void DeactivateMovement()
+        {
+            IsCanMove = false;
         }
     }
 }

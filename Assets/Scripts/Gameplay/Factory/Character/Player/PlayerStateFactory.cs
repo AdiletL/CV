@@ -27,11 +27,13 @@ namespace Gameplay.Factory.Character.Player
         private SO_PlayerSpecialAction so_PlayerSpecialAction;
         private SO_PlayerItemUsage so_PlayerItemUsage;
         private SO_PlayerAbilityUsage so_PlayerAbilityUsage;
+        private SO_PlayerDisable so_PlayerDisable;
         
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPlayerItemInventory(PlayerItemInventory itemInventory) => this.playerItemInventory = itemInventory;
         public void SetPlayerMoveConfig(SO_PlayerMove so_PlayerMove) => this.so_PlayerMove = so_PlayerMove;
+        public void SetPlayerDisableConfig(SO_PlayerDisable playerDisable) => this.so_PlayerDisable = playerDisable;
         public void SetPlayerAttackConfig(SO_PlayerAttack so_PlayerAttack) => this.so_PlayerAttack = so_PlayerAttack;
         public void SetPlayerSpecialAction(SO_PlayerSpecialAction so_PlayerSpecialAction) => this.so_PlayerSpecialAction = so_PlayerSpecialAction;
         public void SetPlayerItemUsageConfig(SO_PlayerItemUsage so_PlayerItemUsage) => this.so_PlayerItemUsage = so_PlayerItemUsage;
@@ -55,6 +57,7 @@ namespace Gameplay.Factory.Character.Player
                 _ when stateType == typeof(PlayerSpecialActionState) => CreateSpecialActionState(),
                 _ when stateType == typeof(PlayerItemUsageState) => CreateItemUsageState(),
                 _ when stateType == typeof(PlayerAbilityUsageState) => CreateAbilityUsageState(),
+                _ when stateType == typeof(PlayerDisableState) => CreateDisableState(),
                 _ => throw new ArgumentException($"Unknown state type: {stateType}")
             };
             
@@ -158,6 +161,16 @@ namespace Gameplay.Factory.Character.Player
                 .SetStateMachine(stateMachine)
                 .Build();
         }
+
+        private PlayerDisableState CreateDisableState()
+        {
+            return (PlayerDisableState)new PlayerDisableStateBuilder()
+                .SetConfig(so_PlayerDisable)
+                .SetGameObject(gameObject)
+                .SetCharacterAnimation(characterAnimation)
+                .SetStateMachine(stateMachine)
+                .Build();
+        }
     }
 
     public class PlayerStateFactoryBuilder : CharacterStateFactoryBuilder
@@ -183,6 +196,13 @@ namespace Gameplay.Factory.Character.Player
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetPlayerAttackConfig(so_PlayerAttack);
+            return this;
+        }
+        
+        public PlayerStateFactoryBuilder SetPlayerDisableConfig(SO_PlayerDisable so_PlayerDisable)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetPlayerDisableConfig(so_PlayerDisable);
             return this;
         }
         

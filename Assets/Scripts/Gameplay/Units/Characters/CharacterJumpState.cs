@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Character
 {
-    public class CharacterJumpState : State
+    public class CharacterJumpState : State, IJump
     {
         public override StateCategory Category { get; } = StateCategory.Jump;
 
@@ -13,6 +13,8 @@ namespace Gameplay.Unit.Character
         protected GameObject gameObject;
         protected CharacterAnimation characterAnimation;
 
+        public bool IsCanJump { get; protected set; } = true;
+        
         public void SetConfig(SO_CharacterMove config) => so_CharacterMove = config;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
@@ -20,7 +22,7 @@ namespace Gameplay.Unit.Character
         public override void Update()
         {
         }
-
+        
     }
     
     public class CharacterJumpStateBuilder : StateBuilder<CharacterJumpState>

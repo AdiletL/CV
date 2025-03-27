@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Character.Player
 {
-    public class PlayerMoveState : CharacterMoveState
+    public class PlayerMoveState : CharacterMoveState, IRotate
     {
         private SO_PlayerMove so_PlayerMove;
         private PhotonView photonView;
@@ -12,20 +12,26 @@ namespace Gameplay.Unit.Character.Player
         private CharacterStatsController characterStatsController;
         
         private Vector3 directionMovement;
-        private float consumptionEnduranceRate;
-        private float currentConsumptionEnduranceRate;
-        private bool isAddedEnduranceStat;
+        private float runConsumptionEndurance;
         
         public Stat RotationSpeedStat { get; } = new Stat();
+        public bool IsCanRotate { get; private set; } = true;
+        
+        ~PlayerMoveState()
+        {
+            UnsubscribeStat();
+        }
         
         public void SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl) => this.playerKinematicControl = playerKinematicControl;
         public void SetPhotonView(PhotonView photonView) => this.photonView = photonView;
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
-        public void SetRunConsumptionEnduranceRate(float consumptionEnduranceRate) => this.consumptionEnduranceRate = consumptionEnduranceRate;
+        public void SetRunConsumptionEnduranceRate(float consumptionEnduranceRate) => this.runConsumptionEndurance = consumptionEnduranceRate;
 
         public override void Initialize()
         {
             base.Initialize();
+            SubscribeStat();
+            
             so_PlayerMove = (SO_PlayerMove)so_CharacterMove;
             RotationSpeedStat.AddCurrentValue(so_PlayerMove.RotateSpeed);
         }
@@ -35,6 +41,7 @@ namespace Gameplay.Unit.Character.Player
             base.Enter();
             currentClip = getRandomClip(runClips);
             PlayAnimation();
+            AddRegenerationEnduranceStat();
         }
 
         public override void Subscribe()
@@ -43,18 +50,28 @@ namespace Gameplay.Unit.Character.Player
             stateMachine.OnExitCategory += OnExitCategory;
         }
 
+        private void SubscribeStat()
+        {
+            
+        }
+
         public override void Unsubscribe()
         {
             base.Unsubscribe();
             stateMachine.OnExitCategory -= OnExitCategory;
         }
 
+        private void UnsubscribeStat()
+        {
+            
+        }
+        
         public override void Update()
         {
             base.Update();
             
             CheckDirectionMovement();
-            Rotate();
+            ExecuteRotate();
             ExecuteMovement();
             
             if (directionMovement.magnitude == 0)
@@ -63,6 +80,8 @@ namespace Gameplay.Unit.Character.Player
 
         public override void Exit()
         {
+            playerKinematicControl.ClearVelocity();
+            playerKinematicControl.SetRotationSpeed(0);
             base.Exit();
             ClearRegenerationEnduranceStat();
         }
@@ -74,6 +93,7 @@ namespace Gameplay.Unit.Character.Player
             if (typeof(CharacterSpecialActionState).IsAssignableFrom(state.GetType()))
                 PlayAnimation();
         }
+        
         
         private void CheckDirectionMovement()
         {
@@ -91,32 +111,39 @@ namespace Gameplay.Unit.Character.Player
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            playerKinematicControl.SetVelocity(directionMovement * (MovementSpeedStat.CurrentValue));
-            playerKinematicControl.SetRotationSpeed(RotationSpeedStat.CurrentValue);
-            AddRegenerationEnduranceStat();
+            if (IsCanMove) playerKinematicControl.SetVelocity(directionMovement * (MovementSpeedStat.CurrentValue));
+            else playerKinematicControl.ClearVelocity();
         }
 
-        private void Rotate()
+        public void ExecuteRotate()
         {
             playerKinematicControl.SetDirectionRotate(directionMovement);
+            
+            if(IsCanRotate) playerKinematicControl.SetRotationSpeed(RotationSpeedStat.CurrentValue);
+            else playerKinematicControl.SetRotationSpeed(0);
+        }
+
+        public void ActivateRotate() => IsCanRotate = true;
+        public void DeactivateRotate()
+        {
+            IsCanRotate = false;
+            playerKinematicControl.SetRotationSpeed(0);
+        }
+
+        public override void DeactivateMovement()
+        {
+            base.DeactivateMovement();
+            playerKinematicControl.ClearVelocity();
         }
 
         private void AddRegenerationEnduranceStat()
         {
-            if (!isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEnduranceRate);
-                isAddedEnduranceStat = true;
-            }
+            characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(runConsumptionEndurance);
         }
 
         private void ClearRegenerationEnduranceStat()
         {
-            if (isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEnduranceRate);
-                isAddedEnduranceStat = false;
-            }
+            characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(runConsumptionEndurance);
         }
     }
 

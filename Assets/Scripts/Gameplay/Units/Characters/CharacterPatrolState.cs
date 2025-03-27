@@ -21,7 +21,8 @@ namespace Gameplay.Unit.Character
         
         public Vector3[] PatrolPoints { get; protected set; }
         public Stat MovementSpeedStat { get; } = new Stat();
-        
+        public bool IsCanMove { get; protected set; } = true;
+
         public void SetPatrolPoints(Vector3[] points) => PatrolPoints = points;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
@@ -64,6 +65,9 @@ namespace Gameplay.Unit.Character
         {
             
         }
+
+        public virtual void ActivateMovement() => IsCanMove = true;
+        public virtual void DeactivateMovement() => IsCanMove = false;
     }
 
     public class CharacterPatrolStateBuilder : StateBuilder<CharacterPatrolState>

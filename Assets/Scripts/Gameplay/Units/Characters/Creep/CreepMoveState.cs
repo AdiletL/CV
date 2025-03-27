@@ -84,7 +84,8 @@ namespace Gameplay.Unit.Character.Creep
                 TimerUpdateTargetPosition();
                 
                 if (!navMeshAgent.pathPending &&
-                    navMeshAgent.remainingDistance < STOPPING_DISTANCE)
+                    navMeshAgent.remainingDistance < STOPPING_DISTANCE &&
+                    IsCanMove)
                 {
                     CheckUnitInRange();
                 }
@@ -118,9 +119,21 @@ namespace Gameplay.Unit.Character.Creep
             else
                 stateMachine.ExitCategory(Category, null);
         }
+
+        public override void ActivateMovement()
+        {
+            base.ActivateMovement();
+            navMeshAgent.isStopped = false;
+        }
+
+        public override void DeactivateMovement()
+        {
+            base.DeactivateMovement();
+            navMeshAgent.isStopped = true;
+        }
     }
 
-public class CreepMoveStateBuilder : CharacterMoveStateBuilder
+    public class CreepMoveStateBuilder : CharacterMoveStateBuilder
     {
         public CreepMoveStateBuilder(CreepMoveState instance) : base(instance)
         {

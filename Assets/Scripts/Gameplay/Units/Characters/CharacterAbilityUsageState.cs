@@ -15,6 +15,7 @@ namespace Gameplay.Unit.Character
         protected Ability.Ability currentAbility;
         
         protected float durationAnimation, countDurationAnimation;
+        protected bool isCanUsage = true;
 
         protected Queue<float> momentEvents;
         
@@ -39,8 +40,11 @@ namespace Gameplay.Unit.Character
         {
             base.Enter();
 
-            if (currentAbility == null)
+            if (currentAbility == null || !isCanUsage)
+            {
                 stateMachine.ExitCategory(Category, null);
+                return;
+            }
 
             if (momentEvents == null || momentEvents.Count == 0 || durationAnimation == 0)
                 currentAbility.StartEffect();
@@ -88,6 +92,7 @@ namespace Gameplay.Unit.Character
         
         public void SetAbility(Ability.Ability ability)
         {
+            if(!isCanUsage) return;
             if(currentAbility != ability)
                 ExitCurrentAbility();
             ClearValues();
@@ -120,6 +125,17 @@ namespace Gameplay.Unit.Character
 
         protected virtual void FinishDurationAnimation()
         {
+            stateMachine.ExitCategory(Category, null);
+        }
+        
+        public void ActivateUsage()
+        {
+            isCanUsage = true;
+        }
+
+        public void DeactivateUsage()
+        {
+            isCanUsage = false;
             stateMachine.ExitCategory(Category, null);
         }
     }

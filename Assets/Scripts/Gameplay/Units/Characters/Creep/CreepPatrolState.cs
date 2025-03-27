@@ -65,12 +65,25 @@ namespace Gameplay.Unit.Character.Creep
             base.ExecuteMovement();
             if (navMeshAgent.isOnNavMesh &&
                 !navMeshAgent.pathPending && 
-                navMeshAgent.remainingDistance < STOPPING_DISTANCE)
+                navMeshAgent.remainingDistance < STOPPING_DISTANCE &&
+                IsCanMove)
             {
                 SetTargetPoint();
                 currentClip = getRandomClip(walkClips);
                 PlayAnimation();
             }
+        }
+
+        public override void ActivateMovement()
+        {
+            base.ActivateMovement();
+            navMeshAgent.isStopped = false;
+        }
+
+        public override void DeactivateMovement()
+        {
+            base.DeactivateMovement();
+            navMeshAgent.isStopped = true;
         }
     }
 

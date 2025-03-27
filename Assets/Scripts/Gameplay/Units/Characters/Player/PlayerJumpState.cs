@@ -56,7 +56,7 @@ namespace Gameplay.Unit.Character.Player
             if (countCooldownCheckGround > cooldownCheckGround)
             {
                 if (Input.GetKeyDown(jumpKey) && currentJumpCount < maxJumpCount)
-                {
+                { 
                     StartJump();
                 }
             }

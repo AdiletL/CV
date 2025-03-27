@@ -21,10 +21,9 @@ namespace Gameplay.Movement
         private float totalDuration;
         private float height;
 
-        private bool isMoveable;
-
         public Stat MovementSpeedStat { get; private set; } = new Stat();
-        
+        public bool IsCanMove { get; private set; }
+
 
         public ArcMovement(GameObject gameObject, float movementSpeed, float height, AnimationCurve moveCurve)
         {
@@ -40,10 +39,9 @@ namespace Gameplay.Movement
         }
 
 
-
         public void ExecuteMovement()
         {
-            if (isMoveable)
+            if (IsCanMove)
             {
                 timerHeight += Time.deltaTime;
                 float progress = Mathf.Clamp01(timerHeight / totalDuration);
@@ -65,12 +63,22 @@ namespace Gameplay.Movement
                 previousPosition = currentPosition;
 
                 if (progress >= 1f)
-                    isMoveable = false;
+                    DeactivateMovement();
             }
             else
             {
                OnFinished?.Invoke();
             }
+        }
+
+        public void ActivateMovement()
+        {
+            IsCanMove = true;
+        }
+
+        public void DeactivateMovement()
+        {
+            IsCanMove = false;
         }
 
         public void UpdateData(Vector3 target)
@@ -81,7 +89,7 @@ namespace Gameplay.Movement
             totalHeight = (distance * .1f) * height;
             totalDuration = distance / MovementSpeedStat.CurrentValue;
             timerHeight = 0;
-            isMoveable = true;
+            ActivateMovement();
 
             previousPosition = gameObject.transform.position;
             

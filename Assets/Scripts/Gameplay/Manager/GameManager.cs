@@ -51,6 +51,7 @@ namespace Gameplay.Manager
             diContainer.Bind<SO_GameHotkeys>().FromInstance(so_GameConfig.SO_GameHotkeys).AsSingle();
             diContainer.Bind<SO_GameUIColor>().FromInstance(so_GameConfig.SO_GameUIColor).AsSingle();
             diContainer.Bind<SO_GameStatIcon>().FromInstance(so_GameConfig.SO_GameStatIcon).AsSingle();
+            diContainer.Bind<SO_GameDisable>().FromInstance(so_GameConfig.SO_GameDisable).AsSingle();
             diContainer.Bind<SO_BaseAbilityConfigContainer>().FromInstance(so_BaseAbilityConfigContainer).AsSingle();
             
             if(!PhotonNetwork.IsMasterClient) return;

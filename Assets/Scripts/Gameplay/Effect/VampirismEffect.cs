@@ -15,6 +15,7 @@ namespace Gameplay.Effect
         private IHealth targetHealth;
         private UnitCenter targetUnitCenter;
         private GameValue gameValue;
+        
 
         public VampirismEffect(VampirismConfig config, string id) : base(config, id)
         {

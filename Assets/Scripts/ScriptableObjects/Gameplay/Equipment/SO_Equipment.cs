@@ -9,5 +9,6 @@ namespace ScriptableObjects.Gameplay.Equipment
     {
         [field: SerializeField] public AssetReferenceGameObject EquipmentPrefab { get; set; }
         [field: SerializeField] public StatConfig[] StatConfigs { get; protected set; }
+        
     }
 }

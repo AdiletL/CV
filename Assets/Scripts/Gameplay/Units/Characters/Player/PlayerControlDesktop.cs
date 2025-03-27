@@ -175,14 +175,14 @@ namespace Gameplay.Unit.Character.Player
 
         public override void HandleHotkey()
         {
-            if(!photonView.IsMine) return;
+            if(!photonView.IsMine || !isCanControl) return;
             base.HandleHotkey();
             
         }
 
         public override void HandleInput()
         {
-            if(!photonView.IsMine) return;
+            if(!photonView.IsMine || !isCanControl) return;
             base.HandleInput();
             
             if ((Input.GetKey(KeyCode.A) || 
@@ -219,57 +219,57 @@ namespace Gameplay.Unit.Character.Player
 
         public PlayerControlDesktopBuilder SetConfig(SO_PlayerControlDesktop config)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetConfig(config);
             return this;
         }
         public PlayerControlDesktopBuilder SetPlayerKinematicControl(PlayerKinematicControl playerKinematicControl)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerKinematicControl(playerKinematicControl);
             return this;
         }
         public PlayerControlDesktopBuilder SetPlayerStateFactory(PlayerStateFactory playerStateFactory)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerStateFactory(playerStateFactory);
             return this;
         }
         public PlayerControlDesktopBuilder SetPhotonView(PhotonView view)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPhotonView(view);
             return this;
         }
         public PlayerControlDesktopBuilder SetPlayerController(PlayerController playerController)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerController(playerController);
             return this;
         }
         public PlayerControlDesktopBuilder SetStateMachine(StateMachine stateMachine)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetStateMachine(stateMachine);
             return this;
         }
         public PlayerControlDesktopBuilder SetPlayerAttackConfig(SO_PlayerAttack config)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerAttackConfig(config);
             return this;
         }
         
         public PlayerControlDesktopBuilder SetPlayerSpecialActionConfig(SO_PlayerSpecialAction config)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerSpecialActionConfig(config);
             return this;
         }
         
         public PlayerControlDesktopBuilder SetPlayerMoveConfig(SO_PlayerMove config)
         {
-            if (unitControlDesktop is PlayerControlDesktop playerControlDesktop)
+            if (characterControlDesktop is PlayerControlDesktop playerControlDesktop)
                 playerControlDesktop.SetPlayerMoveConfig(config);
             return this;
         }
