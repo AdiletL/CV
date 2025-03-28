@@ -11,16 +11,14 @@ namespace Gameplay.Effect
         
         private Dictionary<EffectType, List<Effect>> currentEffects = new();
         
-        public Effect GetEffect(EffectType effectType, string id)
+        public Effect GetEffect(Effect effect)
         {
-            if (currentEffects == null || !currentEffects.ContainsKey(effectType) ||
-                currentEffects[effectType].Count == 0) return null;
-
-            for (int i = currentEffects[effectType].Count - 1; i >= 0; i--)
+            for (int i = currentEffects[effect.EffectTypeID].Count - 1; i >= 0; i--)
             {
-                if(string.Equals(currentEffects[effectType][i].ID, id))
-                    return currentEffects[effectType][i];
+                if (ReferenceEquals(currentEffects[effect.EffectTypeID][i], effect))
+                    return currentEffects[effect.EffectTypeID][i];
             }
+
             return null;
         }
 
@@ -30,20 +28,7 @@ namespace Gameplay.Effect
                 currentEffects[effectType].Count == 0) return null;
             return currentEffects[effectType];
         }
-        public List<Effect> GetEffects(EffectType effectType, string id)
-        {
-            if (currentEffects == null || !currentEffects.ContainsKey(effectType) ||
-                currentEffects[effectType].Count == 0) return null;
-            var effects = new List<Effect>();
 
-            for (int i = currentEffects[effectType].Count - 1; i >= 0; i--)
-            {
-                if(string.Equals(currentEffects[effectType][i].ID, id))
-                    effects.Add(currentEffects[effectType][i]);
-            }
-            return effects;
-        }
-        
         public void Initialize()
         {
             
@@ -59,25 +44,27 @@ namespace Gameplay.Effect
             currentEffects[effect.EffectTypeID].Add(effect);
             
             OnUpdate += effect.Update;
-            effect.OnDestroyEffect += RemoveEffects;
+            effect.OnDestroyEffect += OnDestroyEffect;
             effect.ApplyEffect();
         }
 
-        public void RemoveEffects(EffectType effectType, string id)
+        public void OnDestroyEffect(Effect effect)
         {
-            var effects = GetEffects(effectType, id);
-            if (effects == null || effects.Count == 0) return;
+            RemoveEffect(effect);
+        }
 
-            for (int i = effects.Count - 1; i >= 0; i--)
-            {
-                OnUpdate -= effects[i].Update;
-                effects[i].OnDestroyEffect -= RemoveEffects;
-                effects[i].DestroyEffect();
-                
-                currentEffects[effectType].Remove(effects[i]);
-            }
-            if(currentEffects[effectType].Count == 0)
-                currentEffects.Remove(effectType);
+        public void RemoveEffect(Effect effect)
+        {
+            var targetEffect = GetEffect(effect);
+            if (targetEffect == null) return;
+
+            OnUpdate -= targetEffect.Update;
+            targetEffect.OnDestroyEffect -= OnDestroyEffect;
+            targetEffect.DestroyEffect();
+            currentEffects[targetEffect.EffectTypeID].Remove(targetEffect);
+            
+            if(currentEffects[targetEffect.EffectTypeID].Count == 0)
+                currentEffects.Remove(targetEffect.EffectTypeID);
         }
     }
 }

@@ -14,15 +14,32 @@ namespace Gameplay.Unit.Character
         protected CharacterAnimation characterAnimation;
 
         public bool IsCanJump { get; protected set; } = true;
-        
+       
+
         public void SetConfig(SO_CharacterMove config) => so_CharacterMove = config;
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
-        
+
+        public override void Enter()
+        {
+            base.Enter();
+            if(!IsCanJump)
+                stateMachine.ExitCategory(Category, null);
+        }
+
         public override void Update()
         {
         }
         
+        public void ActivateJump()
+        {
+            IsCanJump = true;
+        }
+
+        public void DeactivateJump()
+        {
+            IsCanJump = false;
+        }
     }
     
     public class CharacterJumpStateBuilder : StateBuilder<CharacterJumpState>

@@ -22,7 +22,6 @@ namespace Gameplay.Unit.Character.Player
         private float countCooldownCheckGround;
         private float consumptionEndurance;
         private float jumpPower;
-        private bool isAddedEnduranceStat;
 
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
 
@@ -43,6 +42,7 @@ namespace Gameplay.Unit.Character.Player
         public override void Enter()
         {
             base.Enter();
+            if(!IsCanJump) return;
             IsCanExit = false;
             characterAnimation.SetBlock(true);
             ClearValues();
@@ -87,24 +87,18 @@ namespace Gameplay.Unit.Character.Player
 
         private void AddRegenerationEnduranceStat()
         {
-            if (!isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEndurance);
-                isAddedEnduranceStat = true;
-            }
+            characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEndurance);
         }
 
         private void ClearRegenerationEnduranceStat()
         {
-            if (isAddedEnduranceStat)
-            {
-                characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEndurance);
-                isAddedEnduranceStat = false;
-            }
+            characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEndurance);
         }
         
         private void StartJump()
         {
+            if(!IsCanJump) return;
+            
             currentJumpCount++;
             var currentPower = jumpPower;
             if (currentJumpCount >= maxJumpCount)

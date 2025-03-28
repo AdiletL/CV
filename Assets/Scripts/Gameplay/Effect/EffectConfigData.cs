@@ -14,5 +14,8 @@ namespace Gameplay.Effect
         
         [ShowIf("@EffectTypesID.Contains(EffectType.Vampirism)"), Space]
         public VampirismConfig VampirismConfig;
+        
+        [ShowIf("@EffectTypesID.Contains(EffectType.Disable)"), Space]
+        public DisableConfig[] DisableConfigs;
     }
 }

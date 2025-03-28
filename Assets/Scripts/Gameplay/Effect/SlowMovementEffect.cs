@@ -16,7 +16,7 @@ namespace Gameplay.Effect
         private float timer, countTimer;
         private float addedStatValue;
         
-        public SlowMovementEffect(SlowMovementConfig slowMovementConfig, string id) : base(slowMovementConfig, id)
+        public SlowMovementEffect(SlowMovementConfig slowMovementConfig) : base(slowMovementConfig)
         {
             this.value = slowMovementConfig.Value;
             this.timer = slowMovementConfig.Timer;

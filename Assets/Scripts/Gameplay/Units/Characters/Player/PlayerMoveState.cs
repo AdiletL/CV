@@ -40,7 +40,6 @@ namespace Gameplay.Unit.Character.Player
         {
             base.Enter();
             currentClip = getRandomClip(runClips);
-            PlayAnimation();
             AddRegenerationEnduranceStat();
         }
 
@@ -82,8 +81,8 @@ namespace Gameplay.Unit.Character.Player
         {
             playerKinematicControl.ClearVelocity();
             playerKinematicControl.SetRotationSpeed(0);
-            base.Exit();
             ClearRegenerationEnduranceStat();
+            base.Exit();
         }
 
         private void OnExitCategory(IState state)
@@ -111,8 +110,15 @@ namespace Gameplay.Unit.Character.Player
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
-            if (IsCanMove) playerKinematicControl.SetVelocity(directionMovement * (MovementSpeedStat.CurrentValue));
-            else playerKinematicControl.ClearVelocity();
+            if (IsCanMove)
+            {
+                playerKinematicControl.SetVelocity(directionMovement * MovementSpeedStat.CurrentValue);
+                PlayAnimation();
+            }
+            else
+            {
+                playerKinematicControl.ClearVelocity();
+            }
         }
 
         public void ExecuteRotate()

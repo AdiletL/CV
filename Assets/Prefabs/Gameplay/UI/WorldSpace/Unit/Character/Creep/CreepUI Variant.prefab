@@ -60,6 +60,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3081633784391214726}
   m_SourcePrefab: {fileID: 100100000, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
+--- !u!114 &610874124120781924 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7609770470248171625, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
+  m_PrefabInstance: {fileID: 7052943965558160397}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87a3d57b51954ae796fd5e56141a7ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2492574460382768501 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4861196443270467960, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}
@@ -103,6 +114,7 @@ MonoBehaviour:
   healthBarUI: {fileID: 2492574460382768501}
   enduranceBarUI: {fileID: 8641516640053037320}
   manaBarUI: {fileID: 7096111512194394404}
+  disableBarUI: {fileID: 610874124120781924}
 --- !u!114 &8641516640053037320 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1589140314720384261, guid: c035a49d33956dd448ebf9ee4d7bffef, type: 3}

@@ -24,3 +24,21 @@ MonoBehaviour:
       TimerCast: 0.1
       Speed: 15
       Duration: 0.15
+  <EffectConfigData>k__BackingField:
+    EffectTypesID: 03000000
+    SlowMovementConfig:
+      IsInterim: 1
+      ValueType: 0
+      Value: 0
+      Timer: 0
+    VampirismConfig:
+      IsInterim: 1
+      ValueType: 0
+      Value: 0
+    DisableConfigs:
+    - IsInterim: 1
+      DisableTypeID: 1
+      Timer: 100
+    - IsInterim: 1
+      DisableTypeID: 2
+      Timer: 100

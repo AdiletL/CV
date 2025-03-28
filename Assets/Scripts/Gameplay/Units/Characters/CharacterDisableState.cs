@@ -18,6 +18,7 @@ namespace Gameplay.Unit.Character
         Control = 1 << 2,
         ItemUsage = 1 << 3,
         AbilityUsage = 1 << 4,
+        Jump = 1 << 5,
     }
     public abstract class CharacterDisableState : State, IDisablelable
     {
@@ -103,7 +104,6 @@ namespace Gameplay.Unit.Character
             base.Enter();
             IsCanExit = false;
             ActivateDisable(CurrentDisableType);
-            characterAnimation.ChangeAnimationWithDuration(getClip(CurrentDisableType), isForce: true, layer: ANIMATION_LAYER);
         }
 
         public override void Update()
@@ -120,13 +120,16 @@ namespace Gameplay.Unit.Character
         public void SetDisableType(DisableType disableType)
         {
             CurrentDisableType = disableType;
-            if (!IsActive) return;
-            ActivateDisable(CurrentDisableType);
-            characterAnimation.ChangeAnimationWithDuration(getClip(CurrentDisableType), isForce: true, layer: ANIMATION_LAYER);
+            if(!IsActive) return;
+            
+            var clip = getClip(disableType);
+            if(clip) characterAnimation.ChangeAnimationWithDuration(clip, layer: ANIMATION_LAYER);
         }
 
         public virtual void ActivateDisable(DisableType disableType)
         {
+            if (!IsActive) return;
+            
             if((so_GameDisable.BlockActions[disableType] & DisableCategory.ItemUsage) != 0)
                 stateMachine.GetState<CharacterItemUsageState>()?.DeactivateUsage();
             if((so_GameDisable.BlockActions[disableType] & DisableCategory.AbilityUsage) != 0)
@@ -135,8 +138,11 @@ namespace Gameplay.Unit.Character
                 stateMachine.GetInterfaceImplementingClass<IMovement>()?.DeactivateMovement();
             if((so_GameDisable.BlockActions[disableType] & DisableCategory.Rotation) != 0)
                 stateMachine.GetInterfaceImplementingClass<IRotate>()?.DeactivateRotate();
+            if((so_GameDisable.BlockActions[disableType] & DisableCategory.Jump) != 0)
+                stateMachine.GetInterfaceImplementingClass<IJump>()?.DeactivateJump();
             
             BlockAction(so_GameDisable.BlockActions[disableType]);
+            characterAnimation.ChangeAnimationWithDuration(getClip(CurrentDisableType), isForce: true, layer: ANIMATION_LAYER);
         }
 
         public virtual void DeactivateDisable(DisableType disableType)
@@ -151,7 +157,13 @@ namespace Gameplay.Unit.Character
                 stateMachine.GetInterfaceImplementingClass<IMovement>()?.ActivateMovement();
             if(!IsActionBlocked(DisableCategory.Rotation))
                 stateMachine.GetInterfaceImplementingClass<IRotate>()?.ActivateRotate();
+            if((so_GameDisable.BlockActions[disableType] & DisableCategory.Jump) != 0)
+                stateMachine.GetInterfaceImplementingClass<IJump>()?.ActivateJump();
             
+            if(getClip(CurrentDisableType))
+                characterAnimation.ExitAnimation(ANIMATION_LAYER);
+            
+            CurrentDisableType = DisableType.Nothing;
             foreach (int value in blockedActions.Values)
             {
                 if (value > 0) return;

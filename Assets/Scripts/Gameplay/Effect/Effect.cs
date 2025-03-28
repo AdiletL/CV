@@ -5,19 +5,18 @@ namespace Gameplay.Effect
 {
     public abstract class Effect : IEffect
     {
-        public event Action<EffectType, string> OnDestroyEffect;
+        public event Action<Effect> OnDestroyEffect;
 
         public abstract EffectType EffectTypeID { get; }
 
-        public string ID { get; protected set; }
         public GameObject Target { get; protected set; }
         public bool IsInterim { get; protected set; }
         public bool IsBuff { get; protected set; }
         
 
-        public Effect(EffectConfig effectConfig, string id)
+        public Effect(EffectConfig effectConfig)
         {
-            ID = id;
+            
         }
 
         public void SetModifier(bool isBuff) => IsBuff = isBuff;
@@ -33,7 +32,7 @@ namespace Gameplay.Effect
 
         public virtual void DestroyEffect()
         {
-            OnDestroyEffect?.Invoke(EffectTypeID, ID);
+            OnDestroyEffect?.Invoke(this);
         }
     }
 

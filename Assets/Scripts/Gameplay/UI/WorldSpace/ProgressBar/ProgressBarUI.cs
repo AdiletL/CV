@@ -16,7 +16,7 @@ namespace Gameplay.UI
         
         public abstract void Initialize();
         
-        public virtual void UpdateHealthBar(float current, float max)
+        public virtual void UpdateBar(float current, float max)
         {
             result = current/max;
             progressBar.fillAmount = result;

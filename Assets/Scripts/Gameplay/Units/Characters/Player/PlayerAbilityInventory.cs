@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gameplay.Factory;
 using Gameplay.Ability;
+using Gameplay.Effect;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Unit.Cell;
 using ScriptableObjects.Ability;
@@ -209,14 +210,32 @@ namespace Gameplay.Unit.Character.Player
 
             if (Input.GetKeyDown(KeyCode.J))
             {
-                GetComponent<PlayerDisableController>().ActivateDisable(DisableType.Stun);
+                var disableEffect = new DisableEffect(so_PlayerAbilities.EffectConfigData.DisableConfigs[0]);
+                diContainer.Inject(disableEffect);
+                GetComponent<PlayerDisableController>().ActivateDisable(disableEffect);
+                disableEffects.Add(disableEffect);
+                disableEffect.ApplyEffect();
             }
             else if(Input.GetKeyDown(KeyCode.K))
             {
-                GetComponent<PlayerDisableController>().DeactivateDisable(DisableType.Stun);
+                if (disableEffects.Count > 0)
+                {
+                    GetComponent<PlayerDisableController>().DeactivateDisable(disableEffects[^1]);
+                    disableEffects.RemoveAt(disableEffects.Count - 1);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                var disableEffect = new DisableEffect(so_PlayerAbilities.EffectConfigData.DisableConfigs[1]);
+                diContainer.Inject(disableEffect);
+                GetComponent<PlayerDisableController>().ActivateDisable(disableEffect);
+                disableEffects.Add(disableEffect);
+                disableEffect.ApplyEffect();
             }
         }
 
+        private List<DisableEffect> disableEffects = new List<DisableEffect>();
+        
         private void HotkeysHandler()
         {
             for (int i = 0; i < abilityInventoryHotkeys.Length; i++)

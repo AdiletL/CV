@@ -16,8 +16,6 @@ namespace Gameplay.Unit.Item
         private VampirismEffect vampirismEffect;
         private VampirismConfig vampirismConfig;
         
-        private static readonly string ID = nameof(MadnessMaskItem);
-        
 
         public MadnessMaskItem(SO_MadnessMaskItem so_MadnessMaskItem) : base(so_MadnessMaskItem)
         {
@@ -27,7 +25,7 @@ namespace Gameplay.Unit.Item
         public override void Initialize()
         {
             base.Initialize();
-            vampirismEffect = new VampirismEffect(vampirismConfig, ID);
+            vampirismEffect = new VampirismEffect(vampirismConfig);
             diContainer.Inject(vampirismEffect);
             vampirismEffect.SetTarget(Owner);
         }
@@ -54,7 +52,7 @@ namespace Gameplay.Unit.Item
         protected override void RemoveEffectFromUnit()
         {
             if (Owner.TryGetComponent(out EffectHandler effectHandler))
-                effectHandler.RemoveEffects(vampirismEffect.EffectTypeID, vampirismEffect.ID);
+                effectHandler.OnDestroyEffect(vampirismEffect);
         }
     }
 }

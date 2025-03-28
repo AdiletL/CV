@@ -4,10 +4,10 @@
     {
         public override void ActivateDisable(DisableType disableType)
         {
-            base.ActivateDisable(disableType);
-            if((so_GameDisable.BlockActions[DisableType.Stun] & DisableCategory.Control) != 0 && 
+            if((so_GameDisable.BlockActions[disableType] & DisableCategory.Control) != 0 && 
                gameObject.TryGetComponent(out IPlayerController playerController))
                 playerController.DeactivateControl();
+            base.ActivateDisable(disableType);
         }
 
         public override void DeactivateDisable(DisableType disableType)

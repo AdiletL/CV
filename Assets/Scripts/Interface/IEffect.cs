@@ -5,7 +5,6 @@ public interface IEffect
 { 
     public EffectType EffectTypeID { get; }
     
-    public string ID { get; }
     public GameObject Target { get; }
     public bool IsInterim { get; }
     public bool IsBuff { get; }

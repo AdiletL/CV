@@ -10,7 +10,7 @@ namespace Gameplay.Weapon.Projectile
     {
         private SO_Sphere so_Sphere;
         private IMovement directionMovement;
-        private const string ID = nameof(SphereController);
+        private SlowMovementEffect slowMovementEffect;
 
         public override void Initialize()
         {
@@ -18,11 +18,16 @@ namespace Gameplay.Weapon.Projectile
             if(isInitialized) return;
             
             so_Sphere = (SO_Sphere)so_Projectile;
-            
-            if (directionMovement == null)
-                directionMovement = new DirectionMovement(gameObject, MovementSpeedStat.CurrentValue);
 
-            directionMovement.Initialize();
+            if (directionMovement == null)
+            {
+                directionMovement = new DirectionMovement(gameObject, MovementSpeedStat.CurrentValue);
+                directionMovement.Initialize();
+            }
+
+            if (slowMovementEffect == null)
+                slowMovementEffect = new SlowMovementEffect(so_Sphere.EffectConfigData.SlowMovementConfig);
+            
             isInitialized = true;
         }
 
@@ -37,16 +42,15 @@ namespace Gameplay.Weapon.Projectile
             var handleEffect = target.GetComponent<EffectHandler>();
             if(handleEffect == null) return;
             
-            var effect = handleEffect.GetEffect(EffectType.SlowMovement, ID);
+            var effect = handleEffect.GetEffect(slowMovementEffect);
             if (effect != null)
             {
                 effect.UpdateEffect();
             }
             else
             {
-                effect = new SlowMovementEffect(so_Sphere.EffectConfigData.SlowMovementConfig, ID);
-                effect.SetTarget(target);
-                handleEffect.AddEffect(effect);
+                slowMovementEffect.SetTarget(target);
+                handleEffect.AddEffect(slowMovementEffect);
             }
         }
     }

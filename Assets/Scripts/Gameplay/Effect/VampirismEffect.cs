@@ -17,7 +17,7 @@ namespace Gameplay.Effect
         private GameValue gameValue;
         
 
-        public VampirismEffect(VampirismConfig config, string id) : base(config, id)
+        public VampirismEffect(VampirismConfig config) : base(config)
         {
             gameValue = new GameValue(config.Value, config.ValueType);
         }

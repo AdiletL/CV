@@ -8,5 +8,6 @@ namespace ScriptableObjects.Gameplay
         [field: SerializeField] public Gradient HealthBarGradient { get; private set; }
         [field: SerializeField] public Gradient EnduranceBarGradient { get; private set; }
         [field: SerializeField] public Gradient ManaBarGradient { get; private set; }
+        [field: SerializeField] public Gradient DisableBarGradient { get; private set; }
     }
 }
