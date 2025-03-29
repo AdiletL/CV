@@ -12,6 +12,7 @@ public interface IAbility
     public AbilityType AbilityTypeID { get; }
     public AbilityBehaviour AbilityBehaviourID { get; }
     public Action FinishedCallBack { get; }
+    public float Range { get; }
     public float Cooldown { get; }
     public bool IsCooldown { get; }
     

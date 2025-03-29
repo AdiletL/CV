@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ScriptableObjects.Gameplay;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class UnitRenderer : MonoBehaviour
@@ -11,8 +12,10 @@ public class UnitRenderer : MonoBehaviour
     
     [SerializeField] private Renderer[] baseRenderers;
 
+    [FormerlySerializedAs("rangeAttackVisual")]
     [Space]
-    [SerializeField] private GameObject rangeVisual;
+    [SerializeField] private GameObject rangeAttack;
+    [SerializeField] private GameObject rangeCast;
 
     [Space] 
     [SerializeField] private GameObject selectedObject;
@@ -52,9 +55,22 @@ public class UnitRenderer : MonoBehaviour
         }
     }
     
-    public void SetRangeScale(float scale) => rangeVisual.transform.localScale = Vector3.one * (scale * 2);
-    public void ShowRangeVisual() => rangeVisual.SetActive(true);
-    public void HideRangeVisual() => rangeVisual.SetActive(false);
+    public void SetRangeAttackScale(float scale) => rangeAttack.transform.localScale = Vector3.one * (scale * 2);
+    public void ShowRangeAttack() => rangeAttack.SetActive(true);
+    public void HideRangeAttack() => rangeAttack.SetActive(false);
+    
+    public void SetRangeCastScale(float scale) => rangeCast.transform.localScale = Vector3.one * (scale * 2);
+    public void ShowRangeCast()
+    {
+        rangeCast.SetActive(true);
+        HideRangeAttack();
+    }
+
+    public void HideRangeCast()
+    {
+        rangeCast.SetActive(false);
+        ShowRangeAttack();
+    }
 
     public void HighlightedObject()
     {

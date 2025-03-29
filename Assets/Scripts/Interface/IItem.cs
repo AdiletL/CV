@@ -20,6 +20,7 @@ public interface IItem
     public Action FinishedCallBack { get; }
     public int Amount { get; }
     public float Cooldown { get; }
+    public float Range { get; }
     public bool IsCooldown { get; }
     public StatConfig[] Stats { get; }
     public List<Ability> Abilities { get; }

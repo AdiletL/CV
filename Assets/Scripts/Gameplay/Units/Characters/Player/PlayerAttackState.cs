@@ -108,7 +108,7 @@ namespace Gameplay.Unit.Character.Player
         {
             var totalRange = RangeStat.CurrentValue;
             if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
-            unitRenderer.SetRangeScale(totalRange);
+            unitRenderer.SetRangeAttackScale(totalRange);
         }
         
         protected override void ClearValues()

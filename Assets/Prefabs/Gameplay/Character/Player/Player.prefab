@@ -80,12 +80,12 @@ GameObject:
   - component: {fileID: 1190701228076766930}
   - component: {fileID: 7763242891327214566}
   m_Layer: 0
-  m_Name: Range
+  m_Name: RangeCast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6155692371262033155
 Transform:
   m_ObjectHideFlags: 0
@@ -1371,7 +1371,7 @@ GameObject:
   - component: {fileID: 7910787118552556907}
   - component: {fileID: 6848516748896638315}
   m_Layer: 3
-  m_Name: Range1
+  m_Name: RangeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3739,7 +3739,8 @@ MonoBehaviour:
   - {fileID: 2154833952339412076}
   - {fileID: 3038800472530841984}
   - {fileID: 2805917253128922478}
-  rangeVisual: {fileID: 4850091647839168485}
+  rangeAttack: {fileID: 4850091647839168485}
+  rangeCast: {fileID: 571700094542742763}
   selectedObject: {fileID: 1290455938804012064}
 --- !u!136 &1836599491007769117
 CapsuleCollider:
@@ -3867,6 +3868,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  unitRenderer: {fileID: 8871355657616788559}
 --- !u!114 &7816595593769935627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3889,6 +3891,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  unitRenderer: {fileID: 8871355657616788559}
 --- !u!114 &1799113198584482480
 MonoBehaviour:
   m_ObjectHideFlags: 0

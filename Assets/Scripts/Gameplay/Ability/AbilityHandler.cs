@@ -7,7 +7,6 @@ namespace Gameplay.Ability
     public class AbilityHandler : MonoBehaviour, IHandler
     {
         public event Action OnUpdate;
-        public event Action OnLateUpdate;
 
 
         private Dictionary<AbilityType, List<Ability>> currentAbilities;
@@ -65,8 +64,6 @@ namespace Gameplay.Ability
         }
 
         private void Update() => OnUpdate?.Invoke();
-        private void LateUpdate() => OnLateUpdate?.Invoke();
-        
         
         public void AddAbility(Ability ability)
         {
@@ -75,9 +72,8 @@ namespace Gameplay.Ability
             if (IsAbilityNull(ability.AbilityTypeID))
                 currentAbilities.Add(ability.AbilityTypeID, new List<Ability>());
             
-            OnUpdate += ability.Update;
-            
             currentAbilities[ability.AbilityTypeID].Add(ability);
+            OnUpdate += ability.Update;
         }
 
         public void RemoveAbilityByID(AbilityType abilityType, int? id)

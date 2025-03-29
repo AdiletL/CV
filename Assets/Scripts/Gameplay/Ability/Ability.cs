@@ -21,6 +21,7 @@ namespace Gameplay.Ability
         public abstract AbilityType AbilityTypeID { get; protected set; }
         public AbilityBehaviour AbilityBehaviourID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
+        public float Range { get; protected set; }
         public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
@@ -45,6 +46,7 @@ namespace Gameplay.Ability
             AbilityBehaviourID = SO_BaseAbilityConfigContainer.GetAbilityConfig(abilityConfig.AbilityTypeID).AbilityBehaviour;
             Cooldown = abilityConfig.Cooldown;
             TimerCast = abilityConfig.TimerCast;
+            Range = abilityConfig.Range;
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -136,5 +138,6 @@ namespace Gameplay.Ability
         public abstract AbilityType AbilityTypeID { get; }
         public float Cooldown;
         public float TimerCast;
+        public float Range;
     }
 }

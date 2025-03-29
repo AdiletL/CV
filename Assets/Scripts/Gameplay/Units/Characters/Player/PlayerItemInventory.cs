@@ -21,6 +21,7 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
         [SerializeField] private SO_PlayerItemUsage so_PlayerItemUsage;
         [SerializeField] private AssetReferenceGameObject uiItemInventoryPrefab;
+        [SerializeField] private UnitRenderer unitRenderer;
 
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
@@ -79,6 +80,8 @@ namespace Gameplay.Unit.Character.Player
             InitializeUIInventory();
             InitializeSlots();
             InitializeItemUsageState();
+            
+            unitRenderer.HideRangeCast();
         }
 
         private  void InitializeUIInventory()
@@ -172,6 +175,8 @@ namespace Gameplay.Unit.Character.Player
                     case ItemBehaviour.UnitTarget:
                         currentSelectedItem = slots[slotID]; 
                         playerBlockInput.BlockInput(selectItemBlockInput);
+                        unitRenderer.SetRangeCastScale(currentSelectedItem.Range);
+                        unitRenderer.ShowRangeCast();
                         break;
                 }
             }
@@ -220,6 +225,7 @@ namespace Gameplay.Unit.Character.Player
                 else if(Input.GetMouseButtonDown(1))
                 {
                     ClearSelectedItem();
+                    isNextFrameFromUnblockInput = true;
                 }
             }
         }
@@ -233,11 +239,16 @@ namespace Gameplay.Unit.Character.Player
                 if (hit.collider.TryGetComponent(out CellController cellController) &&
                     !cellController.IsBlocked())
                 {
+                    if(!Calculate.Distance.IsNearUsingSqr(transform.position, hit.point, 
+                           currentSelectedItem.Range * currentSelectedItem.Range))
+                        return;
+                    
                     currentSelectedItem.Enter(point: hit.point);
                     playerItemUsageState.SetItem(currentSelectedItem);
                     playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
+                    unitRenderer.HideRangeCast();
                 }
             }
         }
@@ -250,11 +261,16 @@ namespace Gameplay.Unit.Character.Player
             {
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
+                    if(!Calculate.Distance.IsNearUsingSqr(transform.position, characterMainController.transform.position,
+                           currentSelectedItem.Range * currentSelectedItem.Range))
+                        return;
+                    
                     currentSelectedItem.Enter(target: characterMainController.gameObject);
                     playerItemUsageState.SetItem(currentSelectedItem);
                     playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
+                    unitRenderer.HideRangeCast();
                 }
             }
         }

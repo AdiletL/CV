@@ -28,6 +28,7 @@ namespace Gameplay.Unit.Item
         public int Amount { get; protected set; }
         public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
+        public float Range { get; protected set; }
         public bool IsCooldown { get; protected set; }
         public StatConfig[] Stats { get; protected set; }
         public List<Ability.Ability> Abilities { get; protected set; }
@@ -63,6 +64,7 @@ namespace Gameplay.Unit.Item
             ItemBehaviourID = so_Item.ItemBehaviourID;
             Cooldown = so_Item.Cooldown;
             TimerCast = so_Item.TimerCast;
+            Range = so_Item.Range;
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)

@@ -7,7 +7,6 @@ namespace Gameplay.Unit.Item
     public class ItemHandler : MonoBehaviour, IHandler
     {
         public event Action OnUpdate;
-        public event Action OnLateUpdate;
 
         private Dictionary<AbilityType, List<Ability.Ability>> currentAbilities;
         private Dictionary<string, List<Item>> currentItems;
@@ -61,8 +60,6 @@ namespace Gameplay.Unit.Item
         }
 
         private void Update() => OnUpdate?.Invoke();
-        private void LateUpdate() => OnLateUpdate?.Invoke();
-        
         
         public void AddItem(Item item)
         {
