@@ -28,7 +28,6 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
         [SerializeField] private SO_PlayerAbilityUsage so_PlayerAbilityUsage;
         [SerializeField] private AssetReferenceGameObject uiAbilityInventoryPrefab;
-        [SerializeField] private UnitRenderer unitRenderer;
         
         private AbilityHandler abilityHandler;
         private UIAbilityInventory uiAbilityInventory;
@@ -38,6 +37,7 @@ namespace Gameplay.Unit.Character.Player
         private InputType selectItemBlockInput;
         private KeyCode[] abilityInventoryHotkeys;
         private Camera baseCamera;
+        private RangeDisplay rangeCastDisplay;
 
         private Ability.Ability currentSelectedAbility;
         private Texture2D selectedAbilityCursor;
@@ -67,8 +67,6 @@ namespace Gameplay.Unit.Character.Player
             InitializeHotkeys();
             InitializeSlots();
             InitializeUsageState();
-            
-            unitRenderer.HideRangeCast();
         }
 
         private  void InitializeUIInventory()
@@ -77,6 +75,8 @@ namespace Gameplay.Unit.Character.Player
             uiAbilityInventory = handle.GetComponent<UIAbilityInventory>();
             diContainer.Inject(uiAbilityInventory);
             uiAbilityInventory.OnClickedLeftMouse += OnClickedLeftMouse;
+            uiAbilityInventory.OnEnter += OnPointerEnter;
+            uiAbilityInventory.OnExit += OnPointerExit;
             uiAbilityInventory.CreateCells(maxSlot);
         }
 
@@ -133,6 +133,27 @@ namespace Gameplay.Unit.Character.Player
             slots[slotID.Value] = null;
         }
 
+        private void CreateRangeCastDisplay()
+        {
+            if(rangeCastDisplay) return;
+            var newGameObject = Addressables.InstantiateAsync(so_PlayerAbilityInventory.RangeCastPrefab, playerController.VisualParent.transform).WaitForCompletion();
+            newGameObject.transform.localPosition = Vector3.zero;
+            rangeCastDisplay = newGameObject.GetComponent<RangeDisplay>();
+        }
+        
+        private void OnPointerEnter(int? slotID)
+        {
+            if(slotID == null || slots[slotID] == null) return;
+            CreateRangeCastDisplay();
+            rangeCastDisplay.SetRange(slots[slotID].Range);
+            rangeCastDisplay.ShowRange();
+        }
+
+        private void OnPointerExit()
+        {
+            rangeCastDisplay?.HideRange();
+        }
+        
         private void ClearSelectedAbility()
         {
             ExitAbility(currentSelectedAbility);
@@ -167,8 +188,9 @@ namespace Gameplay.Unit.Character.Player
                     case AbilityBehaviour.UnitTarget:
                         currentSelectedAbility = ability; 
                         playerBlockInput.IsInputBlocked(selectItemBlockInput);
-                        unitRenderer.SetRangeCastScale(currentSelectedAbility.Range);
-                        unitRenderer.ShowRangeCast();
+                        CreateRangeCastDisplay();
+                        rangeCastDisplay.SetRange(currentSelectedAbility.Range);
+                        rangeCastDisplay.ShowRange();
                         break;
                 }
             }
@@ -214,7 +236,7 @@ namespace Gameplay.Unit.Character.Player
                 {
                     ClearSelectedAbility();
                     isNextFrameFromUnblockInput = true;
-                    unitRenderer.HideRangeCast();
+                    rangeCastDisplay.HideRange();
                 }
             }
 
@@ -276,7 +298,7 @@ namespace Gameplay.Unit.Character.Player
                     playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
                     currentSelectedAbility = null;
                     isNextFrameFromUnblockInput = true;
-                    unitRenderer.HideRangeCast();
+                    rangeCastDisplay.HideRange();
                 }
             }
         }
@@ -297,7 +319,7 @@ namespace Gameplay.Unit.Character.Player
                     playerController.StateMachine.ExitOtherStates(playerAbilityUsageState.GetType());
                     currentSelectedAbility = null;
                     isNextFrameFromUnblockInput = true;
-                    unitRenderer.HideRangeCast();
+                    rangeCastDisplay.HideRange();
                 }
             }
         }

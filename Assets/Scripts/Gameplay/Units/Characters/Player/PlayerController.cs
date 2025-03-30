@@ -4,7 +4,6 @@ using Gameplay.Factory.Character.Player;
 using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Factory;
-using Gameplay.UI.ScreenSpace.Portrait;
 using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
@@ -29,6 +28,7 @@ namespace Gameplay.Unit.Character.Player
     [RequireComponent(typeof(PlayerKinematicControl))]
     [RequireComponent(typeof(PlayerEquipmentController))]
     [RequireComponent(typeof(PlayerDisableController))]
+    [RequireComponent(typeof(CharacterPortrait))]
     public class PlayerController : CharacterMainController, IItemInteractable, ITrapInteractable, ICreepInteractable, IPlayerController
     {
         public Action<GameObject> TriggerEnter;
@@ -43,9 +43,6 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private SO_PlayerAbilities so_PlayerAbilities;
         [SerializeField] private SO_PlayerSpecialAction so_PlayerSpecialAction;
 
-        [Space] 
-        [SerializeField] private AssetReferenceGameObject uiPortraitPrefab;
-        
         [FormerlySerializedAs("so_NormalSword")]
         [Space]
         [SerializeField] private SO_NormalSwordItem soNormalSwordItem;
@@ -63,6 +60,7 @@ namespace Gameplay.Unit.Character.Player
         private PlayerUI playerUI;
         private PlayerHealth playerHealth;
         private PlayerMana playerMana;
+        private CharacterPortrait characterPortrait;
         
         private CharacterEndurance characterEndurance;
         private CharacterExperience characterExperience;
@@ -216,11 +214,9 @@ namespace Gameplay.Unit.Character.Player
             diContainer.Inject(characterEndurance);
             characterEndurance.Initialize();
             
-            var newGameObject = Addressables.InstantiateAsync(uiPortraitPrefab).WaitForCompletion();
-            var uiPortrait = newGameObject.GetComponent<UIPortrait>();
-            diContainer.Inject(uiPortrait);
-            uiPortrait.Initialize();
-            uiPortrait.SetStatsController(GetComponentInUnit<IStatsController>());
+            characterPortrait = GetComponentInUnit<CharacterPortrait>();
+            diContainer.Inject(characterPortrait);
+            characterPortrait.Initialize(playerStatsController);
         }
 
         protected override void InitializeMediatorEvent()

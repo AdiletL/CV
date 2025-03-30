@@ -24,7 +24,7 @@ namespace Gameplay.Unit.Character.Creep
         public override void Initialize()
         {
             base.Initialize();
-            rangeSqr = RangeStat.CurrentValue * RangeStat.CurrentValue;
+            rangeSqr = RangeAttackStat.CurrentValue * RangeAttackStat.CurrentValue;
             rotation = new Rotation(gameObject.transform, so_CharacterAttack.RotationSpeed);
         }
 

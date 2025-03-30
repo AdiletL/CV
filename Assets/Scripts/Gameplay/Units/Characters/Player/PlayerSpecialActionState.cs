@@ -39,24 +39,12 @@ namespace Gameplay.Unit.Character.Player
             
             var durationAnimation = blockClip.length;
             characterAnimation.ChangeAnimationWithDuration(blockClip, durationAnimation, isForce: true, layer: ANIMATION_LAYER);
-            
-            playerMoveState ??= stateMachine.GetState<PlayerMoveState>();
-            if(playerMoveState == null) return;
-            
-            changedMovementSpeedValue = playerMoveState.MovementSpeedStat.CurrentValue * MULTIPLY_MOVEMENT_SPEED;
-            playerMoveState.MovementSpeedStat.RemoveCurrentValue(changedMovementSpeedValue);
-            
-            changedRotateSpeedValue = playerMoveState.RotationSpeedStat.CurrentValue;
-            playerMoveState.RotationSpeedStat.RemoveCurrentValue(changedRotateSpeedValue);
         }
 
         public override void Exit()
         {
             characterAnimation.ExitAnimation(ANIMATION_LAYER);
             IsCanExit = true;
-            
-            //playerMoveState?.MovementSpeedStat.AddCurrentValue(changedMovementSpeedValue);
-            //playerMoveState?.RotationSpeedStat.AddCurrentValue(changedRotateSpeedValue);
             base.Exit();
         }
     }

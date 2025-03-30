@@ -22,7 +22,7 @@ namespace Gameplay.Unit.Character
             var attackSpeedStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.AttackSpeedStat;
             if(attackSpeedStat != null) AddStatToDictionary(StatType.AttackSpeed, attackSpeedStat);
             
-            var rangeAttackStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.RangeStat;
+            var rangeAttackStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.RangeAttackStat;
             if(rangeAttackStat != null) AddStatToDictionary(StatType.AttackRange, rangeAttackStat);
             
             var movementSpeedStat = characterMainController.StateMachine.GetState<CharacterMoveState>()?.MovementSpeedStat;

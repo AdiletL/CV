@@ -8,6 +8,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
     public class UIAbilityInventory : UIInventory
     {
         public event Action<int?> OnClickedLeftMouse;
+        public event Action<int?> OnEnter;
+        public event Action OnExit;
         
         [SerializeField] private AssetReferenceGameObject uiAbilityPrefab;
         [SerializeField] private Transform container;
@@ -23,6 +25,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
                 var handle = Addressables.InstantiateAsync(uiAbilityPrefab, container).WaitForCompletion();
                 uiAbility = handle.GetComponent<UIAbility>();
                 uiAbility.OnClickedLeftMouse += OnClickedLeftMouse;
+                uiAbility.OnEnter += OnEnter;
+                uiAbility.OnExit += OnExit;
                 uiAbility.Initialize();
                 uiAbility.Clear();
                 uiAbilities.Add(i, uiAbility);
@@ -58,6 +62,9 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             if(slotID == null) return;
             uiAbilities[slotID].Clear();
         }
+        
+        private void OnEnterItem(int? slotID) => OnEnter?.Invoke(slotID);
+        private void OnExitItem() => OnExit?.Invoke();
 
         private void OnDestroy()
         {

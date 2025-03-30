@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gameplay.Unit.Character.Player;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -27,8 +26,6 @@ namespace Gameplay.Unit.Character
         protected float angleToTarget;
         
         protected bool isAttacked;
-        protected bool isAddedEnduranceStat;
-        
        
         protected Queue<float> cooldownsApplyDamage;
         
@@ -38,7 +35,6 @@ namespace Gameplay.Unit.Character
         
         public Equipment.Weapon.Weapon CurrentWeapon { get; protected set; }
         public Stat ConsumptionEnduranceStat { get; } = new();
-        public Stat RangeStat { get; } = new();
 
         ~CharacterAttackState()
         {
@@ -57,7 +53,7 @@ namespace Gameplay.Unit.Character
         
         protected GameObject FindUnitInRange<T>()
         {
-            var totalRange = RangeStat.CurrentValue;
+            var totalRange = RangeAttackStat.CurrentValue;
             if (CurrentWeapon != null)
                 totalRange += CurrentWeapon.RangeStat.CurrentValue;
 
@@ -106,7 +102,7 @@ namespace Gameplay.Unit.Character
             DamageStat.AddCurrentValue(so_CharacterAttack.Damage);
             ConsumptionEnduranceStat.AddCurrentValue(so_CharacterAttack.ConsumptionEnduranceRate);
             AttackSpeedStat.AddCurrentValue(so_CharacterAttack.AttackSpeed);
-            RangeStat.AddCurrentValue(so_CharacterAttack.Range);
+            RangeAttackStat.AddCurrentValue(so_CharacterAttack.Range);
 
             for (int i = 0; i < so_CharacterAttack.DefaultAnimations.Length; i++)
                 unitAnimation.AddClip(so_CharacterAttack.DefaultAnimations[i].Clip);
@@ -191,7 +187,7 @@ namespace Gameplay.Unit.Character
             CurrentWeapon = weapon;
             CurrentWeapon.SetEnemyLayer(enemyLayer);
             CurrentWeapon.SetOwnerDamageStat(DamageStat);
-            CurrentWeapon.SetOwnerRangeStat(RangeStat);
+            CurrentWeapon.SetOwnerRangeStat(RangeAttackStat);
             CurrentWeapon.Show();
             ClearValues();
             UpdateDurationAttack();

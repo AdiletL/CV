@@ -21,7 +21,6 @@ namespace Gameplay.Unit.Character.Player
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
         [SerializeField] private SO_PlayerItemUsage so_PlayerItemUsage;
         [SerializeField] private AssetReferenceGameObject uiItemInventoryPrefab;
-        [SerializeField] private UnitRenderer unitRenderer;
 
         private ItemHandler itemHandler;
         private UIItemInventory uiItemInventory;
@@ -32,6 +31,7 @@ namespace Gameplay.Unit.Character.Player
         private Item.Item currentUseItem;
         private Camera baseCamera;
         private InputType selectItemBlockInput;
+        private RangeDisplay rangeCastDisplay;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
@@ -80,8 +80,6 @@ namespace Gameplay.Unit.Character.Player
             InitializeUIInventory();
             InitializeSlots();
             InitializeItemUsageState();
-            
-            unitRenderer.HideRangeCast();
         }
 
         private  void InitializeUIInventory()
@@ -91,6 +89,8 @@ namespace Gameplay.Unit.Character.Player
             diContainer.Inject(uiItemInventory);
             uiItemInventory.OnClickedLeftMouse += OnClickedLeftMouseInventory;
             uiItemInventory.OnClickedRightMouse += OnClickedRightMouseInventory;
+            uiItemInventory.OnEnter += OnPointerEnter;
+            uiItemInventory.OnExit += OnPointerExit;
             uiItemInventory.CreateCells(maxSlot);
         }
 
@@ -158,6 +158,27 @@ namespace Gameplay.Unit.Character.Player
                 item.RemoveStatsFromUnit();
             }
         }
+
+        private void CreateRangeCastDisplay()
+        {
+            if(rangeCastDisplay) return;
+            var newGameObject = Addressables.InstantiateAsync(so_PlayerItemInventory.RangeCastPrefab, playerController.VisualParent.transform).WaitForCompletion();
+            newGameObject.transform.localPosition = Vector3.zero;
+            rangeCastDisplay = newGameObject.GetComponent<RangeDisplay>();
+        }
+
+        private void OnPointerEnter(int? slotID)
+        {
+            if(slotID == null || slots[slotID] == null) return;
+            CreateRangeCastDisplay();
+            rangeCastDisplay.SetRange(slots[slotID].Range);
+            rangeCastDisplay.ShowRange();
+        }
+
+        private void OnPointerExit()
+        {
+            rangeCastDisplay?.HideRange();
+        }
         
         private void OnClickedLeftMouseInventory(int? slotID)
         {
@@ -175,8 +196,9 @@ namespace Gameplay.Unit.Character.Player
                     case ItemBehaviour.UnitTarget:
                         currentSelectedItem = slots[slotID]; 
                         playerBlockInput.BlockInput(selectItemBlockInput);
-                        unitRenderer.SetRangeCastScale(currentSelectedItem.Range);
-                        unitRenderer.ShowRangeCast();
+                        CreateRangeCastDisplay();
+                        rangeCastDisplay.SetRange(currentSelectedItem.Range);
+                        rangeCastDisplay.ShowRange();
                         break;
                 }
             }
@@ -226,6 +248,7 @@ namespace Gameplay.Unit.Character.Player
                 {
                     ClearSelectedItem();
                     isNextFrameFromUnblockInput = true;
+                    rangeCastDisplay.HideRange();
                 }
             }
         }
@@ -248,7 +271,7 @@ namespace Gameplay.Unit.Character.Player
                     playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
-                    unitRenderer.HideRangeCast();
+                    rangeCastDisplay.HideRange();
                 }
             }
         }
@@ -270,7 +293,7 @@ namespace Gameplay.Unit.Character.Player
                     playerController.StateMachine.ExitOtherStates(playerItemUsageState.GetType());
                     currentSelectedItem = null;
                     isNextFrameFromUnblockInput = true;
-                    unitRenderer.HideRangeCast();
+                    rangeCastDisplay.HideRange();
                 }
             }
         }

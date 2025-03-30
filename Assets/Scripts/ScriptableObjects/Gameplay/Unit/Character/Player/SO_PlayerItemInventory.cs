@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace ScriptableObjects.Unit.Character.Player
 {
@@ -7,5 +8,6 @@ namespace ScriptableObjects.Unit.Character.Player
     {
         [field: SerializeField] public InputType SelectItemBlockInputType { get; private set; } = InputType.Attack;
         [field: SerializeField] public int MaxCountItem { get; private set; } = 1;
+        [field: SerializeField] public AssetReferenceT<GameObject> RangeCastPrefab { get; private set; }
     }
 }

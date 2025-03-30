@@ -91,25 +91,6 @@ namespace Gameplay.Unit.Character.Player
             base.Exit();
             unitAnimation.ExitAnimation(2);
         }
-
-        protected override void SubscribeStatEvent()
-        {
-            base.SubscribeStatEvent();
-            RangeStat.OnChangedCurrentValue += OnChangedRangeStatCurrentValue;
-        }
-
-        protected override void UnsubscribeStatEvent()
-        {
-            base.UnsubscribeStatEvent();
-            RangeStat.OnChangedCurrentValue -= OnChangedRangeStatCurrentValue;
-        }
-
-        private void OnChangedRangeStatCurrentValue()
-        {
-            var totalRange = RangeStat.CurrentValue;
-            if(CurrentWeapon != null) totalRange += CurrentWeapon.RangeStat.CurrentValue;
-            unitRenderer.SetRangeAttackScale(totalRange);
-        }
         
         protected override void ClearValues()
         {

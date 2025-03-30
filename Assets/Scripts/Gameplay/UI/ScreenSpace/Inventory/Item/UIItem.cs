@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 namespace Gameplay.UI.ScreenSpace.Inventory
 {
-    public class UIItem : MonoBehaviour, IPointerClickHandler
+    public class UIItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public event Action<int?> OnClickedLeftMouse;
         public event Action<int?> OnClickedRightMouse;
+        public event Action<int?> OnEnter;
+        public event Action OnExit;
         
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownBar;
@@ -83,6 +85,16 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             {
                 OnClickedLeftMouse?.Invoke(SlotID);
             }
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            OnEnter?.Invoke(SlotID);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            OnExit?.Invoke();
         }
     }
 }

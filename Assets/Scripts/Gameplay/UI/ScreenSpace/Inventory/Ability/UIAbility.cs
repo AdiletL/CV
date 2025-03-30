@@ -1,13 +1,16 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Gameplay.UI.ScreenSpace.Inventory
 {
-    public class UIAbility : MonoBehaviour
+    public class UIAbility : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public event Action<int?> OnClickedLeftMouse;
+        public event Action<int?> OnEnter;
+        public event Action OnExit;
         
         [SerializeField] private Image icon;
         [SerializeField] private Image cooldownBar;
@@ -74,6 +77,16 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         private void OnDestroy()
         {
             button.onClick.RemoveAllListeners();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            OnEnter?.Invoke(SlotID);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            OnExit?.Invoke();
         }
     }
 }

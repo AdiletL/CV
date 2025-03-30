@@ -2,8 +2,9 @@
 
 public interface IAttack : IApplyDamage
 {
-    public Stat AttackSpeedStat { get; }
     public Stat DamageStat { get; }
+    public Stat AttackSpeedStat { get; }
+    public Stat RangeAttackStat { get; }
 
     public void Initialize();
 

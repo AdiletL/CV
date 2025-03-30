@@ -15,6 +15,7 @@ namespace Gameplay.Unit
         
         public Stat DamageStat { get; } = new Stat();
         public Stat AttackSpeedStat { get;} = new Stat();
+        public Stat RangeAttackStat { get; } = new Stat();
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;

@@ -2,7 +2,6 @@
 using Gameplay.Spawner;
 using Gameplay.UI.ScreenSpace;
 using Gameplay.UI.ScreenSpace.ContextMenu;
-using Gameplay.UI.ScreenSpace.CreatureInformation;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -21,7 +20,6 @@ namespace Gameplay.Manager
         [Space]
         [SerializeField] private AssetReferenceGameObject[] popUpSpawnerPrefabs;
         
-        private UIUnitInformation _uiUnitInformation;
         private GameObject mainCanvas;
         private PhotonView photonView;
         

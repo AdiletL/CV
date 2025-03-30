@@ -9,6 +9,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
     {
         public event Action<int?> OnClickedLeftMouse;
         public event Action<int?> OnClickedRightMouse;
+        public event Action<int?> OnEnter;
+        public event Action OnExit;
         
         [SerializeField] private AssetReferenceGameObject uiItemPrefab;
         [SerializeField] private Transform container;
@@ -24,6 +26,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
                 uiItem = handle.GetComponent<UIItem>();
                 uiItem.OnClickedLeftMouse += OnClickedLeftMouse;
                 uiItem.OnClickedRightMouse += OnClickedRightMouse;
+                uiItem.OnEnter += OnEnterItem;
+                uiItem.OnExit += OnExitItem;
                 uiItem.Initialize();
                 uiItem.Clear();
                 uiItems.Add(i, uiItem);
@@ -68,6 +72,9 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             if(slotID == null) return;
             uiItems[slotID].Clear();
         }
+        
+        private void OnEnterItem(int? slotID) => OnEnter?.Invoke(slotID);
+        private void OnExitItem() => OnExit?.Invoke();
 
         private void OnDestroy()
         {
@@ -75,6 +82,8 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             {
                 uiItems[i].OnClickedLeftMouse -= OnLeftMouseClickItem;
                 uiItems[i].OnClickedRightMouse -= OnRightMouseClickItem;
+                uiItems[i].OnEnter -= OnEnter;
+                uiItems[i].OnExit -= OnExit;
             }
         }
     }
