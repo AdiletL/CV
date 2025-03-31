@@ -1,8 +1,7 @@
 ﻿using Gameplay;
 
-public interface IAttack : IApplyDamage
+public interface IAttack : IApplyDamage, IDamage
 {
-    public Stat DamageStat { get; }
     public Stat AttackSpeedStat { get; }
     public Stat RangeAttackStat { get; }
 

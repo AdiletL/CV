@@ -1,9 +1,8 @@
 ﻿using Gameplay;
 using UnityEngine;
 
-public interface IMovement
+public interface IMovement : IMovementSpeed
 {
-    public Stat MovementSpeedStat { get; }
     public bool IsCanMove { get; }
     
     public void Initialize();

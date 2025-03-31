@@ -34,7 +34,7 @@ namespace Gameplay.Unit.Character
         public override void TakeDamage(DamageData damageData)
         {
             if(characterStatsController&&
-               ((IEvasion)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
+               ((EvasionStat)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
                 return;
             
             damageData = abilityHandler.DamageModifiers(damageData);

@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Gameplay.Unit
 {
-    public abstract class UnitAttackState : State, IAttack
+    public abstract class UnitAttackState : State, IAttack, IRangeAttack, IAttackSpeed
     {
         public override StateCategory Category { get; } = StateCategory.Attack;
         

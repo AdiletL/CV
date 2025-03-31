@@ -2,22 +2,16 @@
 
 namespace Gameplay.Effect
 {
-    public class EvasionEffect : Effect, IEvasion
+    public class EvasionEffect : Effect
     {
         public override EffectType EffectTypeID { get; } = EffectType.Evasion;
         
-        public float EvasionChance { get; }
+        public Evasion Evasion { get; } = new Evasion();
 
         public EvasionEffect(EvasionConfig effectConfig) : base(effectConfig)
         {
-            EvasionChance = effectConfig.EvasionChance;
+            Evasion.EvasionStat.AddCurrentValue(effectConfig.EvasionChance);
             IsBuff = true;
-        }
-
-
-        public bool TryEvade()
-        {
-            return Random.value < EvasionChance;
         }
 
         public override void ClearValues()

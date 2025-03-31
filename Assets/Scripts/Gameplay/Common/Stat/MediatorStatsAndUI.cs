@@ -47,7 +47,7 @@ namespace Gameplay
             movementStat = statsController.GetStat(StatType.MovementSpeed);
             if(movementStat != null) uiStats.SetMovementSpeed(movementStat.CurrentValue);
 
-            armorStat = statsController.GetStat(StatType.Armor);
+            armorStat = statsController.GetStat(StatType.PhysicalDamageResistance);
             if(armorStat != null) uiStats.SetArmor(armorStat.CurrentValue);
 
             rangeAttackStat = statsController.GetStat(StatType.AttackRange);

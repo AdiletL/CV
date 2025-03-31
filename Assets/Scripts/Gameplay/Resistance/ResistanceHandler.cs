@@ -24,16 +24,16 @@ namespace Gameplay.Resistance
 
         public DamageData DamageModifiers(DamageData damageData)
         {
-            var type = typeof(DamageResistance);
+            var type = typeof(PhysicalDamageResistance);
             if (!IsResistanceNull(type))
             {
                 var damageResistances = GetResistances(type);
-                DamageResistance damageResistance = null;
+                PhysicalDamageResistance physicalDamageResistance = null;
                 foreach (var VARIABLE in damageResistances)
                 {
-                    damageResistance = VARIABLE as DamageResistance;
-                    if (damageResistance?.DamageType == damageData.DamageTypeID)
-                        damageData = damageResistance.DamageModify(damageData);
+                    physicalDamageResistance = VARIABLE as PhysicalDamageResistance;
+                    if (physicalDamageResistance?.DamageTypeID == damageData.DamageTypeID)
+                        damageData = physicalDamageResistance.DamageModify(damageData);
                 }
             }
             return damageData;

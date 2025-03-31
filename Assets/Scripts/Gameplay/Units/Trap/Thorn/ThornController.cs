@@ -94,5 +94,6 @@ namespace Gameplay.Unit.Trap
             yield return new WaitForSeconds(INTERVAL_RESET_ACTION);
             ResetAction();
         }
+
     }
 }

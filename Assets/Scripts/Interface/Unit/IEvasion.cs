@@ -2,5 +2,5 @@
 
 public interface IEvasion
 {
-    public bool TryEvade();
+    public Stat EvasionStat { get; }
 }

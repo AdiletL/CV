@@ -9,8 +9,8 @@ namespace Gameplay.Unit.Character
     public abstract class CharacterStatsController : UnitStatsController
     {
         [SerializeField] protected SO_CharacterStats so_CharacterStats;
-        
-        protected Stat evasionStat = new EvasionStat();
+
+        protected IEvasion evasion;
         
         public override void Initialize()
         {
@@ -23,17 +23,17 @@ namespace Gameplay.Unit.Character
             if(TryGetComponent(out ILevel level))
                 AddStatToDictionary(StatType.Level, level.LevelStat);
             
-            var damageStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.DamageStat;
-            if(damageStat != null) AddStatToDictionary(StatType.Damage, damageStat);
+            if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IDamage damage))
+                AddStatToDictionary(StatType.Damage, damage.DamageStat);
 
-            var attackSpeedStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.AttackSpeedStat;
-            if(attackSpeedStat != null) AddStatToDictionary(StatType.AttackSpeed, attackSpeedStat);
+            if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IAttackSpeed attackSpeed))
+                AddStatToDictionary(StatType.AttackSpeed, attackSpeed.AttackSpeedStat);
             
-            var rangeAttackStat = characterMainController.StateMachine.GetState<CharacterAttackState>()?.RangeAttackStat;
-            if(rangeAttackStat != null) AddStatToDictionary(StatType.AttackRange, rangeAttackStat);
+            if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IRangeAttack rangeAttack))
+                AddStatToDictionary(StatType.AttackRange, rangeAttack.RangeAttackStat);
             
-            var movementSpeedStat = characterMainController.StateMachine.GetState<CharacterMoveState>()?.MovementSpeedStat;
-            if(movementSpeedStat != null) AddStatToDictionary(StatType.MovementSpeed, movementSpeedStat);
+            if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IMovementSpeed movementSpeed))
+                AddStatToDictionary(StatType.MovementSpeed, movementSpeed.MovementSpeedStat);
 
             if (TryGetComponent(out IHealth health))
             {
@@ -55,22 +55,22 @@ namespace Gameplay.Unit.Character
 
             if (TryGetComponent(out ResistanceHandler resistanceHandler))
             {
-                var armor = new DamageResistance(StatType.Armor, ValueType.Percent, so_CharacterStats.Armor);
-                var magicalResistance = new DamageResistance(StatType.MagicalResistance, ValueType.Percent, so_CharacterStats.MagicalResistance);
-                var pureResistance = new DamageResistance(StatType.PureResistance, ValueType.Percent, so_CharacterStats.PureResistance);
+                IPhysicalResistance physicalResistance = new PhysicalDamageResistance(ValueType.Percent, so_CharacterStats.Armor);
+                IMagicalResistance magicalResistance = new MagicalDamageResistance(ValueType.Percent, so_CharacterStats.MagicalResistance);
+                IPureResistance pureResistance = new PureDamageResistance(ValueType.Percent, so_CharacterStats.PureResistance);
                 
-                resistanceHandler.AddResistance(armor);
+                resistanceHandler.AddResistance(physicalResistance);
                 resistanceHandler.AddResistance(magicalResistance);
                 resistanceHandler.AddResistance(pureResistance);
                 
-                AddStatToDictionary(armor.StatTypeID, armor.ProtectionStat);
-                AddStatToDictionary(magicalResistance.StatTypeID, magicalResistance.ProtectionStat);
-                AddStatToDictionary(pureResistance.StatTypeID, pureResistance.ProtectionStat);
+                AddStatToDictionary(physicalResistance.StatTypeID, physicalResistance.ResistanceStat);
+                AddStatToDictionary(magicalResistance.StatTypeID, magicalResistance.ResistanceStat);
+                AddStatToDictionary(pureResistance.StatTypeID, pureResistance.ResistanceStat);
             }
 
-            evasionStat = new EvasionStat();
-            evasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
-            AddStatToDictionary(StatType.Evasion, evasionStat);
+            evasion = new Evasion();
+            evasion.EvasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
+            AddStatToDictionary(StatType.Evasion, evasion.EvasionStat);
         }
     }
 }
