@@ -19,3 +19,30 @@ MonoBehaviour:
   <IsTakeLevel>k__BackingField: 1
   <IsGiveExperience>k__BackingField: 1
   <IsTakeExperience>k__BackingField: 1
+  <IncreaseStatConfig>k__BackingField:
+    StatConfigs:
+    - StatTypeID: 1
+      StatValuesConfig:
+      - StatValueTypeID: 1
+        ValueTypeID: 0
+        Value: 2
+    - StatTypeID: 6
+      StatValuesConfig:
+      - StatValueTypeID: 1
+        ValueTypeID: 0
+        Value: 2
+    - StatTypeID: 5
+      StatValuesConfig:
+      - StatValueTypeID: 3
+        ValueTypeID: 0
+        Value: 111
+    - StatTypeID: 4
+      StatValuesConfig:
+      - StatValueTypeID: 1
+        ValueTypeID: 0
+        Value: 0.5
+    - StatTypeID: 11
+      StatValuesConfig:
+      - StatValueTypeID: 1
+        ValueTypeID: 0
+        Value: 3

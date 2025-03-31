@@ -55,7 +55,6 @@ namespace Gameplay.Unit
             while (ExperienceStat.CurrentValue >= ExperienceStat.MaximumValue)
             {
                 LevelUp(1);
-                UpdateMaxExperience();
             }
         }
         public virtual void LevelUp(int amount)
@@ -63,7 +62,20 @@ namespace Gameplay.Unit
             if(!IsTakeLevel) return;
             LevelStat.AddCurrentValue(amount);
             UpdateMaxExperience();
+            IncreaseStats();
             Debug.Log(gameObject.name + " Level Up! New Level: " + LevelStat.CurrentValue);
+        }
+
+        public void IncreaseStats()
+        {
+            var unitStatsController = unitController.GetComponentInUnit<UnitStatsController>();
+            if(!unitStatsController) return;
+            foreach (var statConfig in so_UnitExperience.IncreaseStatConfig.StatConfigs)
+            {
+                var unitStat = unitStatsController.GetStat(statConfig.StatTypeID);
+                foreach (var statValueConfig in statConfig.StatValuesConfig)
+                    unitStat.AddValue(statValueConfig.Value, statValueConfig.StatValueTypeID);
+            }
         }
 
         private void UpdateMaxExperience()
