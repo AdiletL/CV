@@ -1,10 +1,17 @@
-﻿using Gameplay.Resistance;
+﻿using Calculate;
+using Gameplay.Resistance;
+using ScriptableObjects.Unit.Character;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Unit.Character
 {
     public abstract class CharacterStatsController : UnitStatsController
     {
+        [SerializeField] protected SO_CharacterStats so_CharacterStats;
+        
+        protected Stat evasionStat = new EvasionStat();
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -48,19 +55,22 @@ namespace Gameplay.Unit.Character
 
             if (TryGetComponent(out ResistanceHandler resistanceHandler))
             {
-                var damageResistances = resistanceHandler.GetResistances(typeof(DamageResistance));
-                DamageResistance damageResistance = null;
-                foreach (var VARIABLE in damageResistances)
-                {
-                    damageResistance = VARIABLE as DamageResistance;
-                    if (damageResistance?.DamageType == DamageType.Physical)
-                        AddStatToDictionary(StatType.Armor, damageResistance.ProtectionStat);
-                    else if (damageResistance?.DamageType == DamageType.Magical)
-                        AddStatToDictionary(StatType.MagicalResistance, damageResistance.ProtectionStat);
-                    else if (damageResistance?.DamageType == DamageType.Pure)
-                        AddStatToDictionary(StatType.PureResistance, damageResistance.ProtectionStat);
-                }
+                var armor = new DamageResistance(StatType.Armor, ValueType.Percent, so_CharacterStats.Armor);
+                var magicalResistance = new DamageResistance(StatType.MagicalResistance, ValueType.Percent, so_CharacterStats.MagicalResistance);
+                var pureResistance = new DamageResistance(StatType.PureResistance, ValueType.Percent, so_CharacterStats.PureResistance);
+                
+                resistanceHandler.AddResistance(armor);
+                resistanceHandler.AddResistance(magicalResistance);
+                resistanceHandler.AddResistance(pureResistance);
+                
+                AddStatToDictionary(armor.StatTypeID, armor.ProtectionStat);
+                AddStatToDictionary(magicalResistance.StatTypeID, magicalResistance.ProtectionStat);
+                AddStatToDictionary(pureResistance.StatTypeID, pureResistance.ProtectionStat);
             }
+
+            evasionStat = new EvasionStat();
+            evasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
+            AddStatToDictionary(StatType.Evasion, evasionStat);
         }
     }
 }

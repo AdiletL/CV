@@ -16,6 +16,7 @@ MonoBehaviour:
   <SO_GameStatIcon>k__BackingField: {fileID: 11400000, guid: 005e2559711c5204ea35d5930aa85d81, type: 2}
   <SO_GameHotkeys>k__BackingField: {fileID: 11400000, guid: 0c7f87ea8f55e4f4397c85fe5ca0a192, type: 2}
   <SO_GameDisable>k__BackingField: {fileID: 11400000, guid: 327e2a8d3d0c39a4098d64efc79aaf5b, type: 2}
+  <SO_GameRange>k__BackingField: {fileID: 11400000, guid: 665bd8e72a0fcda49908f2b6d17727fc, type: 2}
   <BaseConsumptionEnduranceRate>k__BackingField: 0.1
   <BaseWaitTimeTrap>k__BackingField: 0.3
   <HighlightedMaterial>k__BackingField: {fileID: 2100000, guid: c44e347a12c67184cbf1e39631e44732, type: 2}

@@ -16,7 +16,6 @@ namespace Gameplay.Unit.Character.Player
         private Vector3 direction;
         private Vector3 worldMousePosition;
         private int counterSpecialAttack;
-        private const int SPECIAL_ATTACK_INDEX = 2;
         private bool isFacingTarget;
         
         public Stat RotationSpeed { get; } = new Stat();

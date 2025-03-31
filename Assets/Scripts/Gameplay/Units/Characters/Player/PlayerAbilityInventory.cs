@@ -22,6 +22,7 @@ namespace Gameplay.Unit.Character.Player
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         [Inject] private AbilityFactory abilityFactory;
         [Inject] private SO_BaseAbilityConfigContainer so_BaseAbilityConfigContainer;
+        [Inject] private SO_GameRange so_GameRange;
         
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerAbilityInventory so_PlayerAbilityInventory;
@@ -136,7 +137,7 @@ namespace Gameplay.Unit.Character.Player
         private void CreateRangeCastDisplay()
         {
             if(rangeCastDisplay) return;
-            var newGameObject = Addressables.InstantiateAsync(so_PlayerAbilityInventory.RangeCastPrefab, playerController.VisualParent.transform).WaitForCompletion();
+            var newGameObject = Addressables.InstantiateAsync(so_GameRange.CastPrefab, playerController.VisualParent.transform).WaitForCompletion();
             newGameObject.transform.localPosition = Vector3.zero;
             rangeCastDisplay = newGameObject.GetComponent<RangeDisplay>();
         }

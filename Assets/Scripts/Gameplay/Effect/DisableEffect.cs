@@ -22,6 +22,7 @@ namespace Gameplay.Effect
         {
             DisableTypeID = disableConfig.DisableTypeID;
             Timer = disableConfig.Timer;
+            IsBuff = false;
         }
 
         public override void ClearValues()

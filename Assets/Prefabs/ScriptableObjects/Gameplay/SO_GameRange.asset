@@ -12,8 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbe12462baa4426dbc3184646526f713, type: 3}
   m_Name: SO_GameRange
   m_EditorClassIdentifier: 
-  <DefaultPrefab>k__BackingField:
-    m_AssetGUID: 
+  <AttackPrefab>k__BackingField:
+    m_AssetGUID: 664fb73a12ca04748ae13de7759ab189
+    m_SubObjectName: 
+    m_SubObjectGUID: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  <CastPrefab>k__BackingField:
+    m_AssetGUID: 9b3e0ae21afddd743bbcef8c4094444b
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

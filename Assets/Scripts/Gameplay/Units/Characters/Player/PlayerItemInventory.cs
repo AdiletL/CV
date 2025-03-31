@@ -5,6 +5,7 @@ using Gameplay.Factory.Character.Player;
 using Gameplay.UI.ScreenSpace.Inventory;
 using Gameplay.Unit.Cell;
 using Gameplay.Unit.Item;
+using ScriptableObjects.Gameplay;
 using ScriptableObjects.Unit.Character.Player;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -16,6 +17,7 @@ namespace Gameplay.Unit.Character.Player
     public class PlayerItemInventory : MonoBehaviour, IInventory, IActivatable
     {
         [Inject] private DiContainer diContainer;
+        [Inject] private SO_GameRange so_GameRange;
 
         [SerializeField] private PlayerController playerController;
         [SerializeField] private SO_PlayerItemInventory so_PlayerItemInventory;
@@ -162,7 +164,7 @@ namespace Gameplay.Unit.Character.Player
         private void CreateRangeCastDisplay()
         {
             if(rangeCastDisplay) return;
-            var newGameObject = Addressables.InstantiateAsync(so_PlayerItemInventory.RangeCastPrefab, playerController.VisualParent.transform).WaitForCompletion();
+            var newGameObject = Addressables.InstantiateAsync(so_GameRange.CastPrefab, playerController.VisualParent.transform).WaitForCompletion();
             newGameObject.transform.localPosition = Vector3.zero;
             rangeCastDisplay = newGameObject.GetComponent<RangeDisplay>();
         }

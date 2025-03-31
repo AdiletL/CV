@@ -5,16 +5,21 @@ namespace Gameplay.Resistance
     public class DamageResistance : IResistance
     {
         public StatType StatTypeID { get; }
-        public DamageType DamageType { get; }
+        public DamageType DamageType { get; private set; }
         public ValueType ValueType { get; }
         public Stat ProtectionStat { get; } = new();
 
-        public DamageResistance(StatType statTypeID, DamageType damageType, ValueType valueType, float value)
+        public DamageResistance(StatType statType, ValueType valueType, float value)
         {
-            StatTypeID = statTypeID;
-            DamageType = damageType;
+            this.StatTypeID = statType;
             ValueType = valueType;
             ProtectionStat.AddCurrentValue(value);
+            switch (statType)
+            {
+                case StatType.Armor: DamageType = DamageType.Physical; break;
+                case StatType.MagicalResistance: DamageType = DamageType.Magical; break;
+                case StatType.PureResistance: DamageType = DamageType.Pure; break;
+            }
         }
 
         public DamageData DamageModify(DamageData damageData)

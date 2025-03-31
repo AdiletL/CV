@@ -23,6 +23,7 @@ MonoBehaviour:
   <ItemBehaviourID>k__BackingField: 1
   <Cooldown>k__BackingField: 0.5
   <TimerCast>k__BackingField: 0
+  <Range>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
   <UnitStatsConfigs>k__BackingField:
@@ -44,15 +45,15 @@ MonoBehaviour:
   <AbilityConfigData>k__BackingField:
     AbilityTypeID: 
     DamageResistanceConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
       TimerCast: 0
+      Range: 0
       StatConfigs: []
       Clip: {fileID: 0}
     DashConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
       Cooldown: 0
       TimerCast: 0
+      Range: 0
       Speed: 0
       Duration: 0
   <EffectConfigData>k__BackingField:
@@ -61,9 +62,10 @@ MonoBehaviour:
       IsInterim: 0
       ValueType: 1
       Value: 50
-      Duration: 0
+      Timer: 0
     VampirismConfig:
       IsInterim: 1
       ValueType: 0
       Value: 0
+    DisableConfigs: []
   <SO_Equipment>k__BackingField: {fileID: 11400000, guid: 9710cc4060643cd4bb379faf90da8b81, type: 2}

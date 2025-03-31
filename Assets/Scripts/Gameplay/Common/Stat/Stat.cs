@@ -29,6 +29,7 @@ namespace Gameplay
         PureResistance,
         Level,
         Experience,
+        Evasion,
     }
 
     [System.Serializable]

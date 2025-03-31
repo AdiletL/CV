@@ -20,6 +20,7 @@ namespace Gameplay.Effect
         public VampirismEffect(VampirismConfig config) : base(config)
         {
             gameValue = new GameValue(config.Value, config.ValueType);
+            IsBuff = true;
         }
 
         public override void SetTarget(GameObject target)

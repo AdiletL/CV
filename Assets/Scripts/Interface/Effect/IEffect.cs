@@ -25,4 +25,5 @@ public enum EffectType
     SlowMovement,
     Vampirism,
     Disable,
+    Evasion,
 }

@@ -3732,6 +3732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitController: {fileID: 6200176588022165938}
+  so_CharacterStats: {fileID: 11400000, guid: cb5450b5e76c1fc43a1de87c9b93b155, type: 2}
 --- !u!114 &692351359827104898
 MonoBehaviour:
   m_ObjectHideFlags: 0

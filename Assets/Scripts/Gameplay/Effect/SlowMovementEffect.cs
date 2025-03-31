@@ -22,6 +22,7 @@ namespace Gameplay.Effect
             this.timer = slowMovementConfig.Timer;
             this.valueType = slowMovementConfig.ValueType;
             this.IsInterim = slowMovementConfig.IsInterim;
+            IsBuff = false;
         }
 
         public override void ClearValues()

@@ -8,6 +8,5 @@ namespace ScriptableObjects.Unit.Character.Player
     {
         [field: SerializeField] public InputType SelectItemBlockInputType { get; private set; } = InputType.Attack;
         [field: SerializeField] public int MaxSlot { get; private set; } = 1;
-        [field: SerializeField] public AssetReferenceT<GameObject> RangeCastPrefab { get; private set; }
     }
 }

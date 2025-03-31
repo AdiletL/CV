@@ -120,10 +120,9 @@ namespace Gameplay.Unit.Character.Creep
             else
             {
                 this.unitAnimation.ChangeAnimationWithDuration(null, isDefault: true);
+                ClearValues();
                 UpdateCurrentClip();
             }
-            ClearValues();
-            countDurationAttack = 0;
         }
     }
     

@@ -10,15 +10,17 @@ namespace Gameplay.Unit.Character
     {
         protected AbilityHandler abilityHandler;
         protected ResistanceHandler resistanceHandler;
+        protected CharacterStatsController characterStatsController;
 
         public override void Initialize()
         {
             base.Initialize();
             abilityHandler = GetComponent<AbilityHandler>();
             resistanceHandler = GetComponent<ResistanceHandler>();
+            characterStatsController = GetComponent<CharacterStatsController>();
         }
 
-        private void VampirismAbility(GameObject attacker, float totalDamage)
+        private void VampirismEffect(GameObject attacker, float totalDamage)
         {
             var effectHandler = attacker.GetComponent<EffectHandler>();
             if (!effectHandler) return;
@@ -31,9 +33,13 @@ namespace Gameplay.Unit.Character
         
         public override void TakeDamage(DamageData damageData)
         {
+            if(characterStatsController&&
+               ((IEvasion)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
+                return;
+            
             damageData = abilityHandler.DamageModifiers(damageData);
             damageData = resistanceHandler.DamageModifiers(damageData);
-            VampirismAbility(damageData.Owner, damageData.Amount);
+            VampirismEffect(damageData.Owner, damageData.Amount);
             base.TakeDamage(damageData);
         }
     }

@@ -11,5 +11,10 @@
         {
             return 2 * regeneration;
         }
+
+        public static float EvasionToStat(float evasion)
+        {
+            return 100 * evasion;
+        }
     }
 }
