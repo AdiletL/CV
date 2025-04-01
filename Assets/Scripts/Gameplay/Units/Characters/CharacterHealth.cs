@@ -2,12 +2,17 @@
 using Gameplay.Ability;
 using Gameplay.Effect;
 using Gameplay.Resistance;
+using Gameplay.Spawner;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Unit.Character
 {
     public abstract class CharacterHealth : UnitHealth
     {
+        [Inject] private ProtectionPopUpSpawner protectionPopUpSpawner;
+        [Inject] private EvasionPopUpSpawner evasionPopUpSpawner;
+        
         protected AbilityHandler abilityHandler;
         protected ResistanceHandler resistanceHandler;
         protected CharacterStatsController characterStatsController;
@@ -33,12 +38,19 @@ namespace Gameplay.Unit.Character
         
         public override void TakeDamage(DamageData damageData)
         {
-            if(characterStatsController&&
-               ((EvasionStat)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
+            if (characterStatsController &&
+                ((EvasionStat)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
+            {
+                evasionPopUpSpawner.CreatePopUp(unitCenter.Center.position);
                 return;
+            }
             
             damageData = abilityHandler.DamageModifiers(damageData);
+            
+            var currentDamage = damageData.Amount;
             damageData = resistanceHandler.DamageModifiers(damageData);
+            protectionPopUpSpawner.CreatePopUp(unitCenter.Center.position, currentDamage - damageData.Amount, damageData.DamageTypeID);
+            
             VampirismEffect(damageData.Owner, damageData.Amount);
             base.TakeDamage(damageData);
         }

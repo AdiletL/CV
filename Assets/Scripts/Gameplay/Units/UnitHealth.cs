@@ -10,7 +10,7 @@ namespace Gameplay.Unit
     {
         public event Action OnZeroHealth;
         
-        [Inject] private DamagePopUpPopUpSpawner damagePopUpSpawner;
+        [Inject] private DamagePopUpSpawner damagePopUpSpawner;
         
         [SerializeField] protected UnitController unitController;
         [SerializeField] protected SO_UnitHealth so_UnitHealth;
@@ -79,7 +79,7 @@ namespace Gameplay.Unit
                 damageData.Amount = 0;
             
             Damaging = damageData.Owner;
-            damagePopUpSpawner.CreatePopUp(unitCenter.Center.position, damageData.Amount);
+            damagePopUpSpawner.CreatePopUp(unitCenter.Center.position, damageData.Amount, damageData.DamageTypeID);
 
             if (HealthStat.CurrentValue < damageData.Amount)
                 HealthStat.RemoveCurrentValue(HealthStat.CurrentValue);

@@ -8,7 +8,7 @@ namespace Gameplay.Effect
 {
     public class VampirismEffect : Effect
     {
-        [Inject] private HealPopUpPopUpSpawner healPopUpPopUpSpawner;
+        [Inject] private HealPopUpSpawner _healPopUpSpawner;
 
         public override EffectType EffectTypeID { get; } = EffectType.Vampirism;
         
@@ -59,7 +59,7 @@ namespace Gameplay.Effect
         {
             var result = gameValue.Calculate(totalDamage);
             targetHealth.HealthStat.AddCurrentValue((int)result);
-            healPopUpPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
+            _healPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
         }
     }
 

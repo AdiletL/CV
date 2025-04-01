@@ -17,9 +17,6 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject uiCastTimerPrefab;
         [SerializeField] private AssetReferenceGameObject uiContextMenuPrefab;
         
-        [Space]
-        [SerializeField] private AssetReferenceGameObject[] popUpSpawnerPrefabs;
-        
         private GameObject mainCanvas;
         private PhotonView photonView;
         
@@ -28,13 +25,6 @@ namespace Gameplay.Manager
             photonView = GetComponent<PhotonView>();
             
             if(!PhotonNetwork.IsMasterClient) return;
-
-            foreach (var popUpSpawnerPrefab in popUpSpawnerPrefabs)
-            {
-                var popUp =
-                    PhotonNetwork.Instantiate(popUpSpawnerPrefab.AssetGUID, Vector3.zero, Quaternion.identity);
-                photonView.RPC(nameof(InstantiatePopUpSpawner), RpcTarget.AllBuffered, popUp.GetComponent<PhotonView>().ViewID);
-            }
             
             var newMainCanvas = PhotonNetwork.Instantiate(mainCanvasPrefab.AssetGUID, Vector3.zero,
                 Quaternion.identity);
@@ -46,24 +36,28 @@ namespace Gameplay.Manager
             photonView.RPC(nameof(InitializeMainCanvas), RpcTarget.AllBuffered, newMainCanvas.GetComponent<PhotonView>().ViewID);
             photonView.RPC(nameof(InitializeUICastTimer), RpcTarget.AllBuffered, newUICastTimer.GetComponent<PhotonView>().ViewID);
             photonView.RPC(nameof(InitializeUIContextMenu), RpcTarget.AllBuffered, newUIContextMenu.GetComponent<PhotonView>().ViewID);
+
+            var damagePopUpSpawner = new DamagePopUpSpawner();
+            diContainer.Inject(damagePopUpSpawner);
+            diContainer.Bind(damagePopUpSpawner.GetType()).FromInstance(damagePopUpSpawner).AsSingle();
             
+            var healPopUpSpawner = new HealPopUpSpawner();
+            diContainer.Inject(healPopUpSpawner);
+            diContainer.Bind(healPopUpSpawner.GetType()).FromInstance(healPopUpSpawner);
+            
+            var protectionPopUpSpawner = new ProtectionPopUpSpawner();
+            diContainer.Inject(protectionPopUpSpawner);
+            diContainer.Bind(protectionPopUpSpawner.GetType()).FromInstance(protectionPopUpSpawner).AsSingle();
+            
+            var evasionPopUpSpawner = new EvasionPopUpSpawner();
+            diContainer.Inject(evasionPopUpSpawner);
+            diContainer.Bind(evasionPopUpSpawner.GetType()).FromInstance(evasionPopUpSpawner).AsSingle();
         }
 
         [PunRPC]
         private void InitializeMainCanvas(int viewID)
         {
             mainCanvas = PhotonView.Find(viewID).gameObject;
-        }
-        
-        [PunRPC]
-        private void InstantiatePopUpSpawner(int viewID)
-        {
-            var result = PhotonView.Find(viewID).gameObject;
-            var popUpPopUpSpawner = result.GetComponent<PopUpSpawner>();
-            diContainer.Inject(popUpPopUpSpawner);
-            diContainer.Bind(popUpPopUpSpawner.GetType()).FromInstance(popUpPopUpSpawner).AsSingle();
-            popUpPopUpSpawner.transform.SetParent(transform);
-            popUpPopUpSpawner.Initialize();
         }
 
         [PunRPC]

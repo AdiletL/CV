@@ -25,6 +25,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15e17110ca7e8b04e952028819711d59
+    m_Address: PureDamageResistancePopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4639b62104647c94093de740ce013cc1
+    m_Address: PhysicalDamageResistancePopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 575897c4baaf1f345b8928b7103805d6
     m_Address: ContextMenu
     m_ReadOnly: 0
@@ -50,13 +60,33 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91c7ffa31de744b48bf0ac04147ce40c
+    m_Address: EvasionPopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9395832828f6ece4bbbb3366ac70abbf
+    m_Address: PureDamagePopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96f1844308ef85845b6136c8f6949247
     m_Address: Option
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d2cb966370d0de4d98d0950409980c7
+    m_Address: MagicalDamageResistancePopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9d70789ff7b54df418704c2c1c80db2f
     m_Address: UISkill
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a325b9840b8ffcd4e974e99e034b38ca
+    m_Address: MagicalDamagePopUp
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

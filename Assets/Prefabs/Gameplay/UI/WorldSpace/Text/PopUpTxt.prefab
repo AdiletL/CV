@@ -9,12 +9,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
+      propertyPath: m_Maskable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
       propertyPath: m_fontSize
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
-      propertyPath: m_isRichText
+      propertyPath: m_fontStyle
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
+      propertyPath: m_isRichText
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
       propertyPath: m_fontColor.b
@@ -30,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
       propertyPath: m_RaycastTarget
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5307404900447674859, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
       propertyPath: m_fontColor32.rgba
@@ -118,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8044521721301746972, guid: 88ccc0afd8ec26640a1be8a38e3f89ae, type: 3}
       propertyPath: m_Name
-      value: PopUp Variant
+      value: PopUpTxt
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
