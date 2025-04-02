@@ -19,6 +19,7 @@ namespace Gameplay.UI
             float randomX = randomValues[Random.Range(0, randomValues.Length)];
             startPosition = transform.position + (Vector3.right * randomX);
             endPosition = startPosition - new Vector3(0, fallDistance, 0);
+            transform.position = startPosition;
 
             isAnimating = true;
         }

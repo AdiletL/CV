@@ -264,7 +264,7 @@ namespace Gameplay.Unit.Character.Player
                 if (hit.collider.TryGetComponent(out CellController cellController) &&
                     !cellController.IsBlocked())
                 {
-                    if(!Calculate.Distance.IsNearUsingSqr(transform.position, hit.point, 
+                    if(!Calculate.Distance.IsDistanceToTargetSqr(transform.position, hit.point, 
                            currentSelectedItem.Range * currentSelectedItem.Range))
                         return;
                     
@@ -286,7 +286,7 @@ namespace Gameplay.Unit.Character.Player
             {
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
-                    if(!Calculate.Distance.IsNearUsingSqr(transform.position, characterMainController.transform.position,
+                    if(!Calculate.Distance.IsDistanceToTargetSqr(transform.position, characterMainController.transform.position,
                            currentSelectedItem.Range * currentSelectedItem.Range))
                         return;
                     

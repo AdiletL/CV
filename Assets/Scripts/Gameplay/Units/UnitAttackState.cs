@@ -1,15 +1,19 @@
-﻿using Machine;
+﻿using System.Collections.Generic;
+using Machine;
+using ScriptableObjects.Unit;
 using UnityEngine;
 using Zenject;
 
 namespace Gameplay.Unit
 {
-    public abstract class UnitAttackState : State, IAttack, IRangeAttack, IAttackSpeed
+    public abstract class UnitAttackState : State, IAttack
     {
         public override StateCategory Category { get; } = StateCategory.Attack;
-        
+
+        protected SO_UnitAttack so_UnitAttack;
         protected GameObject gameObject;
         protected Transform center;
+        protected DamageType damageTypeID;
         
         public DamageData DamageData { get; protected set; }
         
@@ -19,12 +23,14 @@ namespace Gameplay.Unit
         
         public void SetGameObject(GameObject gameObject) => this.gameObject = gameObject;
         public void SetCenter(Transform center) => this.center = center;
+        public void SetConfig(SO_UnitAttack config) => so_UnitAttack = config;
 
 
         public override void Initialize()
         {
             base.Initialize();
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
+            damageTypeID = so_UnitAttack.DamageTypeID;
+            DamageData = new DamageData(gameObject, damageTypeID, DamageStat.CurrentValue);
         }
 
         public abstract void Attack();
@@ -46,6 +52,11 @@ namespace Gameplay.Unit
         public UnitAttackStateBuilder SetCenter(Transform center)
         {
             state.SetCenter(center);
+            return this;
+        }
+        public UnitAttackStateBuilder SetConfig(SO_UnitAttack config)
+        {
+            state.SetConfig(config);
             return this;
         }
     }

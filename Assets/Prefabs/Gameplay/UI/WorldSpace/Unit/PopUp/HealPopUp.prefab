@@ -284,6 +284,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
+      propertyPath: m_fontSize
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 9108152954481782479, guid: b02422c8373125b43be555d9ce37a794, type: 3}
       propertyPath: m_Name
       value: PopUp

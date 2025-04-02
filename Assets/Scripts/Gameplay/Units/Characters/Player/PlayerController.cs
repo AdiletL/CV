@@ -94,6 +94,7 @@ namespace Gameplay.Unit.Character.Player
                 .SetPlayerItemInventory(GetComponentInUnit<PlayerItemInventory>())
                 .SetPlayerSpecialActionConfig(so_PlayerSpecialAction)
                 .SetPlayerKinematicControl(playerKinematicControl)
+                .SetAbilityHandler(GetComponentInUnit<AbilityHandler>())
                 .SetBaseCamera(BaseCamera)
                 .SetCharacterStatsController(GetComponentInUnit<CharacterStatsController>())
                 .SetPhotonView(photonView)
@@ -304,8 +305,6 @@ namespace Gameplay.Unit.Character.Player
            // Debug.Log(StateMachine.GetState<PlayerAttackState>().IsFindUnitInRange());
             StateMachine?.LateUpdate();
         }
-        
-       
 
         private void OnChangedState(IState state)
         {

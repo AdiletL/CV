@@ -47,7 +47,7 @@ namespace Gameplay.Unit.Character.Player
 
     private bool IsFinalPositionValid()
     {
-        return Calculate.Distance.IsNearUsingSqr(finalTarget.transform.position, finalTargetPosition);
+        return Calculate.Distance.IsDistanceToTargetSqr(finalTarget.transform.position, finalTargetPosition);
     }
 
     public override void Initialize()
@@ -231,7 +231,7 @@ namespace Gameplay.Unit.Character.Player
 
     private void CheckIfTargetReached()
     {
-        if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, finalTarget.transform.position) || pathQueue.Count == 0)
+        if (Calculate.Distance.IsDistanceToTargetSqr(gameObject.transform.position, finalTarget.transform.position) || pathQueue.Count == 0)
             stateMachine.ExitCategory(Category, null);
     }
 
@@ -239,7 +239,7 @@ namespace Gameplay.Unit.Character.Player
     {
         currentTargetPosition = new Vector3(currentTarget.transform.position.x, gameObject.transform.position.y, currentTarget.transform.position.z);
 
-        if (Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTargetPosition))
+        if (Calculate.Distance.IsDistanceToTargetSqr(gameObject.transform.position, currentTargetPosition))
         {
             if (currentTarget)
             {

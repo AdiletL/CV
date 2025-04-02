@@ -21,6 +21,7 @@ namespace Gameplay.Unit.Character.Creep
             return currentTarget;
         }
 
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -70,7 +71,7 @@ namespace Gameplay.Unit.Character.Creep
         private void CheckNearTarget()
         {
             if (currentTarget && 
-                !Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, currentTarget.transform.position,
+                !Calculate.Distance.IsDistanceToTargetSqr(gameObject.transform.position, currentTarget.transform.position,
                     rangeSqr) || isObstacleBetween(currentTarget))
             {
                 var target = FindUnitInRange<ICreepInteractable>();

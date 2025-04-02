@@ -21,6 +21,7 @@ namespace Gameplay
         private Stat regenerationHealthStat;
         private Stat regenerationEnduranceStat;
         private Stat regenerationManaStat;
+        private Stat evasionStat;
         
         public MediatorStatsAndUI(IStatsController statsController, UIStats uiStats)
         {
@@ -71,6 +72,8 @@ namespace Gameplay
             regenerationEnduranceStat = statsController.GetStat(StatType.RegenerationEndurance);
             if(regenerationEnduranceStat != null) uiStats.SetRegenerationEndurance(regenerationEnduranceStat.CurrentValue);
             
+            evasionStat = statsController.GetStat(StatType.Evasion);
+            if(evasionStat != null) uiStats.SetEvasion(evasionStat.CurrentValue * 100);
             SubscribeEvent();
         }
 
@@ -92,6 +95,7 @@ namespace Gameplay
             if (regenerationHealthStat != null) regenerationHealthStat.OnChangedCurrentValue += OnChangedRegenerationHealthStatCurrentValue;
             if (regenerationEnduranceStat != null) regenerationEnduranceStat.OnChangedCurrentValue += OnChangedRegenerationEnduranceStatCurrentValue;
             if (regenerationManaStat != null) regenerationManaStat.OnChangedCurrentValue += OnChangedRegenerationManaStatCurrentValue;
+            if (evasionStat != null) evasionStat.OnChangedCurrentValue += OnChangedEvasionStatCurrentValue;
         }
 
         private void UnsubscribeEvent()
@@ -127,5 +131,6 @@ namespace Gameplay
         private void OnChangedRegenerationHealthStatCurrentValue() => uiStats.SetRegenerationHealth(regenerationHealthStat.CurrentValue);
         private void OnChangedRegenerationEnduranceStatCurrentValue() => uiStats.SetRegenerationEndurance(regenerationEnduranceStat.CurrentValue);
         private void OnChangedRegenerationManaStatCurrentValue() => uiStats.SetRegenerationMana(regenerationManaStat.CurrentValue);
+        private void OnChangedEvasionStatCurrentValue() => uiStats.SetEvasion(evasionStat.CurrentValue * 100);
     }
 }

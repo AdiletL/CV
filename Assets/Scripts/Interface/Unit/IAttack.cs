@@ -1,10 +1,8 @@
-﻿using Gameplay;
+﻿using System.Collections.Generic;
+using Gameplay;
 
-public interface IAttack : IApplyDamage, IDamage
+public interface IAttack : IApplyDamage, IDamage, IRangeAttack, IAttackSpeed
 {
-    public Stat AttackSpeedStat { get; }
-    public Stat RangeAttackStat { get; }
-
     public void Initialize();
 
     public void Attack();

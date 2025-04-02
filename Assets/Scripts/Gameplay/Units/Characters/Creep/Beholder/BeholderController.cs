@@ -1,4 +1,5 @@
-﻿using Gameplay.Factory.Character.Creep;
+﻿using Gameplay.Ability;
+using Gameplay.Factory.Character.Creep;
 using ScriptableObjects.Unit.Character.Creep;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace Gameplay.Unit.Character.Creep
                 patrolPoints[i] = this.patrolPoints[i].position;
             
             return (BeholderStateFactory)new BeholderStateFactoryBuilder()
+                .SetAbilityHandler(GetComponentInUnit<AbilityHandler>())
                 .SetBeholderAttackConfig(so_BeholderAttack)
                 .SetBeholderMoveConfig(so_BeholderMove)
                 .SetCharacterAnimation(characterAnimation)

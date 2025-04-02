@@ -41,6 +41,7 @@ namespace Gameplay.Unit.Character.Creep
             ClearValues();
             currentClip = getRandomClip(runClips);
             PlayAnimation();
+            Debug.Log("enter");
         }
 
         public override void Update()
@@ -59,6 +60,7 @@ namespace Gameplay.Unit.Character.Creep
                 navMeshAgent.isStopped = true;
                 navMeshAgent.ResetPath();
             }
+            Debug.Log("exit");
         }
 
         private void ClearValues()
@@ -79,6 +81,7 @@ namespace Gameplay.Unit.Character.Creep
         public override void ExecuteMovement()
         {
             base.ExecuteMovement();
+            
             if (navMeshAgent.isOnNavMesh)
             {
                 TimerUpdateTargetPosition();
@@ -118,6 +121,7 @@ namespace Gameplay.Unit.Character.Creep
                 stateMachine.ExitCategory(Category, typeof(CreepAttackState));
             else
                 stateMachine.ExitCategory(Category, null);
+            
         }
 
         public override void ActivateMovement()

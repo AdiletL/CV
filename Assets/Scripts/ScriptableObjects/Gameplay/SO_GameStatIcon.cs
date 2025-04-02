@@ -10,5 +10,6 @@ namespace ScriptableObjects.Gameplay
         [field: SerializeField, PreviewField] public Sprite MovementSpeed{ get; private set; }
         [field: SerializeField, PreviewField] public Sprite Armor{ get; private set; }
         [field: SerializeField, PreviewField] public Sprite RangeAttack { get; private set; }
+        [field: SerializeField, PreviewField] public Sprite Evasion { get; private set; }
     }
 }

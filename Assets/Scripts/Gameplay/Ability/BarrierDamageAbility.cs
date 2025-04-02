@@ -5,7 +5,6 @@ namespace Gameplay.Ability
 {
     public class BarrierDamageAbility : Ability
     {
-
         public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.BarrierDamage;
 
         private DamageType damageType;

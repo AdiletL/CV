@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
       propertyPath: m_fontSize
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
       propertyPath: m_fontColor.b
@@ -102,7 +102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
       propertyPath: m_fontSizeBase
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6368927270317099576, guid: b02422c8373125b43be555d9ce37a794, type: 3}
       propertyPath: m_fontColor32.rgba
@@ -303,5 +303,5 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   startScale: {x: 1.5, y: 1.5, z: 1}
-  endScale: {x: 1, y: 1, z: 1}
+  endScale: {x: 0.5, y: 0.5, z: 1}
   fallDistance: 1

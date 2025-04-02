@@ -12,17 +12,18 @@ namespace Gameplay.Unit.Character
     {
         [Inject] private ProtectionPopUpSpawner protectionPopUpSpawner;
         [Inject] private EvasionPopUpSpawner evasionPopUpSpawner;
+        [Inject] private CriticalDamagePopUpSpawner criticalDamagePopUpSpawner;
         
         protected AbilityHandler abilityHandler;
         protected ResistanceHandler resistanceHandler;
-        protected CharacterStatsController characterStatsController;
+        protected IEvasionApplier evasionApplier;
 
         public override void Initialize()
         {
             base.Initialize();
             abilityHandler = GetComponent<AbilityHandler>();
             resistanceHandler = GetComponent<ResistanceHandler>();
-            characterStatsController = GetComponent<CharacterStatsController>();
+            TryGetComponent(out evasionApplier);
         }
 
         private void VampirismEffect(GameObject attacker, float totalDamage)
@@ -38,21 +39,57 @@ namespace Gameplay.Unit.Character
         
         public override void TakeDamage(DamageData damageData)
         {
-            if (characterStatsController &&
-                ((EvasionStat)characterStatsController.GetStat(StatType.Evasion)).TryEvade())
+            if (TryEvade())
+                return;
+
+            if (damageData.DamageTypeID.HasFlag(DamageType.Physical) &&
+                damageData.Owner.TryGetComponent(out AbilityHandler abilityHandler))
+            {
+                var criticalDamages = abilityHandler.GetCriticalDamages(damageData.Amount);
+                if (criticalDamages != null && criticalDamages.Count > 0)
+                {
+                    foreach (var criticalDamage in criticalDamages)
+                    {
+                        damageData.Amount += criticalDamage;
+                        ApplyDamage(ref damageData, criticalDamage);
+                    }
+                    base.TakeDamage(damageData);
+                    return;
+                }
+            }
+
+            ApplyDamage(ref damageData);
+
+            base.TakeDamage(damageData);
+        }
+
+        private bool TryEvade()
+        {
+            if (evasionApplier != null && evasionApplier.Evasion.TryEvade())
             {
                 evasionPopUpSpawner.CreatePopUp(unitCenter.Center.position);
-                return;
+                return true;
             }
-            
-            damageData = abilityHandler.DamageModifiers(damageData);
-            
-            var currentDamage = damageData.Amount;
+            return false;
+        }
+
+        private void ApplyDamage(ref DamageData damageData, float criticalDamage = 0)
+        {
+            float initialDamage = damageData.Amount;
+
+            // Модификация урона резистами и защитой
             damageData = resistanceHandler.DamageModifiers(damageData);
-            protectionPopUpSpawner.CreatePopUp(unitCenter.Center.position, currentDamage - damageData.Amount, damageData.DamageTypeID);
-            
+            protectionPopUpSpawner.CreatePopUp(unitCenter.Center.position, initialDamage - damageData.Amount, damageData.DamageTypeID);
+
+            // Модификация урона способностями
+            damageData = abilityHandler.DamageResistanceModifiers(damageData);
+
+            // Вампиризм
             VampirismEffect(damageData.Owner, damageData.Amount);
-            base.TakeDamage(damageData);
+
+            // Поп-ап критического урона
+            if (criticalDamage > 0)
+                criticalDamagePopUpSpawner.CreatePopUp(unitCenter.Center.position, damageData.Amount);
         }
     }
 }

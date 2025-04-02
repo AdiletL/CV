@@ -52,6 +52,10 @@ namespace Gameplay.Manager
             var evasionPopUpSpawner = new EvasionPopUpSpawner();
             diContainer.Inject(evasionPopUpSpawner);
             diContainer.Bind(evasionPopUpSpawner.GetType()).FromInstance(evasionPopUpSpawner).AsSingle();
+            
+            var criticalDamagePopUpSpawner = new CriticalDamagePopUpSpawner();
+            diContainer.Inject(criticalDamagePopUpSpawner);
+            diContainer.Bind(criticalDamagePopUpSpawner.GetType()).FromInstance(criticalDamagePopUpSpawner).AsSingle();
         }
 
         [PunRPC]

@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.Ability;
 using Gameplay.Unit.Character;
 using Gameplay.Unit.Character.Player;
 using Machine;
@@ -21,6 +22,7 @@ namespace Gameplay.Factory.Character.Player
         
         private CharacterAnimation characterAnimation;
         private CharacterStatsController characterStatsController;
+        private AbilityHandler abilityHandler;
         
         private SO_PlayerMove so_PlayerMove;
         private SO_PlayerAttack so_PlayerAttack;
@@ -41,6 +43,7 @@ namespace Gameplay.Factory.Character.Player
         public void SetStateMachine(StateMachine stateMachine) => this.stateMachine = stateMachine;
         public void SetCharacterAnimation(CharacterAnimation characterAnimation) => this.characterAnimation = characterAnimation;
         public void SetCharacterStatsController(CharacterStatsController characterStatsController) => this.characterStatsController = characterStatsController;
+        public void SetAbilityHandler(AbilityHandler abilityHandler) => this.abilityHandler = abilityHandler;
         public void SetPhotonView(PhotonView view) => photonView = view;
         public void SetBaseCamera(Camera camera) => baseCamera = camera;
 
@@ -81,9 +84,10 @@ namespace Gameplay.Factory.Character.Player
                 .SetPlayerKinematicControl(playerKinematicControl)
                 .SetBaseCamera(baseCamera)
                 .SetUnitAnimation(characterAnimation)
+                .SetAbilityHandler(abilityHandler)
                 .SetUnitRenderer(unitRenderer)
-                .SetConfig(so_PlayerAttack)
                 .SetCenter(unitCenter.Center)
+                .SetConfig(so_PlayerAttack)
                 .SetGameObject(gameObject)
                 .SetStateMachine(stateMachine)
                 .Build();
@@ -259,6 +263,13 @@ namespace Gameplay.Factory.Character.Player
         {
             if(factory is PlayerStateFactory playerStateFactory)
                 playerStateFactory.SetBaseCamera(camera);
+            return this;
+        }
+        
+        public PlayerStateFactoryBuilder SetAbilityHandler(AbilityHandler abilityHandler)
+        {
+            if(factory is PlayerStateFactory playerStateFactory)
+                playerStateFactory.SetAbilityHandler(abilityHandler);
             return this;
         }
     }

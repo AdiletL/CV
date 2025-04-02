@@ -11,7 +11,6 @@ namespace Gameplay.Ability
 
         private Dictionary<AbilityType, List<Ability>> currentAbilities;
 
-
         public bool IsSkillActive(AbilityType abilityType)
         {
             return currentAbilities.ContainsKey(abilityType);
@@ -19,12 +18,14 @@ namespace Gameplay.Ability
 
         public bool IsAbilityNull(AbilityType abilityType)
         {
-            return currentAbilities == null || !currentAbilities.ContainsKey(abilityType);
+            return currentAbilities == null 
+                   || !currentAbilities.ContainsKey(abilityType) 
+                   || currentAbilities[abilityType].Count == 0;
         }
 
         public Ability GetAbility(AbilityType abilityType, int? id)
         {
-            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType)) return null;
+            if (IsAbilityNull(abilityType)) return null;
             
             for (int i = currentAbilities[abilityType].Count - 1; i >= 0; i--)
             {
@@ -37,25 +38,43 @@ namespace Gameplay.Ability
         
         public List<Ability> GetAbilities(AbilityType abilityType)
         {
-            if (currentAbilities == null || !currentAbilities.ContainsKey(abilityType) ||
-                currentAbilities[abilityType].Count == 0)
+            if (IsAbilityNull(abilityType))
                 return null;
             return currentAbilities[abilityType];
         }
 
-        public DamageData DamageModifiers(DamageData damageData)
+        public DamageData DamageResistanceModifiers(DamageData damageData)
         {
-            if (!IsAbilityNull(AbilityType.BarrierDamage))
+            var abilities = GetAbilities(AbilityType.BarrierDamage);
+            if (abilities != null)
             {
-                var abilities = GetAbilities(AbilityType.BarrierDamage);
-                for (int i = abilities.Count - 1; i >= 0; i--)
+                foreach (BarrierDamageAbility VARIABLE in abilities)
                 {
-                    if (abilities[i] is BarrierDamageAbility barrierDamageAbility)
-                        damageData = barrierDamageAbility.DamageModify(damageData);
+                    damageData = VARIABLE.DamageModify(damageData);
                 }
             }
 
             return damageData;
+        }
+
+        public List<float> GetCriticalDamages(float baseDamage)
+        {
+            if (currentAbilities == null) return null;
+            
+            var list = new List<float>();
+            foreach (var lists in currentAbilities.Values)
+            {
+                foreach (var VARIABLE in lists)
+                {
+                    if (VARIABLE is ICriticalDamageApplier criticalDamageApplier)
+                    {
+                        if(!criticalDamageApplier.CriticalDamage.TryApply()) continue;
+                        var result = criticalDamageApplier.CriticalDamage.GetCalculateDamage(baseDamage);
+                        list.Add(result);
+                    }
+                }
+            }
+            return list;
         }
         
         public void Initialize()

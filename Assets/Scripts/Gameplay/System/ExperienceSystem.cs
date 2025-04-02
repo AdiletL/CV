@@ -33,7 +33,7 @@ public class ExperienceSystem
             }
             
             distanceSqr = experienceUnits[i].RangeTakeExperience * experienceUnits[i].RangeTakeExperience;
-            if (!Calculate.Distance.IsNearUsingSqr(info.Owner.transform.position,
+            if (!Calculate.Distance.IsDistanceToTargetSqr(info.Owner.transform.position,
                     experienceUnits[i].transform.position, distanceSqr))
             {
                 experienceUnits.RemoveAt(i);

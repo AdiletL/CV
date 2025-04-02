@@ -30,6 +30,7 @@ namespace Gameplay
         Level,
         Experience,
         Evasion,
+        CriticalDamage,
     }
 
     [System.Serializable]
@@ -63,6 +64,11 @@ namespace Gameplay
         public float MinimumValue { get; private set; }
         public float MaximumValue { get; private set; }
 
+        public virtual bool TryApply()
+        {
+            return false;
+        }
+        
         public float GetValue(StatValueType statValueType)
         {
             switch (statValueType)

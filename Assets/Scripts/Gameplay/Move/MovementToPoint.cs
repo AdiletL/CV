@@ -19,7 +19,7 @@ namespace Gameplay.Movement
 
         public bool IsInPlace()
         {
-            return Calculate.Distance.IsNearUsingSqr(gameObject.transform.position, point);
+            return Calculate.Distance.IsDistanceToTargetSqr(gameObject.transform.position, point);
         }
 
 

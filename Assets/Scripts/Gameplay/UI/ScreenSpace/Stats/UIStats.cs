@@ -27,6 +27,7 @@ namespace Gameplay.UI.ScreenSpace.Stats
         [SerializeField] private UIStat regenerationHealthStat;
         [SerializeField] private UIStat regenerationEnduranceStat;
         [SerializeField] private UIStat regenerationManaStat;
+        [SerializeField] private UIStat evasionStat;
         
         [Space]
         [SerializeField] private UIStat levelStat;
@@ -67,6 +68,7 @@ namespace Gameplay.UI.ScreenSpace.Stats
             movementSpeedStat.SetIcon(so_GameStatIcon.MovementSpeed);
             armorStat.SetIcon(so_GameStatIcon.Armor);
             rangeAttackStat.SetIcon(so_GameStatIcon.RangeAttack);
+            evasionStat.SetIcon(so_GameStatIcon.Evasion);
             
             ClearStats();
         }
@@ -177,6 +179,11 @@ namespace Gameplay.UI.ScreenSpace.Stats
         public void SetRegenerationMana(float value)
         {
             regenerationManaStat.SetText(FormatValue(value, 1));
+        }
+
+        public void SetEvasion(float value)
+        {
+            evasionStat.SetText(FormatValue(value) + "%");
         }
     }
 

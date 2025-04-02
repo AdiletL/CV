@@ -16,3 +16,4 @@ MonoBehaviour:
   <MovementSpeed>k__BackingField: {fileID: 21300000, guid: 29a1226f7b5e20240942612e151c3c4c, type: 3}
   <Armor>k__BackingField: {fileID: 21300000, guid: 567fdd2e557fefc478f8aaa7ae56fb11, type: 3}
   <RangeAttack>k__BackingField: {fileID: 21300000, guid: 59c8cd2a91ad7f846b9efd79b945c356, type: 3}
+  <Evasion>k__BackingField: {fileID: 21300000, guid: 5ff9b869a12e70b4db7a137f84ed920b, type: 3}

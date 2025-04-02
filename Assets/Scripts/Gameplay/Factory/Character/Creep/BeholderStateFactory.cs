@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.Ability;
 using Gameplay.Unit;
 using Gameplay.Unit.Character;
 using Gameplay.Unit.Character.Creep;
@@ -9,6 +10,8 @@ namespace Gameplay.Factory.Character.Creep
 {
     public class BeholderStateFactory : CreepStateFactory
     {
+        private AbilityHandler abilityHandler;
+            
         private SO_BeholderAttack so_BeholderAttack;
         private SO_BeholderMove so_BeholderMove;
         private SO_BeholderHealth so_BeholderHealth;
@@ -16,6 +19,7 @@ namespace Gameplay.Factory.Character.Creep
         public void SetBeholderAttackConfig(SO_BeholderAttack config) => so_BeholderAttack = config;
         public void SetBeholderMoveConfig(SO_BeholderMove config) => so_BeholderMove = config;
         public void SetBeholderHealthConfig(SO_BeholderHealth config) => so_BeholderHealth = config;
+        public void SetAbilityHandler(AbilityHandler abilityHandler) => this.abilityHandler = abilityHandler;
         
         
         public override State CreateState(Type stateType)
@@ -78,9 +82,10 @@ namespace Gameplay.Factory.Character.Creep
         {
             var result = (BeholderAttackState)new BeholderAttackStateBuilder()
                 .SetNavMeshAgent(navMeshAgent)
-                .SetConfig(so_BeholderAttack)
+                .SetAbilityHandler(abilityHandler)
                 .SetUnitRenderer(gameObject.GetComponent<UnitRenderer>())
                 .SetUnitAnimation(characterAnimation)
+                .SetConfig(so_BeholderAttack)
                 .SetGameObject(gameObject)
                 .SetCenter(unitCenter.Center)
                 .SetStateMachine(stateMachine)
@@ -115,6 +120,12 @@ namespace Gameplay.Factory.Character.Creep
         {
             if(factory is BeholderStateFactory beholderStateFactory)
                 beholderStateFactory.SetBeholderMoveConfig(config);
+            return this;
+        }
+        public BeholderStateFactoryBuilder SetAbilityHandler(AbilityHandler abilityHandler)
+        {
+            if(factory is BeholderStateFactory beholderStateFactory)
+                beholderStateFactory.SetAbilityHandler(abilityHandler);
             return this;
         }
     }

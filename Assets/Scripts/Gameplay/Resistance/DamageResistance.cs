@@ -2,17 +2,13 @@
 
 namespace Gameplay.Resistance
 {
-    public class PureDamageResistance : DamageResistance, IPureResistance
+    public abstract class DamageResistance : IDamageResistance
     {
-        public StatType StatTypeID { get; } = StatType.PureDamageResistance;
-        public override DamageType DamageTypeID { get; } = DamageType.Pure;
-
-        public PureDamageResistance(ValueType valueType, float value)
-        {
-            ValueType = valueType;
-            ResistanceStat.AddCurrentValue(value);
-        }
-
+        public ResistanceType ResistanceTypeID { get; } = ResistanceType.Damage;
+        public Stat ResistanceStat { get; } = new Stat();
+        public ValueType ValueType { get; protected set; }
+        public abstract DamageType DamageTypeID { get; }
+        
         public DamageData DamageModify(DamageData damageData)
         {
             if (damageData.DamageTypeID.HasFlag(DamageTypeID))

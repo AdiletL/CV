@@ -10,6 +10,16 @@ namespace Gameplay.Effect
         
         
         private Dictionary<EffectType, List<Effect>> currentEffects = new();
+
+        public bool IsEffectNull(EffectType effectType)
+        {
+            if (currentEffects == null 
+                || !currentEffects.ContainsKey(effectType) 
+                || currentEffects[effectType].Count == 0)
+                return true;
+            
+            return false;
+        }
         
         public Effect GetEffect(Effect effect)
         {
@@ -24,8 +34,7 @@ namespace Gameplay.Effect
 
         public List<Effect> GetEffects(EffectType effectType)
         {
-            if (currentEffects == null || !currentEffects.ContainsKey(effectType) ||
-                currentEffects[effectType].Count == 0) return null;
+            if (IsEffectNull(effectType)) return null;
             return currentEffects[effectType];
         }
 

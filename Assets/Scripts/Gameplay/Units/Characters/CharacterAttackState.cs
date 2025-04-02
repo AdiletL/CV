@@ -1,22 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using Calculate;
+using Gameplay.Ability;
+using Gameplay.Spawner;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
+using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Unit.Character
 {
     public class CharacterAttackState : UnitAttackState
     {
+        [Inject] private CriticalDamagePopUpSpawner criticalDamagePopUpSpawner;
+        
         protected SO_CharacterAttack so_CharacterAttack;
+        protected AbilityHandler abilityHandler;
         protected GameObject currentTarget;
         protected UnitAnimation unitAnimation;
         protected UnitRenderer unitRenderer;
         protected AnimationClip currentClip;
         protected LayerMask enemyLayer;
 
-        protected RaycastHit hitInTarget;
-        protected Collider[] findUnitColliders = new Collider[1];
+        protected Collider[] resultFindUnitColliders = new Collider[1];
+        protected RaycastHit[] resultObstacleHits = new RaycastHit[2];
         
         protected int mainLayer;
         protected int currentAnimatonLayer;
@@ -41,9 +49,9 @@ namespace Gameplay.Unit.Character
             UnsubscribeStatEvent();
         }
 
-        public void SetConfig(SO_CharacterAttack config) => so_CharacterAttack = config;
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
+        public void SetAbilityHandler(AbilityHandler abilityHandler) => this.abilityHandler = abilityHandler;
         
         public virtual bool IsUnitInRange()
         {
@@ -58,24 +66,27 @@ namespace Gameplay.Unit.Character
                 totalRange += CurrentWeapon.RangeStat.CurrentValue;
 
             var target = Calculate.Attack.FindUnitInRange<T>(center.position, totalRange,
-                enemyLayer, ref findUnitColliders);
+                enemyLayer, ref resultFindUnitColliders);
             if(!target) return null;
-
+            
             if (!isObstacleBetween(target))
                 return target;
                 
             return null;
         }
 
-        protected bool isObstacleBetween(GameObject target)
+        protected virtual bool isObstacleBetween(GameObject target)
         {
-            var directionToTarget = (target.GetComponent<UnitCenter>().Center.position - center.position).normalized;
-            float distance = Vector3.Distance(center.position, target.transform.position);
+            var targetCenterPosition = target.GetComponent<UnitCenter>().Center.position;
+            var directionToTarget = (targetCenterPosition - center.position).normalized;
+            float distance = Vector3.Distance(center.position, targetCenterPosition);
             int ignoreLayer = 1 << mainLayer;
- 
-            if (Physics.Raycast(center.position,  directionToTarget, out hitInTarget, distance, ~ignoreLayer))
+
+            Ray ray = new Ray(center.position, directionToTarget);
+            var size = Physics.RaycastNonAlloc(ray, resultObstacleHits, distance, ~ignoreLayer);
+            for (int i = size - 1; i >= 0; i--)
             {
-                if(hitInTarget.collider.gameObject.layer == target.gameObject.layer)
+                if(resultObstacleHits[i].collider.gameObject.layer == target.gameObject.layer)
                     return false;
             }
             return true;
@@ -95,9 +106,11 @@ namespace Gameplay.Unit.Character
         {
             base.Initialize();
             SubscribeStatEvent();
-            
+
+            so_CharacterAttack = (SO_CharacterAttack)so_UnitAttack;
             enemyLayer = so_CharacterAttack.EnemyLayer;
             angleToTarget = so_CharacterAttack.AngleToTarget;
+            damageTypeID = so_CharacterAttack.DamageTypeID;
             
             DamageStat.AddCurrentValue(so_CharacterAttack.Damage);
             ConsumptionEnduranceStat.AddCurrentValue(so_CharacterAttack.ConsumptionEnduranceRate);
@@ -260,13 +273,7 @@ namespace Gameplay.Unit.Character
         public CharacterAttackStateBuilder(CharacterAttackState instance) : base(instance)
         {
         }
-        
-        public CharacterAttackStateBuilder SetConfig(SO_CharacterAttack config)
-        {
-            if (state is CharacterAttackState characterWeapon)
-                characterWeapon.SetConfig(config);
-            return this;
-        }
+
         public CharacterAttackStateBuilder SetUnitAnimation(UnitAnimation unitAnimation)
         {
             if (state is CharacterAttackState characterWeapon)
@@ -278,6 +285,13 @@ namespace Gameplay.Unit.Character
         {
             if (state is CharacterAttackState characterWeapon)
                 characterWeapon.SetUnitRenderer(unitRenderer);
+            return this;
+        }
+        
+        public CharacterAttackStateBuilder SetAbilityHandler(AbilityHandler abilityHandler)
+        {
+            if (state is CharacterAttackState characterWeapon)
+                characterWeapon.SetAbilityHandler(abilityHandler);
             return this;
         }
     }

@@ -2,12 +2,10 @@
 
 namespace Gameplay.Resistance
 {
-    public class MagicalDamageResistance : IMagicalResistance
+    public class MagicalDamageResistance : DamageResistance, IMagicalResistance
     {
         public StatType StatTypeID { get; } = StatType.MagicalDamageResistance;
-        public DamageType DamageTypeID { get; } = DamageType.Magical;
-        public ValueType ValueType { get; }
-        public Stat ResistanceStat { get; } = new();
+        public override DamageType DamageTypeID { get; } = DamageType.Magical;
 
         public MagicalDamageResistance(ValueType valueType, float value)
         {

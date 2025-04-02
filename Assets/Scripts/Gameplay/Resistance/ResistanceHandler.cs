@@ -2,38 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Resistance
 {
     public class ResistanceHandler : MonoBehaviour, IHandler
     {
-        private Dictionary<Type, List<IResistance>> resistances;
+        private Dictionary<ResistanceType, List<IResistance>> resistances;
 
-        public bool IsResistanceNull(Type type)
+        public bool IsResistanceNull(ResistanceType resistanceType)
         {
-            if(resistances == null) return true;
-            if (!resistances.ContainsKey(type)) return true;
-            if(resistances[type].Count == 0) return true;
+            if(resistances == null
+               || !resistances.ContainsKey(resistanceType)
+               || resistances[resistanceType].Count == 0) 
+                return true;
+            
             return false;
         }
-        public List<IResistance> GetResistances(Type type)
+
+        public List<IResistance> GetResistances(ResistanceType resistanceType)
         {
-            return resistances[type];
+            if (IsResistanceNull(resistanceType))
+            {
+                return null;
+            }
+
+            return resistances[resistanceType];
         }
 
         public DamageData DamageModifiers(DamageData damageData)
         {
-            var type = typeof(PhysicalDamageResistance);
-            if (!IsResistanceNull(type))
+            var list = GetResistances(ResistanceType.Damage);
+            if (list != null)
             {
-                var damageResistances = GetResistances(type);
-                PhysicalDamageResistance physicalDamageResistance = null;
-                foreach (var VARIABLE in damageResistances)
+                foreach (IDamageResistance VARIABLE in list)
                 {
-                    physicalDamageResistance = VARIABLE as PhysicalDamageResistance;
-                    if (physicalDamageResistance?.DamageTypeID == damageData.DamageTypeID)
-                        damageData = physicalDamageResistance.DamageModify(damageData);
+                    if (damageData.DamageTypeID.HasFlag(VARIABLE.DamageTypeID))
+                    {
+                        return VARIABLE.DamageModify(damageData);
+                    }
                 }
             }
             return damageData;
@@ -46,33 +52,33 @@ namespace Gameplay.Resistance
 
         public void AddResistance(IResistance resistance)
         {
-            resistances ??= new Dictionary<Type, List<IResistance>>();
+            resistances ??= new Dictionary<ResistanceType, List<IResistance>>();
 
-            var type = resistance.GetType();
-            if (!IsResistanceNull(type))
+            var resistanceType = resistance.ResistanceTypeID;
+            if (!IsResistanceNull(resistance.ResistanceTypeID))
             {
-                for (int i = resistances[type].Count - 1; i >= 0; i--)
+                for (int i = resistances[resistanceType].Count - 1; i >= 0; i--)
                 {
-                    if (Object.ReferenceEquals(resistance, resistances[type][i]))
+                    if (Object.ReferenceEquals(resistance, resistances[resistanceType][i]))
                         return;
                 }
             }
             else
             {
-                resistances.Add(type, new List<IResistance>());
+                resistances.Add(resistanceType, new List<IResistance>());
             }
-            resistances[type].Add(resistance);
+            resistances[resistanceType].Add(resistance);
         }
 
         public void RemoveResistance(IResistance resistance)
         {
-            var type = resistance.GetType();
-            if(IsResistanceNull(type)) return;
-            for (int i = resistances[type].Count - 1; i >= 0; i--)
+            var resistanceType = resistance.ResistanceTypeID;
+            if(IsResistanceNull(resistanceType)) return;
+            for (int i = resistances[resistanceType].Count - 1; i >= 0; i--)
             {
-                if (Object.ReferenceEquals(resistance, resistances[type][i]))
+                if (Object.ReferenceEquals(resistance, resistances[resistanceType][i]))
                 {
-                    resistances[type].RemoveAt(i);
+                    resistances[resistanceType].RemoveAt(i);
                     return;
                 }
             }

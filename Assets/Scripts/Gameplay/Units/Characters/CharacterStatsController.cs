@@ -6,11 +6,11 @@ using UnityEngine.Serialization;
 
 namespace Gameplay.Unit.Character
 {
-    public abstract class CharacterStatsController : UnitStatsController
+    public abstract class CharacterStatsController : UnitStatsController, IEvasionApplier
     {
         [SerializeField] protected SO_CharacterStats so_CharacterStats;
 
-        protected IEvasion evasion;
+        public IEvasion Evasion { get; protected set; }
         
         public override void Initialize()
         {
@@ -68,9 +68,9 @@ namespace Gameplay.Unit.Character
                 AddStatToDictionary(pureResistance.StatTypeID, pureResistance.ResistanceStat);
             }
 
-            evasion = new Evasion();
-            evasion.EvasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
-            AddStatToDictionary(StatType.Evasion, evasion.EvasionStat);
+            Evasion = new Evasion();
+            Evasion.EvasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
+            AddStatToDictionary(StatType.Evasion, Evasion.EvasionStat);
         }
     }
 }

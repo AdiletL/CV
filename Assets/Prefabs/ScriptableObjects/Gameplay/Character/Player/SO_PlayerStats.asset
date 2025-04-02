@@ -21,7 +21,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  <EvasionChance>k__BackingField: 0.25
+  <EvasionChance>k__BackingField: 0.8
   <Armor>k__BackingField: 3
   <MagicalResistance>k__BackingField: 3
   <PureResistance>k__BackingField: 3

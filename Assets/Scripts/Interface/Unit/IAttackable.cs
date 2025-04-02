@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IAttackable : IInteractable
@@ -9,10 +10,10 @@ public interface IAttackable : IInteractable
 [Flags]
 public enum DamageType
 {
-    Nothing,
-    Physical,
-    Magical,
-    Pure,
+    Nothing = 0,
+    Physical = 1 << 0,
+    Magical = 1 << 1,
+    Pure = 1 << 2,
 }
 
 public class DamageData
@@ -20,7 +21,7 @@ public class DamageData
     public GameObject Owner { get; }
     public DamageType DamageTypeID { get; }
     public float Amount;
-
+    
     public DamageData(GameObject owner, DamageType damageTypeID, float amount)
     {
         Owner = owner;
