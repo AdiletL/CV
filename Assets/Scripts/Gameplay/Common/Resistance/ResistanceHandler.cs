@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace Gameplay.Resistance
 {
-    public class ResistanceHandler : MonoBehaviour, IHandler
+    public class ResistanceHandler : MonoBehaviour, IHandler, IDamageDataModifier
     {
         private Dictionary<ResistanceType, List<IResistance>> resistances;
 
@@ -29,7 +29,7 @@ namespace Gameplay.Resistance
             return resistances[resistanceType];
         }
 
-        public DamageData DamageModifiers(DamageData damageData)
+        public DamageData DamageResistanceModifiers(DamageData damageData)
         {
             var list = GetResistances(ResistanceType.Damage);
             if (list != null)

@@ -32,8 +32,6 @@ namespace Gameplay.Unit.Character
         public override void Initialize()
         {
             base.Initialize();
-            abilityHandler = GetComponent<AbilityHandler>();
-            resistanceHandler = GetComponent<ResistanceHandler>();
             TryGetComponent(out evasionApplier);
         }
 
@@ -52,7 +50,7 @@ namespace Gameplay.Unit.Character
         {
             float initialDamage = damageData.Amount;
 
-            damageData = resistanceHandler.DamageModifiers(damageData);
+            damageData = resistanceHandler.DamageResistanceModifiers(damageData);
             protectionPopUpSpawner.CreatePopUp(unitCenter.Center.position, initialDamage - damageData.Amount, damageData.DamageTypeID);
 
             damageData = abilityHandler.DamageResistanceModifiers(damageData);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Ability
 {
-    public class AbilityHandler : MonoBehaviour, IHandler
+    public class AbilityHandler : MonoBehaviour, IHandler, ICriticalDamageProvider, IDamageDataModifier
     {
         public event Action OnUpdate;
 

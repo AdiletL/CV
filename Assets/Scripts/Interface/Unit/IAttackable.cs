@@ -34,3 +34,8 @@ public class DamageData
         return new DamageData(Owner, DamageTypeID, Amount);
     }
 }
+
+public interface IDamageDataModifier
+{
+    public DamageData DamageResistanceModifiers(DamageData damageData);
+}

@@ -59,21 +59,10 @@ namespace Gameplay.Equipment.Weapon
         {
             if (damageData.DamageTypeID.HasFlag(DamageType.Physical))
             {
-                // Криты от способностей
-                if (DamageData.Owner.TryGetComponent(out AbilityHandler abilityHandler))
+                var criticalDamageProviders = damageData.Owner.GetComponents<ICriticalDamageProvider>();
+                for (int i = 0; i < criticalDamageProviders.Length; i++)
                 {
-                    var criticalDamages = abilityHandler.GetCriticalDamages(damageData.Amount);
-                    if (criticalDamages != null && criticalDamages.Count > 0)
-                    {
-                        ExecuteCriticalDamage(damageData, criticalDamages, attackable, target);
-                        isWasCriticalApplied = true;
-                    }
-                }
-
-                // Криты от предметов
-                if (damageData.Owner.TryGetComponent(out ItemHandler itemHandler))
-                {
-                    var criticalDamages = itemHandler.GetCriticalDamages(damageData.Amount);
+                    var criticalDamages = criticalDamageProviders[i].GetCriticalDamages(damageData.Amount);
                     if (criticalDamages != null && criticalDamages.Count > 0)
                     {
                         ExecuteCriticalDamage(damageData, criticalDamages, attackable, target);

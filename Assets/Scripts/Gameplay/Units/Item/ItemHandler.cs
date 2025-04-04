@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Unit.Item
 {
-    public class ItemHandler : MonoBehaviour, IHandler
+    public class ItemHandler : MonoBehaviour, IHandler, ICriticalDamageProvider
     {
         public event Action OnUpdate;
 

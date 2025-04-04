@@ -1,4 +1,5 @@
-﻿using Calculate;
+﻿using System.Collections.Generic;
+using Calculate;
 using Gameplay;
 
 public interface ICriticalDamage : IActivatable
@@ -14,4 +15,9 @@ public interface ICriticalDamage : IActivatable
 public interface ICriticalDamageApplier
 {
     public ICriticalDamage CriticalDamage { get; }
+}
+
+public interface ICriticalDamageProvider
+{
+    public List<float> GetCriticalDamages(float baseDamage);
 }
