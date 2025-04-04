@@ -50,6 +50,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61fd1e5efc957db4c87ba422b5212496
+    m_Address: CriticalDamagePopUp
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6999ec052f4c3dc4cb3ead18bca6e320
     m_Address: DamageUI Variant
     m_ReadOnly: 0

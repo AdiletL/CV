@@ -1,9 +1,12 @@
 ﻿using Calculate;
 using Gameplay;
 
-public interface ICriticalDamage
+public interface ICriticalDamage : IActivatable
 {
-    public Stat CriticalDamageStat { get; }
+    public ValueType ValueTypeID { get; }
+    public float Value { get; }
+    public float ChanceValue { get; }
+    
     public float GetCalculateDamage(float baseDamage);
     public bool TryApply();
 }

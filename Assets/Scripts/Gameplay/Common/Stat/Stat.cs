@@ -1,4 +1,5 @@
 ﻿using System;
+using Calculate;
 using UnityEngine.Serialization;
 using ValueType = Calculate.ValueType;
 
@@ -44,8 +45,7 @@ namespace Gameplay
     public class StatValueConfig
     {
         public StatValueType StatValueTypeID;
-        public ValueType ValueTypeID;
-        public float Value;
+        public GameValueConfig GameValueConfig;
     }
     
     [System.Serializable]

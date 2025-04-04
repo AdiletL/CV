@@ -8,7 +8,7 @@ namespace Gameplay.Effect
 {
     public class VampirismEffect : Effect
     {
-        [Inject] private HealPopUpSpawner _healPopUpSpawner;
+        [Inject] private HealPopUpSpawner healPopUpSpawner;
 
         public override EffectType EffectTypeID { get; } = EffectType.Vampirism;
         
@@ -19,8 +19,7 @@ namespace Gameplay.Effect
 
         public VampirismEffect(VampirismConfig config) : base(config)
         {
-            gameValue = new GameValue(config.Value, config.ValueType);
-            IsBuff = true;
+            gameValue = new GameValue(config.GameValueConfig.Value, config.GameValueConfig.ValueTypeID);
         }
 
         public override void SetTarget(GameObject target)
@@ -58,15 +57,14 @@ namespace Gameplay.Effect
         public void Heal(float totalDamage)
         {
             var result = gameValue.Calculate(totalDamage);
-            targetHealth.HealthStat.AddCurrentValue((int)result);
-            _healPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
+            targetHealth.HealthStat.AddCurrentValue(result);
+            healPopUpSpawner.CreatePopUp(targetUnitCenter.Center.position, result);
         }
     }
 
     [System.Serializable]
     public class VampirismConfig : EffectConfig
     {
-        public ValueType ValueType;
-        public int Value;
+        public GameValueConfig GameValueConfig;
     }
 }

@@ -11,7 +11,6 @@ namespace Gameplay.Effect
         public EvasionEffect(EvasionConfig effectConfig) : base(effectConfig)
         {
             Evasion.EvasionStat.AddCurrentValue(effectConfig.EvasionChance);
-            IsBuff = true;
         }
 
         public override void ClearValues()

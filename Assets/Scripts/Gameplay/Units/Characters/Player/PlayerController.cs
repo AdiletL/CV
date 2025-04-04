@@ -284,7 +284,7 @@ namespace Gameplay.Unit.Character.Player
             diContainer.Inject(item);
             item.SetOwner(gameObject);
             item.SetAmountItem(1);
-            item.SetStats(soNormalSwordItem.UnitStatsConfigs);
+            item.SetStats(soNormalSwordItem.StatsConfigData.StatConfigs);
             item.Initialize();
             playerItemInventory.AddItem(item, soNormalSwordItem.Icon);
             var equipmentItem = (EquipmentItem)item;

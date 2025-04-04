@@ -74,7 +74,7 @@ namespace Gameplay.Unit
             {
                 var unitStat = unitStatsController.GetStat(statConfig.StatTypeID);
                 foreach (var statValueConfig in statConfig.StatValuesConfig)
-                    unitStat.AddValue(statValueConfig.Value, statValueConfig.StatValueTypeID);
+                    unitStat.AddValue(statValueConfig.GameValueConfig.Value, statValueConfig.StatValueTypeID);
             }
         }
 

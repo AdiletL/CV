@@ -16,7 +16,7 @@ namespace Gameplay.UI
             textColor.a = 1f;
             valueText.color = textColor;
 
-            float randomX = randomValues[Random.Range(0, randomValues.Length)];
+            float randomX = randomValuesX[Random.Range(0, randomValuesX.Length)];
             startPosition = transform.position + (Vector3.right * randomX);
             endPosition = startPosition - new Vector3(0, fallDistance, 0);
             transform.position = startPosition;

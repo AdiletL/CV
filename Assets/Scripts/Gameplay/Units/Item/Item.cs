@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Calculate;
-using Gameplay.Effect;
 using Gameplay.UI.ScreenSpace;
 using ScriptableObjects.Unit.Item;
 using UnityEngine;
 using Zenject;
-using ValueType = Calculate.ValueType;
 
 namespace Gameplay.Unit.Item
 {
@@ -31,7 +29,6 @@ namespace Gameplay.Unit.Item
         public float Range { get; protected set; }
         public bool IsCooldown { get; protected set; }
         public StatConfig[] Stats { get; protected set; }
-        public List<Ability.Ability> Abilities { get; protected set; }
 
         protected SO_Item so_Item;
         private float countCooldown;
@@ -151,7 +148,7 @@ namespace Gameplay.Unit.Item
                 stat = unitStatController.GetStat(config.StatTypeID);
                 foreach (var statValue in config.StatValuesConfig)
                 {
-                    var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
+                    var gameValue = new GameValue(statValue.GameValueConfig.Value, statValue.GameValueConfig.ValueTypeID);
                     result = gameValue.Calculate(stat.GetValue(statValue.StatValueTypeID));
                     stat.AddValue(result, statValue.StatValueTypeID); 
                     addedStatValues.Add(result);
@@ -185,14 +182,6 @@ namespace Gameplay.Unit.Item
             isCasting = false;
             uiCastTimer.Hide();
         }
-
-        protected void AddAbility(Ability.Ability ability)
-        {
-            Abilities ??= new ();
-            Abilities.Add(ability);
-        }
-
-        protected void RemoveAbility(Ability.Ability ability) => Abilities.Remove(ability);
         
         protected virtual void AddEffectToUnit()
         {

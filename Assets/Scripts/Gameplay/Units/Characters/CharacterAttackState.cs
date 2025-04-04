@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Calculate;
 using Gameplay.Ability;
 using Gameplay.Spawner;
+using Gameplay.Unit;
+using Gameplay.Unit.Character;
+using Gameplay.Unit.Item;
 using ScriptableObjects.Unit.Character;
 using UnityEngine;
 using Zenject;
@@ -263,7 +266,52 @@ namespace Gameplay.Unit.Character
                currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
             {
                 DamageData.Amount = DamageStat.CurrentValue;
-                attackable.TakeDamage(DamageData);
+                
+                bool isWasCriticalDamage = false;
+                CheckCriticalDamage(DamageData, ref isWasCriticalDamage, attackable, currentTarget);
+
+                if(!isWasCriticalDamage)
+                    attackable.TakeDamage(DamageData);
+            }
+        }
+        
+        protected void CheckCriticalDamage(DamageData damageData, ref bool isWasCriticalApplied, IAttackable attackable, GameObject target)
+        {
+            if (damageData.DamageTypeID.HasFlag(DamageType.Physical))
+            {
+                // Криты от способностей
+                if (DamageData.Owner.TryGetComponent(out AbilityHandler abilityHandler))
+                {
+                    var criticalDamages = abilityHandler.GetCriticalDamages(damageData.Amount);
+                    if (criticalDamages != null && criticalDamages.Count > 0)
+                    {
+                        ExecuteCriticalDamage(damageData, criticalDamages, attackable, target);
+                        isWasCriticalApplied = true;
+                    }
+                }
+
+                // Криты от предметов
+                if (damageData.Owner.TryGetComponent(out ItemHandler itemHandler))
+                {
+                    var criticalDamages = itemHandler.GetCriticalDamages(damageData.Amount);
+                    if (criticalDamages != null && criticalDamages.Count > 0)
+                    {
+                        ExecuteCriticalDamage(damageData, criticalDamages, attackable, target);
+                        isWasCriticalApplied = true;
+                    }
+                }
+            }
+        }
+
+        protected void ExecuteCriticalDamage(DamageData damageData, List<float> criticalDamages, IAttackable attackable, GameObject target)
+        {
+            var unitCenter = target.GetComponent<UnitCenter>();
+            foreach (var crit in criticalDamages)
+            {
+                var critData = damageData.Clone();
+                critData.Amount = crit;
+                criticalDamagePopUpSpawner.CreatePopUp(unitCenter.Center.position, critData.Amount);
+                attackable.TakeDamage(critData);
             }
         }
     }

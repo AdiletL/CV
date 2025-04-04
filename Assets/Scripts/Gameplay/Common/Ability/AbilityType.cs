@@ -17,5 +17,5 @@ public enum AbilityBehaviour
     PointTarget = 1 << 2,// Требует точки на земле (Sun Strike)
     Toggle = 1 << 3,     // Включается/выключается (Armlet)
     Passive = 1 << 5,    // Пассивная способность (Critical Strike)
-    Hidden = 1 << 6   // Скрытая способность (Invoke)
+    Hidden = 1 << 6,  // Скрытая способность (Invoke)
 }

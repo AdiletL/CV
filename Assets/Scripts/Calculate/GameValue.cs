@@ -21,8 +21,15 @@ namespace Calculate
 
         public float Calculate(float baseValue)
         {
-            float result = valueType == ValueType.Percent ? (baseValue * value) / 100f : value;
+            float result = valueType == ValueType.Percent ? baseValue * value : value;
             return (float)(Math.Truncate(result * 10) / 10);
         }
+    }
+
+    [System.Serializable]
+    public class GameValueConfig
+    {
+        public ValueType ValueTypeID;
+        public float Value;
     }
 }

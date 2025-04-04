@@ -17,28 +17,78 @@ MonoBehaviour:
     DamageResistanceConfig:
       Cooldown: 0
       TimerCast: 0
+      Range: 0
+      AttackModifierConfigData:
+        AttackModifierTypeID: 0
+        CriticalDamageConfig:
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+          Chance: 0
+      StatConfigData:
+        StatConfigs: []
+      EffectConfigData:
+        EffectTypesID: 
+        SlowMovementConfig:
+          EffectCategoryID: 0
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+          Timer: 0
+        VampirismConfig:
+          EffectCategoryID: 0
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+        DisableConfigs: []
       StatConfigs: []
       Clip: {fileID: 0}
     DashConfig:
       Cooldown: 1
       TimerCast: 0.1
+      Range: 0
+      AttackModifierConfigData:
+        AttackModifierTypeID: 0
+        CriticalDamageConfig:
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+          Chance: 0
+      StatConfigData:
+        StatConfigs: []
+      EffectConfigData:
+        EffectTypesID: 
+        SlowMovementConfig:
+          EffectCategoryID: 0
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+          Timer: 0
+        VampirismConfig:
+          EffectCategoryID: 0
+          GameValueConfig:
+            ValueTypeID: 0
+            Value: 0
+        DisableConfigs: []
       Speed: 15
       Duration: 0.15
   <EffectConfigData>k__BackingField:
     EffectTypesID: 03000000
     SlowMovementConfig:
-      IsInterim: 1
-      ValueType: 0
-      Value: 0
+      EffectCategoryID: 0
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
       Timer: 0
     VampirismConfig:
-      IsInterim: 1
-      ValueType: 0
-      Value: 0
+      EffectCategoryID: 0
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
     DisableConfigs:
-    - IsInterim: 1
+    - EffectCategoryID: 26
       DisableTypeID: 1
       Timer: 100
-    - IsInterim: 1
+    - EffectCategoryID: 26
       DisableTypeID: 2
       Timer: 100

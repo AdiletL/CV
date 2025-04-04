@@ -23,37 +23,30 @@ MonoBehaviour:
   <ItemBehaviourID>k__BackingField: 1
   <Cooldown>k__BackingField: 0.5
   <TimerCast>k__BackingField: 0
+  <Range>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
-  <UnitStatsConfigs>k__BackingField:
-  - StatTypeID: 11
-    StatValuesConfig:
-    - StatValueTypeID: 1
-      ValueTypeID: 0
-      Value: 10
-  <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 
-    DamageResistanceConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
-      Cooldown: 0
-      TimerCast: 0
-      StatConfigs: []
-      Clip: {fileID: 0}
-    DashConfig:
-      SO_BaseAbilityConfig: {fileID: 0}
-      Cooldown: 0
-      TimerCast: 0
-      Speed: 0
-      Duration: 0
+  <AttackModifierConfigData>k__BackingField:
+    AttackModifierTypeID: 0
+    CriticalDamageConfig:
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
+      Chance: 0
+  <StatsConfigData>k__BackingField:
+    StatConfigs: []
   <EffectConfigData>k__BackingField:
     EffectTypesID: 
     SlowMovementConfig:
-      IsInterim: 1
-      ValueType: 0
-      Value: 0
-      Duration: 0
+      EffectCategoryID: 0
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
+      Timer: 0
     VampirismConfig:
-      IsInterim: 1
-      ValueType: 0
-      Value: 0
+      EffectCategoryID: 4
+      GameValueConfig:
+        ValueTypeID: 1
+        Value: 0.5
+    DisableConfigs: []
   <SO_Equipment>k__BackingField: {fileID: 11400000, guid: d8a45793d4a6c1d4cab2a46e2911e8a8, type: 2}

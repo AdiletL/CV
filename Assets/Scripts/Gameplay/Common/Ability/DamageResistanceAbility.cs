@@ -57,7 +57,7 @@ namespace Gameplay.Ability
                 stat = unitStatsController.GetStat(statConfig.StatTypeID);
                 foreach (var statValue in statConfig.StatValuesConfig)
                 {
-                    var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
+                    var gameValue = new GameValue(statValue.GameValueConfig.Value, statValue.GameValueConfig.ValueTypeID);
                     result = gameValue.Calculate(stat.CurrentValue);
                     stat.AddValue(result, statValue.StatValueTypeID);
                     addedStatValues.Add(result);

@@ -70,7 +70,7 @@ namespace Gameplay.Equipment
             {
                 foreach (var statValue in VARIABLE.StatValuesConfig)
                 {
-                    var gameValue = new GameValue(statValue.Value, statValue.ValueTypeID);
+                    var gameValue = new GameValue(statValue.GameValueConfig.Value, statValue.GameValueConfig.ValueTypeID);
                     var result = gameValue.Calculate(endurance.RegenerationStat.GetValue(statValue.StatValueTypeID));
                     endurance.RegenerationStat.AddValue(result, statValue.StatValueTypeID);
                     addedStats.Add(result);

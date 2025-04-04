@@ -1,11 +1,14 @@
-﻿using Gameplay.Unit;
+﻿using Gameplay.Spawner;
+using Gameplay.Unit;
 using ScriptableObjects.Gameplay.Equipment.Weapon;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Equipment.Weapon
 {
     public class Sword : Weapon
     {
+        
         private Collider[] findColliders = new Collider[1];
         private int ownerLayer;
         private int counterSpecialAction;
@@ -61,7 +64,12 @@ namespace Gameplay.Equipment.Weapon
                     currentTarget.TryGetComponent(out IHealth health) && health.IsLive)
                 {
                     DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
-                    attackable.TakeDamage(DamageData);
+
+                    bool isWasCriticalDamage = false;
+                    CheckCriticalDamage(DamageData, ref isWasCriticalDamage, attackable, currentTarget);
+
+                    if (!isWasCriticalDamage)
+                        attackable.TakeDamage(DamageData);
 
                     if (counterSpecialAction >= SPECIAL_ATTACK_INDEX)
                     {
@@ -73,9 +81,9 @@ namespace Gameplay.Equipment.Weapon
                     {
                         counterSpecialAction++;
                     }
-                }
 
-                currentTarget = null;
+                    currentTarget = null;
+                }
             }
         }
 
@@ -93,7 +101,12 @@ namespace Gameplay.Equipment.Weapon
                     target.TryGetComponent(out IHealth health) && health.IsLive)
                 {
                     DamageData.Amount = DamageStat.CurrentValue + OwnerDamageStat.CurrentValue;
-                    attackable.TakeDamage(DamageData);
+                    
+                    bool isWasCriticalDamage = false;
+                    CheckCriticalDamage(DamageData, ref isWasCriticalDamage, attackable, target);
+                    
+                    if (!isWasCriticalDamage)
+                        attackable.TakeDamage(DamageData);
                 }
             }
             IsActivatedSpecialAction = false;

@@ -2,6 +2,7 @@
 using System.IO;
 using Gameplay;
 using Gameplay.Ability;
+using Gameplay.AttackModifier;
 using Gameplay.Effect;
 using Sirenix.OdinInspector;
 using UnityEditor;
@@ -24,9 +25,9 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
         
-        [field: SerializeField, Space(15)] public StatConfig[] UnitStatsConfigs { get; private set; }
-        [field: SerializeField, Space(15)] public AbilityConfigData AbilityConfigData { get; private set; }
-        [field: SerializeField, Space(15)] public EffectConfigData EffectConfigData { get; private set; }
+        [field: SerializeField, Space(25)] public AttackModifierConfigData AttackModifierConfigData { get; private set; }
+        [field: SerializeField, Space(25)] public StatConfigData StatsConfigData { get; private set; }
+        [field: SerializeField, Space(25)] public EffectConfigData EffectConfigData { get; private set; }
         
         #if UNITY_EDITOR
         //[Button]

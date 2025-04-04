@@ -28,4 +28,9 @@ public class DamageData
         DamageTypeID = damageTypeID;
         Amount = amount;
     }
+    
+    public DamageData Clone()
+    {
+        return new DamageData(Owner, DamageTypeID, Amount);
+    }
 }

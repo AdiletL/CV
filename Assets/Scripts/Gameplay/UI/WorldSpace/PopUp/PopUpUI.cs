@@ -27,16 +27,28 @@ namespace Gameplay.UI
         protected Color textColor;
         protected bool isAnimating;
 
-        protected float[] randomValues;
+        protected float[] randomValuesX;
+        protected float[] randomValuesY;
+        protected float[] randomValuesZ;
 
-        protected virtual float[] CreateRandomValuesForPosition()
+        protected virtual float[] CreateRandomValuesForPositionX()
         {
             return new float[] { -0.2f, -0.15f, -0.1f, 0.1f, 0.15f, 0.2f };
+        }
+        protected virtual float[] CreateRandomValuesForPositionY()
+        {
+            return new float[] { 0 };
+        }
+        protected virtual float[] CreateRandomValuesForPositionZ()
+        {
+            return new float[] { 0 };
         }
 
         private void Awake()
         {
-            randomValues = CreateRandomValuesForPosition();
+            randomValuesX = CreateRandomValuesForPositionX();
+            randomValuesY = CreateRandomValuesForPositionY();
+            randomValuesZ = CreateRandomValuesForPositionZ();
         }
 
         public virtual void Play(float damageValue)
@@ -49,8 +61,11 @@ namespace Gameplay.UI
             textColor.a = 1f;
             valueText.color = textColor;
 
-            float randomX = randomValues[Random.Range(0, randomValues.Length)];
-            startPosition = transform.position + (Vector3.right * randomX);
+            float randomX = randomValuesX[Random.Range(0, randomValuesX.Length)];
+            float randomY = randomValuesY[Random.Range(0, randomValuesY.Length)];
+            float randomZ = randomValuesZ[Random.Range(0, randomValuesZ.Length)];
+
+            startPosition = transform.position + new Vector3(randomX, randomY, randomZ);
             endPosition = startPosition - new Vector3(0, fallDistance, 0);
             transform.position = startPosition;
 

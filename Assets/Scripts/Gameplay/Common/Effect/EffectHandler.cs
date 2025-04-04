@@ -9,7 +9,7 @@ namespace Gameplay.Effect
         public event Action OnUpdate;
         
         
-        private Dictionary<EffectType, List<Effect>> currentEffects = new();
+        private Dictionary<EffectType, List<IEffect>> currentEffects = new();
 
         public bool IsEffectNull(EffectType effectType)
         {
@@ -21,7 +21,7 @@ namespace Gameplay.Effect
             return false;
         }
         
-        public Effect GetEffect(Effect effect)
+        public IEffect GetEffect(IEffect effect)
         {
             for (int i = currentEffects[effect.EffectTypeID].Count - 1; i >= 0; i--)
             {
@@ -32,7 +32,7 @@ namespace Gameplay.Effect
             return null;
         }
 
-        public List<Effect> GetEffects(EffectType effectType)
+        public List<IEffect> GetEffects(EffectType effectType)
         {
             if (IsEffectNull(effectType)) return null;
             return currentEffects[effectType];
@@ -46,10 +46,10 @@ namespace Gameplay.Effect
         private void Update() => OnUpdate?.Invoke();
         
 
-        public void AddEffect(Effect effect)
+        public void AddEffect(IEffect effect)
         {
             if(!currentEffects.ContainsKey(effect.EffectTypeID))
-                currentEffects.Add(effect.EffectTypeID, new List<Effect>());
+                currentEffects.Add(effect.EffectTypeID, new List<IEffect>());
             currentEffects[effect.EffectTypeID].Add(effect);
             
             OnUpdate += effect.Update;
@@ -57,12 +57,12 @@ namespace Gameplay.Effect
             effect.ApplyEffect();
         }
 
-        public void OnDestroyEffect(Effect effect)
+        public void OnDestroyEffect(IEffect effect)
         {
             RemoveEffect(effect);
         }
 
-        public void RemoveEffect(Effect effect)
+        public void RemoveEffect(IEffect effect)
         {
             var targetEffect = GetEffect(effect);
             if (targetEffect == null) return;

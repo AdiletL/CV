@@ -18,11 +18,9 @@ namespace Gameplay.Effect
         
         public SlowMovementEffect(SlowMovementConfig slowMovementConfig) : base(slowMovementConfig)
         {
-            this.value = slowMovementConfig.Value;
+            this.value = slowMovementConfig.GameValueConfig.Value;
             this.timer = slowMovementConfig.Timer;
-            this.valueType = slowMovementConfig.ValueType;
-            this.IsInterim = slowMovementConfig.IsInterim;
-            IsBuff = false;
+            this.valueType = slowMovementConfig.GameValueConfig.ValueTypeID;
         }
 
         public override void ClearValues()
@@ -33,7 +31,7 @@ namespace Gameplay.Effect
 
         public override void Update()
         {
-            if(!IsInterim) return;
+            if(!EffectCategoryID.HasFlag(EffectCategory.Interim)) return;
             
             countTimer -= Time.deltaTime;
             if (countTimer <= 0)
@@ -80,8 +78,7 @@ namespace Gameplay.Effect
     [System.Serializable]
     public class SlowMovementConfig : EffectConfig
     {
-        public ValueType ValueType;
-        public float Value;
+        public GameValueConfig GameValueConfig;
         public float Timer;
     }
 }

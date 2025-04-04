@@ -57,7 +57,7 @@ namespace Gameplay.Unit.Item
                     diContainer.Inject(item);
                     item.SetOwner(playerInventory.gameObject);
                     item.SetAmountItem(amountItem);
-                    item.SetStats(so_Item.UnitStatsConfigs);
+                    item.SetStats(so_Item.StatsConfigData.StatConfigs);
                     item.Initialize();
                     
                     playerInventory.AddItem(item, so_Item.Icon);

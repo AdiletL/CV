@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using Gameplay.AttackModifier;
+using Gameplay.Effect;
 using Gameplay.UI.ScreenSpace;
 using ScriptableObjects.Ability;
 using UnityEngine;
@@ -139,5 +141,14 @@ namespace Gameplay.Ability
         public float Cooldown;
         public float TimerCast;
         public float Range;
+
+        [Space(25)]
+        public AttackModifierConfigData AttackModifierConfigData;
+        
+        [Space(25)]
+        public StatConfigData StatConfigData;
+        
+        [Space(25)]
+        public EffectConfigData EffectConfigData;
     }
 }
