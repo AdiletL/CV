@@ -34,7 +34,13 @@ MonoBehaviour:
         Value: 0
       Chance: 0
   <StatsConfigData>k__BackingField:
-    StatConfigs: []
+    StatConfigs:
+    - StatTypeID: 11
+      StatValuesConfig:
+      - StatValueTypeID: 1
+        GameValueConfig:
+          ValueTypeID: 0
+          Value: 5
   <EffectConfigData>k__BackingField:
     EffectTypesID: 
     SlowMovementConfig:

@@ -26,7 +26,7 @@ namespace Gameplay.Unit.Trap
             cooldownAttack = so_Push.CooldownAttack;
 
             DamageStat.AddCurrentValue(so_Push.Damage);
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue, false);
         }
 
         public override void Appear()

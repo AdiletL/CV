@@ -25,12 +25,16 @@ namespace Gameplay.Unit
         public void SetCenter(Transform center) => this.center = center;
         public void SetConfig(SO_UnitAttack config) => so_UnitAttack = config;
 
+        protected virtual DamageData CreateDamageData()
+        {
+            return new DamageData(gameObject, so_UnitAttack.DamageTypeID, DamageStat.CurrentValue, true);
+        }
 
         public override void Initialize()
         {
             base.Initialize();
             damageTypeID = so_UnitAttack.DamageTypeID;
-            DamageData = new DamageData(gameObject, damageTypeID, DamageStat.CurrentValue);
+            DamageData = CreateDamageData();
         }
 
         public abstract void Attack();

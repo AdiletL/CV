@@ -33,6 +33,8 @@ namespace Gameplay.Unit.Character
         {
             base.Initialize();
             TryGetComponent(out evasionApplier);
+            abilityHandler = GetComponent<AbilityHandler>();
+            resistanceHandler = GetComponent<ResistanceHandler>();
         }
 
         private void VampirismEffect(GameObject attacker, float totalDamage)

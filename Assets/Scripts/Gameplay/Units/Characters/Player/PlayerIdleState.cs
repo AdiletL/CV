@@ -24,7 +24,7 @@ namespace Gameplay.Unit.Character.Player
         {
             if(!IsActive) return;
             
-            if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
+            if (typeof(IJump).IsAssignableFrom(state.GetType()))
             {
                 PlayAnimation();
             }

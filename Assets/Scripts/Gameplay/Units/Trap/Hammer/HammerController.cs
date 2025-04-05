@@ -27,7 +27,7 @@ namespace Gameplay.Unit.Trap.Hammer
             base.Initialize();
             so_Hammer = (SO_Hammer)so_Trap;
             DamageStat.AddCurrentValue(so_Hammer.Damage);
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue, false);
             durationAttack = Calculate.Convert.AttackSpeedToDuration(so_Hammer.AttackSpeed);
             cooldownAttack = so_Hammer.CooldownAttack;
         }

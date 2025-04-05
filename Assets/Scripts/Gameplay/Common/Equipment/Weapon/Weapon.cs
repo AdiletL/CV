@@ -47,7 +47,7 @@ namespace Gameplay.Equipment.Weapon
             so_Weapon = (SO_Weapon)so_Equipment;
             angleToTarget = so_Weapon.AngleToTarget;
             
-            DamageData = new DamageData(Owner, DamageType.Physical, DamageStat.CurrentValue);
+            DamageData = new DamageData(Owner, DamageType.Physical, DamageStat.CurrentValue, true);
             diContainer.Inject(DamageData);
         }
 

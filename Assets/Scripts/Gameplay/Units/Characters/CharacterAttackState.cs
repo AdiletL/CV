@@ -55,7 +55,7 @@ namespace Gameplay.Unit.Character
         public void SetUnitAnimation(UnitAnimation animation) => unitAnimation = animation;
         public void SetUnitRenderer(UnitRenderer unitRenderer) => this.unitRenderer = unitRenderer;
         public void SetAbilityHandler(AbilityHandler abilityHandler) => this.abilityHandler = abilityHandler;
-        
+
         public virtual bool IsUnitInRange()
         {
             currentTarget = FindUnitInRange<IAttackable>();

@@ -56,7 +56,7 @@ namespace Gameplay.Unit.Trap
             if(trapCollision && trapCollision.TryGetComponent(out SphereCollider sphereCollider))
                 radius = sphereCollider.radius;
             
-            DamageData = new DamageData(gameObject, DamageType.Physical, so_Thorn.Damage);
+            DamageData = new DamageData(gameObject, DamageType.Physical, so_Thorn.Damage, false);
         }
 
         public override void Appear()

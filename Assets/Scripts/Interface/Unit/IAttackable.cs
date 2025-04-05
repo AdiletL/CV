@@ -21,17 +21,19 @@ public class DamageData
     public GameObject Owner { get; }
     public DamageType DamageTypeID { get; }
     public float Amount;
+    public bool IsCanEvade { get; }
     
-    public DamageData(GameObject owner, DamageType damageTypeID, float amount)
+    public DamageData(GameObject owner, DamageType damageTypeID, float amount, bool isCanEvade)
     {
         Owner = owner;
         DamageTypeID = damageTypeID;
         Amount = amount;
+        IsCanEvade = isCanEvade;
     }
     
     public DamageData Clone()
     {
-        return new DamageData(Owner, DamageTypeID, Amount);
+        return new DamageData(Owner, DamageTypeID, Amount, IsCanEvade);
     }
 }
 

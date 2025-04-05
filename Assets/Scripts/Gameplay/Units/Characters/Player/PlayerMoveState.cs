@@ -87,9 +87,9 @@ namespace Gameplay.Unit.Character.Player
 
         private void OnExitCategory(IState state)
         {
-            if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
+            if (typeof(IJump).IsAssignableFrom(state.GetType()))
                 PlayAnimation();
-            if (typeof(CharacterSpecialActionState).IsAssignableFrom(state.GetType()))
+            if (typeof(ISpecialAction).IsAssignableFrom(state.GetType()))
                 PlayAnimation();
         }
         

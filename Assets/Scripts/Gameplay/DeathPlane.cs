@@ -9,7 +9,7 @@ namespace Gameplay
 
         private void Start()
         {
-            damageData = new DamageData(gameObject, DamageType.Physical, 999999);
+            damageData = new DamageData(gameObject, DamageType.Physical, 999999, false);
         }
 
         private void OnTriggerEnter(Collider other)

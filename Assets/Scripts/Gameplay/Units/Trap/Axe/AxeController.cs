@@ -19,7 +19,7 @@ namespace Gameplay.Unit.Trap
         {
             base.Initialize();
             DamageStat.AddCurrentValue(so_Trap.Damage);
-            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue);
+            DamageData = new DamageData(gameObject, DamageType.Physical, DamageStat.CurrentValue, false);
             axeAnimation = components.GetComponentFromArray<AxeAnimation>();
             so_Axe = (SO_Axe)so_Trap;
             speedPlayClip = so_Axe.SpeedPlayClip;
