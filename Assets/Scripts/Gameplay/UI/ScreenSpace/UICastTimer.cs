@@ -19,12 +19,12 @@ namespace Gameplay.UI.ScreenSpace
 
         public void UpdateTime(float currentTime, float maxTimer)
         {
-            if (currentTime <= 0 || maxTimer <= 0)
+            /*if (currentTime <= 0 || maxTimer <= 0)
             {
                 if (parent.gameObject.activeSelf) // Проверяем, не скрыт ли уже
                     Hide();
                 return;
-            }
+            }*/
 
             if (Mathf.Approximately(lastTime, currentTime)) return; // Если время не изменилось, выходим
 
@@ -32,8 +32,8 @@ namespace Gameplay.UI.ScreenSpace
             timerTxt.text = currentTime.ToString("0.0");
             timerBar.fillAmount = currentTime / maxTimer;
     
-            if (!parent.gameObject.activeSelf) // Проверяем, скрыт ли объект, перед тем как показать
-                Show();
+            /*if (!parent.gameObject.activeSelf) // Проверяем, скрыт ли объект, перед тем как показать
+                Show();*/
         }
         
         public void Show() => parent.gameObject.SetActive(true);

@@ -26,6 +26,8 @@ MonoBehaviour:
   <Range>k__BackingField: 0
   <JumpPower>k__BackingField: 1.5
   <JumpDuration>k__BackingField: 0.5
+  <DescriptionConfig>k__BackingField:
+    templateFile: {fileID: 4900000, guid: 601c3a2f10117864eaca348868b42816, type: 3}
   <AttackModifierConfigData>k__BackingField:
     AttackModifierTypeID: 1
     CriticalDamageConfig:

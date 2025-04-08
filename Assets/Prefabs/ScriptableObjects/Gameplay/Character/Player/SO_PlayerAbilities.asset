@@ -12,66 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3623e5d25c2441209de0314150e09129, type: 3}
   m_Name: SO_PlayerAbilities
   m_EditorClassIdentifier: 
-  <AbilityConfigData>k__BackingField:
-    AbilityTypeID: 01000000
-    DamageResistanceConfig:
-      Cooldown: 0
-      TimerCast: 0
-      Range: 0
-      AttackModifierConfigData:
-        AttackModifierTypeID: 0
-        CriticalDamageConfig:
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-          Chance: 0
-      StatConfigData:
-        StatConfigs: []
-      EffectConfigData:
-        EffectTypesID: 
-        SlowMovementConfig:
-          EffectCategoryID: 0
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-          Timer: 0
-        VampirismConfig:
-          EffectCategoryID: 0
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-        DisableConfigs: []
-      StatConfigs: []
-      Clip: {fileID: 0}
-    DashConfig:
-      Cooldown: 1
-      TimerCast: 0.1
-      Range: 0
-      AttackModifierConfigData:
-        AttackModifierTypeID: 0
-        CriticalDamageConfig:
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-          Chance: 0
-      StatConfigData:
-        StatConfigs: []
-      EffectConfigData:
-        EffectTypesID: 
-        SlowMovementConfig:
-          EffectCategoryID: 0
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-          Timer: 0
-        VampirismConfig:
-          EffectCategoryID: 0
-          GameValueConfig:
-            ValueTypeID: 0
-            Value: 0
-        DisableConfigs: []
-      Speed: 15
-      Duration: 0.15
+  <AbilityTypesID>k__BackingField: 01000000
   <EffectConfigData>k__BackingField:
     EffectTypesID: 03000000
     SlowMovementConfig:

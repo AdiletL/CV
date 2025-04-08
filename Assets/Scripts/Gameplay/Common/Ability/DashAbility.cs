@@ -1,4 +1,5 @@
 ﻿using System;
+using ScriptableObjects.Ability;
 using UnityEngine;
 
 namespace Gameplay.Ability
@@ -7,16 +8,16 @@ namespace Gameplay.Ability
     {
         public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.Dash;
         
-        private DashConfig dashConfig;
+        private SO_DashAbility so_DashAbility;
         private IMoveControl moveControl;
         private float duration;
         private float speed;
         private float dashTimer;
         private bool isStartEffect;
 
-        public DashAbility(DashConfig dashConfig) : base(dashConfig)
+        public DashAbility(SO_DashAbility so_DashAbility) : base(so_DashAbility)
         {
-            this.dashConfig = dashConfig;
+            this.so_DashAbility = so_DashAbility;
         }
 
         public void SetMoveControl(IMoveControl moveControl) => this.moveControl = moveControl;
@@ -24,8 +25,8 @@ namespace Gameplay.Ability
         public override void Initialize()
         {
             base.Initialize();
-            duration = dashConfig.Duration;
-            speed = dashConfig.Speed;
+            duration = so_DashAbility.Duration;
+            speed = so_DashAbility.Speed;
         }
 
         public override void StartEffect()
@@ -59,13 +60,5 @@ namespace Gameplay.Ability
                 Exit();
             }
         }
-    }
-    
-    [System.Serializable]
-    public class DashConfig : AbilityConfig
-    {
-        public override AbilityType AbilityTypeID { get; } = AbilityType.Dash;
-        public float Speed;
-        public float Duration;
     }
 }

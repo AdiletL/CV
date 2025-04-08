@@ -40,7 +40,7 @@ namespace Gameplay.Unit.Character
         {
             base.Enter();
 
-            if (currentAbility == null || !isCanUsage)
+            if (currentAbility == null || !isCanUsage || currentAbility.IsCooldown)
             {
                 stateMachine.ExitCategory(Category, null);
                 return;

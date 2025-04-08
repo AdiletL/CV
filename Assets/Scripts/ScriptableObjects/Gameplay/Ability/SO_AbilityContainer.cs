@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace ScriptableObjects.Ability
 {
-    [CreateAssetMenu(fileName = "SO_BaseAbilityConfigContainer", menuName = "SO/Gameplay/Ability/Container", order = 51)]
-    public class SO_BaseAbilityConfigContainer : ScriptableObject
+    [CreateAssetMenu(fileName = "SO_AbilityContainer", menuName = "SO/Gameplay/Ability/Container", order = 51)]
+    public class SO_AbilityContainer : ScriptableObject
     {
-        [SerializeField] private SO_BaseAbilityConfig[] abilityConfigs;
+        [SerializeField] private SO_Ability[] abilityConfigs;
 
-        public SO_BaseAbilityConfig GetAbilityConfig(AbilityType abilityType)
+        public SO_Ability GetAbilityConfig(AbilityType abilityType)
         {
             for (int i = 0; i < abilityConfigs.Length; i++)
             {

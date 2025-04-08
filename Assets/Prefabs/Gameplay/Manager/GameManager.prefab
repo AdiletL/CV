@@ -81,4 +81,4 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   so_GameConfig: {fileID: 11400000, guid: 663f3157d209a694c88f78d9c0c8eb27, type: 2}
-  so_BaseAbilityConfigContainer: {fileID: 11400000, guid: 2a06932eefaec594f8ae2a188be43462, type: 2}
+  soAbilityContainer: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}

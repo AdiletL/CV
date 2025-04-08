@@ -12,7 +12,7 @@ namespace Gameplay.Ability
     public abstract class Ability : IAbility
     {
         [Inject] protected UICastTimer uiCastTimer;
-        [Inject] protected SO_BaseAbilityConfigContainer SO_BaseAbilityConfigContainer;
+        [Inject] protected SO_AbilityContainer SoAbilityContainer;
 
         public event Action<int?, float, float> OnCountCooldown;
         public event Action<int?> OnStartedCast;
@@ -28,15 +28,15 @@ namespace Gameplay.Ability
         public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
 
-        protected AbilityConfig abilityConfig;
+        protected SO_Ability so_Ability;
         private float countCooldown;
         private float countTimerCast;
         protected bool isActivated;
         protected bool isCasting;
 
-        public Ability(AbilityConfig abilityConfig)
+        public Ability(SO_Ability so_Ability)
         {
-            this.abilityConfig = abilityConfig;
+            this.so_Ability = so_Ability;
         }
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
@@ -45,10 +45,10 @@ namespace Gameplay.Ability
 
         public virtual void Initialize()
         {
-            AbilityBehaviourID = SO_BaseAbilityConfigContainer.GetAbilityConfig(abilityConfig.AbilityTypeID).AbilityBehaviour;
-            Cooldown = abilityConfig.Cooldown;
-            TimerCast = abilityConfig.TimerCast;
-            Range = abilityConfig.Range;
+            AbilityBehaviourID = SoAbilityContainer.GetAbilityConfig(so_Ability.AbilityTypeID).AbilityBehaviour;
+            Cooldown = so_Ability.Cooldown;
+            TimerCast = so_Ability.TimerCast;
+            Range = so_Ability.Range;
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -116,6 +116,7 @@ namespace Gameplay.Ability
         {
             isCasting = true;
             countTimerCast = TimerCast;
+            if(TimerCast > .1f) uiCastTimer.Show();
             OnStartedCast?.Invoke(InventorySlotID);
         }
         
@@ -133,22 +134,5 @@ namespace Gameplay.Ability
             isCasting = false;
             uiCastTimer.Hide();
         }
-    }
-
-    public abstract class AbilityConfig
-    {
-        public abstract AbilityType AbilityTypeID { get; }
-        public float Cooldown;
-        public float TimerCast;
-        public float Range;
-
-        [Space(25)]
-        public AttackModifierConfigData AttackModifierConfigData;
-        
-        [Space(25)]
-        public StatConfigData StatConfigData;
-        
-        [Space(25)]
-        public EffectConfigData EffectConfigData;
     }
 }

@@ -25,6 +25,8 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField, Space(10)] public float JumpPower { get; private set; } = 1.5f;
         [field: SerializeField] public float JumpDuration { get; private set; } = .5f;
         
+        [field: SerializeField, Space(10)] public DescriptionConfig DescriptionConfig { get; private set; }
+        
         [field: SerializeField, Space(25)] public AttackModifierConfigData AttackModifierConfigData { get; private set; }
         [field: SerializeField, Space(25)] public StatConfigData StatsConfigData { get; private set; }
         [field: SerializeField, Space(25)] public EffectConfigData EffectConfigData { get; private set; }

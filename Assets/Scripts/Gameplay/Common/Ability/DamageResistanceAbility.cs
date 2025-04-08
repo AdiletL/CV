@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Calculate;
 using Gameplay.Resistance;
 using Gameplay.Unit;
+using ScriptableObjects.Ability;
 using UnityEngine;
 using ValueType = Calculate.ValueType;
 
@@ -12,7 +13,7 @@ namespace Gameplay.Ability
     {
         public override AbilityType AbilityTypeID { get; protected set; } = AbilityType.DamageResistance;
 
-        private DamageResistanceConfig config;
+        private SO_DamageResistanceAbility so_DamageResistanceAbility;
         private UnitStatsController unitStatsController;
         private StatConfig[] statConfigs;
 
@@ -21,16 +22,16 @@ namespace Gameplay.Ability
         private List<float> addedStatValues = new List<float>();
 
 
-        public DamageResistanceAbility(DamageResistanceConfig config) : base(config)
+        public DamageResistanceAbility(SO_DamageResistanceAbility so_DamageResistanceAbility) : base(so_DamageResistanceAbility)
         {
-            this.config = config;
+            this.so_DamageResistanceAbility = so_DamageResistanceAbility;
         }
 
         public override void Initialize()
         {
             base.Initialize();
             unitStatsController = GameObject.GetComponent<UnitStatsController>();
-            statConfigs = config.StatConfigs;
+            statConfigs = so_DamageResistanceAbility.StatConfigs;
         }
 
         public override void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -87,13 +88,5 @@ namespace Gameplay.Ability
             isUsed = false;
             base.Exit();
         }
-    }
-
-    [System.Serializable]
-    public class DamageResistanceConfig : AbilityConfig
-    {
-        public override AbilityType AbilityTypeID { get; } = AbilityType.DamageResistance;
-        public StatConfig[] StatConfigs;
-        public AnimationClip Clip;
     }
 }

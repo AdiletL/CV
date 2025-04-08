@@ -4,8 +4,8 @@ using UnityEngine;
 namespace ScriptableObjects.Unit.Character.Player
 {
     [CreateAssetMenu(fileName = "SO_PlayerAbilities", menuName = "SO/Gameplay/Unit/Character/Player/Abilities", order = 51)]
-    public class SO_PlayerAbilities : SO_CharacterSkills
+    public class SO_PlayerAbilities : SO_CharacterAbilites
     {
-        [field: SerializeField] public EffectConfigData EffectConfigData { get; set; }
+        [field: SerializeField, Space(20)] public EffectConfigData EffectConfigData { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace Gameplay.Unit.Character.Player
         [Inject] private DiContainer diContainer;
         [Inject] private SO_GameHotkeys so_GameHotkeys;
         [Inject] private AbilityFactory abilityFactory;
-        [Inject] private SO_BaseAbilityConfigContainer so_BaseAbilityConfigContainer;
+        [Inject] private SO_AbilityContainer _soAbilityContainer;
         [Inject] private SO_GameRange so_GameRange;
         
         [SerializeField] private PlayerController playerController;
@@ -201,12 +201,16 @@ namespace Gameplay.Unit.Character.Player
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                var newAbility = (DashAbility)abilityFactory.CreateAbility(so_PlayerAbilities.AbilityConfigData.DashConfig);
-                diContainer.Inject(newAbility);
-                newAbility.SetMoveControl(gameObject.GetComponent<IMoveControl>());
-                newAbility.SetGameObject(gameObject);
-                newAbility.Initialize();
-                AddAbility(newAbility, so_BaseAbilityConfigContainer.GetAbilityConfig(so_PlayerAbilities.AbilityConfigData.DashConfig.AbilityTypeID).Icon);
+                foreach (var VARIABLE in so_PlayerAbilities.AbilityTypesID)
+                {
+                    var abilityConfig = _soAbilityContainer.GetAbilityConfig(VARIABLE);
+                    var newAbility = (DashAbility)abilityFactory.CreateAbility(abilityConfig);
+                    diContainer.Inject(newAbility);
+                    newAbility.SetMoveControl(gameObject.GetComponent<IMoveControl>());
+                    newAbility.SetGameObject(gameObject);
+                    newAbility.Initialize();
+                    AddAbility(newAbility, abilityConfig.Icon);
+                }
             }
             
             if (isNextFrameFromUnblockInput)

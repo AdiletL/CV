@@ -76,6 +76,16 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         private void OnEnterItem(int? slotID) => OnEnter?.Invoke(slotID);
         private void OnExitItem() => OnExit?.Invoke();
 
+        public void ShowTooltip()
+        {
+            
+        }
+
+        public void HideTooltip()
+        {
+            
+        }
+
         private void OnDestroy()
         {
             for (int i = 0; i < uiItems.Count; i++)

@@ -123,7 +123,8 @@ namespace Gameplay.Unit.Item
         {
             isCasting = true;
             countTimerCast = TimerCast;
-            uiCastTimer.Show();
+            if(TimerCast > .1f)
+                uiCastTimer.Show();
             OnStartedCast?.Invoke(InventorySlotID);
         }
         

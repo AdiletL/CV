@@ -28,7 +28,6 @@ namespace Gameplay.Unit.Character.Player
             base.Initialize();
             so_PlayerSpecialAction = (SO_PlayerSpecialAction)so_CharacterSpecialAction;
             
-            blockClip = so_PlayerSpecialAction.AbilityConfigData.DamageResistanceConfig.Clip;
             characterAnimation.AddClip(blockClip);
         }
 

@@ -21,7 +21,7 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject roomManagerPrefab;
         [SerializeField] private AssetReferenceGameObject networkManagerPrefab;
         [SerializeField] private SO_GameConfig so_GameConfig;
-        [SerializeField] private SO_BaseAbilityConfigContainer so_BaseAbilityConfigContainer;
+        [FormerlySerializedAs("soAbilityConfigContainer")] [FormerlySerializedAs("so_BaseAbilityConfigContainer")] [SerializeField] private SO_AbilityContainer soAbilityContainer;
         
         private LevelManager levelManager;
         private PoolManager poolManager;
@@ -53,7 +53,7 @@ namespace Gameplay.Manager
             diContainer.Bind<SO_GameStatIcon>().FromInstance(so_GameConfig.SO_GameStatIcon).AsSingle();
             diContainer.Bind<SO_GameDisable>().FromInstance(so_GameConfig.SO_GameDisable).AsSingle();
             diContainer.Bind<SO_GameRange>().FromInstance(so_GameConfig.SO_GameRange).AsSingle();
-            diContainer.Bind<SO_BaseAbilityConfigContainer>().FromInstance(so_BaseAbilityConfigContainer).AsSingle();
+            diContainer.Bind<SO_AbilityContainer>().FromInstance(soAbilityContainer).AsSingle();
             
             if(!PhotonNetwork.IsMasterClient) return;
             photonView.RPC(nameof(InitializeGameUnitsAndExperienceSystem), RpcTarget.AllBuffered);
