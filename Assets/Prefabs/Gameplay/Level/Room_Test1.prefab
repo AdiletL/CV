@@ -4051,7 +4051,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4590196419346242171, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
       propertyPath: items.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4590196419346242171, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
       propertyPath: items.Array.data[0].amount
@@ -4066,6 +4066,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4590196419346242171, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
+      propertyPath: items.Array.data[3].amount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590196419346242171, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
       propertyPath: items.Array.data[0].SO_Item
       value: 
       objectReference: {fileID: 11400000, guid: f3f4fc1f5ca711a44a2eaeee469f1523, type: 2}
@@ -4077,6 +4081,10 @@ PrefabInstance:
       propertyPath: items.Array.data[2].SO_Item
       value: 
       objectReference: {fileID: 11400000, guid: 1a0ae3864b2a88f4a9b033d1e4a4369e, type: 2}
+    - target: {fileID: 4590196419346242171, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
+      propertyPath: items.Array.data[3].SO_Item
+      value: 
+      objectReference: {fileID: 11400000, guid: 759d1607746ee5141af60fcdb61b620e, type: 2}
     - target: {fileID: 7761902545292532768, guid: 85988f35e91c5d84a8b2ffc5aa968329, type: 3}
       propertyPath: m_Name
       value: Chest

@@ -176,6 +176,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_monoInstallers.Array.data[2]'
+      value: 
+      objectReference: {fileID: 619416357}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_scriptableObjectInstallers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_scriptableObjectInstallers.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_scriptableObjectInstallers.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_scriptableObjectInstallers.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}
+    - target: {fileID: 4721341774533391702, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: '_scriptableObjectInstallers.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6924b614f7b3c8d4c848131b578b176f, type: 2}
+    - target: {fileID: 7675124488934118779, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: gameScriptableObjectInstallerPrefab.m_AssetGUID
+      value: af74b060cfbdbf64dbca71c0f67407a7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7675124488934118779, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+      propertyPath: gameScriptableObjectInstallerPrefab.m_EditorAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8321453124024859272, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
       propertyPath: m_Name
       value: SceneContext
@@ -453,6 +485,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66ae442726d1cf4428dacb34edd61ac4, type: 3}
+--- !u!114 &619416357 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7675124488934118779, guid: 7ea490d6ae5997e438b8043074baacc8, type: 3}
+  m_PrefabInstance: {fileID: 20328561}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65c6563818d4f14b8010d31ec3bc1ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &686931341
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Gameplay.Unit.Item
 {
-    public abstract class Item : IItem
+    public abstract class Item : IItem, IStatsController<UnitStatType>
     {
         [Inject] private UICastTimer uiCastTimer;
         
@@ -28,7 +28,7 @@ namespace Gameplay.Unit.Item
         public float TimerCast { get; protected set; }
         public float Range { get; protected set; }
         public bool IsCooldown { get; protected set; }
-        public StatConfig[] Stats { get; protected set; }
+        public UnitStatConfig[] Stats { get; protected set; }
 
         protected SO_Item so_Item;
         private float countCooldown;
@@ -37,7 +37,8 @@ namespace Gameplay.Unit.Item
         protected bool isCasting;
 
         private List<float> addedStatValues;
-
+        private Dictionary<UnitStatType, Stat> unitStats;
+        
         public Item(SO_Item so_Item)
         {
             this.so_Item = so_Item;
@@ -46,9 +47,16 @@ namespace Gameplay.Unit.Item
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetOwner(GameObject gameObject) => this.Owner = gameObject;
         public void SetAmountItem(int amount) => Amount = amount;
-        public void SetStats(StatConfig[] stats)
+
+
+        public Stat GetStat(UnitStatType unitStatType)
         {
-            Stats = new StatConfig[stats.Length];
+            return unitStats.GetValueOrDefault(unitStatType);
+        }
+        public void SetStats(UnitStatConfig[] stats)
+        {
+            if(stats == null) return;
+            Stats = new UnitStatConfig[stats.Length];
             for (int i = 0; i < stats.Length; i++)
             {
                 Stats[i] = stats[i];
@@ -62,6 +70,18 @@ namespace Gameplay.Unit.Item
             Cooldown = so_Item.Cooldown;
             TimerCast = so_Item.TimerCast;
             Range = so_Item.Range;
+            
+            SetStats(so_Item.StatsConfigData.StatConfigs);
+            
+            unitStats ??= new Dictionary<UnitStatType, Stat>();
+            foreach (var unitStatConfig in so_Item.StatsConfigData.StatConfigs)
+            {
+                var stat = new Stat();
+                foreach (var VARIABLE in unitStatConfig.StatValuesConfig)
+                    stat.AddValue(VARIABLE.GameValueConfig.Value, VARIABLE.StatValueTypeID);
+                
+                unitStats[unitStatConfig.UnitStatTypeID] = stat;
+            }
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -146,7 +166,7 @@ namespace Gameplay.Unit.Item
             float result = 0;
             foreach (var config in Stats)
             {
-                stat = unitStatController.GetStat(config.StatTypeID);
+                stat = unitStatController.GetStat(config.UnitStatTypeID);
                 foreach (var statValue in config.StatValuesConfig)
                 {
                     var gameValue = new GameValue(statValue.GameValueConfig.Value, statValue.GameValueConfig.ValueTypeID);
@@ -166,7 +186,7 @@ namespace Gameplay.Unit.Item
             int index = 0;
             foreach (var config in Stats)
             {
-                stat = unitStatController.GetStat(config.StatTypeID);
+                stat = unitStatController.GetStat(config.UnitStatTypeID);
                 foreach (var statValue in config.StatValuesConfig)
                 {
                     stat.RemoveValue(addedStatValues[index], statValue.StatValueTypeID);

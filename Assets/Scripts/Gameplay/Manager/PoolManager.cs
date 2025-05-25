@@ -18,26 +18,23 @@ namespace Gameplay.Manager
 
         private AssetReference suitablePrefab;
         private SemaphoreSlim semaphore = new(System.Environment.ProcessorCount / 2);
-        
-        public Transform poolParent { get; private set; }
+
+        private Transform poolParent;
         public List<GameObject> PoolObjects { get; private set; } = new();
         
-        private PhotonView photonView;
 
         public void Initialize()
         {
-            photonView = GetComponent<PhotonView>();
-            if(!PhotonNetwork.IsMasterClient) return;
-            
-            photonView.RPC(nameof(CreatePoolParent), RpcTarget.AllBuffered);
+            CreatePoolParent();
             
             foreach (var prefabReference in poolPrefabReferences)
             {
                 for (int i = 0; i < initialPoolSize; i++)
                 {
-                    var result =
-                        PhotonNetwork.Instantiate(prefabReference.AssetGUID, Vector3.zero, Quaternion.identity);
-                    photonView.RPC(nameof(InjectComponents), RpcTarget.AllBuffered, result.GetComponent<PhotonView>().ViewID);
+                    var loadGameObject = Addressables.LoadAssetAsync<GameObject>(prefabReference).WaitForCompletion();
+                    var newGameObject = diContainer.InstantiatePrefab(loadGameObject);
+                    newGameObject.transform.SetParent(poolParent);
+                    newGameObject.SetActive(false);
                 }
             }
         }
@@ -137,9 +134,9 @@ namespace Gameplay.Manager
                 }
 
                 // Создаем объект из найденного префаба
-                var handle = PhotonNetwork.Instantiate(suitablePrefab.AssetGUID, Vector3.zero, Quaternion.identity);
-                photonView.RPC(nameof(InjectComponent), RpcTarget.All, handle.GetComponent<PhotonView>().ViewID);
-                return handle;
+                var loadGameObject = Addressables.LoadAssetAsync<GameObject>(suitablePrefab).WaitForCompletion();
+                var newGameObject = diContainer.InstantiatePrefab(loadGameObject);
+                return newGameObject;
             }
             finally
             {

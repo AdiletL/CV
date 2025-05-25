@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using Gameplay;
-using Gameplay.Ability;
 using Gameplay.AttackModifier;
 using Gameplay.Effect;
+using Gameplay.Unit;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -28,7 +28,7 @@ namespace ScriptableObjects.Unit.Item
         [field: SerializeField, Space(10)] public DescriptionConfig DescriptionConfig { get; private set; }
         
         [field: SerializeField, Space(25)] public AttackModifierConfigData AttackModifierConfigData { get; private set; }
-        [field: SerializeField, Space(25)] public StatConfigData StatsConfigData { get; private set; }
+        [field: SerializeField, Space(25)] public UnitStatConfigData StatsConfigData { get; private set; }
         [field: SerializeField, Space(25)] public EffectConfigData EffectConfigData { get; private set; }
         
         #if UNITY_EDITOR

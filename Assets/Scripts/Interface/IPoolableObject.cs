@@ -4,7 +4,6 @@ using UnityEngine;
 
 public interface IPoolableObject
 {
-    public Transform poolParent { get; }
     public List<GameObject> PoolObjects { get; }
 
     public void Initialize();

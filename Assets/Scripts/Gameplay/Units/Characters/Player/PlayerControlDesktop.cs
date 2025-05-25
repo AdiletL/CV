@@ -156,11 +156,11 @@ namespace Gameplay.Unit.Character.Player
 
         private void OnExitCategory(IState state)
         {
-            if (typeof(CharacterMoveState).IsAssignableFrom(state.GetType()))
+            if (typeof(IMovement).IsAssignableFrom(state.GetType()))
             {
                 playerBlockInput.UnblockInput(movementBlockInputType);
             }
-            else if (typeof(CharacterJumpState).IsAssignableFrom(state.GetType()))
+            else if (typeof(IJump).IsAssignableFrom(state.GetType()))
             {
                 playerBlockInput.UnblockInput(jumpBlockInputType);
             }

@@ -11,7 +11,6 @@
 
 public interface IState
 {
-    public StateCategory Category { get; }
     public bool IsActive { get; }
     public bool IsCanExit { get; }
     public bool IsInitialized { get; }

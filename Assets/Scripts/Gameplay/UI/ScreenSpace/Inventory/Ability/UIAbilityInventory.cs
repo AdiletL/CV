@@ -32,13 +32,10 @@ namespace Gameplay.UI.ScreenSpace.Inventory
                 uiAbilities.Add(i, uiAbility);
             }
         }
-
-        private void OnClickedLeftMouseAbility(int? slotID) => OnClickedLeftMouse?.Invoke(slotID);
         
         public void AddAbility(int? slotID, Sprite icon, bool isSelectable, float currentCooldown, float maxCooldown)
         {
             if(slotID == null) return;
-            
             uiAbilities[slotID].SetSlotID(slotID);
             uiAbilities[slotID].SetIcon(icon);
             uiAbilities[slotID].SetCooldownBar(currentCooldown, maxCooldown);
@@ -70,7 +67,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
         {
             for (int i = 0; i < uiAbilities.Count; i++)
             {
-                uiAbilities[i].OnClickedLeftMouse -= OnClickedLeftMouseAbility;
+                uiAbilities[i].OnClickedLeftMouse -= OnClickedLeftMouse;
             }
         }
     }

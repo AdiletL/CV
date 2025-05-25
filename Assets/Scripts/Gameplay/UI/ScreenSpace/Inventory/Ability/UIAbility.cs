@@ -58,7 +58,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
             lastTime = current;
             cooldownBar.fillAmount = current/max;
-            cooldownText.text = $"{current: 0}";
+            cooldownText.text = current.ToString("0");
             
             if(!cooldownText.enabled) cooldownText.enabled = true;
         }

@@ -39,6 +39,7 @@ namespace Gameplay.Unit.Character.Player
         private KeyCode[] abilityInventoryHotkeys;
         private Camera baseCamera;
         private RangeDisplay rangeCastDisplay;
+        private AbilityTooltipProvider abilityTooltipProvider;
 
         private Ability.Ability currentSelectedAbility;
         private Texture2D selectedAbilityCursor;
@@ -63,6 +64,9 @@ namespace Gameplay.Unit.Character.Player
             abilityHandler = GetComponent<AbilityHandler>();
             playerBlockInput = playerController.PlayerBlockInput;
             baseCamera = playerController.BaseCamera;
+
+            abilityTooltipProvider ??= new AbilityTooltipProvider();
+            diContainer.Inject(abilityTooltipProvider);
             
             InitializeUIInventory();
             InitializeHotkeys();
@@ -146,13 +150,15 @@ namespace Gameplay.Unit.Character.Player
         {
             if(slotID == null || slots[slotID] == null) return;
             CreateRangeCastDisplay();
-            rangeCastDisplay.SetRange(slots[slotID].Range);
+            rangeCastDisplay.SetRange(slots[slotID].GetStat(AbilityStatType.Range).CurrentValue);
             rangeCastDisplay.ShowRange();
+            abilityTooltipProvider?.ShowTooltip(slots[slotID]);
         }
 
         private void OnPointerExit()
         {
             rangeCastDisplay?.HideRange();
+            abilityTooltipProvider?.HideTooltip();
         }
         
         private void ClearSelectedAbility()
@@ -190,7 +196,7 @@ namespace Gameplay.Unit.Character.Player
                         currentSelectedAbility = ability; 
                         playerBlockInput.IsInputBlocked(selectItemBlockInput);
                         CreateRangeCastDisplay();
-                        rangeCastDisplay.SetRange(currentSelectedAbility.Range);
+                        rangeCastDisplay.SetRange(currentSelectedAbility.GetStat(AbilityStatType.Range).CurrentValue);
                         rangeCastDisplay.ShowRange();
                         break;
                 }
@@ -295,7 +301,7 @@ namespace Gameplay.Unit.Character.Player
                     !cellController.IsBlocked())
                 {
                     if(!Calculate.Distance.IsDistanceToTargetSqr(transform.position, hit.point, 
-                           currentSelectedAbility.Range * currentSelectedAbility.Range))
+                           currentSelectedAbility.GetStat(AbilityStatType.Range).CurrentValue * currentSelectedAbility.GetStat(AbilityStatType.Range).CurrentValue))
                         return;
                     
                     currentSelectedAbility.Enter(point: hit.point);
@@ -316,7 +322,7 @@ namespace Gameplay.Unit.Character.Player
                 if (hit.collider.TryGetComponent(out CharacterMainController characterMainController))
                 {
                     if(!Calculate.Distance.IsDistanceToTargetSqr(transform.position, characterMainController.transform.position,
-                           currentSelectedAbility.Range * currentSelectedAbility.Range))
+                           currentSelectedAbility.GetStat(AbilityStatType.Range).CurrentValue * currentSelectedAbility.GetStat(AbilityStatType.Range).CurrentValue))
                         return;
                     
                     currentSelectedAbility.Enter(target: characterMainController.gameObject);

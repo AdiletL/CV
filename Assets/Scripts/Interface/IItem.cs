@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay;
+using Gameplay.Unit;
 using UnityEngine;
 
 public interface IItem
@@ -19,7 +20,7 @@ public interface IItem
     public float Cooldown { get; }
     public float Range { get; }
     public bool IsCooldown { get; }
-    public StatConfig[] Stats { get; }
+    public UnitStatConfig[] Stats { get; }
     
     public void Initialize();
     public void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null);

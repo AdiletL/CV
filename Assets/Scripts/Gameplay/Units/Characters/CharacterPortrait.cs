@@ -22,7 +22,7 @@ namespace Gameplay.Unit.Character
         private RangeDisplay rangeAttack;
         
 
-        public void Initialize(IStatsController statsController)
+        public void Initialize(IStatsController<UnitStatType> statsController)
         {
             uiPortrait = Addressables.InstantiateAsync(uiPortraitPrefab).WaitForCompletion();
             

@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 774afa563aac4f35b5bbd2851119f0cd, type: 3}
+  m_Name: SO_Dash
+  m_EditorClassIdentifier: 
+  <Icon>k__BackingField: {fileID: 21300000, guid: 5170e0068a8cf184fb119834fa7ba0f3, type: 3}
+  <AbilityBehaviour>k__BackingField: 1
+  <DescriptionConfig>k__BackingField:
+    templateFile: {fileID: 4900000, guid: 3cd89f938e185504693daabd56c3b6d6, type: 3}
+  <MaxLevelScale>k__BackingField: 3
+  <AbilityStatConfigData>k__BackingField:
+    AbilityStatConfigs:
+    - StatValuesConfig:
+      - StatValueTypeID: 1
+        GameValueConfig:
+          ValueTypeID: 1
+          Value: 4
+        ScalingValue: 2
+      AbilityStatTypeID: 1
+    - StatValuesConfig:
+      - StatValueTypeID: 1
+        GameValueConfig:
+          ValueTypeID: 0
+          Value: 6
+        ScalingValue: -1
+      AbilityStatTypeID: 2
+    - StatValuesConfig:
+      - StatValueTypeID: 2
+        GameValueConfig:
+          ValueTypeID: 0
+          Value: 2
+        ScalingValue: 0
+      - StatValueTypeID: 1
+        GameValueConfig:
+          ValueTypeID: 1
+          Value: 5
+        ScalingValue: 1.5
+      AbilityStatTypeID: 3
+  <AttackModifierConfigData>k__BackingField:
+    AttackModifierTypeID: 0
+    CriticalDamageConfig:
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
+      Chance: 0
+  <UnitStatConfigData>k__BackingField:
+    StatConfigs: []
+  <EffectConfigData>k__BackingField:
+    EffectTypesID: 
+    SlowMovementConfig:
+      EffectCategoryID: 0
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
+      Timer: 0
+    VampirismConfig:
+      EffectCategoryID: 0
+      GameValueConfig:
+        ValueTypeID: 0
+        Value: 0
+    DisableConfigs: []
+  <TimerCast>k__BackingField: 0.1
+  <Speed>k__BackingField: 15
+  <Duration>k__BackingField: 0.15

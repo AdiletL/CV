@@ -7,7 +7,7 @@ namespace Gameplay
     public class MediatorStatsAndUI
     {
         private UIStats uiStats;
-        private IStatsController statsController;
+        private IStatsController<UnitStatType> statsController;
 
         private Stat levelStat;
         private Stat experienceStat;
@@ -23,7 +23,7 @@ namespace Gameplay
         private Stat regenerationManaStat;
         private Stat evasionStat;
         
-        public MediatorStatsAndUI(IStatsController statsController, UIStats uiStats)
+        public MediatorStatsAndUI(IStatsController<UnitStatType> statsController, UIStats uiStats)
         {
             this.statsController = statsController;
             this.uiStats = uiStats;
@@ -36,43 +36,43 @@ namespace Gameplay
 
         public void Initialize()
         {
-            levelStat = statsController.GetStat(StatType.Level);
+            levelStat = statsController.GetStat(UnitStatType.Level);
             if(levelStat != null) uiStats.SetLevel(levelStat.CurrentValue);
             
-            experienceStat = statsController.GetStat(StatType.Experience);
+            experienceStat = statsController.GetStat(UnitStatType.Experience);
             if(experienceStat != null) uiStats.SetExperience(experienceStat.CurrentValue, experienceStat.MaximumValue);
             
-            damageStat = statsController.GetStat(StatType.Damage);
+            damageStat = statsController.GetStat(UnitStatType.Damage);
             if(damageStat != null) uiStats.SetDamage(damageStat.CurrentValue);
 
-            movementStat = statsController.GetStat(StatType.MovementSpeed);
+            movementStat = statsController.GetStat(UnitStatType.MovementSpeed);
             if(movementStat != null) uiStats.SetMovementSpeed(movementStat.CurrentValue);
 
-            armorStat = statsController.GetStat(StatType.PhysicalDamageResistance);
+            armorStat = statsController.GetStat(UnitStatType.PhysicalDamageResistance);
             if(armorStat != null) uiStats.SetArmor(armorStat.CurrentValue);
 
-            rangeAttackStat = statsController.GetStat(StatType.AttackRange);
+            rangeAttackStat = statsController.GetStat(UnitStatType.AttackRange);
             if(rangeAttackStat != null) uiStats.SetRangeAttack(rangeAttackStat.CurrentValue);
            
-            healthStat = statsController.GetStat(StatType.Health);
+            healthStat = statsController.GetStat(UnitStatType.Health);
             if(healthStat != null) uiStats.SetHealth(healthStat.CurrentValue, healthStat.MaximumValue);
             
-            enduranceStat = statsController.GetStat(StatType.Endurance);
+            enduranceStat = statsController.GetStat(UnitStatType.Endurance);
             if(enduranceStat != null) uiStats.SetEndurance(enduranceStat.CurrentValue, enduranceStat.MaximumValue);
             
-            manaStat = statsController.GetStat(StatType.Mana);
+            manaStat = statsController.GetStat(UnitStatType.Mana);
             if(manaStat != null) uiStats.SetMana(manaStat.CurrentValue, manaStat.MaximumValue);
             
-            regenerationHealthStat = statsController.GetStat(StatType.RegenerationHealth);
+            regenerationHealthStat = statsController.GetStat(UnitStatType.RegenerationHealth);
             if(regenerationHealthStat != null) uiStats.SetRegenerationHealth(regenerationHealthStat.CurrentValue);
             
-            regenerationManaStat = statsController.GetStat(StatType.RegenerationMana);
+            regenerationManaStat = statsController.GetStat(UnitStatType.RegenerationMana);
             if(regenerationManaStat != null) uiStats.SetRegenerationMana(regenerationManaStat.CurrentValue);
             
-            regenerationEnduranceStat = statsController.GetStat(StatType.RegenerationEndurance);
+            regenerationEnduranceStat = statsController.GetStat(UnitStatType.RegenerationEndurance);
             if(regenerationEnduranceStat != null) uiStats.SetRegenerationEndurance(regenerationEnduranceStat.CurrentValue);
             
-            evasionStat = statsController.GetStat(StatType.Evasion);
+            evasionStat = statsController.GetStat(UnitStatType.Evasion);
             if(evasionStat != null) uiStats.SetEvasion(evasionStat.CurrentValue * 100);
             SubscribeEvent();
         }

@@ -5,6 +5,7 @@ using Gameplay.Resistance;
 using Gameplay.Ability;
 using Gameplay.Factory;
 using Gameplay.Unit.Item;
+using Machine;
 using ScriptableObjects.Unit.Character.Player;
 using ScriptableObjects.Unit.Item;
 using Unity.Collections;
@@ -111,9 +112,6 @@ namespace Gameplay.Unit.Character.Player
         {
             base.Initialize();
             
-            //Test
-            InitializeSword();
-
             StateMachine.SetStates(desiredStates: typeof(PlayerIdleState));
         }
 
@@ -274,21 +272,6 @@ namespace Gameplay.Unit.Character.Player
         {
             throw new NotImplementedException();
         }
-
-        //Test
-        private void InitializeSword()
-        {
-            if (!photonView.IsMine) return;
-            
-            var item = inventoryItemFactory.CreateItem(soNormalSwordItem);
-            diContainer.Inject(item);
-            item.SetOwner(gameObject);
-            item.SetAmountItem(1);
-            item.SetStats(soNormalSwordItem.StatsConfigData.StatConfigs);
-            item.Initialize();
-            playerItemInventory.AddItem(item, soNormalSwordItem.Icon);
-            var equipmentItem = (EquipmentItem)item;
-        }
         
         private void Update()
         {
@@ -299,14 +282,7 @@ namespace Gameplay.Unit.Character.Player
             StateMachine?.Update();
         }
 
-        private void LateUpdate()
-        {
-            if(!IsActive || !photonView.IsMine) return;
-           // Debug.Log(StateMachine.GetState<PlayerAttackState>().IsFindUnitInRange());
-            StateMachine?.LateUpdate();
-        }
-
-        private void OnChangedState(IState state)
+        private void OnChangedState(State state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;

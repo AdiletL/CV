@@ -18,39 +18,39 @@ namespace Gameplay.Unit.Character
             var characterMainController = (CharacterMainController)unitController;
 
             if (TryGetComponent(out IExperience experience))
-                AddStatToDictionary(StatType.Experience, experience.ExperienceStat);
+                AddStatToDictionary(UnitStatType.Experience, experience.ExperienceStat);
             
             if(TryGetComponent(out ILevel level))
-                AddStatToDictionary(StatType.Level, level.LevelStat);
+                AddStatToDictionary(UnitStatType.Level, level.LevelStat);
             
             if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IDamage damage))
-                AddStatToDictionary(StatType.Damage, damage.DamageStat);
+                AddStatToDictionary(UnitStatType.Damage, damage.DamageStat);
 
             if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IAttackSpeed attackSpeed))
-                AddStatToDictionary(StatType.AttackSpeed, attackSpeed.AttackSpeedStat);
+                AddStatToDictionary(UnitStatType.AttackSpeed, attackSpeed.AttackSpeedStat);
             
             if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IRangeAttack rangeAttack))
-                AddStatToDictionary(StatType.AttackRange, rangeAttack.RangeAttackStat);
+                AddStatToDictionary(UnitStatType.AttackRange, rangeAttack.RangeAttackStat);
             
             if(characterMainController.StateMachine.TryGetInterfaceImplementingClass(out IMovementSpeed movementSpeed))
-                AddStatToDictionary(StatType.MovementSpeed, movementSpeed.MovementSpeedStat);
+                AddStatToDictionary(UnitStatType.MovementSpeed, movementSpeed.MovementSpeedStat);
 
             if (TryGetComponent(out IHealth health))
             {
-                AddStatToDictionary(StatType.Health, health.HealthStat);
-                AddStatToDictionary(StatType.RegenerationHealth, health.RegenerationStat);
+                AddStatToDictionary(UnitStatType.Health, health.HealthStat);
+                AddStatToDictionary(UnitStatType.RegenerationHealth, health.RegenerationStat);
             }
 
             if (TryGetComponent(out IEndurance endurance))
             {
-                AddStatToDictionary(StatType.Endurance, endurance.EnduranceStat);
-                AddStatToDictionary(StatType.RegenerationEndurance, endurance.RegenerationStat);
+                AddStatToDictionary(UnitStatType.Endurance, endurance.EnduranceStat);
+                AddStatToDictionary(UnitStatType.RegenerationEndurance, endurance.RegenerationStat);
             }
 
             if (TryGetComponent(out IMana mana))
             {
-                AddStatToDictionary(StatType.Mana, mana.ManaStat);
-                AddStatToDictionary(StatType.RegenerationMana, mana.RegenerationStat);
+                AddStatToDictionary(UnitStatType.Mana, mana.ManaStat);
+                AddStatToDictionary(UnitStatType.RegenerationMana, mana.RegenerationStat);
             }
 
             if (TryGetComponent(out ResistanceHandler resistanceHandler))
@@ -63,14 +63,14 @@ namespace Gameplay.Unit.Character
                 resistanceHandler.AddResistance(magicalResistance);
                 resistanceHandler.AddResistance(pureResistance);
                 
-                AddStatToDictionary(physicalResistance.StatTypeID, physicalResistance.ResistanceStat);
-                AddStatToDictionary(magicalResistance.StatTypeID, magicalResistance.ResistanceStat);
-                AddStatToDictionary(pureResistance.StatTypeID, pureResistance.ResistanceStat);
+                AddStatToDictionary(physicalResistance.UnitStatTypeID, physicalResistance.ResistanceStat);
+                AddStatToDictionary(magicalResistance.UnitStatTypeID, magicalResistance.ResistanceStat);
+                AddStatToDictionary(pureResistance.UnitStatTypeID, pureResistance.ResistanceStat);
             }
 
             Evasion = new Evasion();
             Evasion.EvasionStat.AddCurrentValue(so_CharacterStats.EvasionChance);
-            AddStatToDictionary(StatType.Evasion, Evasion.EvasionStat);
+            AddStatToDictionary(UnitStatType.Evasion, Evasion.EvasionStat);
         }
     }
 }

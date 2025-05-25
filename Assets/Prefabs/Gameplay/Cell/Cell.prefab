@@ -264,6 +264,8 @@ MonoBehaviour:
   <VisualParent>k__BackingField: {fileID: 2764638693606309324}
   platformText: {fileID: 5568411240746634969}
   <CurrentCoordinates>k__BackingField: {x: 0, y: 0}
+  renderers:
+  - {fileID: 5922919985975680491}
 --- !u!65 &6533177454188079626
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -299,7 +301,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRenderers:
   - {fileID: 5922919985975680491}
-  rangeVisual: {fileID: 0}
   selectedObject: {fileID: 0}
 --- !u!114 &1471724553134719840
 MonoBehaviour:

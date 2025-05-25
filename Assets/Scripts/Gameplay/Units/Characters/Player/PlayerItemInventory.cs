@@ -34,6 +34,7 @@ namespace Gameplay.Unit.Character.Player
         private Camera baseCamera;
         private InputType selectItemBlockInput;
         private RangeDisplay rangeCastDisplay;
+        private ItemTooltipProvider itemTooltipProvider;
         
         private int maxSlot;
         private bool isNextFrameFromUnblockInput;
@@ -78,6 +79,8 @@ namespace Gameplay.Unit.Character.Player
             playerBlockInput = playerController.PlayerBlockInput;
             baseCamera = playerController.BaseCamera;
             itemHandler = GetComponent<ItemHandler>();
+            itemTooltipProvider = new ItemTooltipProvider();
+            diContainer.Inject(itemTooltipProvider);
             
             InitializeUIInventory();
             InitializeSlots();
@@ -175,11 +178,13 @@ namespace Gameplay.Unit.Character.Player
             CreateRangeCastDisplay();
             rangeCastDisplay.SetRange(slots[slotID].Range);
             rangeCastDisplay.ShowRange();
+            itemTooltipProvider?.ShowTooltip(slots[slotID]);
         }
 
         private void OnPointerExit()
         {
             rangeCastDisplay?.HideRange();
+            itemTooltipProvider?.HideTooltip();
         }
         
         private void OnClickedLeftMouseInventory(int? slotID)

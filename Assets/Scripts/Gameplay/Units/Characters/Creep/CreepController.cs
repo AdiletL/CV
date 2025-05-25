@@ -19,8 +19,8 @@ namespace Gameplay.Unit.Character.Creep
     [RequireComponent(typeof(EffectHandler))]
     public abstract class CreepController : CharacterMainController
     {
-        public event Action<CreepController> OnDeath; 
-        
+        public event Action<CreepController> OnDeath;
+
         [Space]
         [ReadOnly] public StateCategory currentStateCategory;
         [ReadOnly] public string currentStateName;
@@ -136,14 +136,8 @@ namespace Gameplay.Unit.Character.Creep
             if(!IsActive) return;
             this.StateMachine?.Update();
         }
-
-        protected void LateUpdate()
-        {
-            if(!IsActive) return;
-            this.StateMachine?.LateUpdate();
-        }
         
-        protected void OnChangedState(IState state)
+        protected void OnChangedState(State state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;

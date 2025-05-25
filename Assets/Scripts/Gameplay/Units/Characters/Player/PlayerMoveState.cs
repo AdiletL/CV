@@ -93,7 +93,6 @@ namespace Gameplay.Unit.Character.Player
                 PlayAnimation();
         }
         
-        
         private void CheckDirectionMovement()
         {
             directionMovement = Vector3.zero;
@@ -144,12 +143,12 @@ namespace Gameplay.Unit.Character.Player
 
         private void AddRegenerationEnduranceStat()
         {
-            characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(runConsumptionEndurance);
+            characterStatsController.GetStat(UnitStatType.RegenerationEndurance).RemoveCurrentValue(runConsumptionEndurance);
         }
 
         private void ClearRegenerationEnduranceStat()
         {
-            characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(runConsumptionEndurance);
+            characterStatsController.GetStat(UnitStatType.RegenerationEndurance).AddCurrentValue(runConsumptionEndurance);
         }
     }
 

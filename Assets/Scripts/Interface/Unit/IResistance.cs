@@ -23,15 +23,15 @@ public interface IDamageResistance : IResistance
 
 public interface IPhysicalResistance : IDamageResistance
 {
-    public StatType StatTypeID { get; }
+    public UnitStatType UnitStatTypeID { get; }
 }
 
 public interface IMagicalResistance : IDamageResistance
 {
-    public StatType StatTypeID { get; }
+    public UnitStatType UnitStatTypeID { get; }
 }
 
 public interface IPureResistance : IDamageResistance
 {
-    public StatType StatTypeID { get; }
+    public UnitStatType UnitStatTypeID { get; }
 }

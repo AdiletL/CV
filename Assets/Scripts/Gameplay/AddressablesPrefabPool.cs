@@ -7,7 +7,6 @@ public class AddressablesPrefabPool : IPunPrefabPool
 {
     private readonly Dictionary<string, GameObject> prefabCache = new ();
 
-    // Метод для создания объекта
     public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
     {
         if (!prefabCache.TryGetValue(prefabId, out GameObject prefab))
@@ -29,7 +28,7 @@ public class AddressablesPrefabPool : IPunPrefabPool
         GameObject newObject = Object.Instantiate(prefab);
         if(position != Vector3.zero) newObject.transform.position = position;
         if(rotation != Quaternion.identity) newObject.transform.rotation = rotation;
-        newObject.SetActive(false);  // Make sure the object is inactive when returned
+        newObject.SetActive(false);
         
         if(newObject.GetComponent<PhotonView>() == null)
             newObject.AddComponent<PhotonView>();
@@ -37,9 +36,6 @@ public class AddressablesPrefabPool : IPunPrefabPool
         return newObject;
     }
 
-    
-
-    // Метод для удаления объекта
     public void Destroy(GameObject gameObject)
     {
         Object.Destroy(gameObject);

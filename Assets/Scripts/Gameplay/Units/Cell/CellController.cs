@@ -12,7 +12,7 @@ namespace Gameplay.Unit.Cell
     {
         [SerializeField] private TextMeshPro platformText;
        [field: SerializeField, HideInInspector] public Vector2Int CurrentCoordinates { get; private set; }
-
+       
         private PhotonView photonView;
         private Collider[] colliders = new Collider[1];
         private Rigidbody rigidbody;

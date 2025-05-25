@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Gameplay.Unit;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace Gameplay.Effect
@@ -43,6 +44,6 @@ namespace Gameplay.Effect
         public AssetReferenceT<GameObject> ModelPrefab;
         public Shader animationShader;
         public float Timer;
-        public StatConfigData StatConfigData;
+        public UnitStatConfigData StatConfigData;
     }
 }

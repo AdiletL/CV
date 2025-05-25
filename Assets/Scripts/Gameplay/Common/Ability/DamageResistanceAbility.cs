@@ -15,7 +15,7 @@ namespace Gameplay.Ability
 
         private SO_DamageResistanceAbility so_DamageResistanceAbility;
         private UnitStatsController unitStatsController;
-        private StatConfig[] statConfigs;
+        private UnitStatConfig[] statConfigs;
 
         private bool isUsed;
         
@@ -55,7 +55,7 @@ namespace Gameplay.Ability
             float result = 0;
             foreach (var statConfig in statConfigs)
             {
-                stat = unitStatsController.GetStat(statConfig.StatTypeID);
+                stat = unitStatsController.GetStat(statConfig.UnitStatTypeID);
                 foreach (var statValue in statConfig.StatValuesConfig)
                 {
                     var gameValue = new GameValue(statValue.GameValueConfig.Value, statValue.GameValueConfig.ValueTypeID);
@@ -72,7 +72,7 @@ namespace Gameplay.Ability
             int index = 0;
             foreach (var config in statConfigs)
             {
-                stat = unitStatsController.GetStat(config.StatTypeID);
+                stat = unitStatsController.GetStat(config.UnitStatTypeID);
                 foreach (var statValue in config.StatValuesConfig)
                 {
                     stat.RemoveValue(addedStatValues[index], statValue.StatValueTypeID);

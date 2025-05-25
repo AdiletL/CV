@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7854251967456890499}
   - component: {fileID: 6790860645931548291}
   - component: {fileID: -5447100219239333795}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: RangeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}

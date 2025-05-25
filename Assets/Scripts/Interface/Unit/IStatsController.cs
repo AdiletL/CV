@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Gameplay;
 
-public interface IStatsController
+public interface IStatsController<T> where T : Enum
 {
-    public Dictionary<StatType, Stat> Stats { get; }
-    public Stat GetStat(StatType statType);
-    public void Initialize();
+    public Stat GetStat(T statType);
 }

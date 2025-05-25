@@ -1,4 +1,5 @@
 ﻿using Gameplay;
+using Gameplay.Unit;
 using UnityEngine;
 
 namespace ScriptableObjects.Unit
@@ -13,6 +14,6 @@ namespace ScriptableObjects.Unit
         [field: SerializeField] public bool IsGiveExperience { get; protected set; }
         [field: SerializeField] public bool IsTakeExperience { get; protected set; }
         
-        [field: SerializeField, Space(10)] public StatConfigData IncreaseStatConfig { get; protected set; }
+        [field: SerializeField, Space(10)] public UnitStatConfigData IncreaseStatConfig { get; protected set; }
     }
 }

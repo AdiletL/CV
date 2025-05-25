@@ -4,7 +4,7 @@ namespace Gameplay.Resistance
 {
     public class PureDamageResistance : DamageResistance, IPureResistance
     {
-        public StatType StatTypeID { get; } = StatType.PureDamageResistance;
+        public UnitStatType UnitStatTypeID { get; } = UnitStatType.PureDamageResistance;
         public override DamageType DamageTypeID { get; } = DamageType.Pure;
 
         public PureDamageResistance(ValueType valueType, float value)

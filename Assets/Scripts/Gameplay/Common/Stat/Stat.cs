@@ -1,6 +1,5 @@
 ﻿using System;
 using Calculate;
-using UnityEngine.Serialization;
 using ValueType = Calculate.ValueType;
 
 namespace Gameplay
@@ -12,7 +11,8 @@ namespace Gameplay
         Minimum,
         Maximum,
     }
-    public enum StatType
+    
+    public enum UnitStatType
     {
         Nothing,
         Damage,
@@ -31,13 +31,11 @@ namespace Gameplay
         Level,
         Experience,
         Evasion,
-        CriticalDamage,
     }
 
     [System.Serializable]
     public class StatConfig
     {
-        public StatType StatTypeID;
         public StatValueConfig[] StatValuesConfig;
     }
 
@@ -46,12 +44,7 @@ namespace Gameplay
     {
         public StatValueType StatValueTypeID;
         public GameValueConfig GameValueConfig;
-    }
-    
-    [System.Serializable]
-    public class StatConfigData
-    {
-        public StatConfig[] StatConfigs;
+        public float ScalingValue;
     }
     
     public class Stat
@@ -63,11 +56,7 @@ namespace Gameplay
         public float CurrentValue { get; private set; }
         public float MinimumValue { get; private set; }
         public float MaximumValue { get; private set; }
-
-        public virtual bool TryApply()
-        {
-            return false;
-        }
+        
         
         public float GetValue(StatValueType statValueType)
         {

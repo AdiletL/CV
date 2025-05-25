@@ -4,7 +4,7 @@ namespace Gameplay.Resistance
 {
     public class MagicalDamageResistance : DamageResistance, IMagicalResistance
     {
-        public StatType StatTypeID { get; } = StatType.MagicalDamageResistance;
+        public UnitStatType UnitStatTypeID { get; } = UnitStatType.MagicalDamageResistance;
         public override DamageType DamageTypeID { get; } = DamageType.Magical;
 
         public MagicalDamageResistance(ValueType valueType, float value)

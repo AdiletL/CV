@@ -57,7 +57,7 @@ namespace Gameplay.Effect
                 return;
             }
             
-            var movementStat = characterStatsController.GetStat(StatType.MovementSpeed);
+            var movementStat = characterStatsController.GetStat(UnitStatType.MovementSpeed);
             var gameValue = new GameValue(value, valueType);
             addedStatValue = gameValue.Calculate(movementStat.CurrentValue);
             movementStat.RemoveCurrentValue(addedStatValue);
@@ -68,7 +68,7 @@ namespace Gameplay.Effect
             var characterStatsController = Target.GetComponent<CharacterStatsController>();
             if(!characterStatsController) return;
             
-            var movementStat = characterStatsController.GetStat(StatType.MovementSpeed);
+            var movementStat = characterStatsController.GetStat(UnitStatType.MovementSpeed);
             movementStat.AddCurrentValue(addedStatValue);
             ClearValues();
             base.DestroyEffect();

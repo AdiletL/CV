@@ -87,12 +87,12 @@ namespace Gameplay.Unit.Character.Player
 
         private void AddRegenerationEnduranceStat()
         {
-            characterStatsController.GetStat(StatType.RegenerationEndurance).RemoveCurrentValue(consumptionEndurance);
+            characterStatsController.GetStat(UnitStatType.RegenerationEndurance).RemoveCurrentValue(consumptionEndurance);
         }
 
         private void ClearRegenerationEnduranceStat()
         {
-            characterStatsController.GetStat(StatType.RegenerationEndurance).AddCurrentValue(consumptionEndurance);
+            characterStatsController.GetStat(UnitStatType.RegenerationEndurance).AddCurrentValue(consumptionEndurance);
         }
         
         private void StartJump()

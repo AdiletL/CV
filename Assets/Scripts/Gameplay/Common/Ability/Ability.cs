@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
-using Gameplay.AttackModifier;
-using Gameplay.Effect;
+using System.Collections.Generic;
+using Gameplay;
 using Gameplay.UI.ScreenSpace;
 using ScriptableObjects.Ability;
 using UnityEngine;
@@ -9,10 +9,11 @@ using Zenject;
 
 namespace Gameplay.Ability
 {
-    public abstract class Ability : IAbility
+    public abstract class Ability : IAbility, 
+        IStatsController<AbilityStatType>,
+        IStatsController<UnitStatType>
     {
         [Inject] protected UICastTimer uiCastTimer;
-        [Inject] protected SO_AbilityContainer SoAbilityContainer;
 
         public event Action<int?, float, float> OnCountCooldown;
         public event Action<int?> OnStartedCast;
@@ -23,16 +24,17 @@ namespace Gameplay.Ability
         public abstract AbilityType AbilityTypeID { get; protected set; }
         public AbilityBehaviour AbilityBehaviourID { get; protected set; }
         public Action FinishedCallBack { get; protected set; }
-        public float Range { get; protected set; }
-        public float Cooldown { get; protected set; }
         public float TimerCast { get; protected set; }
         public bool IsCooldown { get; protected set; }
-
+        
         protected SO_Ability so_Ability;
         private float countCooldown;
         private float countTimerCast;
         protected bool isActivated;
         protected bool isCasting;
+        
+        private Dictionary<AbilityStatType, Stat> abilityStats;
+        private Dictionary<UnitStatType, Stat> unitStats;
 
         public Ability(SO_Ability so_Ability)
         {
@@ -41,14 +43,40 @@ namespace Gameplay.Ability
         
         public void SetInventorySlotID(int? slotID) => InventorySlotID = slotID;
         public void SetGameObject(GameObject gameObject) => this.GameObject = gameObject;
-        
+
+        public Stat GetStat(AbilityStatType statType)
+        {
+            return abilityStats.GetValueOrDefault(statType);
+        }
+        public Stat GetStat(UnitStatType unitStatType)
+        {
+            return unitStats.GetValueOrDefault(unitStatType);
+        }
 
         public virtual void Initialize()
         {
-            AbilityBehaviourID = SoAbilityContainer.GetAbilityConfig(so_Ability.AbilityTypeID).AbilityBehaviour;
-            Cooldown = so_Ability.Cooldown;
+            AbilityBehaviourID = so_Ability.AbilityBehaviour;
             TimerCast = so_Ability.TimerCast;
-            Range = so_Ability.Range;
+
+            abilityStats ??= new Dictionary<AbilityStatType, Stat>();
+            foreach (var abilityStatConfig in so_Ability.AbilityStatConfigData.AbilityStatConfigs)
+            {
+                var stat = new Stat();
+                foreach (var VARIABLE in abilityStatConfig.StatValuesConfig)
+                    stat.AddValue(VARIABLE.GameValueConfig.Value, VARIABLE.StatValueTypeID);
+                
+                abilityStats[abilityStatConfig.AbilityStatTypeID] = stat;
+            }
+            
+            unitStats ??= new Dictionary<UnitStatType, Stat>();
+            foreach (var unitStatConfig in so_Ability.UnitStatConfigData.StatConfigs)
+            {
+                var stat = new Stat();
+                foreach (var VARIABLE in unitStatConfig.StatValuesConfig)
+                    stat.AddValue(VARIABLE.GameValueConfig.Value, VARIABLE.StatValueTypeID);
+                
+                unitStats[unitStatConfig.UnitStatTypeID] = stat;
+            }
         }
 
         public virtual void Enter(Action finishedCallBack = null, GameObject target = null, Vector3? point = null)
@@ -92,7 +120,7 @@ namespace Gameplay.Ability
                 countCooldown -= Time.deltaTime;
                 if (countCooldown <= 0)
                     IsCooldown = false;
-                OnCountCooldown?.Invoke(InventorySlotID, countCooldown, Cooldown);
+                OnCountCooldown?.Invoke(InventorySlotID, countCooldown, abilityStats[AbilityStatType.Cooldown].CurrentValue);
             }
             
             if (isCasting)
@@ -109,7 +137,7 @@ namespace Gameplay.Ability
         private void StartCooldown()
         {
             IsCooldown = true;
-            countCooldown = Cooldown;
+            countCooldown = abilityStats[AbilityStatType.Cooldown].CurrentValue;
         }
         
         private void StartCasting()
@@ -134,5 +162,17 @@ namespace Gameplay.Ability
             isCasting = false;
             uiCastTimer.Hide();
         }
+    }
+    
+    [System.Serializable]
+    public class AbilityStatConfig : StatConfig
+    {
+        public AbilityStatType AbilityStatTypeID;
+    }
+
+    [System.Serializable]
+    public class AbilityStatConfigData
+    {
+        public AbilityStatConfig[] AbilityStatConfigs;
     }
 }

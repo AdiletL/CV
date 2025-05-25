@@ -42,13 +42,8 @@ namespace Gameplay.Unit.Trap.Tower
         {
             this.stateMachine?.Update();
         }
-
-        private void LateUpdate()
-        {
-            this.stateMachine?.LateUpdate();
-        }
         
-        private void OnChangedState(IState state)
+        private void OnChangedState(State state)
         {
             currentStateCategory = state.Category;
             currentStateName = state.GetType().Name;

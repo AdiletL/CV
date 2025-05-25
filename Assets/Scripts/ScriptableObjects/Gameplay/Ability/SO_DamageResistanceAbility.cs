@@ -1,4 +1,5 @@
 ﻿using Gameplay;
+using Gameplay.Unit;
 using UnityEngine;
 
 namespace ScriptableObjects.Ability
@@ -8,7 +9,7 @@ namespace ScriptableObjects.Ability
     {
         public override AbilityType AbilityTypeID { get; } = AbilityType.DamageResistance;
         
-        [field: SerializeField, Space(15)] public StatConfig[] StatConfigs { get; private set; }
+        [field: SerializeField, Space(15)] public UnitStatConfig[] StatConfigs { get; private set; }
         [field: SerializeField] public AnimationClip Clip { get; private set; }
     }
 }

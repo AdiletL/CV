@@ -50,12 +50,6 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  uiCreatureInformationPrefab:
-    m_AssetGUID: 045c8d912fa65524cac47fa93085383a
-    m_SubObjectName: 
-    m_SubObjectGUID: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
   uiCastTimerPrefab:
     m_AssetGUID: e32418020bb4a4543bed6d11166f1668
     m_SubObjectName: 
@@ -68,13 +62,14 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  popUpSpawnerPrefabs:
-  - m_AssetGUID: 1789adeb0187bb9478f27f4284e23369
+  uiAbilityTooltipPrefab:
+    m_AssetGUID: a83c94fd998eea4428214e2e5e014dd7
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  - m_AssetGUID: bea83ea0e5c7b234c8f8c8659d6a2ef9
+  uiItemTooltipPrefab:
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectGUID: 
     m_SubObjectType: 

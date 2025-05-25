@@ -2122,6 +2122,8 @@ MonoBehaviour:
     - {fileID: 3485907890520392551}
   <VisualParent>k__BackingField: {fileID: 7735062511587869407}
   <SO_CharacterInformation>k__BackingField: {fileID: 11400000, guid: 481d9a66ba7896046a4d7b437deed80a, type: 2}
+  renderers:
+  - {fileID: 7652247588124250486}
   currentStateCategory: 0
   currentStateName: 
   patrolPoints: []
@@ -2196,7 +2198,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRenderers:
   - {fileID: 7652247588124250486}
-  rangeVisual: {fileID: 0}
   selectedObject: {fileID: 5816200542816922211}
 --- !u!114 &2528836868523246379
 MonoBehaviour:

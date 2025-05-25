@@ -6,13 +6,12 @@ using UnityEngine;
 
 public class StateMachine
 {
-    public event Action<IState> OnChangedState;
-    public event Action<IState> OnExitCategory;
+    public event Action<State> OnChangedState;
+    public event Action<State> OnExitCategory;
     public event Action OnUpdate;
-    public event Action OnLateUpdate;
     
-    private readonly Dictionary<StateCategory, IState> activeStates = new();
-    private readonly Dictionary<Type, IState> states = new();
+    private readonly Dictionary<StateCategory, State> activeStates = new();
+    private readonly Dictionary<Type, State> states = new();
     private readonly List<StateCategory> cachedCategories = new();
 
     private IState defaultIdleState;
@@ -84,7 +83,7 @@ public class StateMachine
         }
     }
 
-    public void AddStates(params IState[] states)
+    public void AddStates(params State[] states)
     {
         foreach (var state in states)
         {
@@ -133,11 +132,11 @@ public class StateMachine
         }
     }
 
-    private IState FindMostDerivedState(Type baseType)
+    private State FindMostDerivedState(Type baseType)
     {
         if (baseType == null) return null;
         
-        IState mostDerivedState = null;
+        State mostDerivedState = null;
 
         foreach (var state in states.Values)
         {
@@ -210,6 +209,4 @@ public class StateMachine
     }
 
     public void Update() => OnUpdate?.Invoke();
-
-    public void LateUpdate() => OnLateUpdate?.Invoke();
 }

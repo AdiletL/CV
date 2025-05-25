@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -45,9 +46,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
 
         public void SetAmount(int amount)
         {
-            if (amount <= 0) amountTxt.enabled = false;
-            else amountTxt.enabled = true;
-            
+            amountTxt.enabled = amount > 0;
             amountTxt.text = amount.ToString();
         }
         public void SetSelectable(bool value) => isInteractable = value;
@@ -68,7 +67,7 @@ namespace Gameplay.UI.ScreenSpace.Inventory
             
             lastTime = current;
             cooldownBar.fillAmount = current/max;
-            cooldownText.text = $"{current: 0}";
+            cooldownText.text = current.ToString("0");
             
             if(!cooldownText.enabled) cooldownText.enabled = true;
         }

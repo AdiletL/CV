@@ -72,7 +72,6 @@ MonoBehaviour:
   baseRenderers:
   - {fileID: 2932153396545511530}
   - {fileID: 432476275938422935}
-  rangeVisual: {fileID: 0}
   selectedObject: {fileID: 0}
 --- !u!114 &-4689133026271156194
 MonoBehaviour:
@@ -86,6 +85,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d9b8fa1084426aae238de0b8cbae37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 2932153396545511530}
+  - {fileID: 432476275938422935}
   IsBlocked: 1
 --- !u!208 &3260985260258439175
 NavMeshObstacle:

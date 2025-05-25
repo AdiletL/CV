@@ -18,23 +18,18 @@ namespace Gameplay.Manager
 
         private PlayerController playerController;
         
-        private PhotonView photonView;
-
         public static int CurrentLevelIndex { get; private set; }
         
 
         public void Initialize()
         {
-            photonView = GetComponent<PhotonView>();
+            
         }
         
         public void StartLevel()
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC(nameof(CreateCamera), RpcTarget.AllBuffered);
-                roomManager.SpawnStartRoom(CurrentLevelIndex);
-            }
+            CreateCamera();
+            roomManager.SpawnStartRoom(CurrentLevelIndex);
 
             CreatePlayer();
         }
@@ -49,7 +44,6 @@ namespace Gameplay.Manager
             // Реализация остановки уровня
         }
 
-        [PunRPC]
         private void CreateCamera()
         {
             var cameraObject = Instantiate(cameraPrefab);
@@ -60,8 +54,8 @@ namespace Gameplay.Manager
         {
             var playerGameObject = PhotonNetwork.Instantiate(playerPrefab.AssetGUID,
                 roomManager.PlayerSpawnPosition, Quaternion.identity);
-            
-            photonView.RPC(nameof(InitializePlayer), RpcTarget.AllBuffered, playerGameObject.GetComponent<PhotonView>().ViewID);
+
+            InitializePlayer(playerGameObject.GetComponent<PhotonView>().ViewID);
         }
         
         [PunRPC]

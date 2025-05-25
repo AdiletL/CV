@@ -16,26 +16,17 @@ namespace Gameplay.Manager
         [SerializeField] private AssetReferenceGameObject mainCanvasPrefab;
         [SerializeField] private AssetReferenceGameObject uiCastTimerPrefab;
         [SerializeField] private AssetReferenceGameObject uiContextMenuPrefab;
+        [SerializeField] private AssetReferenceGameObject uiAbilityTooltipPrefab;
+        [SerializeField] private AssetReferenceGameObject uiItemTooltipPrefab;
         
-        private GameObject mainCanvas;
-        private PhotonView photonView;
+        private GameObject mainCanvasGameObject;
         
         public void Initialize()
         {
-            photonView = GetComponent<PhotonView>();
-            
-            if(!PhotonNetwork.IsMasterClient) return;
-            
-            var newMainCanvas = PhotonNetwork.Instantiate(mainCanvasPrefab.AssetGUID, Vector3.zero,
-                Quaternion.identity);
-            var newUICastTimer = PhotonNetwork.Instantiate(uiCastTimerPrefab.AssetGUID, Vector3.zero,
-                Quaternion.identity);
-            var newUIContextMenu = PhotonNetwork.Instantiate(uiContextMenuPrefab.AssetGUID, Vector3.zero,
-                Quaternion.identity);
-
-            photonView.RPC(nameof(InitializeMainCanvas), RpcTarget.AllBuffered, newMainCanvas.GetComponent<PhotonView>().ViewID);
-            photonView.RPC(nameof(InitializeUICastTimer), RpcTarget.AllBuffered, newUICastTimer.GetComponent<PhotonView>().ViewID);
-            photonView.RPC(nameof(InitializeUIContextMenu), RpcTarget.AllBuffered, newUIContextMenu.GetComponent<PhotonView>().ViewID);
+            InitializeMainCanvas();
+            InitializeUICastTimer();
+            InitializeUIContextMenu();
+            InitializeUIAbilityTooltipView();
 
             var damagePopUpSpawner = new DamagePopUpSpawner();
             diContainer.Inject(damagePopUpSpawner);
@@ -58,30 +49,38 @@ namespace Gameplay.Manager
             diContainer.Bind(criticalDamagePopUpSpawner.GetType()).FromInstance(criticalDamagePopUpSpawner).AsSingle();
         }
 
-        [PunRPC]
-        private void InitializeMainCanvas(int viewID)
+        private void InitializeMainCanvas()
         {
-            mainCanvas = PhotonView.Find(viewID).gameObject;
+            var loadGameObject = Addressables.LoadAssetAsync<GameObject>(mainCanvasPrefab).WaitForCompletion();
+            mainCanvasGameObject = diContainer.InstantiatePrefab(loadGameObject);
         }
 
-        [PunRPC]
-        private void InitializeUICastTimer(int viewID)
+        private void InitializeUICastTimer()
         {
-            var result = PhotonView.Find(viewID).gameObject;
-            var uiCastTimer = result.GetComponent<UICastTimer>();
-            diContainer.Inject(uiCastTimer);
+            var loadGameObject = Addressables.LoadAssetAsync<GameObject>(uiCastTimerPrefab).WaitForCompletion();
+            var newGameObject = diContainer.InstantiatePrefab(loadGameObject);
+            var uiCastTimer = newGameObject.GetComponent<UICastTimer>();
             diContainer.Bind(uiCastTimer.GetType()).FromInstance(uiCastTimer).AsSingle();
             uiCastTimer.Initialize();
         }
         
-        [PunRPC]
-        private void InitializeUIContextMenu(int viewID)
+        private void InitializeUIContextMenu()
         {
-            var result = PhotonView.Find(viewID).gameObject;
-            var uiContextMenu = result.GetComponent<UIContextMenu>();
-            diContainer.Inject(uiContextMenu);
+            var loadGameObject = Addressables.LoadAssetAsync<GameObject>(uiContextMenuPrefab).WaitForCompletion();
+            var newGameObject = diContainer.InstantiatePrefab(loadGameObject);
+            var uiContextMenu = newGameObject.GetComponent<UIContextMenu>();
             diContainer.Bind(uiContextMenu.GetType()).FromInstance(uiContextMenu).AsSingle();
-            result.transform.SetParent(mainCanvas.transform);
+            newGameObject.transform.SetParent(mainCanvasGameObject.transform);
+        }
+        
+        private void InitializeUIAbilityTooltipView()
+        {
+            var loadGameObject = Addressables.LoadAssetAsync<GameObject>(uiAbilityTooltipPrefab).WaitForCompletion();
+            var newGameObject = diContainer.InstantiatePrefab(loadGameObject);
+            var uiAbilityTooltipView = newGameObject.GetComponent<UITooltipView>();
+            diContainer.Inject(uiAbilityTooltipView);
+            diContainer.Bind(uiAbilityTooltipView.GetType()).FromInstance(uiAbilityTooltipView).AsSingle();
+            uiAbilityTooltipView.Hide();
         }
     }
 }
